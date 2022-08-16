@@ -1,0 +1,17 @@
+D:\Projects\Geesemon\Geesemon\Geesemon.DataAccess\obj\Debug\net6.0\Geesemon.DataAccess.csproj.AssemblyReference.cache
+D:\Projects\Geesemon\Geesemon\Geesemon.DataAccess\obj\Debug\net6.0\Geesemon.DataAccess.GeneratedMSBuildEditorConfig.editorconfig
+D:\Projects\Geesemon\Geesemon\Geesemon.DataAccess\obj\Debug\net6.0\Geesemon.DataAccess.AssemblyInfoInputs.cache
+D:\Projects\Geesemon\Geesemon\Geesemon.DataAccess\obj\Debug\net6.0\Geesemon.DataAccess.AssemblyInfo.cs
+D:\Projects\Geesemon\Geesemon\Geesemon.DataAccess\obj\Debug\net6.0\Geesemon.DataAccess.csproj.CoreCompileInputs.cache
+D:\Projects\Geesemon\Geesemon\Geesemon.DataAccess\bin\Debug\net6.0\Geesemon.DataAccess.deps.json
+D:\Projects\Geesemon\Geesemon\Geesemon.DataAccess\bin\Debug\net6.0\Geesemon.DataAccess.runtimeconfig.json
+D:\Projects\Geesemon\Geesemon\Geesemon.DataAccess\bin\Debug\net6.0\Geesemon.DataAccess.dll
+D:\Projects\Geesemon\Geesemon\Geesemon.DataAccess\bin\Debug\net6.0\Geesemon.DataAccess.pdb
+D:\Projects\Geesemon\Geesemon\Geesemon.DataAccess\bin\Debug\net6.0\Geesemon.Model.dll
+D:\Projects\Geesemon\Geesemon\Geesemon.DataAccess\bin\Debug\net6.0\Geesemon.Model.pdb
+D:\Projects\Geesemon\Geesemon\Geesemon.DataAccess\obj\Debug\net6.0\Geesemon.DataAccess.csproj.CopyComplete
+D:\Projects\Geesemon\Geesemon\Geesemon.DataAccess\obj\Debug\net6.0\Geesemon.DataAccess.dll
+D:\Projects\Geesemon\Geesemon\Geesemon.DataAccess\obj\Debug\net6.0\refint\Geesemon.DataAccess.dll
+D:\Projects\Geesemon\Geesemon\Geesemon.DataAccess\obj\Debug\net6.0\Geesemon.DataAccess.pdb
+D:\Projects\Geesemon\Geesemon\Geesemon.DataAccess\obj\Debug\net6.0\Geesemon.DataAccess.genruntimeconfig.cache
+D:\Projects\Geesemon\Geesemon\Geesemon.DataAccess\obj\Debug\net6.0\ref\Geesemon.DataAccess.dll
