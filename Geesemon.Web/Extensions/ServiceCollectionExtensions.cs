@@ -52,7 +52,6 @@ namespace Geesemon.Web.Extensions
 
             services.Configure<ErrorInfoProviderOptions>(opt => opt.ExposeExceptionStackTrace = isDevelopmentMode);
             services.AddTransient<IAuthorizationErrorMessageBuilder, DefaultAuthorizationErrorMessageBuilder>();
-
             services.AddGraphQL(builder => builder
            .AddApolloTracing()
            .AddHttpMiddleware<ApplicationSchema, GraphQLHttpMiddleware<ApplicationSchema>>()
@@ -120,7 +119,7 @@ namespace Geesemon.Web.Extensions
         
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
-            services.AddScoped<AuthService>();
+            services.AddSingleton<AuthService>();
             return services;
         }
     }
