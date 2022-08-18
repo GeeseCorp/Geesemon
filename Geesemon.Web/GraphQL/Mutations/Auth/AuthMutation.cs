@@ -11,16 +11,15 @@ namespace Geesemon.Web.GraphQL.Mutations.Auth
 {
     public class AuthMutation : ObjectGraphType
     {
-        public AuthMutation(AuthService authService)
+        public AuthMutation(UserManager userManager, AuthService authService, IHttpContextAccessor httpContextAccessor)
         {
             Field<NonNullGraphType<AuthResponseType>, AuthResponse>()
                 .Name("Register")
                 .Argument<NonNullGraphType<RegisterInputType>, RegisterInput>("input", "Argument to register new User")
                 .ResolveAsync(async context =>
                 {
-                    var userManager = context.RequestServices.GetRequiredService<UserManager>();
                     RegisterInput loginInput = context.GetArgument<RegisterInput>("input");
-                    UserModel? user = await userManager.CreateAsync(new UserModel
+                    User? user = await userManager.CreateAsync(new User
                     {
                         Login = loginInput.Login,
                         Password = loginInput.Password,

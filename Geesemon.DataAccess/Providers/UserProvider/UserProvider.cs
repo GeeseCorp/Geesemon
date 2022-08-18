@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 
 namespace Geesemon.DataAccess.Data
 {
-    public class UserProvider : ProviderBase<UserModel>, IUserProvider
+    public class UserProvider : ProviderBase<User>, IUserProvider
     {
 
         public UserProvider(AppDbContext appDbContext)
@@ -13,7 +13,7 @@ namespace Geesemon.DataAccess.Data
         {
         }
 
-        public virtual Task<UserModel?> GetByLoginAsync(string login, params Expression<Func<UserModel, object>>[] includes)
+        public virtual Task<User?> GetByLoginAsync(string login, params Expression<Func<User, object>>[] includes)
         {
             return includes.Aggregate(context.Users.AsQueryable(),
                 (current, include) => current.Include(include))

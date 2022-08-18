@@ -14,15 +14,15 @@ namespace EducationalPortal.Server.Services
 {
     public class AuthService
     {
-        private readonly IServiceProvider serviceProvider;
+        private readonly UserManager userManager;
 
         private readonly ISettingsProvider settingsProvider;
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly IConfiguration configuration;
 
-        public AuthService(IServiceProvider serviceProvider, ISettingsProvider settingsProvider, IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
+        public AuthService(UserManager userManager, ISettingsProvider settingsProvider, IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
         {
-            this.serviceProvider = serviceProvider;
+            this.userManager = userManager;
             this.settingsProvider = settingsProvider;
             this.httpContextAccessor = httpContextAccessor;
             this.configuration = configuration;
@@ -30,9 +30,7 @@ namespace EducationalPortal.Server.Services
 
         public async Task<AuthResponse> AuthenticateAsync(LoginInput loginAuthInput)
         {
-            using var scope = serviceProvider.CreateScope();
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager>();
-            UserModel? user = await userManager.GetByLoginAsync(loginAuthInput.Login);
+            User? user = await userManager.GetByLoginAsync(loginAuthInput.Login);
             if (user == null || user.Password != loginAuthInput.Password)
                 throw new Exception("Login or password not valid.");
             var token = GenerateAccessToken(user.Id, user.Login, user.Role);

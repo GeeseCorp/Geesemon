@@ -5,7 +5,7 @@ using GraphQL.Types;
 
 namespace Geesemon.Web.GraphQL.Types
 {
-    public class UserType : EntityType<UserModel>
+    public class UserType : EntityType<User>
     {
         public UserType() 
             : base()

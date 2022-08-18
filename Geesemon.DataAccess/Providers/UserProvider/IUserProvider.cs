@@ -3,8 +3,8 @@ using System.Linq.Expressions;
 
 namespace Geesemon.DataAccess.Data
 {
-    public interface IUserProvider : IProviderBase<UserModel>
+    public interface IUserProvider : IProviderBase<User>
     {
-        Task<UserModel?> GetByLoginAsync(string login, params Expression<Func<UserModel, object>>[] includes);
+        Task<User?> GetByLoginAsync(string login, params Expression<Func<User, object>>[] includes);
     }
 }

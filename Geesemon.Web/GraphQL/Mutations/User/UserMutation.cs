@@ -10,23 +10,21 @@ namespace Geesemon.Web.GraphQL.Mutations.UserMutations
 {
     public class UserMutation : ObjectGraphType
     {
-        public UserMutation()
+        public UserMutation(UserManager userManager)
         {
-            Field<UserType, UserModel>()
+            Field<UserType, User>()
                 .Name("Save")
                 .Argument<UserInputType>("UserInput", "User input for creating new user.")
-                .ResolveAsync(async context => {
-                    var userManager = context.RequestServices.GetRequiredService<UserManager>();
-                    var userInp = context.GetArgument<UserModel>("UserInput");
-                    return await userManager.CreateAsync(userInp);
-                });
+                .ResolveAsync(async ctx => {
+                        var userInp = ctx.GetArgument<User>("UserInput");
+                        return await userManager.CreateAsync(userInp);
+                    });
 
-            Field<UserType, UserModel>()
+            Field<UserType, User>()
                 .Name("Delete")
                 .Argument<GuidGraphType>("Id", "Id of user to be deleted.")
-                .ResolveAsync(async context => {
-                    var userManager = context.RequestServices.GetRequiredService<UserManager>();
-                    var userId = context.GetArgument<Guid>("Id");
+                .ResolveAsync(async ctx => {
+                    var userId = ctx.GetArgument<Guid>("Id");
                     return await userManager.RemoveAsync(userId);
                 });
         }

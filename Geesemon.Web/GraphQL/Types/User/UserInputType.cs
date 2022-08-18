@@ -4,7 +4,7 @@ using GraphQL.Types;
 
 namespace Geesemon.Web.GraphQL.Types.InputTypes
 {
-    public class UserInputType : InputObjectGraphType<UserModel>
+    public class UserInputType : InputObjectGraphType<User>
     {
         public UserInputType() 
             : base()

@@ -8,7 +8,7 @@ namespace Geesemon.Web.GraphQL.Types.Auth
     {
         public AuthResponseType()
         {
-            Field<NonNullGraphType<UserType>, UserModel>()
+            Field<NonNullGraphType<UserType>, User>()
                 .Name("User")
                 .Resolve(context => context.Source.User);
 

@@ -12,7 +12,7 @@ namespace Geesemon.Web.GraphQL.Queris.UserQueries
     {
         public UserQuery()
         {
-            Field<ListGraphType<UserType>, List<UserModel>>()
+            Field<ListGraphType<UserType>, List<User>>()
                 .Name("GetAll")
                 .ResolveAsync(async context =>
                 {
@@ -21,7 +21,7 @@ namespace Geesemon.Web.GraphQL.Queris.UserQueries
                 })
                 .AuthorizeWithPolicy(AuthPolicies.Authenticated);
 
-            Field<UserType, UserModel>()
+            Field<UserType, User>()
                 .Name("Get")
                 .Argument<GuidGraphType>("UserId")
                 .ResolveAsync(async context => 
