@@ -2,7 +2,7 @@
 
 namespace Geesemon.Web.GraphQL.Types.Message
 {
-    public class MessageType : ObjectGraphType<Geesemon.Model.Models.Message>
+    public class MessageType : ObjectGraphType<Geesemon.Model.Models.Message_old>
     {
         public MessageType()
         {

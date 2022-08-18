@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Geesemon.Model.Common;
 
 namespace Geesemon.Model.Models;
-
-public class Message
+public class Message : Entity
 {
-    public string FromId { get; set; }
+    public Guid ChatId { get; set; }
 
-    public string ToId { get; set; }
+    public string Text { get; set; }
 
-    public string Content { get; set; }
+    public Guid FromId { get; set; }
 
-    public DateTime? SentAt { get; set; }
+    public User From { get; set; }
+
+    public Chat Chat { get; set; }
+
+    public List<ReadMessage> ReadMessages { get; set; }
 }

@@ -6,13 +6,21 @@ namespace Geesemon.DataAccess.Providers
 {
     public class AppDbContext : DbContext
     {
-        public AppDbContext(DbContextOptions<AppDbContext> options) 
+        public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)
         {
             Database.Migrate();
         }
 
         public DbSet<User> Users { get; set; }
+
+        public DbSet<Chat> Chats { get; set; }
+
+        public DbSet<Message> Messages { get; set; }
+
+        public DbSet<ReadMessage> ReadMessages { get; set; }
+
+        public DbSet<UserChat> UserChats { get; set; }
 
         public override int SaveChanges()
         {

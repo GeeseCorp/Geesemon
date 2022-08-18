@@ -22,20 +22,20 @@ namespace Geesemon.Web.GraphQL.Subscriptions.Chat
             {
                 Name = "messageAdded",
                 Type = typeof(MessageType),
-                Resolver = new FuncFieldResolver<Message>(ResolveMessage),
-                StreamResolver = new SourceStreamResolver<Message>(Subscribe)  
+                Resolver = new FuncFieldResolver<Message_old>(ResolveMessage),
+                StreamResolver = new SourceStreamResolver<Message_old>(Subscribe)  
             })
             .AuthorizeWithPolicy(AuthPolicies.Authenticated);
         }
 
-        private Message ResolveMessage(IResolveFieldContext context)
+        private Message_old ResolveMessage(IResolveFieldContext context)
         {
-            var message = context.Source as Message;
+            var message = context.Source as Message_old;
 
             return message;
         }
 
-        private IObservable<Message> Subscribe(IResolveFieldContext context)
+        private IObservable<Message_old> Subscribe(IResolveFieldContext context)
         {
             string currentUserId = httpContextAccessor?.HttpContext?.User.Claims?.First(c => c.Type == AuthClaimsIdentity.DefaultIdClaimType)?.Value;
 

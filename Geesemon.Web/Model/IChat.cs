@@ -6,12 +6,12 @@ namespace Geesemon.Web.Model
 {
     public interface IChat
     {
-        ConcurrentStack<Message> AllMessages { get; }
+        ConcurrentStack<Message_old> AllMessages { get; }
 
-        Message AddMessage(Message message);
+        Message_old AddMessage(Message_old message);
 
-        IObservable<Message> Subscribe(string user);
+        IObservable<Message_old> Subscribe(string user);
 
-        Message AddMessage(ReceivedMessage message);
+        Message_old AddMessage(ReceivedMessage message);
     }
 }
