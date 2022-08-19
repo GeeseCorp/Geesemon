@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useAppDispatch } from "../../behavior/store";
-import { login, register } from "../../behavior/auth/thunk";
-import { LoginRequest, RegisterRequest } from "../../behavior/auth/types";
+import { login, register } from "../../behavior/features/auth/thunk";
+import { LoginRequest, RegisterRequest } from "../../behavior/features/auth/types";
 import { LoginForm } from "./LoginForm";
 import { RegisterForm } from "./RegisterForm";
 import style from "./auth.module.scss";

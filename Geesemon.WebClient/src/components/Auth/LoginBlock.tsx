@@ -1,7 +1,7 @@
 import { Link, Route, Routes } from "react-router-dom";
 import { useAppDispatch } from "../../behavior/store";
-import { login } from "../../behavior/auth/thunk";
-import { LoginRequest } from "../../behavior/auth/types";
+import { login } from "../../behavior/features/auth/thunk";
+import { LoginRequest } from "../../behavior/features/auth/types";
 import { LoginForm } from "./LoginForm";
 import { RegisterForm } from "./RegisterForm";
 

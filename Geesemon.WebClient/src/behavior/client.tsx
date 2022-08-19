@@ -7,7 +7,7 @@ import { SubscriptionClient } from "subscriptions-transport-ws";
 
 const cache = new InMemoryCache();
 const httpsLink = new HttpLink({
-  uri: `https://localhost:7010/graphql`,
+  uri: `https://localhost:7195/graphql`,
 });
 
 const wsLink = new WebSocketLink(

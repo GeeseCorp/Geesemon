@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@ant-design/icons": "^4.7.0",
     "@apollo/client": "^3.6.4",
     "@reduxjs/toolkit": "^1.8.1",
     "antd": "^4.20.5",
@@ -18,12 +19,12 @@
     "sass": "^1.52.3",
     "subscriptions-transport-ws": "^0.11.0"
   },
-  "devDependencies":{
-    "typescript": "^4.6.4",
-    "typescript-plugin-css-modules": "^3.4.0",
+  "devDependencies": {
     "@types/node": "^16.11.36",
     "@types/react": "^18.0.9",
-    "@types/react-dom": "^18.0.4"
+    "@types/react-dom": "^18.0.4",
+    "typescript": "^4.6.4",
+    "typescript-plugin-css-modules": "^3.4.0"
   },
   "scripts": {
     "start": "react-scripts start",

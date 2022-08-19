@@ -38,12 +38,12 @@ builder.Services.AddServices();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: MyAllowSpecificOrigins,
-                      policy =>
-                      {
-                          policy.WithOrigins("https://localhost:44470")
-                          .AllowAnyHeader()
-                          .AllowAnyMethod();
-                      });
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:3000")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+        });
 });
 
 var app = builder.Build();

@@ -1,0 +1,30 @@
+.chats {
+    background-color: #212121;
+    height: 100%;
+}
+
+.chat {
+    margin: 0 5px;
+    padding: 2px 5px;
+    border-radius: 5px;
+}
+
+.chat:hover:not(.chatSelected) {
+    background-color: #2C2C2C;
+    border-radius: 5px;
+}
+
+.chatLink {
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
+
+.chatSelected {
+    background-color: #766AC8;
+}
+
+.chatSelected * {
+    color: white;
+}
+

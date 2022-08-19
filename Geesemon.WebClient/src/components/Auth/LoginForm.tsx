@@ -1,5 +1,5 @@
 import { Form, Input, Button } from "antd";
-import { LoginRequest } from "../../behavior/auth/types";
+import { LoginRequest } from "../../behavior/features/auth/types";
 
 type Props = {
   onFinish: (values: LoginRequest) => void;

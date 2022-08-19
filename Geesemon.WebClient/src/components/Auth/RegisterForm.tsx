@@ -1,5 +1,5 @@
 import { Form, Input, Button, Checkbox, Row, Col } from "antd";
-import { RegisterRequest } from "../../behavior/auth/types";
+import { RegisterRequest } from "../../behavior/features/auth/types";
 
 type Props = {
   onFinish: (values: RegisterRequest) => void;
