@@ -3,7 +3,6 @@ using Geesemon.DomainModel.Models.Auth;
 using Geesemon.Model.Enums;
 using Geesemon.Web.GraphQL;
 using GraphQL;
-using GraphQL.Authorization;
 using GraphQL.Execution;
 using GraphQL.MicrosoftDI;
 using GraphQL.Server;

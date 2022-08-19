@@ -3,15 +3,11 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Geesemon.Model.Models;
-public class ReadMessage
+public class ReadMessage : Entity
 {
-    [Key, Column(Order = 0)]
     public Guid MessageId { get; set; }
-
-    [Key, Column(Order = 1)]
-    public Guid ReadById { get; set; }
-
     public Message Message { get; set; }
 
+    public Guid ReadById { get; set; }
     public User ReadBy { get; set; }
 }

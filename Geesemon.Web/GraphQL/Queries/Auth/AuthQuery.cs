@@ -12,14 +12,15 @@ namespace Geesemon.Web.GraphQL.Queries.Auth
 {
     public class AuthQuery : ObjectGraphType
     {
-        public AuthQuery(UserManager usersManager, IHttpContextAccessor httpContextAccessor)
+        public AuthQuery(IHttpContextAccessor httpContextAccessor)
         {
             Field<NonNullGraphType<AuthResponseType>, AuthResponse>()
                 .Name("Me")
                 .ResolveAsync(async context =>
                 {
+                    var userManager = context.RequestServices.GetRequiredService<UserManager>();
                     string userLogin = httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == AuthClaimsIdentity.DefaultLoginClaimType).Value;
-                    User currentUser = await usersManager.GetByLoginAsync(userLogin);
+                    User currentUser = await userManager.GetByLoginAsync(userLogin);
 
                     if (currentUser == null)
                         return new AuthResponse();

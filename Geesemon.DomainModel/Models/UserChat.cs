@@ -1,16 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using Geesemon.Model.Common;
 
 namespace Geesemon.Model.Models;
-public class UserChat
+public class UserChat : Entity
 {
-    [Key, Column(Order = 0)]
     public Guid ChatId { get; set; }
-
-    [Key, Column(Order =1)]
-    public Guid UserId { get; set; }
-
     public Chat Chat { get; set; }
 
+    public Guid UserId { get; set; }
     public User User { get; set; }
 }

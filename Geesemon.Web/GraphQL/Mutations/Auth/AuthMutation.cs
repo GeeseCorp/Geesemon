@@ -1,6 +1,5 @@
 ﻿using EducationalPortal.Server.Services;
 using Geesemon.DataAccess.Managers;
-using Geesemon.DomainModel.Models;
 using Geesemon.Model.Enums;
 using Geesemon.Model.Models;
 using Geesemon.Web.GraphQL.Types.Auth;
@@ -11,13 +10,14 @@ namespace Geesemon.Web.GraphQL.Mutations.Auth
 {
     public class AuthMutation : ObjectGraphType
     {
-        public AuthMutation(UserManager userManager, AuthService authService, IHttpContextAccessor httpContextAccessor)
+        public AuthMutation(AuthService authService)
         {
             Field<NonNullGraphType<AuthResponseType>, AuthResponse>()
                 .Name("Register")
                 .Argument<NonNullGraphType<RegisterInputType>, RegisterInput>("input", "Argument to register new User")
                 .ResolveAsync(async context =>
                 {
+                    var userManager = context.RequestServices.GetRequiredService<UserManager>();
                     RegisterInput loginInput = context.GetArgument<RegisterInput>("input");
                     User? user = await userManager.CreateAsync(new User
                     {
