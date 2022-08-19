@@ -49,5 +49,24 @@ namespace Geesemon.DataAccess.Providers
                 ((Entity)entity.Entity).UpdatedAt = now;
             }
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<ReadMessage>()
+                .HasKey(c => new { c.ReadById, c.MessageId });
+
+            modelBuilder.Entity<UserChat>()
+                .HasKey(c => new { c.UserId, c.ChatId });
+
+            modelBuilder.Entity<Message>()
+                .HasOne(m => m.From)
+                .WithMany(u => u.Messages)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Chat>()
+                .HasOne(c => c.Creator)
+                .WithMany(u => u.Chats)
+                .OnDelete(DeleteBehavior.SetNull);
+        }
     }
 }
