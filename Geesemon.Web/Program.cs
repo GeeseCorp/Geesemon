@@ -21,6 +21,7 @@ builder.Services.AddDbContext<AppDbContext>((options) =>
 builder.Services.AddScoped<UserManager>();
 builder.Services.AddScoped<ChatManager>();
 builder.Services.AddScoped<MessageManager>();
+builder.Services.AddScoped<UserChatManager>();
 
 builder.Services.AddSingleton<ISettingsProvider, SettingsProvider>();
 

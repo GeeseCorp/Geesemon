@@ -20,14 +20,13 @@ namespace Geesemon.Web.GraphQL.Mutations.Messages
                 .ResolveAsync(async context =>
                     {   
                         var receivedMessage = context.GetArgument<ReceivedMessage>("message");
-                        var currentUserId = httpContextAccessor?.HttpContext?.User.Claims
-                            .First(c => c.Type == AuthClaimsIdentity.DefaultIdClaimType).Value;
+                        var currentUserId = httpContextAccessor?.HttpContext?.User.Claims.GetUserId();
 
                         Message newMessage = new Message()
                         {
                             ChatId = receivedMessage.ChatId,
                             Text = receivedMessage.Text,
-                            FromId = Guid.Parse(currentUserId),
+                            FromId = currentUserId,
                             Type = MessageKind.Regular
                         };
                         var messageManager = context.RequestServices.GetRequiredService<MessageManager>();

@@ -22,33 +22,6 @@ namespace Geesemon.Web.Extensions
     {
         public static IServiceCollection AddGraphQLApi(this IServiceCollection services, bool isDevelopmentMode)
         {
-            //services.AddSingleton<ApplicationSchema>();
-
-            //services.AddSingleton<IDocumentExecuter, ApolloTracingDocumentExecuter>();
-            //services.AddSingleton<IDocumentWriter, ApolloTracingDocumentExecuter>();
-
-
-            //services.AddGraphQL(options =>
-            //{
-            //    options.EnableMetrics = true;
-            //    options.UnhandledExceptionDelegate = (context) =>
-            //    {
-            //        Console.WriteLine("StackTrace: " + context.Exception.StackTrace);
-            //        Console.WriteLine("Message: " + context.Exception.Message);
-            //        context.ErrorMessage = context.Exception.Message;
-            //    };
-            //})
-            //.AddSystemTextJson()
-            //.AddWebSockets()
-            //.AddDataLoader()
-            //.AddGraphTypes(typeof(ApplicationSchema))
-            //.AddGraphQLAuthorization(options =>
-            //{
-            //    options.AddPolicy(AuthPolicies.Authenticated.ToString(), p => p.RequireAuthenticatedUser());
-            //    options.AddPolicy(AuthPolicies.User, p => p.RequireClaim(ClaimTypes.Role, UserRole.User.ToString(), UserRole.Admin.ToString()));
-            //    options.AddPolicy(AuthPolicies.Admin, p => p.RequireClaim(ClaimTypes.Role, UserRole.Admin.ToString()));
-            //});
-
             services.Configure<ErrorInfoProviderOptions>(opt => opt.ExposeExceptionStackTrace = isDevelopmentMode);
             services.AddTransient<IAuthorizationErrorMessageBuilder, DefaultAuthorizationErrorMessageBuilder>();
             services.AddGraphQL(builder => builder
