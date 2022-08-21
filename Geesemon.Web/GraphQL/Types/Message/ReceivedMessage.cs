@@ -1,4 +1,4 @@
-﻿namespace Geesemon.Web.GraphQL.Types.Message
+﻿namespace Geesemon.Web.GraphQL.Types
 {
     public class ReceivedMessage
     {

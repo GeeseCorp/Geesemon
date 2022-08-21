@@ -3,7 +3,7 @@ using Geesemon.DomainModel.Models.Auth;
 using Geesemon.Model.Enums;
 using Geesemon.Model.Models;
 using Geesemon.Utils.SettingsAccess;
-using Geesemon.Web.GraphQL.Types.Auth;
+using Geesemon.Web.GraphQL.Types;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -18,14 +18,13 @@ public class AuthService
 
     private readonly ISettingsProvider settingsProvider;
     private readonly IHttpContextAccessor httpContextAccessor;
-    private readonly IConfiguration configuration;
 
-    public AuthService(IServiceProvider serviceProvider, ISettingsProvider settingsProvider, IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
+    public AuthService(IServiceProvider serviceProvider, ISettingsProvider settingsProvider,
+        IHttpContextAccessor httpContextAccessor)
     {
         this.serviceProvider = serviceProvider;
         this.settingsProvider = settingsProvider;
         this.httpContextAccessor = httpContextAccessor;
-        this.configuration = configuration;
     }
 
     public async Task<AuthResponse> AuthenticateAsync(LoginInput loginAuthInput)
@@ -65,13 +64,13 @@ public class AuthService
         try
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(configuration["AuthIssuerSigningKey"]);
+            var key = Encoding.ASCII.GetBytes(settingsProvider.GetAuthIssuerSigningKey());
             tokenHandler.ValidateToken(CleanJWTToken(token), new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(key),
-                ValidIssuer = configuration["AuthValidIssuer"],
-                ValidAudience = configuration["AuthValidAudience"],
+                ValidIssuer = settingsProvider.GetAuthValidIssuer(),
+                ValidAudience = settingsProvider.GetAuthValidAudience(),
                 ValidateIssuer = true,
                 ValidateAudience = true,
                 ClockSkew = TimeSpan.Zero

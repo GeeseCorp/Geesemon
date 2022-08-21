@@ -3,7 +3,7 @@ using Geesemon.DataAccess.Managers;
 using Geesemon.DomainModel.Models;
 using Geesemon.DomainModel.Models.Auth;
 using Geesemon.Model.Models;
-using Geesemon.Web.GraphQL.Types.Auth;
+using Geesemon.Web.GraphQL.Types;
 using GraphQL;
 using GraphQL.Types;
 using Microsoft.Net.Http.Headers;

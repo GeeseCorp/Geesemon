@@ -1,8 +1,5 @@
-﻿using Geesemon.DomainModel.Models.Auth;
-using Geesemon.Model.Enums;
-using Geesemon.Model.Models;
-using Geesemon.Web.GraphQL.Types.Message;
-using Geesemon.Web.Model;
+﻿using Geesemon.Model.Models;
+using Geesemon.Web.GraphQL.Types;
 using GraphQL;
 using GraphQL.Types;
 
@@ -10,37 +7,18 @@ namespace Geesemon.Web.GraphQL.Mutations.Messages
 {
     public class ChatMutation : ObjectGraphType<object>
     {
-        public ChatMutation(IChat chat, IHttpContextAccessor httpContextAccessor)
+        public ChatMutation(IHttpContextAccessor httpContextAccessor)
         {
-            Field<MessageType>("addMessage",
-                arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<MessageInputType>> { Name = "message" }
-                ),
-                resolve: context =>
-                {
-                    var receivedMessage = context.GetArgument<ReceivedMessage>("message");
-                    var currentUserId = httpContextAccessor?.HttpContext?.User.Claims.First(c => c.Type == AuthClaimsIdentity.DefaultIdClaimType).Value;
+            //Field<ChatType, Chat>()
+            //    .Name("CreatePersonal")
+            //    .Argument<ChatInputType>("UserInput", "User input for creating new user.")
+            //    .ResolveAsync(async context =>
+            //    {
+            //        var userManager = context.RequestServices.GetRequiredService<UserManager>();
+            //        var userInp = context.GetArgument<User>("UserInput");
+            //        return await userManager.CreateAsync(userInp);
+            //    });
 
-                    Message newMessage = new Message()
-                    {
-                        ChatId = receivedMessage.ChatId,
-                        Text = receivedMessage.Text,
-                        FromId = Guid.Parse(currentUserId),
-                        Type = MessageKind.Regular
-                    };
-                    var message = chat.AddMessage(newMessage);
-                    return message;
-                })
-                .AuthorizeWithPolicy(AuthPolicies.Authenticated); 
         }
-    }
-}
-
-public class MessageInputType : InputObjectGraphType<ReceivedMessage>
-{
-    public MessageInputType()
-    {
-        Field<NonNullGraphType<GuidGraphType>>("chatId");
-        Field<NonNullGraphType<StringGraphType>>("text");       
     }
 }

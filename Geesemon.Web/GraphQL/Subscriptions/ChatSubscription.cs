@@ -1,6 +1,6 @@
 ﻿using Geesemon.DomainModel.Models.Auth;
 using Geesemon.Model.Models;
-using Geesemon.Web.GraphQL.Types.Message;
+using Geesemon.Web.GraphQL.Types;
 using Geesemon.Web.Model;
 using GraphQL;
 using GraphQL.Resolvers;
@@ -10,11 +10,11 @@ namespace Geesemon.Web.GraphQL.Subscriptions.Chat
 {
     public class ChatSubscriptions : ObjectGraphType
     {
-        private readonly IChat chat;
+        private readonly IMessagerSubscriptionService chat;
 
         private readonly IHttpContextAccessor httpContextAccessor;
 
-        public ChatSubscriptions(IChat chat, IHttpContextAccessor httpContextAccessor)
+        public ChatSubscriptions(IMessagerSubscriptionService chat, IHttpContextAccessor httpContextAccessor)
         {
             this.chat = chat;
             this.httpContextAccessor = httpContextAccessor;       

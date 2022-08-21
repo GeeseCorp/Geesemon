@@ -20,6 +20,10 @@ namespace Geesemon.Web.GraphQL.Mutations
             Field<ChatMutation>()
                 .Name("Chat")
                 .Resolve(_ => new { });
+
+            Field<MessageMutation>()
+                .Name("Message")
+                .Resolve(_ => new { });
         }
 
     }

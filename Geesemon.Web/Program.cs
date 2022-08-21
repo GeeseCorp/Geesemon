@@ -20,6 +20,7 @@ builder.Services.AddDbContext<AppDbContext>((options) =>
 
 builder.Services.AddScoped<UserManager>();
 builder.Services.AddScoped<ChatManager>();
+builder.Services.AddScoped<MessageManager>();
 
 builder.Services.AddSingleton<ISettingsProvider, SettingsProvider>();
 
@@ -28,7 +29,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<IOperationMessageListener, AuthenticationListener>();
 
 builder.Services.AddGraphQLApi(builder.Environment.IsDevelopment());
-builder.Services.AddSingleton<IChat, Chat>();
+builder.Services.AddSingleton<IMessagerSubscriptionService, MessagerSubscriptionService>();
 
 builder.Services.AddJwtAuthorization(builder.Configuration);
 

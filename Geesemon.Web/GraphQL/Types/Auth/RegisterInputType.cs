@@ -1,6 +1,6 @@
 ﻿using GraphQL.Types;
 
-namespace Geesemon.Web.GraphQL.Types.Auth
+namespace Geesemon.Web.GraphQL.Types
 {
     public class RegisterInputType : InputObjectGraphType<RegisterInput>
     {

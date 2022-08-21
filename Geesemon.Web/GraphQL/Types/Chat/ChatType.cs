@@ -2,10 +2,9 @@
 using Geesemon.Model.Enums;
 using Geesemon.Model.Models;
 using GraphQL;
-using GraphQL.Resolvers;
 using GraphQL.Types;
 
-namespace Geesemon.Web.GraphQL.Types.Message
+namespace Geesemon.Web.GraphQL.Types
 {
     public class ChatType : EntityType<Chat>
     {

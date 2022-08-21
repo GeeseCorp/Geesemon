@@ -1,6 +1,6 @@
 ﻿using Geesemon.Model.Models;
 
-namespace Geesemon.Web.GraphQL.Types.Auth
+namespace Geesemon.Web.GraphQL.Types
 {
     public class AuthResponse
     {

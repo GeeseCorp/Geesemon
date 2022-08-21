@@ -2,7 +2,7 @@
 using Geesemon.Model.Models;
 using GraphQL.Types;
 
-namespace Geesemon.Web.GraphQL.Types.InputTypes
+namespace Geesemon.Web.GraphQL.Types
 {
     public class UserInputType : InputObjectGraphType<User>
     {

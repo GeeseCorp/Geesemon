@@ -6,23 +6,18 @@ using System.Reactive.Subjects;
 
 namespace Geesemon.Web.Model
 {
-    public class Chat : IChat
+    public class MessagerSubscriptionService : IMessagerSubscriptionService
     {
         private readonly ISubject<Message> _messageStream = new Subject<Message>();
         
         private readonly IServiceProvider serviceProvider;
-        public Chat(IServiceProvider serviceProvider, IHttpContextAccessor httpContextAccessor)
+        public MessagerSubscriptionService(IServiceProvider serviceProvider, IHttpContextAccessor httpContextAccessor)
         {
-            AllMessages = new ConcurrentStack<Message>();
             this.serviceProvider = serviceProvider;
         }
 
-
-        public ConcurrentStack<Message> AllMessages { get; }
-
         public Message AddMessage(Message message)
         {
-            AllMessages.Push(message);
             _messageStream.OnNext(message);
             return message;
         }
