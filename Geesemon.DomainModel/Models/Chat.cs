@@ -16,4 +16,6 @@ public class Chat : Entity
 
     public List<Message>? Messages { get; set; }
 
+    public List<UserChat>? UserChats { get; set; }
+
 }

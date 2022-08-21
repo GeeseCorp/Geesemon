@@ -1,5 +1,4 @@
-﻿using Geesemon.DataAccess.Data;
-using Geesemon.DataAccess.Managers;
+﻿using Geesemon.DataAccess.Managers;
 using Geesemon.DomainModel.Models.Auth;
 using Geesemon.Model.Models;
 using Geesemon.Web.GraphQL.Types;

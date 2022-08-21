@@ -29,5 +29,7 @@ public class User : Entity
 
     public List<Message>? Messages { get; set; }
 
-    public List<Chat>? Chats { get; set; }
+    public List<Chat>? AuthoredChats { get; set; }
+
+    public List<UserChat>? UserChats { get; set; }
 }

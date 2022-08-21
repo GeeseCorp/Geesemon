@@ -65,7 +65,7 @@ namespace Geesemon.DataAccess.Providers
 
             modelBuilder.Entity<Chat>()
                 .HasOne(c => c.Creator)
-                .WithMany(u => u.Chats)
+                .WithMany(u => u.AuthoredChats)
                 .OnDelete(DeleteBehavior.SetNull);
         }
     }

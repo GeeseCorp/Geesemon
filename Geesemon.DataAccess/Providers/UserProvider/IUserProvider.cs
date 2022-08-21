@@ -1,10 +1,11 @@
 ﻿using Geesemon.Model.Models;
 using System.Linq.Expressions;
 
-namespace Geesemon.DataAccess.Data
+namespace Geesemon.DataAccess.Providers
 {
     public interface IUserProvider : IProviderBase<User>
     {
         Task<User?> GetByLoginAsync(string login, params Expression<Func<User, object>>[] includes);
+        Task<List<User>> GetAsync(Guid chatId);
     }
 }

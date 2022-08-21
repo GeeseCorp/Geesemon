@@ -17,29 +17,27 @@ namespace Geesemon.Web.GraphQL.Subscriptions.Chat
         public ChatSubscriptions(IChat chat, IHttpContextAccessor httpContextAccessor)
         {
             this.chat = chat;
-            this.httpContextAccessor = httpContextAccessor;
-            AddField(new FieldType
-            {
-                Name = "messageAdded",
-                Type = typeof(MessageType),
-                Resolver = new FuncFieldResolver<Message_old>(ResolveMessage),
-                StreamResolver = new SourceStreamResolver<Message_old>(Subscribe)  
-            })
-            .AuthorizeWithPolicy(AuthPolicies.Authenticated);
+            this.httpContextAccessor = httpContextAccessor;       
+
+            Field<MessageType, Message>()
+                .Name("messageAdded")
+                .Resolve(ResolveMessage)
+                .ResolveStreamAsync(Subscribe)
+                .AuthorizeWithPolicy(AuthPolicies.Authenticated);
         }
 
-        private Message_old ResolveMessage(IResolveFieldContext context)
+        private Message ResolveMessage(IResolveFieldContext context)
         {
-            var message = context.Source as Message_old;
+            var message = context.Source as Message;
 
             return message;
         }
 
-        private IObservable<Message_old> Subscribe(IResolveFieldContext context)
+        private async Task<IObservable<Message>> Subscribe(IResolveFieldContext context)
         {
             string currentUserId = httpContextAccessor?.HttpContext?.User.Claims?.First(c => c.Type == AuthClaimsIdentity.DefaultIdClaimType)?.Value;
 
-            return chat.Subscribe(currentUserId);
+            return await chat.Subscribe(Guid.Parse(currentUserId));
         }
     }
 }

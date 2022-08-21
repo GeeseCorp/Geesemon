@@ -15,6 +15,9 @@ namespace Geesemon.Web.GraphQL.Queris
             Field<AuthQuery>()
                 .Name("Auth")
                 .Resolve(_ => new { });
+            Field<ChatQuery>()
+                .Name("Chat")
+                .Resolve(_ => new { });
         }
 
     }

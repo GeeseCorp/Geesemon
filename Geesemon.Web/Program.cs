@@ -1,4 +1,3 @@
-using Geesemon.DataAccess.Data;
 using Geesemon.DataAccess.Managers;
 using Geesemon.DataAccess.Providers;
 using Geesemon.Utils.SettingsAccess;
@@ -19,8 +18,8 @@ builder.Services.AddDbContext<AppDbContext>((options) =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Default"), b => b.MigrationsAssembly("Geesemon.DataAccess"));
 });
 
-builder.Services.AddScoped<IUserProvider, UserProvider>();
-builder.Services.AddScoped<UserManager, UserManager>();
+builder.Services.AddScoped<UserManager>();
+builder.Services.AddScoped<ChatManager>();
 
 builder.Services.AddSingleton<ISettingsProvider, SettingsProvider>();
 
