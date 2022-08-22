@@ -18,22 +18,22 @@ namespace Geesemon.Web.GraphQL.Mutations.Messages
                 .Name("Sent")
                 .Argument<NonNullGraphType<MessageInputType>>("Message")
                 .ResolveAsync(async context =>
-                    {   
-                        var receivedMessage = context.GetArgument<ReceivedMessage>("message");
-                        var currentUserId = httpContextAccessor?.HttpContext?.User.Claims.GetUserId();
+                {   
+                    var receivedMessage = context.GetArgument<ReceivedMessage>("message");
+                    var currentUserId = httpContextAccessor?.HttpContext?.User.Claims.GetUserId();
 
-                        Message newMessage = new Message()
-                        {
-                            ChatId = receivedMessage.ChatId,
-                            Text = receivedMessage.Text,
-                            FromId = currentUserId,
-                            Type = MessageKind.Regular
-                        };
-                        var messageManager = context.RequestServices.GetRequiredService<MessageManager>();
-                        newMessage = await messageManager.CreateAsync(newMessage);
+                    Message newMessage = new Message()
+                    {
+                        ChatId = receivedMessage.ChatId,
+                        Text = receivedMessage.Text,
+                        FromId = currentUserId,
+                        Type = MessageKind.Regular
+                    };
+                    var messageManager = context.RequestServices.GetRequiredService<MessageManager>();
+                    newMessage = await messageManager.CreateAsync(newMessage);
 
-                        return subscriptionService.AddMessage(newMessage);
-                    })
+                    return subscriptionService.AddMessage(newMessage);
+                })
                 .AuthorizeWithPolicy(AuthPolicies.Authenticated);
         }
     }

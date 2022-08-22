@@ -1,6 +1,5 @@
 import {Chat, ChatKind} from "./types";
 import {createSlice, PayloadAction,} from "@reduxjs/toolkit";
-import {User} from "../auth/types";
 
 type InitialState = {
     chats: Chat[],
@@ -13,7 +12,6 @@ const initialState: InitialState = {
             name: 'Yehor',
             type: ChatKind.Personal,
             creatorId: '',
-            creator: {} as User,
             users: [],
             createdAt: '2022-08-19T16:13:12Z',
             updatedAt: '2022-08-19T16:13:13Z',
@@ -23,7 +21,6 @@ const initialState: InitialState = {
             name: 'Alesha',
             type: ChatKind.Personal,
             creatorId: '',
-            creator: {} as User,
             users: [],
             createdAt: '2022-08-19T16:13:12Z',
             updatedAt: '2022-08-19T16:13:13Z',
@@ -38,6 +35,7 @@ const slice = createSlice({
         addChats: (state, action: PayloadAction<Chat[]>) => {
             state.chats = [...state.chats, ...action.payload]
         },
+        getAsync: (state) => state
     },
 });
 

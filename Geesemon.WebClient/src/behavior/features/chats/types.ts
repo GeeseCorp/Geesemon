@@ -6,8 +6,7 @@ export type Chat = {
     type: ChatKind
     imageUrl?: string | null
     creatorId: string
-    creator?: User | null
-    users: UserChat[]
+    users: User[]
 } & Entity
 
 export type UserChat = {

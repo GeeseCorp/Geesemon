@@ -4,12 +4,22 @@ import s from './Chat.module.css';
 import {Col, Row} from "antd";
 import {Avatar} from "../../common/Avatar/Avatar";
 import {getTimeWithoutSeconds} from "../../../utils/dateUtils";
+import {useEffect} from "react";
+import {useDispatch} from "react-redux";
+import {chatActions} from "../../../behavior/features/chats";
+import {ContextMenu} from "../../common/ContextMenu/ContextMenu";
+import {DeleteOutlined} from "@ant-design/icons";
 
 export const Chats = () => {
     const params = useParams()
     const chatId = params.chatId;
     const chats = useAppSelector(s => s.chats.chats);
     const messages = useAppSelector(s => s.messages.messages)
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(chatActions.getAsync());
+    }, [])
 
     return (
         <div className={s.chats}>
@@ -20,25 +30,38 @@ export const Chats = () => {
                 const chatMessages = messages.filter(m => m.chatId === chat.id);
                 const lastMessage = chatMessages.length ? chatMessages.reduce((a, b) => a.createdAt > b.createdAt ? a : b, chatMessages[0]) : null;
                 return (
-                    <div className={[s.chat, chat.id === chatId ? s.chatSelected : null].join(' ')}>
-                        <Link
-                            to={`/${chat.id}`}
-                            className={s.chatLink}
-                        >
-                            <Row justify={'space-between'} align={'top'}>
-                                <Row align={'top'} gutter={10}>
-                                    <Col>
-                                        <Avatar firstName={firstName} lastName={lastName}/>
-                                    </Col>
-                                    <Col>
-                                        <div className={'bold'}>{chat.name}</div>
-                                        <div className={'secondary light'}>{lastMessage?.text}</div>
-                                    </Col>
+                    <ContextMenu
+                        items={[
+                            {
+                                content: 'Delete chat',
+                                icon: <DeleteOutlined />,
+                                // onClick: () => dispatch(),
+                                type: 'danger',
+                            },
+                        ]}
+                    >
+                        <div className={[s.chat, chat.id === chatId ? s.chatSelected : null].join(' ')}>
+                            <Link
+                                to={`/${chat.id}`}
+                                className={s.chatLink}
+                            >
+                                <Row justify={'space-between'} align={'top'}>
+                                    <Row align={'top'} gutter={10}>
+                                        <Col>
+                                            <Avatar firstName={firstName} lastName={lastName}
+                                                    backgroundColor={chat.imageUrl}/>
+                                        </Col>
+                                        <Col>
+                                            <div className={'bold'}>{chat.name}</div>
+                                            <div className={'secondary light'}>{lastMessage?.text}</div>
+                                        </Col>
+                                    </Row>
+                                    <div
+                                        className={'small light'}>{lastMessage && getTimeWithoutSeconds(new Date(lastMessage.createdAt))}</div>
                                 </Row>
-                                <div className={'small light'}>{lastMessage && getTimeWithoutSeconds(new Date(lastMessage.createdAt))}</div>
-                            </Row>
-                        </Link>
-                    </div>
+                            </Link>
+                        </div>
+                    </ContextMenu>
                 )
             })}
         </div>

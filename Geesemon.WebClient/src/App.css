@@ -27,3 +27,18 @@
 .bold {
     font-weight: 650;
 }
+
+.center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.danger, .danger *{
+    color: red;
+}
+
+.danger:hover{
+    background-color: #322525;
+}
