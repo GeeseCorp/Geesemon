@@ -2,7 +2,7 @@
 using Geesemon.Model.Models;
 using GraphQL.Types;
 
-namespace Geesemon.Web.GraphQL.Types.Auth
+namespace Geesemon.Web.GraphQL.Types
 {
     public class AuthResponseType : ObjectGraphType<AuthResponse>
     {

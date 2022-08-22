@@ -11,7 +11,7 @@ const httpsLink = new HttpLink({
 });
 
 const wsLink = new WebSocketLink(
-  new SubscriptionClient("wss://localhost:7010/graphql", {
+  new SubscriptionClient("wss://localhost:7195/graphql", {
     connectionParams: {
       Authorization: "Bearer " + localStorage.getItem("token"),
     },

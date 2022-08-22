@@ -2,7 +2,6 @@
 using Geesemon.DomainModel.Models;
 using Geesemon.Model.Models;
 using Geesemon.Web.GraphQL.Types;
-using Geesemon.Web.GraphQL.Types.InputTypes;
 using GraphQL;
 using GraphQL.Types;
 

@@ -2,7 +2,7 @@
 using Geesemon.DataAccess.Managers;
 using Geesemon.Model.Enums;
 using Geesemon.Model.Models;
-using Geesemon.Web.GraphQL.Types.Auth;
+using Geesemon.Web.GraphQL.Types;
 using GraphQL;
 using GraphQL.Types;
 

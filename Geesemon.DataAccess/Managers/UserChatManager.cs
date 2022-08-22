@@ -3,9 +3,9 @@ using Geesemon.Model.Models;
 
 namespace Geesemon.DataAccess.Managers
 {
-    public class UserManager : UserProvider, IManager<User>
+    public class UserChatManager : UserChatProvider
     {
-        public UserManager(AppDbContext appContext) 
+        public UserChatManager(AppDbContext appContext) 
             : base(appContext)
         { }
     }

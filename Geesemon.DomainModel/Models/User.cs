@@ -26,4 +26,10 @@ public class User : Entity
     public DateTime? DateOfBirth { get; set; }
 
     public UserRole Role { get; set; }
+
+    public List<Message>? Messages { get; set; }
+
+    public List<Chat>? AuthoredChats { get; set; }
+
+    public List<UserChat>? UserChats { get; set; }
 }

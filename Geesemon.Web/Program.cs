@@ -1,4 +1,3 @@
-using Geesemon.DataAccess.Data;
 using Geesemon.DataAccess.Managers;
 using Geesemon.DataAccess.Providers;
 using Geesemon.Utils.SettingsAccess;
@@ -16,11 +15,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<AppDbContext>((options) =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Default"), b => b.MigrationsAssembly("Geesemon.DataAccess"));
 });
 
-builder.Services.AddScoped<IUserProvider, UserProvider>();
-builder.Services.AddScoped<UserManager, UserManager>();
+builder.Services.AddScoped<UserManager>();
+builder.Services.AddScoped<ChatManager>();
+builder.Services.AddScoped<MessageManager>();
+builder.Services.AddScoped<UserChatManager>();
 
 builder.Services.AddSingleton<ISettingsProvider, SettingsProvider>();
 
@@ -29,7 +30,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<IOperationMessageListener, AuthenticationListener>();
 
 builder.Services.AddGraphQLApi(builder.Environment.IsDevelopment());
-builder.Services.AddSingleton<IChat, Chat>();
+builder.Services.AddSingleton<IMessagerSubscriptionService, MessagerSubscriptionService>();
 
 builder.Services.AddJwtAuthorization(builder.Configuration);
 

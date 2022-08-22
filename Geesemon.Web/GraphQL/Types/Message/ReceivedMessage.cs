@@ -1,10 +1,8 @@
-﻿namespace Geesemon.Web.GraphQL.Types.Message
+﻿namespace Geesemon.Web.GraphQL.Types
 {
     public class ReceivedMessage
     {
-        public string ToId { get; set; }
-        public string Content { get; set; }
-
-        public DateTime? SentAt { get; set; }
+        public Guid ChatId { get; set; }
+        public string Text { get; set; }
     }
 }

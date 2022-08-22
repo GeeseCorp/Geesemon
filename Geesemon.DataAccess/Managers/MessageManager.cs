@@ -3,9 +3,9 @@ using Geesemon.Model.Models;
 
 namespace Geesemon.DataAccess.Managers
 {
-    public class UserManager : UserProvider, IManager<User>
+    public class MessageManager : MessageProvider, IManager<Message>
     {
-        public UserManager(AppDbContext appContext) 
+        public MessageManager(AppDbContext appContext) 
             : base(appContext)
         { }
     }

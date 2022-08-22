@@ -1,7 +1,7 @@
 ﻿using Geesemon.Model.Common;
 using System.Linq.Expressions;
 
-namespace Geesemon.DataAccess.Data
+namespace Geesemon.DataAccess.Providers
 {
     public interface IProviderBase<T> where T : Entity
     {

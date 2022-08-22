@@ -1,5 +1,4 @@
-﻿using Geesemon.DataAccess.Data;
-using Geesemon.Model.Common;
+﻿using Geesemon.Model.Common;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
