@@ -4,7 +4,6 @@ import {authReducer} from "./features/auth/slice";
 import {notificationsReducer} from "./features/notifications/slice";
 import {chatReducer} from "./features/chats";
 import {usersReducer} from "./features/users/slice";
-import {messagesReducer} from "./features/messages";
 import {combineEpics, createEpicMiddleware} from "redux-observable";
 import {chatEpics} from "./features/chats/epics";
 
@@ -16,7 +15,6 @@ export const store = configureStore({
     users: usersReducer,
     notifications: notificationsReducer,
     chats: chatReducer,
-    messages: messagesReducer,
   },
   middleware: getDefaultMiddleware => getDefaultMiddleware({thunk: true}).concat(epicMiddleware),
   devTools: true,

@@ -1,5 +1,5 @@
 import {User} from "../auth/types";
-import {Entity} from "../../common/types";
+import {Entity} from "../../common";
 
 export type Message = {
     text?: string | null

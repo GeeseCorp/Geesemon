@@ -14,7 +14,6 @@ export const Chats = () => {
     const params = useParams()
     const chatId = params.chatId;
     const chats = useAppSelector(s => s.chats.chats);
-    const messages = useAppSelector(s => s.messages.messages)
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -27,10 +26,10 @@ export const Chats = () => {
                 const parts = chat.name?.split(' ')[0] || [];
                 const firstName = parts.length ? parts[0] : '';
                 const lastName = parts.length > 1 ? parts[1] : '';
-                const chatMessages = messages.filter(m => m.chatId === chat.id);
-                const lastMessage = chatMessages.length ? chatMessages.reduce((a, b) => a.createdAt > b.createdAt ? a : b, chatMessages[0]) : null;
+                const lastMessage = chat.messages?.length ? chat.messages?.reduce((a, b) => a.createdAt > b.createdAt ? a : b, chat.messages[0]) : null;
                 return (
                     <ContextMenu
+                        key={chat.id}
                         items={[
                             {
                                 content: 'Delete chat',

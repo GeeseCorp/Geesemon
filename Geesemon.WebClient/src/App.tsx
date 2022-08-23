@@ -10,6 +10,7 @@ import {Auth} from "./components/auth/Auth";
 import {Messages} from "./components/messages/Messages/Messages";
 import "./App.css";
 import {Notifications} from "./components/notifications/Notifications";
+import {ChatInfo} from "./components/chats/ChatInfo/ChatInfo";
 
 export const App = () => {
     let isAuthorized = useSelector((state: RootState) => state.auth.isAuthorized);
@@ -26,31 +27,40 @@ export const App = () => {
         );
 
     return (
-        <Row className={'wrapperApp'}>
-            <Notifications/>
-            {!isAuthorized
-                ? <Routes>
-                    <Route path="/auth/*" element={<Auth/>}/>
-                    <Route path="*" element={<Navigate replace to="/auth"/>}/>
-                </Routes>
-                :
-                <>
-                    <Col span={6}>
-                        <Routes>
-                            <Route path={'/'} element={<Chats/>}/>
-                            <Route path={'/:chatId'} element={<Chats/>}/>
-                            <Route path={'/settings'} element={<div>settings</div>}/>
-                            <Route path={'/auth'} element={<Navigate to={'/'}/>}/>
+        <div className={'wrapperApp'}>
+            <div className={'app'}>
+                <Row className={'innerApp'}>
+                    <Notifications/>
+                    {!isAuthorized
+                        ? <Routes>
+                            <Route path="/auth/*" element={<Auth/>}/>
+                            <Route path="*" element={<Navigate replace to="/auth"/>}/>
                         </Routes>
-                    </Col>
-                    <Col span={18}>
-                        <Routes>
-                            <Route path={'/'} element={<div>Select a chat</div>}/>
-                            <Route path={'/:chatId'} element={<Messages/>}/>
-                        </Routes>
-                    </Col>
-                </>
-            }
-        </Row>
+                        :
+                        <>
+                            <Col span={6}>
+                                <Routes>
+                                    <Route path={'/'} element={<Chats/>}/>
+                                    <Route path={'/:chatId'} element={<Chats/>}/>
+                                    <Route path={'/settings'} element={<div>settings</div>}/>
+                                    <Route path={'/auth'} element={<Navigate to={'/'}/>}/>
+                                </Routes>
+                            </Col>
+                            <Col span={18}>
+                                <Routes>
+                                    <Route path={'/'} element={<div className={'center'}>Select a chat</div>}/>
+                                    <Route path={'/:chatId'} element={
+                                        <>
+                                            <ChatInfo/>
+                                            <Messages/>
+                                        </>
+                                    }/>
+                                </Routes>
+                            </Col>
+                        </>
+                    }
+                </Row>
+            </div>
+        </div>
     );
 }

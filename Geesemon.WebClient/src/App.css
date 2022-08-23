@@ -7,8 +7,18 @@
 }
 
 .wrapperApp {
-    width: 100%;
+    background-color: #181818;
+}
+
+.app {
     height: 100vh;
+    max-width: 1682px;
+    margin: 0 auto;
+}
+
+.innerApp {
+    height: 100%;
+    padding: 1px;
 }
 
 .small {
@@ -16,11 +26,11 @@
     color: rgb(104, 108, 114);
 }
 
-.light{
+.light {
     color: rgba(255, 255, 255, 0.53);
 }
 
-.secondary{
+.secondary {
     color: rgb(104, 108, 114);
 }
 
@@ -35,10 +45,16 @@
     transform: translate(-50%, -50%);
 }
 
-.danger, .danger *{
+.danger, .danger * {
     color: red;
 }
 
-.danger:hover{
+.danger:hover {
     background-color: #322525;
+}
+
+.ant-comment-avatar img {
+    width: inherit !important;
+    height: inherit !important;
+    border-radius: inherit !important;
 }

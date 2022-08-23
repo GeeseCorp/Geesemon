@@ -1,4 +1,7 @@
 export const getTimeWithoutSeconds = (date: Date) => {
-    console.log(date.toLocaleTimeString().replace(/(.*)\D\d+/, '$1'))
     return date.toLocaleTimeString().replace(/(.*)\D\d+/, '$1');
+}
+
+export const getDayAndMonth = (date: Date) => {
+    return date.toLocaleString('default', { month: 'long', day: "numeric" });
 }

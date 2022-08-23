@@ -8,10 +8,17 @@ type Props = {
     width?: number
     height?: number
     borderRadius?: number,
-    backgroundColor?: string | null
+    backgroundColor?: string | null,
 };
 
-export const Avatar: FC<Props> = ({firstName, lastName, width = 50, height = 50, borderRadius = 100, backgroundColor}) => {
+export const Avatar: FC<Props> = ({
+                                      firstName,
+                                      lastName,
+                                      width = 50,
+                                      height = 50,
+                                      borderRadius = 100,
+                                      backgroundColor,
+                                  }) => {
     const avatarStyle = {
         width,
         height,

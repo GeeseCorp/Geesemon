@@ -23,11 +23,7 @@ export const ContextMenu: FC<Props> = ({items, children}) => {
     }, [])
 
     const onClickOff = (event: MouseEvent) => {
-        if (
-            menuRef !== null &&
-            event.target !== menuRef.current &&
-            !menuRef.current?.contains(event.target as Node)
-        ) {
+        if (event.target !== menuRef.current && !menuRef.current?.contains(event.target as Node)) {
             setOpen(false);
         }
     };
@@ -59,13 +55,14 @@ export const ContextMenu: FC<Props> = ({items, children}) => {
                         top: location.y,
                     }}
                 >
-                    {items.map(item => {
+                    {items.map((item, i) => {
                         const onClick = () => {
                             item.onClick && item.onClick();
                             setOpen(false)
                         }
                         return (
-                            <div onClick={onClick} className={[s.menuItem, item.type === 'danger' && 'danger'].join(' ')}>
+                            <div key={i} onClick={onClick}
+                                 className={[s.menuItem, item.type === 'danger' && 'danger'].join(' ')}>
                                 <div className={s.icon}>{item.icon}</div>
                                 <div className={s.content}>{item.content}</div>
                             </div>
