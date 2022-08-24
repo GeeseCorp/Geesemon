@@ -40,6 +40,7 @@
 .messageMy {
     align-self: end;
     background-color: #766AC8;
+    border-radius: 7px 7px 0 7px;
 }
 
 .message.messageMy .small {

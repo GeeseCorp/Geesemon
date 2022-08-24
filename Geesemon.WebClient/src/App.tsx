@@ -5,12 +5,12 @@ import {me} from "./behavior/features/auth/thunks";
 import {Triangle} from "react-loader-spinner";
 import {Col, Row} from "antd";
 import {Navigate, Route, Routes} from "react-router-dom";
-import {Chats} from "./components/chats/Chats/Chats";
 import {Auth} from "./components/auth/Auth";
 import {Messages} from "./components/messages/Messages/Messages";
 import "./App.css";
 import {Notifications} from "./components/notifications/Notifications";
 import {ChatInfo} from "./components/chats/ChatInfo/ChatInfo";
+import {Sidebar} from "./components/common/Sidebar/Sidebar";
 
 export const App = () => {
     let isAuthorized = useSelector((state: RootState) => state.auth.isAuthorized);
@@ -40,8 +40,8 @@ export const App = () => {
                         <>
                             <Col span={6}>
                                 <Routes>
-                                    <Route path={'/'} element={<Chats/>}/>
-                                    <Route path={'/:chatId'} element={<Chats/>}/>
+                                    <Route path={'/'} element={<Sidebar/>}/>
+                                    <Route path={'/:chatId'} element={<Sidebar/>}/>
                                     <Route path={'/settings'} element={<div>settings</div>}/>
                                     <Route path={'/auth'} element={<Navigate to={'/'}/>}/>
                                 </Routes>

@@ -1,11 +1,10 @@
 .chats {
     background-color: #212121;
-    height: 100%;
     margin: 0 1px;
+    flex: 1;
 }
 
 .chat {
-    margin: 0 5px;
     padding: 2px 5px;
     border-radius: 5px;
 }
