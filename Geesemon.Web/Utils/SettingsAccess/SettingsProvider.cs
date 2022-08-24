@@ -30,5 +30,10 @@ namespace Geesemon.Utils.SettingsAccess
         { 
             return config.GetSection("AuthIssuerSigningKey").Value;
         }
+        
+        public string GetCloudinaryConnectionString()
+        { 
+            return config.GetSection("Cloudinary").Value;
+        }
     }
 }

@@ -8,14 +8,17 @@
   </PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="CloudinaryDotNet" Version="1.19.0" />
 		<PackageReference Include="GraphQL" Version="5.3.0" />
 		<PackageReference Include="GraphQL.MicrosoftDI" Version="5.3.0" />
 		<PackageReference Include="GraphQL.Server.Authorization.AspNetCore" Version="6.1.0" />
 		<PackageReference Include="GraphQL.Server.Core" Version="5.2.1" />
 		<PackageReference Include="GraphQL.Server.Transports.AspNetCore" Version="6.1.0" />
+		<PackageReference Include="GraphQL.Server.Transports.AspNetCore.SystemTextJson" Version="5.2.0" />
 		<PackageReference Include="GraphQL.Server.Transports.Subscriptions.WebSockets" Version="6.1.0" />
 		<PackageReference Include="GraphQL.Server.Ui.Altair" Version="6.1.0" />
-		<PackageReference Include="GraphQL.SystemTextJson" Version="5.3.0" />
+		<PackageReference Include="GraphQL.SystemTextJson" Version="5.0.0" />
+		<PackageReference Include="GraphQL.Upload.AspNetCore" Version="2.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.8" />
 		<PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="6.0.5" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.7">

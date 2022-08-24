@@ -67,7 +67,9 @@ app.UseWebSockets();
 
 app.UseGraphQLWebSockets<ApplicationSchema>();
 
-app.UseGraphQL<ApplicationSchema, GraphQLHttpMiddleware<ApplicationSchema>>();
+app.UseGraphQL<ApplicationSchema, GraphQLHttpMiddleware<ApplicationSchema>>()
+    .UseGraphQLUpload<ApplicationSchema>();
+
 app.UseGraphQLAltair();
 
 app.MapFallbackToFile("index.html");

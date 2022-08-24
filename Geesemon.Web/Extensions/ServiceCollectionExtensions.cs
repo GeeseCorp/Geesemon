@@ -2,6 +2,7 @@
 using Geesemon.DomainModel.Models.Auth;
 using Geesemon.Model.Enums;
 using Geesemon.Web.GraphQL;
+using Geesemon.Web.Services;
 using GraphQL;
 using GraphQL.Execution;
 using GraphQL.MicrosoftDI;
@@ -44,7 +45,7 @@ namespace Geesemon.Web.Extensions
                    return Task.CompletedTask;
                };
            })
-           .AddSystemTextJson()
+           //.AddSystemTextJson()
            .AddErrorInfoProvider<ApplicationErrorInfoProvider>()
            .AddWebSockets()
            .AddGraphTypes(typeof(ApplicationSchema).Assembly)
@@ -55,8 +56,9 @@ namespace Geesemon.Web.Extensions
                options.AddPolicy(AuthPolicies.Admin, p => p.RequireClaim(ClaimTypes.Role, UserRole.Admin.ToString()));
            }));
 
-           services.AddScoped<ISchema, ApplicationSchema>(services => new ApplicationSchema(new SelfActivatingServiceProvider(services)));
+            services.AddScoped<ISchema, ApplicationSchema>(services => new ApplicationSchema(new SelfActivatingServiceProvider(services)));
 
+            services.AddGraphQLUpload();
 
             return services;
         }
@@ -88,10 +90,11 @@ namespace Geesemon.Web.Extensions
 
             return services;
         }
-        
+
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
             services.AddSingleton<AuthService>();
+            services.AddSingleton<FileManagerService>();
             return services;
         }
     }
