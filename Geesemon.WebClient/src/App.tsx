@@ -13,8 +13,8 @@ import {ChatInfo} from "./components/chats/ChatInfo/ChatInfo";
 import {Sidebar} from "./components/common/Sidebar/Sidebar";
 
 export const App = () => {
-    let isAuthorized = useSelector((state: RootState) => state.auth.isAuthorized);
-    let isLoading = useSelector((state: RootState) => state.auth.isLoading);
+    const isAuthorized = useSelector((state: RootState) => state.auth.isAuthorized);
+    const isLoading = useSelector((state: RootState) => state.auth.isLoading);
     const dispatch = useAppDispatch();
 
     useEffect(() => {
@@ -36,8 +36,7 @@ export const App = () => {
                             <Route path="/auth/*" element={<Auth/>}/>
                             <Route path="*" element={<Navigate replace to="/auth"/>}/>
                         </Routes>
-                        :
-                        <>
+                        : <>
                             <Col span={6}>
                                 <Routes>
                                     <Route path={'/'} element={<Sidebar/>}/>

@@ -1,13 +1,19 @@
 import React, {FC, useState} from 'react';
 import s from './Sidebar.module.css';
 import {Chats} from "../../chats/Chats/Chats";
-import {AnimatePresence, motion} from "framer-motion";
+import {
+    AnimatePresence,
+    AnimationControls,
+    motion,
+    TargetAndTransition,
+    Transition,
+    VariantLabels
+} from "framer-motion";
 import menu from "../../../assets/svg/menu.svg";
 import search from "../../../assets/svg/search.svg";
 import back from "../../../assets/svg/back.svg";
 
-type Props = {};
-export const Sidebar: FC<Props> = ({}) => {
+export const Sidebar: FC = () => {
     const [isEnabledSearchMode, setIsEnabledSearchMode] = useState(false);
     const [inputSearchFocused, setInputSearchFocused] = useState(false);
 
@@ -20,6 +26,23 @@ export const Sidebar: FC<Props> = ({}) => {
         setInputSearchFocused(false)
     }
 
+    const animate: AnimationControls | TargetAndTransition | VariantLabels = {
+        scale: [0.5, 1],
+        rotate: [180, 360],
+    }
+
+    const transition: Transition = {
+        duration: 0.3,
+        ease: "easeInOut",
+    }
+
+    const whileHover: VariantLabels | TargetAndTransition = {
+        backgroundColor: 'rgba(128,128,128, 0.3)',
+        opacity: 0.5,
+        transition: {duration: 0.5},
+    }
+    const whileTap: VariantLabels | TargetAndTransition = {scale: 0.9};
+
     return (
         <div className={s.wrapper}>
             <div className={s.header}>
@@ -30,48 +53,22 @@ export const Sidebar: FC<Props> = ({}) => {
                                 onClick={() => setIsEnabledSearchMode(false)}
                                 className={s.extraButton}
                                 key={'back'}
-                                animate={{
-                                    scale: [0.5, 1],
-                                    rotate: [180, 360],
-                                }}
-                                transition={{
-                                    duration: 0.3,
-                                    ease: "easeInOut",
-                                }}
-                                whileHover={{
-                                    backgroundColor: 'rgba(128,128,128, 0.3)',
-                                    opacity: 0.5,
-                                    transition: {duration: 0.5},
-                                }}
-                                whileTap={{scale: 0.9}}
+                                animate={animate}
+                                transition={transition}
+                                whileHover={whileHover}
+                                whileTap={whileTap}
                             >
-                                <img
-                                    src={back}
-                                    width={25}
-                                />
+                                <img src={back} width={25}/>
                             </motion.div>
                             : <motion.div
                                 className={s.extraButton}
                                 key={'menu'}
-                                animate={{
-                                    scale: [0.5, 1],
-                                    rotate: [180, 360],
-                                }}
-                                transition={{
-                                    duration: 0.3,
-                                    ease: "easeInOut",
-                                }}
-                                whileHover={{
-                                    backgroundColor: 'rgba(128,128,128, 0.3)',
-                                    opacity: 0.5,
-                                    transition: {duration: 0.5},
-                                }}
-                                whileTap={{scale: 0.9}}
+                                animate={animate}
+                                transition={transition}
+                                whileHover={whileHover}
+                                whileTap={whileTap}
                             >
-                                <img
-                                    src={menu}
-                                    width={25}
-                                />
+                                <img src={menu} width={25}/>
                             </motion.div>
                         }
                     </AnimatePresence>
@@ -86,7 +83,10 @@ export const Sidebar: FC<Props> = ({}) => {
                     />
                 </div>
             </div>
-            <Chats/>
+            {isEnabledSearchMode
+                ? null
+                : <Chats/>
+            }
         </div>
     );
 };

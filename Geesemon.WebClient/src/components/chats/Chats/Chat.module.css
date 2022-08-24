@@ -2,6 +2,7 @@
     background-color: #212121;
     margin: 0 1px;
     flex: 1;
+    position: relative;
 }
 
 .chat {
@@ -26,5 +27,11 @@
 
 .chatSelected * {
     color: white !important;
+}
+
+.buttonCreateChat {
+    position: absolute;
+    bottom: 7px;
+    right: 0;
 }
 

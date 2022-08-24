@@ -9,6 +9,8 @@ import {useDispatch} from "react-redux";
 import {chatActions} from "../../../behavior/features/chats";
 import {ContextMenu} from "../../common/ContextMenu/ContextMenu";
 import {DeleteOutlined} from "@ant-design/icons";
+import {StrongButton} from "../../common/StrongButton/StrongButton";
+import pencil from '../../../assets/svg/pencil.svg'
 
 export const Chats = () => {
     const params = useParams()
@@ -33,7 +35,7 @@ export const Chats = () => {
                         items={[
                             {
                                 content: 'Delete chat',
-                                icon: <DeleteOutlined />,
+                                icon: <DeleteOutlined/>,
                                 // onClick: () => dispatch(),
                                 type: 'danger',
                             },
@@ -63,6 +65,11 @@ export const Chats = () => {
                     </ContextMenu>
                 )
             })}
+            <div className={s.buttonCreateChat}>
+                <StrongButton>
+                    <img src={pencil} width={25}/>
+                </StrongButton>
+            </div>
         </div>
     );
 }

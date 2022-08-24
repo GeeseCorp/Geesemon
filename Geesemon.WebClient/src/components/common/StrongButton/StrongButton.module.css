@@ -1,0 +1,10 @@
+.strongButton {
+    background-color: #8774E1;
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}

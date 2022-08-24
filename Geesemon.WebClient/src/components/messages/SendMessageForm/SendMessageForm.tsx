@@ -5,6 +5,7 @@ import send from "../../../assets/svg/send.svg";
 import clip from "../../../assets/svg/clip.svg";
 import microphone from "../../../assets/svg/microphone.svg";
 import {AnimatePresence, motion} from "framer-motion"
+import {StrongButton} from "../../common/StrongButton/StrongButton";
 
 type Props = {};
 export const SendMessageForm: FC<Props> = () => {
@@ -42,23 +43,25 @@ export const SendMessageForm: FC<Props> = () => {
                 <img src={clip} className={s.inputTextButton}/>
             </div>
             <div className={s.buttonSend}>
-                <AnimatePresence>
-                    {messageText
-                        ? <motion.img
-                            key={'send'}
-                            initial={{ scale: 0, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            src={send}
-                        />
-                        : <motion.img
-                            key={'microphone'}
-                            initial={{ scale: 0, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            src={microphone}
-                            width={25}
-                        />
-                    }
-                </AnimatePresence>
+                <StrongButton>
+                    <AnimatePresence>
+                        {messageText
+                            ? <motion.img
+                                key={'send'}
+                                initial={{ scale: 0, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                src={send}
+                            />
+                            : <motion.img
+                                key={'microphone'}
+                                initial={{ scale: 0, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                src={microphone}
+                                width={25}
+                            />
+                        }
+                    </AnimatePresence>
+                </StrongButton>
             </div>
         </div>
     );
