@@ -36,27 +36,24 @@ export const App = () => {
                             <Route path="/auth/*" element={<Auth/>}/>
                             <Route path="*" element={<Navigate replace to="/auth"/>}/>
                         </Routes>
-                        : <>
-                            <Col span={6}>
+                        : <div className={'authedRoutes'}>
                                 <Routes>
                                     <Route path={'/'} element={<Sidebar/>}/>
                                     <Route path={'/:chatId'} element={<Sidebar/>}/>
-                                    <Route path={'/settings'} element={<div>settings</div>}/>
                                     <Route path={'/auth'} element={<Navigate to={'/'}/>}/>
                                 </Routes>
-                            </Col>
-                            <Col span={18}>
-                                <Routes>
-                                    <Route path={'/'} element={<div className={'center'}>Select a chat</div>}/>
-                                    <Route path={'/:chatId'} element={
-                                        <>
-                                            <ChatInfo/>
-                                            <Messages/>
-                                        </>
-                                    }/>
-                                </Routes>
-                            </Col>
-                        </>
+                                <div className={'messages'}>
+                                    <Routes>
+                                        <Route path={'/'} element={<div className={'center'}>Select a chat</div>}/>
+                                        <Route path={'/:chatId'} element={
+                                            <>
+                                                <ChatInfo/>
+                                                <Messages/>
+                                            </>
+                                        }/>
+                                    </Routes>
+                                </div>
+                        </div>
                     }
                 </Row>
             </div>

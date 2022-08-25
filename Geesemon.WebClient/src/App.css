@@ -21,6 +21,16 @@
     padding: 1px;
 }
 
+.authedRoutes{
+    display: flex;
+    width: 100%;
+}
+
+.messages{
+    flex: 1;
+    position: relative;
+}
+
 .small {
     font-size: 12px;
     color: rgb(104, 108, 114);
