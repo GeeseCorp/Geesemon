@@ -1,32 +1,13 @@
 import React, {FC, useEffect, useRef, useState} from 'react';
-import s from './ContextMenu.module.css';
+import {Menu, MenuItem} from "../Menu/Menu";
 
 type Props = {
-    items: {
-        icon?: React.ReactNode,
-        content: React.ReactNode,
-        onClick?: () => void,
-        type: 'default' | 'danger'
-    }[],
+    items: MenuItem[],
     children: React.ReactElement,
 };
-export const ContextMenu: FC<Props> = ({items, children}) => {
+export const ContextMenu: FC<Props> = ({children, items}) => {
     const [open, setOpen] = useState(false);
     const [location, setLocation] = useState<{ x: number, y: number }>({x: 0, y: 0});
-    const menuRef = useRef<HTMLDivElement | null>(null);
-
-    useEffect(() => {
-        document.addEventListener('mousedown', onClickOff);
-        return () => {
-            document.removeEventListener('mousedown', onClickOff);
-        }
-    }, [])
-
-    const onClickOff = (event: MouseEvent) => {
-        if (event.target !== menuRef.current && !menuRef.current?.contains(event.target as Node)) {
-            setOpen(false);
-        }
-    };
 
     const onRightClick = (x: number, y: number) => {
         setOpen(true);
@@ -43,32 +24,12 @@ export const ContextMenu: FC<Props> = ({items, children}) => {
                 },
             })}
             {open && (
-                <div
-                    className={s.menuItems}
-                    ref={menu => {
-                        if (menu) {
-                            menuRef.current = menu;
-                        }
-                    }}
-                    style={{
-                        left: location.x,
-                        top: location.y,
-                    }}
-                >
-                    {items.map((item, i) => {
-                        const onClick = () => {
-                            item.onClick && item.onClick();
-                            setOpen(false)
-                        }
-                        return (
-                            <div key={i} onClick={onClick}
-                                 className={[s.menuItem, item.type === 'danger' && 'danger'].join(' ')}>
-                                <div className={s.icon}>{item.icon}</div>
-                                <div className={s.content}>{item.content}</div>
-                            </div>
-                        )
-                    })}
-                </div>
+                <Menu
+                    items={items}
+                    x={location.x}
+                    y={location.y}
+                    setOpen={setOpen}
+                />
             )}
         </>
     );

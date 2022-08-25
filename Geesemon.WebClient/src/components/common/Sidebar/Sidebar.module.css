@@ -4,16 +4,16 @@
 }
 
 .inner {
-    flex: 1;
+    height: 100vh;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    height: 100%;
     background-color: #212121;
-    padding: 5px 10px;
+    padding: 5px 0 5px 10px;
 }
 
 .header {
+    height: 50px;
     display: flex;
     align-items: center;
     gap: 15px;
@@ -22,6 +22,8 @@
 .wrapperExtraButton {
     width: 40px;
     height: 40px;
+    position: relative;
+    z-index: 10;
 }
 
 .extraButton {
@@ -33,6 +35,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.menuItem{
+    width: 20px;
 }
 
 .wrapperInputSearch {
@@ -57,4 +63,10 @@
 .focused {
     box-sizing: content-box;
     border: 3px solid #8774E1;
+}
+
+.sidebarResizer{
+    width: 3px;
+    cursor: col-resize;
+    margin-left: -3px;
 }

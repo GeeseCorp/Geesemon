@@ -14,8 +14,12 @@ import {
 import menu from "../../../assets/svg/menu.svg";
 import search from "../../../assets/svg/search.svg";
 import back from "../../../assets/svg/back.svg";
+import saved from "../../../assets/svg/saved.svg";
+import settings from "../../../assets/svg/settings.svg";
+import {Menu, MenuItem} from "../Menu/Menu";
 
 export const Sidebar: FC = () => {
+    const [isMenuVisible, setIsMenuVisible] = useState(false);
     const [isEnabledSearchMode, setIsEnabledSearchMode] = useState(false);
     const [inputSearchFocused, setInputSearchFocused] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
@@ -54,6 +58,12 @@ export const Sidebar: FC = () => {
     }
     const whileTap: VariantLabels | TargetAndTransition = {scale: 0.9};
 
+    const menuItems: MenuItem[] = [
+        {icon: <img src={saved} className={s.menuItem}/>, content: 'Saved', type: 'default'},
+        {icon: <img src={settings} className={s.menuItem}/>, content: 'Settings', type: 'default'},
+    ];
+    console.log(isMenuVisible)
+
     return (
         <div className={s.wrapper}>
             <motion.div
@@ -75,16 +85,28 @@ export const Sidebar: FC = () => {
                                 >
                                     <img src={back} width={25}/>
                                 </motion.div>
-                                : <motion.div
-                                    className={s.extraButton}
-                                    key={'menu'}
-                                    animate={animate}
-                                    transition={transition}
-                                    whileHover={whileHover}
-                                    whileTap={whileTap}
-                                >
-                                    <img src={menu} width={25}/>
-                                </motion.div>
+                                : <>
+                                    <motion.div
+                                        onClick={() => setIsMenuVisible(true)}
+                                        className={s.extraButton}
+                                        key={'menu'}
+                                        animate={animate}
+                                        transition={transition}
+                                        whileHover={whileHover}
+                                        whileTap={whileTap}
+                                    >
+                                        <img src={menu} width={20}/>
+
+                                    </motion.div>
+                                    {isMenuVisible &&
+                                        <Menu
+                                            items={menuItems}
+                                            x={20}
+                                            y={50}
+                                            setOpen={setIsMenuVisible}
+                                        />
+                                    }
+                                </>
                             }
                         </AnimatePresence>
                     </div>
@@ -104,10 +126,7 @@ export const Sidebar: FC = () => {
                 }
             </motion.div>
             <motion.div
-                style={{
-                    width: 3,
-                    cursor: "row-resize",
-                }}
+                className={s.sidebarResizer}
                 drag="x"
                 dragConstraints={{top: 0, left: 0, right: 0, bottom: 0}}
                 dragElastic={0}

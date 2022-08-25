@@ -1,13 +1,16 @@
 .chats {
     background-color: #212121;
-    margin: 0 1px;
+    margin: 0 3px 0 1px;
     flex: 1;
     position: relative;
+    height: calc(100% - 50px);
+    overflow-y: auto;
 }
 
 .chat {
     padding: 2px 5px;
     border-radius: 5px;
+    margin-right: 5px;
 }
 
 .chat:hover:not(.chatSelected) {
@@ -31,7 +34,6 @@
 
 .buttonCreateChat {
     position: absolute;
-    bottom: 7px;
-    right: 0;
+    right: 5px;
 }
 

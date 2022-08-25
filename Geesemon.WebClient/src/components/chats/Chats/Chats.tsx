@@ -4,7 +4,7 @@ import s from './Chat.module.css';
 import {Col, Row} from "antd";
 import {Avatar} from "../../common/Avatar/Avatar";
 import {getTimeWithoutSeconds} from "../../../utils/dateUtils";
-import {useEffect} from "react";
+import {UIEventHandler, useEffect, useState} from "react";
 import {useDispatch} from "react-redux";
 import {chatActions} from "../../../behavior/features/chats";
 import {ContextMenu} from "../../common/ContextMenu/ContextMenu";
@@ -17,13 +17,19 @@ export const Chats = () => {
     const chatId = params.chatId;
     const chats = useAppSelector(s => s.chats.chats);
     const dispatch = useDispatch();
+    const [scrolledHeight, setScrolledHeight] = useState(0);
+
 
     useEffect(() => {
         dispatch(chatActions.getAsync());
     }, [])
 
+    const onScroll = (e: React.UIEvent<HTMLDivElement>) => {
+        setScrolledHeight(e.currentTarget.scrollTop + e.currentTarget.offsetHeight);
+    }
+
     return (
-        <div className={s.chats}>
+        <div className={s.chats} onScroll={onScroll}>
             {chats.map(chat => {
                 const parts = chat.name?.split(' ')[0] || [];
                 const firstName = parts.length ? parts[0] : '';
@@ -65,9 +71,9 @@ export const Chats = () => {
                     </ContextMenu>
                 )
             })}
-            <div className={s.buttonCreateChat}>
+            <div className={s.buttonCreateChat} style={{top: `${scrolledHeight - 60}px`}}>
                 <StrongButton>
-                    <img src={pencil} width={25}/>
+                    <img src={pencil} width={20}/>
                 </StrongButton>
             </div>
         </div>
