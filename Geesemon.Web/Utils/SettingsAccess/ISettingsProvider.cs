@@ -11,5 +11,7 @@ namespace Geesemon.Utils.SettingsAccess
         string GetAuthValidIssuer();
 
         string GetAuthIssuerSigningKey();
+
+        string GetCloudinaryConnectionString();
     }
 }

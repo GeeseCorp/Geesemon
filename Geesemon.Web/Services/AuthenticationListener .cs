@@ -1,6 +1,8 @@
 ﻿using System.Security.Claims;
 using EducationalPortal.Server.Services;
 using GraphQL.Server.Transports.Subscriptions.Abstractions;
+using GraphQLParser;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json.Linq;
 
 namespace Geesemon.Web.Services
@@ -18,11 +20,6 @@ namespace Geesemon.Web.Services
             this.authService = authService;
         }
 
-        private void BuildClaimsPrincipal(string token)
-        {
-            authService.ValidateJWTToken(token);
-        }
-
         public Task BeforeHandleAsync(MessageHandlingContext context)
         {
             if (context.Message.Type == MessageType.GQL_CONNECTION_INIT)
@@ -31,14 +28,15 @@ namespace Geesemon.Web.Services
 
                 if (payload != null && payload.ContainsKey("Authorization"))
                 {
-                    var auth = payload.Value<string>("Authorization");
-
-                    BuildClaimsPrincipal(auth);
+                    var token = payload.Value<string>("Authorization");
+                    var principal = authService.ValidateJWTToken(token);
+                    if (principal != null)
+                    {
+                        httpContextAccessor.HttpContext.User = principal;
+                        context.Properties[PRINCIPAL_KEY] = principal;
+                    }
                 }
             }
-
-            context.Properties[PRINCIPAL_KEY] = httpContextAccessor.HttpContext.User;
-
             return Task.CompletedTask;
         }
 

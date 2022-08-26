@@ -29,7 +29,7 @@ builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddTransient<IOperationMessageListener, AuthenticationListener>();
 
-builder.Services.AddGraphQLApi(builder.Environment.IsDevelopment());
+builder.Services.AddGraphQLApi();
 builder.Services.AddSingleton<IMessagerSubscriptionService, MessagerSubscriptionService>();
 
 builder.Services.AddJwtAuthorization(builder.Configuration);
@@ -67,7 +67,9 @@ app.UseWebSockets();
 
 app.UseGraphQLWebSockets<ApplicationSchema>();
 
-app.UseGraphQL<ApplicationSchema, GraphQLHttpMiddleware<ApplicationSchema>>();
+app.UseGraphQL<ApplicationSchema, GraphQLHttpMiddleware<ApplicationSchema>>()
+    .UseGraphQLUpload<ApplicationSchema>();
+
 app.UseGraphQLAltair();
 
 app.MapFallbackToFile("index.html");

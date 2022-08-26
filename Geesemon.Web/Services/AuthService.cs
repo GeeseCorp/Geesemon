@@ -59,7 +59,7 @@ public class AuthService
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    public void ValidateJWTToken(string token)
+    public ClaimsPrincipal ValidateJWTToken(string token)
     {
         try
         {
@@ -80,11 +80,11 @@ public class AuthService
 
             ClaimsIdentity claimsIdentity = new ClaimsIdentity(jwtToken.Claims, JwtBearerDefaults.AuthenticationScheme);
 
-            httpContextAccessor.HttpContext.User = new ClaimsPrincipal(claimsIdentity);
+            return new ClaimsPrincipal(claimsIdentity);
         }
         catch
         {
-            throw new Exception("Fail to validate JWT token.");
+            return null;
         }
     }
 

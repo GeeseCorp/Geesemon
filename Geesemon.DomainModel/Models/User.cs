@@ -27,6 +27,8 @@ public class User : Entity
 
     public UserRole Role { get; set; }
 
+    public string? ImageUrl { get; set; }
+
     public List<Message>? Messages { get; set; }
 
     public List<Chat>? AuthoredChats { get; set; }

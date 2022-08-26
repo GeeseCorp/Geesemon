@@ -2,14 +2,10 @@
 using Geesemon.DomainModel.Models.Auth;
 using Geesemon.Model.Enums;
 using Geesemon.Web.GraphQL;
+using Geesemon.Web.Services;
 using GraphQL;
-using GraphQL.Execution;
-using GraphQL.MicrosoftDI;
 using GraphQL.Server;
-using GraphQL.Server.Authorization.AspNetCore;
-using GraphQL.Server.Transports.AspNetCore;
 using GraphQL.SystemTextJson;
-using GraphQL.Types;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -20,44 +16,29 @@ namespace Geesemon.Web.Extensions
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddGraphQLApi(this IServiceCollection services, bool isDevelopmentMode)
+        public static IServiceCollection AddGraphQLApi(this IServiceCollection services)
         {
-            services.Configure<ErrorInfoProviderOptions>(opt => opt.ExposeExceptionStackTrace = isDevelopmentMode);
-            services.AddTransient<IAuthorizationErrorMessageBuilder, DefaultAuthorizationErrorMessageBuilder>();
-            services.AddGraphQL(builder => builder
-           .AddApolloTracing()
-           .AddHttpMiddleware<ApplicationSchema, GraphQLHttpMiddleware<ApplicationSchema>>()
-           .AddWebSocketsHttpMiddleware<ApplicationSchema>()
-           .AddSchema<ApplicationSchema>()
-           .ConfigureExecutionOptions(options =>
-           {
-               options.EnableMetrics = true;
-
-               using var loggerFactory = LoggerFactory.Create(loggingBuilder => loggingBuilder
-                .SetMinimumLevel(LogLevel.Trace)
-                .AddConsole());
-
-               var logger = loggerFactory.CreateLogger<Program>();
-               options.UnhandledExceptionDelegate = ctx =>
-               {
-                   logger.LogError("{Error} occurred", ctx.OriginalException.Message);
-                   return Task.CompletedTask;
-               };
-           })
-           .AddSystemTextJson()
-           .AddErrorInfoProvider<ApplicationErrorInfoProvider>()
-           .AddWebSockets()
-           .AddGraphTypes(typeof(ApplicationSchema).Assembly)
-           .AddGraphQLAuthorization(options =>
-           {
-               options.AddPolicy(AuthPolicies.Authenticated.ToString(), p => p.RequireAuthenticatedUser());
-               options.AddPolicy(AuthPolicies.User, p => p.RequireClaim(ClaimTypes.Role, UserRole.User.ToString(), UserRole.Admin.ToString()));
-               options.AddPolicy(AuthPolicies.Admin, p => p.RequireClaim(ClaimTypes.Role, UserRole.Admin.ToString()));
-           }));
-
-           services.AddScoped<ISchema, ApplicationSchema>(services => new ApplicationSchema(new SelfActivatingServiceProvider(services)));
-
-
+            services.AddScoped<ApplicationSchema>();
+            services.AddGraphQLUpload();
+            services
+                 .AddGraphQL(options =>
+                 {
+                     options.EnableMetrics = true;
+                     options.UnhandledExceptionDelegate = (context) =>
+                     {
+                         Console.WriteLine(context.Exception.StackTrace);
+                         context.ErrorMessage = context.Exception.Message;
+                     };
+                 })
+                 .AddSystemTextJson()
+                 .AddWebSockets()
+                 .AddGraphTypes(typeof(ApplicationSchema), ServiceLifetime.Scoped)
+                 .AddGraphQLAuthorization(options =>
+                 {
+                     options.AddPolicy(AuthPolicies.Authenticated, p => p.RequireAuthenticatedUser());
+                     options.AddPolicy(AuthPolicies.User, p => p.RequireClaim(ClaimTypes.Role, UserRole.User.ToString(), UserRole.Admin.ToString()));
+                     options.AddPolicy(AuthPolicies.Admin, p => p.RequireClaim(ClaimTypes.Role, UserRole.Admin.ToString()));
+                 });
             return services;
         }
 
@@ -88,10 +69,11 @@ namespace Geesemon.Web.Extensions
 
             return services;
         }
-        
+
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
             services.AddSingleton<AuthService>();
+            services.AddSingleton<FileManagerService>();
             return services;
         }
     }

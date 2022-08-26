@@ -22,8 +22,8 @@ namespace Geesemon.Web.GraphQL.Subscriptions.Chat
             Field<MessageType, Message>()
                 .Name("messageAdded")
                 .Resolve(ResolveMessage)
-                .ResolveStreamAsync(Subscribe)
-                .AuthorizeWithPolicy(AuthPolicies.Authenticated);
+                .SubscribeAsync(Subscribe)
+                .AuthorizeWith(AuthPolicies.Authenticated);
         }
 
         private Message ResolveMessage(IResolveFieldContext context)

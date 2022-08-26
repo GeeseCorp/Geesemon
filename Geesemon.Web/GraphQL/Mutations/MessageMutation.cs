@@ -32,9 +32,9 @@ namespace Geesemon.Web.GraphQL.Mutations.Messages
                     var messageManager = context.RequestServices.GetRequiredService<MessageManager>();
                     newMessage = await messageManager.CreateAsync(newMessage);
 
-                    return subscriptionService.AddMessage(newMessage);
-                })
-                .AuthorizeWithPolicy(AuthPolicies.Authenticated);
+                        return subscriptionService.AddMessage(newMessage);
+                    })
+                .AuthorizeWith(AuthPolicies.Authenticated);
         }
     }
 }

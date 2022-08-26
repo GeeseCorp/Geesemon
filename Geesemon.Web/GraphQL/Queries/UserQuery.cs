@@ -18,7 +18,7 @@ namespace Geesemon.Web.GraphQL.Queris.UserQueries
                     var userManager = context.RequestServices.GetRequiredService<UserManager>();
                     return await userManager.GetAsync();
                 })
-                .AuthorizeWithPolicy(AuthPolicies.Authenticated);
+                .AuthorizeWith(AuthPolicies.Authenticated);
 
             Field<UserType, User>()
                 .Name("Get")
@@ -28,7 +28,7 @@ namespace Geesemon.Web.GraphQL.Queris.UserQueries
                     var userManager = context.RequestServices.GetRequiredService<UserManager>();
                     return await userManager.GetByIdAsync(context.GetArgument<Guid>("UserId"));
                 })
-                .AuthorizeWithPolicy(AuthPolicies.Authenticated);
+                .AuthorizeWith(AuthPolicies.Authenticated);
         }
     }
 }

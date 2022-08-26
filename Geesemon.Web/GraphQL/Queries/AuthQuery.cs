@@ -34,7 +34,7 @@ namespace Geesemon.Web.GraphQL.Queries.Auth
                         User = currentUser,
                     };
                 })
-                .AuthorizeWithPolicy(AuthPolicies.Authenticated);
+                .AuthorizeWith(AuthPolicies.Authenticated);
         }
     }
 }
