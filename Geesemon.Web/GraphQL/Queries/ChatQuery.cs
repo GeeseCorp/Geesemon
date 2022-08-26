@@ -35,7 +35,7 @@ namespace Geesemon.Web.GraphQL.Queries.Auth
 
                     return chats;
                 })
-                .AuthorizeWithPolicy(AuthPolicies.Authenticated);
+                .AuthorizeWith(AuthPolicies.Authenticated);
         }
     }
 }

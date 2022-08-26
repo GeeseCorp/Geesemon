@@ -20,13 +20,13 @@ namespace Geesemon.Web.GraphQL.Mutations.Messages
                 .Name("CreatePersonal")
                 .Argument<CreatePersonalChatInputType>("Input", "Chat input for creating new chat.")
                 .ResolveAsync(ResolveCreatePersonal)
-                .AuthorizeWithPolicy(AuthPolicies.Authenticated);
+                .AuthorizeWith(AuthPolicies.Authenticated);
 
             Field<ChatType, Chat>()
                 .Name("CreateGroup")
                 .Argument<CreateGroupChatInputType>("Input", "Chat input for creating new chat.")
                 .ResolveAsync(ResolveCreateGroup)
-                .AuthorizeWithPolicy(AuthPolicies.Authenticated);
+                .AuthorizeWith(AuthPolicies.Authenticated);
 
             this.httpContextAccessor = httpContextAccessor;
             this.fileManagerService = fileManagerService;

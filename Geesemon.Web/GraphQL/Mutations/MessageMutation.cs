@@ -34,7 +34,7 @@ namespace Geesemon.Web.GraphQL.Mutations.Messages
 
                         return subscriptionService.AddMessage(newMessage);
                     })
-                .AuthorizeWithPolicy(AuthPolicies.Authenticated);
+                .AuthorizeWith(AuthPolicies.Authenticated);
         }
     }
 }
