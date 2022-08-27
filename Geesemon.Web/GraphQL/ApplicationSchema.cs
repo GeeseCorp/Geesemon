@@ -1,7 +1,6 @@
 ﻿using Geesemon.Web.GraphQL.Mutations;
-using Geesemon.Web.GraphQL.Queris;
+using Geesemon.Web.GraphQL.Queries;
 using Geesemon.Web.GraphQL.Subscriptions;
-using Geesemon.Web.GraphQL.Subscriptions.Chat;
 using GraphQL.Types;
 
 namespace Geesemon.Web.GraphQL

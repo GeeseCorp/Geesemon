@@ -1,6 +1,4 @@
-﻿using Geesemon.Web.GraphQL.Mutations.Auth;
-using Geesemon.Web.GraphQL.Mutations.Messages;
-using GraphQL.Types;
+﻿using GraphQL.Types;
 
 namespace Geesemon.Web.GraphQL.Mutations
 {

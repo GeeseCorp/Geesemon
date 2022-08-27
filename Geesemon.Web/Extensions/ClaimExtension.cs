@@ -1,5 +1,5 @@
-﻿using Geesemon.DomainModel.Models.Auth;
-using Geesemon.Model.Enums;
+﻿using Geesemon.Model.Enums;
+using Geesemon.Web.GraphQL.Auth;
 using Newtonsoft.Json;
 using System.Security.Claims;
 

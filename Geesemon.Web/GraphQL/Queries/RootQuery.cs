@@ -1,8 +1,6 @@
-﻿using Geesemon.Web.GraphQL.Queries.Auth;
-using Geesemon.Web.GraphQL.Queris.UserQueries;
-using GraphQL.Types;
+﻿using GraphQL.Types;
 
-namespace Geesemon.Web.GraphQL.Queris
+namespace Geesemon.Web.GraphQL.Queries
 {
     public class RootQuery : ObjectGraphType
     {
@@ -11,7 +9,7 @@ namespace Geesemon.Web.GraphQL.Queris
             Field<UserQuery>()
                 .Name("User")
                 .Resolve(_ => new { });
-            
+
             Field<AuthQuery>()
                 .Name("Auth")
                 .Resolve(_ => new { });

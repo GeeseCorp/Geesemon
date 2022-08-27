@@ -1,5 +1,4 @@
 ﻿using System.Security.Claims;
-using EducationalPortal.Server.Services;
 using GraphQL.Server.Transports.Subscriptions.Abstractions;
 using GraphQLParser;
 using Microsoft.AspNetCore.Http;

@@ -1,12 +1,12 @@
-﻿using Geesemon.DomainModel.Models.Auth;
-using Geesemon.Model.Models;
+﻿using Geesemon.Model.Models;
+using Geesemon.Web.GraphQL.Auth;
 using Geesemon.Web.GraphQL.Types;
-using Geesemon.Web.Model;
+using Geesemon.Web.Services.MessageSubscription;
 using GraphQL;
 using GraphQL.Resolvers;
 using GraphQL.Types;
 
-namespace Geesemon.Web.GraphQL.Subscriptions.Chat
+namespace Geesemon.Web.GraphQL.Subscriptions
 {
     public class MessageSubscription : ObjectGraphType
     {
@@ -17,7 +17,7 @@ namespace Geesemon.Web.GraphQL.Subscriptions.Chat
         public MessageSubscription(IMessagerSubscriptionService chat, IHttpContextAccessor httpContextAccessor)
         {
             this.chat = chat;
-            this.httpContextAccessor = httpContextAccessor;       
+            this.httpContextAccessor = httpContextAccessor;
 
             Field<MessageType, Message>()
                 .Name("messageAdded")
@@ -35,7 +35,7 @@ namespace Geesemon.Web.GraphQL.Subscriptions.Chat
 
         private async Task<IObservable<Message>> Subscribe(IResolveFieldContext context)
         {
-            string currentUserId = httpContextAccessor?.HttpContext?.User.Claims?.First(c => c.Type == AuthClaimsIdentity.DefaultIdClaimType)?.Value;
+            var currentUserId = httpContextAccessor?.HttpContext?.User.Claims?.First(c => c.Type == AuthClaimsIdentity.DefaultIdClaimType)?.Value;
 
             return await chat.Subscribe(Guid.Parse(currentUserId));
         }

@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace Geesemon.DomainModel.Models.Auth
+namespace Geesemon.Web.GraphQL.Auth
 {
     public class AuthClaimsIdentity : ClaimsIdentity
     {

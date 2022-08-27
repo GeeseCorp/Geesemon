@@ -1,10 +1,10 @@
 ﻿using Geesemon.Model.Models;
 
-namespace Geesemon.Web.Model
+namespace Geesemon.Web.Services.MessageSubscription
 {
     public interface IMessagerSubscriptionService
-    { 
-        Message AddMessage(Message message);
+    {
+        Message SendAction(Message message);
 
         Task<IObservable<Message>> Subscribe(Guid user);
     }

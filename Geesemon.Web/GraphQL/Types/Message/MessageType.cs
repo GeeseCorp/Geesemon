@@ -5,7 +5,7 @@ using GraphQL.Types;
 
 namespace Geesemon.Web.GraphQL.Types
 {
-    public class MessageType : ObjectGraphType<Geesemon.Model.Models.Message>
+    public class MessageType : ObjectGraphType<Model.Models.Message>
     {
         public MessageType(IServiceProvider serviceProvider)
         {
@@ -23,7 +23,7 @@ namespace Geesemon.Web.GraphQL.Types
 
             Field<UserType, User?>()
                 .Name("From")
-                .ResolveAsync(async ctx => 
+                .ResolveAsync(async ctx =>
                 {
                     using var scope = serviceProvider.CreateScope();
                     var userManager = scope.ServiceProvider.GetRequiredService<UserManager>();

@@ -1,6 +1,6 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
-using Geesemon.Utils.SettingsAccess;
+using Geesemon.Web.Utils.SettingsAccess;
 using System.Text.RegularExpressions;
 
 namespace Geesemon.Web.Services;

@@ -1,10 +1,10 @@
 using Geesemon.DataAccess.Managers;
 using Geesemon.DataAccess.Providers;
-using Geesemon.Utils.SettingsAccess;
 using Geesemon.Web.Extensions;
 using Geesemon.Web.GraphQL;
-using Geesemon.Web.Model;
 using Geesemon.Web.Services;
+using Geesemon.Web.Services.MessageSubscription;
+using Geesemon.Web.Utils.SettingsAccess;
 using GraphQL.Server.Transports.AspNetCore;
 using GraphQL.Server.Transports.Subscriptions.Abstractions;
 using Microsoft.EntityFrameworkCore;

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 
-namespace Geesemon.Utils.SettingsAccess
+namespace Geesemon.Web.Utils.SettingsAccess
 {
     public class SettingsProvider : ISettingsProvider
     {
@@ -19,20 +19,20 @@ namespace Geesemon.Utils.SettingsAccess
         public string GetAuthValidAudience()
         {
             return config.GetSection("AuthValidAudience").Value;
-        } 
-        
+        }
+
         public string GetAuthValidIssuer()
         {
             return config.GetSection("AuthValidIssuer").Value;
         }
 
         public string GetAuthIssuerSigningKey()
-        { 
+        {
             return config.GetSection("AuthIssuerSigningKey").Value;
         }
-        
+
         public string GetCloudinaryConnectionString()
-        { 
+        {
             return config.GetSection("Cloudinary").Value;
         }
     }

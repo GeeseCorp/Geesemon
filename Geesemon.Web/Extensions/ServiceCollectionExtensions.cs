@@ -1,7 +1,6 @@
-﻿using EducationalPortal.Server.Services;
-using Geesemon.DomainModel.Models.Auth;
-using Geesemon.Model.Enums;
+﻿using Geesemon.Model.Enums;
 using Geesemon.Web.GraphQL;
+using Geesemon.Web.GraphQL.Auth;
 using Geesemon.Web.Services;
 using GraphQL;
 using GraphQL.Server;

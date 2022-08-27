@@ -1,11 +1,11 @@
 ﻿using Geesemon.DataAccess.Managers;
-using Geesemon.DomainModel.Models.Auth;
 using Geesemon.Model.Models;
+using Geesemon.Web.GraphQL.Auth;
 using Geesemon.Web.GraphQL.Types;
 using GraphQL;
 using GraphQL.Types;
 
-namespace Geesemon.Web.GraphQL.Queris.UserQueries
+namespace Geesemon.Web.GraphQL.Queries
 {
     public class UserQuery : ObjectGraphType
     {
@@ -23,7 +23,7 @@ namespace Geesemon.Web.GraphQL.Queris.UserQueries
             Field<UserType, User>()
                 .Name("Get")
                 .Argument<GuidGraphType>("UserId")
-                .ResolveAsync(async context => 
+                .ResolveAsync(async context =>
                 {
                     var userManager = context.RequestServices.GetRequiredService<UserManager>();
                     return await userManager.GetByIdAsync(context.GetArgument<Guid>("UserId"));

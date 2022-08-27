@@ -1,6 +1,4 @@
-﻿using Geesemon.Model.Enums;
-using Geesemon.Model.Models;
-using GraphQL.Types;
+﻿using GraphQL.Types;
 
 namespace Geesemon.Web.GraphQL.Types;
 

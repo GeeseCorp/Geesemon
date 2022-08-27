@@ -1,5 +1,4 @@
-﻿using Geesemon.Web.GraphQL.Subscriptions.Chat;
-using GraphQL.Types;
+﻿using GraphQL.Types;
 
 namespace Geesemon.Web.GraphQL.Subscriptions
 {

@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace Geesemon.Utils.SettingsAccess
+namespace Geesemon.Web.Utils.SettingsAccess
 {
     public interface ISettingsProvider
     {

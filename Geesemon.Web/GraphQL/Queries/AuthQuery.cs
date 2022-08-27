@@ -1,14 +1,11 @@
-﻿using EducationalPortal.Server.Services;
-using Geesemon.DataAccess.Managers;
-using Geesemon.DomainModel.Models;
-using Geesemon.DomainModel.Models.Auth;
-using Geesemon.Model.Models;
+﻿using Geesemon.DataAccess.Managers;
+using Geesemon.Web.GraphQL.Auth;
 using Geesemon.Web.GraphQL.Types;
 using GraphQL;
 using GraphQL.Types;
 using Microsoft.Net.Http.Headers;
 
-namespace Geesemon.Web.GraphQL.Queries.Auth
+namespace Geesemon.Web.GraphQL.Queries
 {
     public class AuthQuery : ObjectGraphType
     {
@@ -19,8 +16,8 @@ namespace Geesemon.Web.GraphQL.Queries.Auth
                 .ResolveAsync(async context =>
                 {
                     var userManager = context.RequestServices.GetRequiredService<UserManager>();
-                    string userLogin = httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == AuthClaimsIdentity.DefaultLoginClaimType).Value;
-                    User currentUser = await userManager.GetByLoginAsync(userLogin);
+                    var userLogin = httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == AuthClaimsIdentity.DefaultLoginClaimType).Value;
+                    var currentUser = await userManager.GetByLoginAsync(userLogin);
 
                     if (currentUser == null)
                         return new AuthResponse();
