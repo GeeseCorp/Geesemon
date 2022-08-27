@@ -1,6 +1,5 @@
 ﻿using Geesemon.DataAccess.Managers;
 using Geesemon.Model.Models;
-using System.Collections.Concurrent;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 
@@ -11,7 +10,7 @@ namespace Geesemon.Web.Services.MessageSubscription
         private readonly ISubject<MessageAction> messageActionStream = new Subject<MessageAction>();
 
         private readonly IServiceProvider serviceProvider;
-        public MessageActionSubscriptionService(IServiceProvider serviceProvider, IHttpContextAccessor httpContextAccessor)
+        public MessageActionSubscriptionService(IServiceProvider serviceProvider)
         {
             this.serviceProvider = serviceProvider;
         }
