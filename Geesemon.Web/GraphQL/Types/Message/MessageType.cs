@@ -9,6 +9,10 @@ namespace Geesemon.Web.GraphQL.Types
     {
         public MessageType(IServiceProvider serviceProvider)
         {
+            Field<GuidGraphType, Guid>()
+                .Name("Id")
+                .Resolve(ctx => ctx.Source.Id);
+
             Field<StringGraphType, string>()
                 .Name("Text")
                 .Resolve(ctx => ctx.Source.Text);

@@ -1,8 +1,9 @@
 ﻿namespace Geesemon.Web.GraphQL.Types
 {
-    public class ReceivedMessage
+    public class UpdateMessageInput
     {
-        public Guid ChatId { get; set; }
+        public Guid MessageId { get; set; }
+
         public string Text { get; set; }
     }
 }

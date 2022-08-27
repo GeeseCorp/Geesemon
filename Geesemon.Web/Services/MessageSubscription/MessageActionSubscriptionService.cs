@@ -6,25 +6,25 @@ using System.Reactive.Subjects;
 
 namespace Geesemon.Web.Services.MessageSubscription
 {
-    public class MessagerSubscriptionService : IMessagerSubscriptionService
+    public class MessageActionSubscriptionService : IMessageActionSubscriptionService
     {
-        private readonly ISubject<Message> _messageStream = new Subject<Message>();
+        private readonly ISubject<MessageAction> messageActionStream = new Subject<MessageAction>();
 
         private readonly IServiceProvider serviceProvider;
-        public MessagerSubscriptionService(IServiceProvider serviceProvider, IHttpContextAccessor httpContextAccessor)
+        public MessageActionSubscriptionService(IServiceProvider serviceProvider, IHttpContextAccessor httpContextAccessor)
         {
             this.serviceProvider = serviceProvider;
         }
 
-        public Message SendAction(Message message)
+        public Message Notify(Message message, MessageActionKind type)
         {
-            _messageStream.OnNext(message);
+            messageActionStream.OnNext(new MessageAction { Message = message, Type = type });
             return message;
         }
 
-        public async Task<IObservable<Message>> Subscribe(Guid userId)
+        public async Task<IObservable<MessageAction>> Subscribe(Guid userId)
         {
-            return _messageStream
+            return messageActionStream
                 .Where(m =>
                 {
                     using var scope = serviceProvider.CreateScope();
@@ -32,14 +32,14 @@ namespace Geesemon.Web.Services.MessageSubscription
                     var chats = chatManager.GetAsync(userId).GetAwaiter().GetResult();
                     var chatIdList = chats.Select(c => c.Id);
 
-                    return chatIdList.Contains(m.ChatId);
+                    return chatIdList.Contains(m.Message.ChatId);
                 })
                 .AsObservable();
         }
 
         public void AddError(Exception exception)
         {
-            _messageStream.OnError(exception);
+            messageActionStream.OnError(exception);
         }
     }
 }

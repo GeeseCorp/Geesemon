@@ -10,30 +10,30 @@ namespace Geesemon.Web.GraphQL.Subscriptions
 {
     public class MessageSubscription : ObjectGraphType
     {
-        private readonly IMessagerSubscriptionService chat;
+        private readonly IMessageActionSubscriptionService chat;
 
         private readonly IHttpContextAccessor httpContextAccessor;
 
-        public MessageSubscription(IMessagerSubscriptionService chat, IHttpContextAccessor httpContextAccessor)
+        public MessageSubscription(IMessageActionSubscriptionService chat, IHttpContextAccessor httpContextAccessor)
         {
             this.chat = chat;
             this.httpContextAccessor = httpContextAccessor;
 
-            Field<MessageType, Message>()
-                .Name("messageAdded")
+            Field<MessageActionType, MessageAction>()
+                .Name("Actions")
                 .Resolve(ResolveMessage)
                 .SubscribeAsync(Subscribe)
                 .AuthorizeWith(AuthPolicies.Authenticated);
         }
 
-        private Message ResolveMessage(IResolveFieldContext context)
+        private MessageAction ResolveMessage(IResolveFieldContext context)
         {
-            var message = context.Source as Message;
+            var message = context.Source as MessageAction;
 
             return message;
         }
 
-        private async Task<IObservable<Message>> Subscribe(IResolveFieldContext context)
+        private async Task<IObservable<MessageAction>> Subscribe(IResolveFieldContext context)
         {
             var currentUserId = httpContextAccessor?.HttpContext?.User.Claims?.First(c => c.Type == AuthClaimsIdentity.DefaultIdClaimType)?.Value;
 

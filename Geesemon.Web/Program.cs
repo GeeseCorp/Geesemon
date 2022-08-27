@@ -30,7 +30,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<IOperationMessageListener, AuthenticationListener>();
 
 builder.Services.AddGraphQLApi();
-builder.Services.AddSingleton<IMessagerSubscriptionService, MessagerSubscriptionService>();
+builder.Services.AddSingleton<IMessageActionSubscriptionService, MessageActionSubscriptionService>();
 
 builder.Services.AddJwtAuthorization(builder.Configuration);
 

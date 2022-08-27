@@ -11,15 +11,15 @@ namespace Geesemon.Web.GraphQL.Mutations
 {
     public class MessageMutation : ObjectGraphType<object>
     {
-        public MessageMutation(IMessagerSubscriptionService subscriptionService,
-            IHttpContextAccessor httpContextAccessor)
+        public MessageMutation(IMessageActionSubscriptionService subscriptionService,
+            IHttpContextAccessor httpContextAccessor, MessageManager messageManager)
         {
             Field<MessageType>()
                 .Name("Sent")
-                .Argument<NonNullGraphType<MessageInputType>>("Message")
+                .Argument<NonNullGraphType<SentMessageInputType>>("Input")
                 .ResolveAsync(async context =>
                     {
-                        var receivedMessage = context.GetArgument<ReceivedMessage>("message");
+                        var receivedMessage = context.GetArgument<SentMessageInput>("Input");
                         var currentUserId = httpContextAccessor?.HttpContext?.User.Claims.GetUserId();
 
                         Message newMessage = new Message()
@@ -29,21 +29,60 @@ namespace Geesemon.Web.GraphQL.Mutations
                             FromId = currentUserId,
                             Type = MessageKind.Regular
                         };
-                        var messageManager = context.RequestServices.GetRequiredService<MessageManager>();
+
                         newMessage = await messageManager.CreateAsync(newMessage);
 
-                        return subscriptionService.SendAction(newMessage);
+                        return subscriptionService.Notify(newMessage, MessageActionKind.Create);
                     })
+                .AuthorizeWith(AuthPolicies.Authenticated);
+
+            Field<MessageType>()
+                .Name("Delete")
+                .Argument<NonNullGraphType<DeleteMessageInputType>>("Input")
+                .ResolveAsync(async context =>
+                {
+                    var input = context.GetArgument<DeleteMessageInput>("Input");
+                    var currentUserId = httpContextAccessor?.HttpContext?.User.Claims.GetUserId();
+
+                    var message = await messageManager.GetByIdAsync(input.MessageId);
+
+                    if (message == null)
+                        throw new Exception("Message not found.");
+
+                    if (message.FromId != currentUserId)
+                        throw new Exception("User can't delete other user's messages.");
+
+                    await messageManager.RemoveAsync(message.Id);
+
+                    return subscriptionService.Notify(message, MessageActionKind.Delete);
+                })
+                .AuthorizeWith(AuthPolicies.Authenticated);
+
+            Field<MessageType>()
+                .Name("Update")
+                .Argument<NonNullGraphType<UpdateMessageInputType>>("Input")
+                .ResolveAsync(async context =>
+                {
+                    var input = context.GetArgument<UpdateMessageInput>("Input");
+                    var currentUserId = httpContextAccessor?.HttpContext?.User.Claims.GetUserId();
+
+                    var message = await messageManager.GetByIdAsync(input.MessageId);
+
+                    if (message == null)
+                        throw new Exception("Message not found.");
+
+                    if (message.FromId != currentUserId)
+                        throw new Exception("User can't update other user's messages.");
+
+                    message.Text = input.Text;
+                    message.IsEdited = true;
+
+                    await messageManager.UpdateAsync(message);
+
+                    return subscriptionService.Notify(message, MessageActionKind.Update);
+                })
                 .AuthorizeWith(AuthPolicies.Authenticated);
         }
     }
 }
 
-public class MessageInputType : InputObjectGraphType<ReceivedMessage>
-{
-    public MessageInputType()
-    {
-        Field<NonNullGraphType<GuidGraphType>>("chatId");
-        Field<NonNullGraphType<StringGraphType>>("text");
-    }
-}
