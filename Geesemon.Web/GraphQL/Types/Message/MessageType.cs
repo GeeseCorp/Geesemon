@@ -5,7 +5,7 @@ using GraphQL.Types;
 
 namespace Geesemon.Web.GraphQL.Types
 {
-    public class MessageType : ObjectGraphType<Model.Models.Message>
+    public class MessageType : ObjectGraphType<Message>
     {
         public MessageType(IServiceProvider serviceProvider)
         {
@@ -37,6 +37,10 @@ namespace Geesemon.Web.GraphQL.Types
             Field<GuidGraphType, Guid?>()
                 .Name("ChatId")
                 .Resolve(ctx => ctx.Source.ChatId);
+
+            Field<BooleanGraphType, bool>()
+                .Name("IsEdited")
+                .Resolve(ctx => ctx.Source.IsEdited);
         }
     }
 }
