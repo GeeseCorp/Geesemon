@@ -10,24 +10,36 @@ namespace Geesemon.Web.GraphQL.Mutations.Auth
 {
     public class AuthMutation : ObjectGraphType
     {
-        public AuthMutation(AuthService authService)
+        public AuthMutation(AuthService authService, UserManager userManager, ChatManager chatManager, UserChatManager userChatManager)
         {
             Field<NonNullGraphType<AuthResponseType>, AuthResponse>()
                 .Name("Register")
                 .Argument<NonNullGraphType<RegisterInputType>, RegisterInput>("input", "Argument to register new User")
                 .ResolveAsync(async context =>
                 {
-                    var userManager = context.RequestServices.GetRequiredService<UserManager>();
                     RegisterInput loginInput = context.GetArgument<RegisterInput>("input");
                     User? user = await userManager.CreateAsync(new User
                     {
                         Login = loginInput.Login,
                         Password = loginInput.Password,
                         FirstName = loginInput.FirstName,
-                        LastName = loginInput.LastName, 
+                        LastName = loginInput.LastName,
                         Email = loginInput.Email,
                         Role = UserRole.User,
                     });
+
+                    var savedChat = new Chat
+                    {
+                        CreatorId = user.Id,
+                        Type = ChatKind.Saved,
+                        Id = user.Id,
+                    };
+                    savedChat = await chatManager.CreateAsync(savedChat);
+
+                    var userChat = new List<UserChat>(){
+                        new UserChat { UserId = user.Id, ChatId = savedChat.Id },
+                    };
+                    await userChatManager.CreateManyAsync(userChat);
 
                     return new AuthResponse()
                     {

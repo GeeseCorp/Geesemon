@@ -7,7 +7,7 @@ namespace Geesemon.Web.GraphQL.Subscriptions
     {
         public RootSubscriptions()
         {
-            Field<ChatSubscriptions>()
+            Field<MessageSubscription>()
                 .Name("Chat")
                 .Resolve(_ => new { });
         }

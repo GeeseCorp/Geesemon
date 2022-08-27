@@ -8,5 +8,6 @@ namespace Geesemon.Model.Enums;
 public enum ChatKind
 {
     Personal,
-    Group
+    Group,
+    Saved
 }

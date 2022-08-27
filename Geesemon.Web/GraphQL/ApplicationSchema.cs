@@ -13,7 +13,7 @@ namespace Geesemon.Web.GraphQL
         {
             Query = provider.GetRequiredService<RootQuery>();
             Mutation = provider.GetRequiredService<RootMutation>();
-            Subscription = provider.GetRequiredService<ChatSubscriptions>();
+            Subscription = provider.GetRequiredService<MessageSubscription>();
         }
     }
 }

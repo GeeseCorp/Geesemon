@@ -8,13 +8,13 @@ using GraphQL.Types;
 
 namespace Geesemon.Web.GraphQL.Subscriptions.Chat
 {
-    public class ChatSubscriptions : ObjectGraphType
+    public class MessageSubscription : ObjectGraphType
     {
         private readonly IMessagerSubscriptionService chat;
 
         private readonly IHttpContextAccessor httpContextAccessor;
 
-        public ChatSubscriptions(IMessagerSubscriptionService chat, IHttpContextAccessor httpContextAccessor)
+        public MessageSubscription(IMessagerSubscriptionService chat, IHttpContextAccessor httpContextAccessor)
         {
             this.chat = chat;
             this.httpContextAccessor = httpContextAccessor;       
