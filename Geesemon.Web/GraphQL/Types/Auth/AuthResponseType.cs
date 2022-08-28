@@ -1,5 +1,4 @@
-﻿using Geesemon.DomainModel.Models;
-using Geesemon.Model.Models;
+﻿using Geesemon.Model.Models;
 using GraphQL.Types;
 
 namespace Geesemon.Web.GraphQL.Types

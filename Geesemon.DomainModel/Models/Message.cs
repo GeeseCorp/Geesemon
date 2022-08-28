@@ -14,5 +14,7 @@ public class Message : Entity
     public Guid ChatId { get; set; }
     public Chat? Chat { get; set; }
 
+    public bool IsEdited { get; set; } = false;
+
     public List<ReadMessage>? ReadMessages { get; set; }
 }

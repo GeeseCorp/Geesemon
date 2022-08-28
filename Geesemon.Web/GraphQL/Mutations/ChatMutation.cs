@@ -1,13 +1,13 @@
 ﻿using Geesemon.DataAccess.Managers;
-using Geesemon.DomainModel.Models.Auth;
 using Geesemon.Model.Enums;
 using Geesemon.Model.Models;
+using Geesemon.Web.GraphQL.Auth;
 using Geesemon.Web.GraphQL.Types;
 using Geesemon.Web.Services;
 using GraphQL;
 using GraphQL.Types;
 
-namespace Geesemon.Web.GraphQL.Mutations.Messages
+namespace Geesemon.Web.GraphQL.Mutations
 {
     public class ChatMutation : ObjectGraphType<object>
     {

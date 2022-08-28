@@ -1,4 +1,5 @@
 ﻿using Geesemon.DataAccess.Providers;
+using Geesemon.DataAccess.Providers.UsersChatsProvider;
 using Geesemon.Model.Models;
 
 namespace Geesemon.DataAccess.Managers

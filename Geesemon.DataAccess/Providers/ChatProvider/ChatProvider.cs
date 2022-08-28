@@ -1,9 +1,8 @@
-﻿using Geesemon.DataAccess.Providers;
-using Geesemon.Model.Models;
+﻿using Geesemon.Model.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
-namespace Geesemon.DataAccess.Providers
+namespace Geesemon.DataAccess.Providers.ChatProvider
 {
     public class ChatProvider : ProviderBase<Chat>, IChatProvider
     {

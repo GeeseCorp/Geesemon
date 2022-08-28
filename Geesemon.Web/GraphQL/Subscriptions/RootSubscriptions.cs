@@ -1,5 +1,4 @@
-﻿using Geesemon.Web.GraphQL.Subscriptions.Chat;
-using GraphQL.Types;
+﻿using GraphQL.Types;
 
 namespace Geesemon.Web.GraphQL.Subscriptions
 {
@@ -7,7 +6,7 @@ namespace Geesemon.Web.GraphQL.Subscriptions
     {
         public RootSubscriptions()
         {
-            Field<ChatSubscriptions>()
+            Field<MessageSubscription>()
                 .Name("Chat")
                 .Resolve(_ => new { });
         }

@@ -1,14 +1,12 @@
-﻿using EducationalPortal.Server.Services;
-using Geesemon.DataAccess.Managers;
-using Geesemon.DomainModel.Models;
-using Geesemon.DomainModel.Models.Auth;
+﻿using Geesemon.DataAccess.Managers;
 using Geesemon.Model.Enums;
 using Geesemon.Model.Models;
+using Geesemon.Web.GraphQL.Auth;
 using Geesemon.Web.GraphQL.Types;
 using GraphQL;
 using GraphQL.Types;
 
-namespace Geesemon.Web.GraphQL.Queries.Auth
+namespace Geesemon.Web.GraphQL.Queries
 {
     public class ChatQuery : ObjectGraphType
     {
@@ -23,15 +21,13 @@ namespace Geesemon.Web.GraphQL.Queries.Auth
                     var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
                     var chats = await chatManager.GetAsync(currentUserId);
 
-                    foreach(var chat in chats)
-                    {
-                        if(chat.Type == ChatKind.Personal)
+                    foreach (var chat in chats)
+                        if (chat.Type == ChatKind.Personal)
                         {
                             var oppositeUser = await userManager.GetByIdAsync(chat.UserChats.FirstOrDefault(uc => uc.UserId != currentUserId).UserId);
 
                             chat.Name = oppositeUser.FirstName + " " + oppositeUser.LastName;
                         }
-                    }
 
                     return chats;
                 })

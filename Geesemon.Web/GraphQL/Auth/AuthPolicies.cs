@@ -1,6 +1,6 @@
 ﻿using Geesemon.Model.Enums;
 
-namespace Geesemon.DomainModel.Models.Auth
+namespace Geesemon.Web.GraphQL.Auth
 {
     public class AuthPolicies
     {

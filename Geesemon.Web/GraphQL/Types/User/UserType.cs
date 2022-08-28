@@ -1,5 +1,4 @@
-﻿using Geesemon.DomainModel.Models;
-using Geesemon.Model.Enums;
+﻿using Geesemon.Model.Enums;
 using Geesemon.Model.Models;
 using GraphQL.Types;
 
@@ -7,25 +6,25 @@ namespace Geesemon.Web.GraphQL.Types
 {
     public class UserType : EntityType<User>
     {
-        public UserType() 
+        public UserType()
             : base()
         {
             Field<NonNullGraphType<StringGraphType>, string>()
                .Name("FirstName")
                .Resolve(context => context.Source.FirstName);
-            
+
             Field<NonNullGraphType<StringGraphType>, string>()
                .Name("LastName")
                .Resolve(context => context.Source.LastName);
-            
+
             Field<NonNullGraphType<StringGraphType>, string>()
                .Name("Login")
                .Resolve(context => context.Source.Login);
-            
+
             Field<NonNullGraphType<StringGraphType>, string>()
                .Name("Email")
                .Resolve(context => context.Source.Email);
-            
+
             Field<StringGraphType, string>()
                .Name("PhoneNumber")
                .Resolve(context => context.Source.PhoneNumber);

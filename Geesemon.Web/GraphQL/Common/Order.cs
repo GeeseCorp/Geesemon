@@ -1,4 +1,4 @@
-﻿namespace Geesemon.Web.Database.Common
+﻿namespace Geesemon.Web.GraphQL.Common
 {
     public enum Order
     {

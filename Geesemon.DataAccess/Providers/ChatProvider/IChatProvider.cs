@@ -1,6 +1,6 @@
 ﻿using Geesemon.Model.Models;
 
-namespace Geesemon.DataAccess.Providers
+namespace Geesemon.DataAccess.Providers.ChatProvider
 {
     public interface IChatProvider : IProviderBase<Chat>
     {

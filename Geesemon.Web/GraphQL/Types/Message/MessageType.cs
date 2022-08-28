@@ -5,10 +5,14 @@ using GraphQL.Types;
 
 namespace Geesemon.Web.GraphQL.Types
 {
-    public class MessageType : ObjectGraphType<Geesemon.Model.Models.Message>
+    public class MessageType : ObjectGraphType<Message>
     {
         public MessageType(IServiceProvider serviceProvider)
         {
+            Field<GuidGraphType, Guid>()
+                .Name("Id")
+                .Resolve(ctx => ctx.Source.Id);
+
             Field<StringGraphType, string>()
                 .Name("Text")
                 .Resolve(ctx => ctx.Source.Text);
@@ -23,7 +27,7 @@ namespace Geesemon.Web.GraphQL.Types
 
             Field<UserType, User?>()
                 .Name("From")
-                .ResolveAsync(async ctx => 
+                .ResolveAsync(async ctx =>
                 {
                     using var scope = serviceProvider.CreateScope();
                     var userManager = scope.ServiceProvider.GetRequiredService<UserManager>();
@@ -33,6 +37,10 @@ namespace Geesemon.Web.GraphQL.Types
             Field<GuidGraphType, Guid?>()
                 .Name("ChatId")
                 .Resolve(ctx => ctx.Source.ChatId);
+
+            Field<BooleanGraphType, bool>()
+                .Name("IsEdited")
+                .Resolve(ctx => ctx.Source.IsEdited);
         }
     }
 }

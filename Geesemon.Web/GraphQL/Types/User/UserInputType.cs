@@ -6,7 +6,7 @@ namespace Geesemon.Web.GraphQL.Types
 {
     public class UserInputType : InputObjectGraphType<User>
     {
-        public UserInputType() 
+        public UserInputType()
             : base()
         {
             Field<NonNullGraphType<StringGraphType>, string>()

@@ -1,9 +1,8 @@
-﻿using Geesemon.DataAccess.Providers;
-using Geesemon.Model.Models;
+﻿using Geesemon.Model.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
-namespace Geesemon.DataAccess.Providers
+namespace Geesemon.DataAccess.Providers.UsersChatsProvider
 {
     public class UserChatProvider : ManyToManyProviderBase<UserChat>, IUserChatProvider
     {
@@ -15,7 +14,7 @@ namespace Geesemon.DataAccess.Providers
 
         public override async Task<UserChat> RemoveAsync(UserChat entity)
         {
-            var userChat = await context.UserChats.FirstOrDefaultAsync(uc => uc.UserId == entity.UserId 
+            var userChat = await context.UserChats.FirstOrDefaultAsync(uc => uc.UserId == entity.UserId
                 && uc.ChatId == entity.ChatId);
             if (userChat == null)
                 throw new NullReferenceException("The given record doesn't exist.");

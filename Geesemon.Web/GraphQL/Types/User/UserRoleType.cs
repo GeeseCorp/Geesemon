@@ -4,5 +4,5 @@ using GraphQL.Types;
 namespace Geesemon.Web.GraphQL.Types
 {
     public class UserRoleType : EnumerationGraphType<UserRole>
-    {}
+    { }
 }

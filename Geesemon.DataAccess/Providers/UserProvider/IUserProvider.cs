@@ -1,7 +1,7 @@
 ﻿using Geesemon.Model.Models;
 using System.Linq.Expressions;
 
-namespace Geesemon.DataAccess.Providers
+namespace Geesemon.DataAccess.Providers.UserProvider
 {
     public interface IUserProvider : IProviderBase<User>
     {

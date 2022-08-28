@@ -1,16 +1,15 @@
 ﻿using Geesemon.DataAccess.Managers;
-using Geesemon.DomainModel.Models.Auth;
 using Geesemon.Model.Enums;
-using Geesemon.Model.Models;
-using Geesemon.Utils.SettingsAccess;
+using Geesemon.Web.GraphQL.Auth;
 using Geesemon.Web.GraphQL.Types;
+using Geesemon.Web.Utils.SettingsAccess;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace EducationalPortal.Server.Services;
+namespace Geesemon.Web.Services;
 
 public class AuthService
 {
@@ -31,11 +30,11 @@ public class AuthService
     {
         using var scope = serviceProvider.CreateScope();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager>();
-        User? user = await userManager.GetByLoginAsync(loginAuthInput.Login);
+        var user = await userManager.GetByLoginAsync(loginAuthInput.Login);
         if (user == null || user.Password != loginAuthInput.Password)
             throw new Exception("Login or password not valid.");
         var token = GenerateAccessToken(user.Id, user.Login, user.Role);
-        return new AuthResponse() { Token = token , User = user } ;
+        return new AuthResponse() { Token = token, User = user };
     }
 
     public string GenerateAccessToken(Guid userId, string userLogin, UserRole userRole)
@@ -74,7 +73,7 @@ public class AuthService
                 ValidateIssuer = true,
                 ValidateAudience = true,
                 ClockSkew = TimeSpan.Zero
-            }, out SecurityToken validatedToken);
+            }, out var validatedToken);
 
             var jwtToken = (JwtSecurityToken)validatedToken;
 
