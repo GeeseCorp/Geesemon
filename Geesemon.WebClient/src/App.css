@@ -21,12 +21,12 @@
     padding: 1px;
 }
 
-.authedRoutes{
+.authedRoutes {
     display: flex;
     width: 100%;
 }
 
-.messages{
+.messages {
     flex: 1;
     position: relative;
     height: 100vh;
@@ -68,4 +68,15 @@
     width: inherit !important;
     height: inherit !important;
     border-radius: inherit !important;
+}
+
+body {
+    position: relative;
+}
+
+#modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }

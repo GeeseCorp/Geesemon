@@ -13,7 +13,7 @@ public class CreateGroupChatInputType : InputObjectGraphType<CreateGroupChatInpu
         Field<NonNullGraphType<StringGraphType>, string>()
             .Name("Name");
 
-        Field<NonNullGraphType<UploadGraphType>, IFormFile>()
+        Field<UploadGraphType, IFormFile>()
             .Name("Image");
     }
 }

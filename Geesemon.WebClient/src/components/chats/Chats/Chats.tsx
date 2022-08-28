@@ -1,16 +1,17 @@
 import {useAppSelector} from "../../../behavior/store";
-import {Link, useParams} from "react-router-dom";
+import {Link, useLocation, useParams} from "react-router-dom";
 import s from './Chat.module.css';
 import {Col, Row} from "antd";
-import {Avatar} from "../../common/Avatar/Avatar";
+import {AvatarWithoutImage} from "../../common/AvatarWithoutImage/AvatarWithoutImage";
 import {getTimeWithoutSeconds} from "../../../utils/dateUtils";
-import {UIEventHandler, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {useDispatch} from "react-redux";
 import {chatActions} from "../../../behavior/features/chats";
 import {ContextMenu} from "../../common/ContextMenu/ContextMenu";
 import {DeleteOutlined} from "@ant-design/icons";
 import {StrongButton} from "../../common/StrongButton/StrongButton";
 import pencil from '../../../assets/svg/pencil.svg'
+import {Avatar} from "../../common/Avatar/Avatar";
 
 export const Chats = () => {
     const params = useParams()
@@ -18,7 +19,7 @@ export const Chats = () => {
     const chats = useAppSelector(s => s.chats.chats);
     const dispatch = useDispatch();
     const [scrolledHeight, setScrolledHeight] = useState(0);
-
+    const location = useLocation();
 
     useEffect(() => {
         dispatch(chatActions.getAsync());
@@ -55,8 +56,14 @@ export const Chats = () => {
                                 <Row justify={'space-between'} align={'top'}>
                                     <Row align={'top'} gutter={10}>
                                         <Col>
-                                            <Avatar firstName={firstName} lastName={lastName}
-                                                    backgroundColor={chat.imageUrl}/>
+                                            {chat.imageUrl
+                                                ? <Avatar imageUrl={chat.imageUrl}/>
+                                                : <AvatarWithoutImage
+                                                    firstName={firstName}
+                                                    lastName={lastName}
+                                                    backgroundColor={chat.imageUrl}
+                                                />
+                                            }
                                         </Col>
                                         <Col>
                                             <div className={'bold'}>{chat.name}</div>
@@ -71,10 +78,13 @@ export const Chats = () => {
                     </ContextMenu>
                 )
             })}
-            <div className={s.buttonCreateChat} style={{top: `${scrolledHeight - 60}px`}}>
-                <StrongButton>
-                    <img src={pencil} width={20}/>
-                </StrongButton>
+            {/*<div className={s.buttonCreateChat} style={{top: `${scrolledHeight - 60}px`}}>*/}
+            <div className={s.buttonCreateChat} style={{bottom: `5px`}}>
+                <Link to={'/create-group-chat'} state={{modal: location}}>
+                    <StrongButton>
+                        <img src={pencil} width={20}/>
+                    </StrongButton>
+                </Link>
             </div>
         </div>
     );

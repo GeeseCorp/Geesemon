@@ -67,8 +67,8 @@ app.UseWebSockets();
 
 app.UseGraphQLWebSockets<ApplicationSchema>();
 
-app.UseGraphQL<ApplicationSchema, GraphQLHttpMiddleware<ApplicationSchema>>()
-    .UseGraphQLUpload<ApplicationSchema>();
+app.UseGraphQLUpload<ApplicationSchema>()
+    .UseGraphQL<ApplicationSchema>();
 
 app.UseGraphQLAltair();
 

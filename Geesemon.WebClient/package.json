@@ -7,6 +7,7 @@
         "@apollo/client": "^3.6.4",
         "@reduxjs/toolkit": "^1.8.1",
         "antd": "^4.20.5",
+        "apollo-upload-client": "^17.0.0",
         "css-modules": "^0.3.0",
         "framer-motion": "^7.2.1",
         "graphql": "^16.5.0",
@@ -23,6 +24,7 @@
         "subscriptions-transport-ws": "^0.11.0"
     },
     "devDependencies": {
+        "@types/apollo-upload-client": "^17.0.1",
         "@types/node": "^16.11.36",
         "@types/react": "^18.0.9",
         "@types/react-dom": "^18.0.4",

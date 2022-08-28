@@ -6,18 +6,20 @@ import {chatReducer} from "./features/chats";
 import {usersReducer} from "./features/users/slice";
 import {combineEpics, createEpicMiddleware} from "redux-observable";
 import {chatEpics} from "./features/chats/epics";
+import {navigateReducer} from "./features/navigate/slice";
 
 const epicMiddleware = createEpicMiddleware();
 
 export const store = configureStore({
-  reducer: {
-    auth: authReducer,
-    users: usersReducer,
-    notifications: notificationsReducer,
-    chats: chatReducer,
-  },
-  middleware: getDefaultMiddleware => getDefaultMiddleware({thunk: true}).concat(epicMiddleware),
-  devTools: true,
+    reducer: {
+        auth: authReducer,
+        users: usersReducer,
+        notifications: notificationsReducer,
+        chats: chatReducer,
+        navigate: navigateReducer,
+    },
+    middleware: getDefaultMiddleware => getDefaultMiddleware({thunk: true}).concat(epicMiddleware),
+    devTools: true,
 });
 
 const rootEpic = combineEpics(

@@ -3,6 +3,7 @@ import s from './ChatInfo.module.css';
 import {Link, useParams} from "react-router-dom";
 import {useAppSelector} from "../../../behavior/store";
 import {Avatar} from "../../common/Avatar/Avatar";
+import {AvatarWithoutImage} from '../../common/AvatarWithoutImage/AvatarWithoutImage';
 
 type Props = {};
 export const ChatInfo: FC<Props> = ({}) => {
@@ -14,19 +15,26 @@ export const ChatInfo: FC<Props> = ({}) => {
     const lastName = parts.length > 1 ? parts[1] : '';
 
     return (
-            <div className={s.wrapper}>
-                <Link to={''}>
+        <div className={s.wrapper}>
+            <Link to={''}>
                 <div className={s.chatInfo}>
-                    <Avatar
-                        firstName={firstName}
-                        lastName={lastName}
-                        backgroundColor={selectedChat?.imageUrl}
-                        width={40}
-                        height={40}
-                    />
+                    {selectedChat?.imageUrl
+                        ? <Avatar
+                            width={40}
+                            height={40}
+                            imageUrl={selectedChat.imageUrl}
+                        />
+                        : <AvatarWithoutImage
+                            firstName={firstName}
+                            lastName={lastName}
+                            backgroundColor={selectedChat?.imageUrl}
+                            width={40}
+                            height={40}
+                        />
+                    }
                     <div className={'bold'}>{selectedChat?.name}</div>
                 </div>
-                </Link>
-            </div>
+            </Link>
+        </div>
     );
 };

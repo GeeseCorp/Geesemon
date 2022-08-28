@@ -6,11 +6,17 @@ import clip from "../../../assets/svg/clip.svg";
 import microphone from "../../../assets/svg/microphone.svg";
 import {AnimatePresence, motion} from "framer-motion"
 import {StrongButton} from "../../common/StrongButton/StrongButton";
+import {useAppDispatch} from "../../../behavior/store";
+import {chatActions} from "../../../behavior/features/chats";
+import {useParams} from "react-router-dom";
 
 type Props = {};
 export const SendMessageForm: FC<Props> = () => {
     const inputTextRef = useRef<HTMLTextAreaElement | null>(null)
     const [messageText, setMessageText] = useState('');
+    const dispatch = useAppDispatch();
+    const params = useParams()
+    const chatId = params.chatId as string;
 
     const onInputText = () => {
         if (inputTextRef.current) {
@@ -25,6 +31,13 @@ export const SendMessageForm: FC<Props> = () => {
 
             inputTextRef.current.style.height = (inputTextRef.current.scrollHeight) + "px";
         }
+    }
+
+    const sendMessageHandler = () => {
+        dispatch(chatActions.messageSendAsync({
+            chatId,
+            text: messageText,
+        }))
     }
 
     console.log(messageText)
@@ -43,19 +56,23 @@ export const SendMessageForm: FC<Props> = () => {
                 <img src={clip} className={s.inputTextButton}/>
             </div>
             <div className={s.buttonSend}>
-                <StrongButton>
+                <StrongButton onClick={
+                    messageText
+                        ? sendMessageHandler
+                        : undefined
+                }>
                     <AnimatePresence>
                         {messageText
                             ? <motion.img
                                 key={'send'}
-                                initial={{ scale: 0, opacity: 0 }}
-                                animate={{ scale: 1, opacity: 1 }}
+                                initial={{scale: 0, opacity: 0}}
+                                animate={{scale: 1, opacity: 1}}
                                 src={send}
                             />
                             : <motion.img
                                 key={'microphone'}
-                                initial={{ scale: 0, opacity: 0 }}
-                                animate={{ scale: 1, opacity: 1 }}
+                                initial={{scale: 0, opacity: 0}}
+                                animate={{scale: 1, opacity: 1}}
                                 src={microphone}
                                 width={25}
                             />

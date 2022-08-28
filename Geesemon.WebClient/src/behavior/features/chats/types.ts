@@ -1,6 +1,21 @@
 import {User} from "../auth/types";
 import {Entity} from "../../common";
-import {Message} from "../messages";
+
+export type Message = {
+    text?: string | null
+    fromId?: string | null
+    from?: User | null
+    chatId: string
+    readMessages: ReadMessage[]
+} & Entity
+
+export type ReadMessage = {
+    messageId: string
+    message: Message
+    readById: string
+    readBy: User
+}
+
 
 export type Chat = {
     name?: string | null
@@ -22,3 +37,5 @@ export enum ChatKind {
     Personal = 'PERSONAL',
     Group = 'GROUP',
 }
+
+

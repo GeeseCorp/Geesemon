@@ -1,7 +1,7 @@
-import {Chat, ChatKind} from "./types";
+import {Chat, ChatKind, Message} from "./types";
 import {createSlice, PayloadAction,} from "@reduxjs/toolkit";
 import {User} from "../auth/types";
-import {Message} from "../messages";
+import {CreateGroupChatInputType, MessageInputType} from "./mutations";
 
 type InitialState = {
     chats: Chat[],
@@ -220,132 +220,6 @@ const initialState: InitialState = {
             createdAt: '2022-08-19T16:13:12Z',
             updatedAt: '2022-08-19T16:13:13Z',
         },
-        {
-            id: '2',
-            name: 'Alesha',
-            type: ChatKind.Personal,
-            creatorId: '',
-            messages: [
-                {
-                    id: '2',
-                    from: {} as User,
-                    fromId: '2',
-                    chatId: '2',
-                    text: 'POWER RANGER',
-                    readMessages: [],
-                    createdAt: '2022-08-19T16:13:12Z',
-                    updatedAt: '2022-08-19T16:13:12Z',
-                },
-            ],
-            users: [],
-            createdAt: '2022-08-19T16:13:12Z',
-            updatedAt: '2022-08-19T16:13:13Z',
-        },
-        {
-            id: '2',
-            name: 'Alesha',
-            type: ChatKind.Personal,
-            creatorId: '',
-            messages: [],
-            users: [],
-            createdAt: '2022-08-19T16:13:12Z',
-            updatedAt: '2022-08-19T16:13:13Z',
-        },
-        {
-            id: '2',
-            name: 'Alesha',
-            type: ChatKind.Personal,
-            creatorId: '',
-            messages: [],
-            users: [],
-            createdAt: '2022-08-19T16:13:12Z',
-            updatedAt: '2022-08-19T16:13:13Z',
-        },
-        {
-            id: '2',
-            name: 'Alesha',
-            type: ChatKind.Personal,
-            creatorId: '',
-            messages: [],
-            users: [],
-            createdAt: '2022-08-19T16:13:12Z',
-            updatedAt: '2022-08-19T16:13:13Z',
-        },    {
-            id: '2',
-            name: 'Alesha',
-            type: ChatKind.Personal,
-            creatorId: '',
-            messages: [],
-            users: [],
-            createdAt: '2022-08-19T16:13:12Z',
-            updatedAt: '2022-08-19T16:13:13Z',
-        },    {
-            id: '2',
-            name: 'Alesha',
-            type: ChatKind.Personal,
-            creatorId: '',
-            messages: [],
-            users: [],
-            createdAt: '2022-08-19T16:13:12Z',
-            updatedAt: '2022-08-19T16:13:13Z',
-        },    {
-            id: '2',
-            name: 'Alesha',
-            type: ChatKind.Personal,
-            creatorId: '',
-            messages: [],
-            users: [],
-            createdAt: '2022-08-19T16:13:12Z',
-            updatedAt: '2022-08-19T16:13:13Z',
-        },    {
-            id: '2',
-            name: 'Alesha',
-            type: ChatKind.Personal,
-            creatorId: '',
-            messages: [],
-            users: [],
-            createdAt: '2022-08-19T16:13:12Z',
-            updatedAt: '2022-08-19T16:13:13Z',
-        },    {
-            id: '2',
-            name: 'Alesha',
-            type: ChatKind.Personal,
-            creatorId: '',
-            messages: [],
-            users: [],
-            createdAt: '2022-08-19T16:13:12Z',
-            updatedAt: '2022-08-19T16:13:13Z',
-        },
-        {
-            id: '2',
-            name: 'Alesha',
-            type: ChatKind.Personal,
-            creatorId: '',
-            messages: [],
-            users: [],
-            createdAt: '2022-08-19T16:13:12Z',
-            updatedAt: '2022-08-19T16:13:13Z',
-        },
-        {
-            id: '2',
-            name: 'Alesha',
-            type: ChatKind.Personal,
-            creatorId: '',
-            messages: [],
-            users: [],
-            createdAt: '2022-08-19T16:13:12Z',
-            updatedAt: '2022-08-19T16:13:13Z',
-        },
-        {
-            id: '2',
-            name: 'Alesha',
-            type: ChatKind.Personal,
-            creatorId: '',
-            messages: [],
-            users: [],
-            createdAt: '2022-08-19T16:13:12Z',
-            updatedAt: '2022-08-19T16:13:13Z',
-        },
     ],
 };
 
@@ -371,6 +245,9 @@ const slice = createSlice({
                 return chat
             })
         },
+
+        createGroupChatAsync: (state, action: PayloadAction<CreateGroupChatInputType>) => state,
+        messageSendAsync: (state, action: PayloadAction<MessageInputType>) => state,
     },
 });
 

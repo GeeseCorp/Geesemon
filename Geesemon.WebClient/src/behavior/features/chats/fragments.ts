@@ -16,3 +16,16 @@ export const CHAT_FRAGMENT = gql`
         updatedAt
     }
 `
+
+export const MESSAGE_FRAGMENT = gql`
+    ${USER_FRAGMENT}
+    fragment ChatFragment on MessageType {
+        text
+        type
+        fromId
+        from {
+            ...UserFragment
+        }
+        chatId
+    }
+`

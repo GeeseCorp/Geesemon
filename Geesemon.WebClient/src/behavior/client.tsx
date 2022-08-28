@@ -1,12 +1,12 @@
-import {ApolloClient, HttpLink, InMemoryCache, split} from "@apollo/client";
+import {ApolloClient, InMemoryCache, split} from "@apollo/client";
 import {setContext} from "@apollo/client/link/context";
 import {getMainDefinition} from "@apollo/client/utilities";
-
 import {WebSocketLink} from "@apollo/client/link/ws";
 import {SubscriptionClient} from "subscriptions-transport-ws";
+import {createUploadLink} from 'apollo-upload-client';
 
 const cache = new InMemoryCache();
-const httpsLink = new HttpLink({
+const httpsLink = createUploadLink({
     uri: `https://localhost:7195/graphql`,
 });
 
