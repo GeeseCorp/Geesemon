@@ -17,5 +17,13 @@ namespace Geesemon.DataAccess.Providers.ChatProvider
                 .Where(c => c.UserChats.Any(uc => uc.UserId == userId))
                 .ToListAsync();
         }
+
+        public async Task<bool> IsUserInChat(Guid userId, Guid chatId)
+        {
+            var chat = await context.Chats.Include(c => c.UserChats)
+                .FirstOrDefaultAsync(c => c.Id == chatId && c.UserChats.Any(uc => uc.UserId == userId));
+
+            return chat != null;
+        }
     }
 }

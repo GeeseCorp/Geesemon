@@ -22,12 +22,19 @@ namespace Geesemon.Web.GraphQL.Queries
                     var chats = await chatManager.GetAsync(currentUserId);
 
                     foreach (var chat in chats)
+                    {
                         if (chat.Type == ChatKind.Personal)
                         {
                             var oppositeUser = await userManager.GetByIdAsync(chat.UserChats.FirstOrDefault(uc => uc.UserId != currentUserId).UserId);
 
                             chat.Name = oppositeUser.FirstName + " " + oppositeUser.LastName;
                         }
+
+                        if (chat.Type == ChatKind.Saved)
+                        {
+                            chat.Name = "Saved Messages";
+                        }
+                    }
 
                     return chats;
                 })

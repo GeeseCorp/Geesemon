@@ -10,5 +10,15 @@ namespace Geesemon.DataAccess.Providers.MessageProvider
             : base(appDbContext)
         {
         }
+
+        public async Task<List<Message>> GetByChatIdAsync(Guid chatId, int skipMessageCout, int getMessageCount = 20)
+        {
+            return await context.Messages
+                .Where(m => m.ChatId == chatId)
+                .Skip(skipMessageCout)
+                .Take(getMessageCount)
+                .OrderBy(m => m.CreatedAt)
+                .ToListAsync();
+        }
     }
 }

@@ -14,18 +14,28 @@ namespace Geesemon.Web.GraphQL.Types
             Field<StringGraphType, string>()
                  .Name("Name")
                  .Resolve(context => context.Source.Name);
+
             Field<NonNullGraphType<ChatKindType>, ChatKind>()
                 .Name("Type")
                 .Resolve(context => context.Source.Type);
+
             Field<StringGraphType, string>()
                 .Name("ImageUrl")
                 .Resolve(context => context.Source.ImageUrl);
+
             Field<GuidGraphType, Guid?>()
                 .Name("CreatorId")
                 .Resolve(context => context.Source.CreatorId);
+
             Field<ListGraphType<UserType>, IList<User>>()
                 .Name("Users")
                 .ResolveAsync(ResolveUsers);
+
+            Field<ListGraphType<MessageType>, IList<Message>>()
+                .Name("Messages")
+                .Argument<NonNullGraphType<IntGraphType>, int>("Skip", "")
+                .Argument<IntGraphType, int?>("Take", "")
+                .ResolveAsync(ResolveMessages);
 
             this.serviceProvider = serviceProvider;
         }
@@ -37,6 +47,17 @@ namespace Geesemon.Web.GraphQL.Types
             var chatId = context.Source.Id;
 
             return await userManager.GetAsync(chatId);
+        }
+
+        private async Task<IList<Message>> ResolveMessages(IResolveFieldContext<Chat> context)
+        {
+            var skip = context.GetArgument<int>("Skip");
+            var take = context.GetArgument<int?>("Take");
+            using var scope = serviceProvider.CreateScope();
+            var messageManager = scope.ServiceProvider.GetRequiredService<MessageManager>();
+            var chatId = context.Source.Id;
+
+            return await messageManager.GetByChatIdAsync(chatId, skip, take ?? 20);
         }
     }
 }

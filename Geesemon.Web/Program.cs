@@ -3,6 +3,7 @@ using Geesemon.DataAccess.Providers;
 using Geesemon.Web.Extensions;
 using Geesemon.Web.GraphQL;
 using Geesemon.Web.Services;
+using Geesemon.Web.Services.ChatActionsSubscription;
 using Geesemon.Web.Services.MessageSubscription;
 using Geesemon.Web.Utils.SettingsAccess;
 using GraphQL.Server.Transports.AspNetCore;
@@ -31,6 +32,7 @@ builder.Services.AddTransient<IOperationMessageListener, AuthenticationListener>
 
 builder.Services.AddGraphQLApi();
 builder.Services.AddSingleton<IMessageActionSubscriptionService, MessageActionSubscriptionService>();
+builder.Services.AddSingleton<IChatActionSubscriptionService, ChatActionSubscriptionService>();
 
 builder.Services.AddJwtAuthorization(builder.Configuration);
 

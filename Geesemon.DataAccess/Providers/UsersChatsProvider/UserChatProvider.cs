@@ -1,4 +1,5 @@
-﻿using Geesemon.Model.Models;
+﻿using Geesemon.Model.Enums;
+using Geesemon.Model.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -22,6 +23,15 @@ namespace Geesemon.DataAccess.Providers.UsersChatsProvider
             await context.SaveChangesAsync();
 
             return userChat;
+        }
+
+        public async Task<List<UserChat>> GetPersonalByUserIds(params Guid[] userIds)
+        {    
+            var chat = await context.Chats.Include(uc => uc.UserChats)
+                .FirstOrDefaultAsync(c => c.Type == ChatKind.Personal && c.UserChats
+                .All(uc => userIds.Contains(uc.UserId)));
+
+            return chat?.UserChats ?? new List<UserChat>();
         }
     }
 }
