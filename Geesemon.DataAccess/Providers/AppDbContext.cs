@@ -40,7 +40,7 @@ namespace Geesemon.DataAccess.Providers
                 .Where(x => x.Entity is Entity && (x.State == EntityState.Added || x.State == EntityState.Modified));
             foreach (var entity in entities)
             {
-                DateTime now = DateTime.Now;
+                DateTime now = DateTime.UtcNow;
                 if (entity.State == EntityState.Added)
                 {
                     ((Entity)entity.Entity).CreatedAt = now;

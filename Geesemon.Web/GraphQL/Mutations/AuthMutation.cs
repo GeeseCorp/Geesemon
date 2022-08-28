@@ -5,11 +5,17 @@ using Geesemon.Web.GraphQL.Types;
 using Geesemon.Web.Services;
 using GraphQL;
 using GraphQL.Types;
+using System.Drawing;
 
 namespace Geesemon.Web.GraphQL.Mutations
 {
     public class AuthMutation : ObjectGraphType
     {
+        public readonly List<string> colors = new List<string>() { "#1abc9c", "#2ecc71", "#3498db", "#9b59b6",
+                                                                    "#16a085", "#27ae60", "#2980b9", "#8e44ad",
+                                                                    "#f1c40f", "#e67e22", "#e74c3c", "#f39c12",
+                                                                    "#d35400", "#c0392b", "#6ab04c", "#be2edd"};
+
         public AuthMutation(AuthService authService, UserManager userManager, ChatManager chatManager, UserChatManager userChatManager)
         {
             Field<NonNullGraphType<AuthResponseType>, AuthResponse>()
@@ -17,6 +23,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                 .Argument<NonNullGraphType<RegisterInputType>, RegisterInput>("input", "Argument to register new User")
                 .ResolveAsync(async context =>
                 {
+                    var rnd = new Random();
                     var loginInput = context.GetArgument<RegisterInput>("input");
                     var user = await userManager.CreateAsync(new User
                     {
@@ -26,6 +33,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                         LastName = loginInput.LastName,
                         Email = loginInput.Email,
                         Role = UserRole.User,
+                        AvatarColor = colors[rnd.Next(0, colors.Count - 1)]
                     });
 
                     var savedChat = new Chat
