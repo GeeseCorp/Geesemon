@@ -5,7 +5,7 @@ using GraphQL.Types;
 
 namespace Geesemon.Web.GraphQL.Types
 {
-    public class MessageType : ObjectGraphType<Message>
+    public class MessageType : EntityType<Message>
     {
         public MessageType(IServiceProvider serviceProvider)
         {

@@ -4,6 +4,7 @@ using Geesemon.Model.Models;
 using Geesemon.Web.GraphQL.Auth;
 using Geesemon.Web.GraphQL.Types;
 using Geesemon.Web.Services;
+using Geesemon.Web.Services.ChatActionsSubscription;
 using GraphQL;
 using GraphQL.Types;
 
@@ -13,8 +14,10 @@ namespace Geesemon.Web.GraphQL.Mutations
     {
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly FileManagerService fileManagerService;
+        private readonly IChatActionSubscriptionService subscriptionService;
 
-        public ChatMutation(IHttpContextAccessor httpContextAccessor, FileManagerService fileManagerService)
+        public ChatMutation(IHttpContextAccessor httpContextAccessor, FileManagerService fileManagerService, 
+            IChatActionSubscriptionService subscriptionService)
         {
             Field<ChatType, Chat>()
                 .Name("CreatePersonal")
@@ -30,6 +33,7 @@ namespace Geesemon.Web.GraphQL.Mutations
 
             this.httpContextAccessor = httpContextAccessor;
             this.fileManagerService = fileManagerService;
+            this.subscriptionService = subscriptionService;
         }
 
         private async Task<Chat?> ResolveCreatePersonal(IResolveFieldContext context)
@@ -43,6 +47,11 @@ namespace Geesemon.Web.GraphQL.Mutations
             var oppositeUser = await userManager.GetByIdAsync(chatInp.UserId);
             if (oppositeUser == null)
                 throw new Exception("User not found");
+
+            var userChats = await userChatManager.GetPersonalByUserIds(oppositeUser.Id, currentUserId);
+
+            if (userChats.Count != 0)
+                throw new Exception("Personal chat elready exist.");
 
             var chat = new Chat
             {
@@ -60,6 +69,8 @@ namespace Geesemon.Web.GraphQL.Mutations
                         new UserChat { UserId = chatInp.UserId, ChatId = chat.Id },
                     };
             await userChatManager.CreateManyAsync(userChat);
+
+            subscriptionService.Notify(chat, ChatActionKind.Create);
 
             return chat;
         }
@@ -99,6 +110,8 @@ namespace Geesemon.Web.GraphQL.Mutations
             foreach (var userId in chatInput.UsersId)
                 userChat.Add(new UserChat { UserId = userId, ChatId = chat.Id });
             await userChatManager.CreateManyAsync(userChat);
+
+            subscriptionService.Notify(chat, ChatActionKind.Create);
 
             return chat;
         }

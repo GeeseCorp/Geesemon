@@ -5,5 +5,6 @@ namespace Geesemon.DataAccess.Providers.UsersChatsProvider
 {
     public interface IUserChatProvider : IManyToManyProviderBase<UserChat>
     {
+        Task<List<UserChat>> GetPersonalByUserIds(params Guid[] userIds);
     }
 }
