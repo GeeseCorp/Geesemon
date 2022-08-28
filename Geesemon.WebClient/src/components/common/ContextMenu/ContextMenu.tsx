@@ -19,7 +19,6 @@ export const ContextMenu: FC<Props> = ({children, items}) => {
             {React.cloneElement(children, {
                 onContextMenu: (event: MouseEvent) => {
                     event.preventDefault();
-                    console.log(event)
                     onRightClick(event.clientX, event.clientY);
                 },
             })}

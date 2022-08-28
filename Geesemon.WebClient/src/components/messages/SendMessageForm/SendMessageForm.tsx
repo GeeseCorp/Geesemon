@@ -40,8 +40,6 @@ export const SendMessageForm: FC<Props> = () => {
         }))
     }
 
-    console.log(messageText)
-
     return (
         <div className={s.wrapper}>
             <div className={s.wrapperInputText}>

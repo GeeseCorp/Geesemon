@@ -62,7 +62,6 @@ export const Sidebar: FC = () => {
         {icon: <img src={saved} className={s.menuItem}/>, content: 'Saved', type: 'default'},
         {icon: <img src={settings} className={s.menuItem}/>, content: 'Settings', type: 'default'},
     ];
-    console.log(isMenuVisible)
 
     return (
         <div className={s.wrapper}>

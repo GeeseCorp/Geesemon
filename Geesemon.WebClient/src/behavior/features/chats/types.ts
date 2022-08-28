@@ -38,4 +38,15 @@ export enum ChatKind {
     Group = 'GROUP',
 }
 
+export enum MessageActionKind {
+    Create = "CREATE",
+    Update = "UPDATE",
+    Delete = "DELETE",
+}
+
+export type MessageAction = {
+    type:MessageActionKind,
+    message: Message,
+}
+
 

@@ -27,7 +27,6 @@ export const Menu: FC<Props> = ({items, x, y, setOpen}) => {
 
     const onClickOff = (event: MouseEvent) => {
         if (event.target !== menuRef.current && !menuRef.current?.contains(event.target as Node)) {
-            console.log('onClickOff')
             setOpen(false);
         }
     };

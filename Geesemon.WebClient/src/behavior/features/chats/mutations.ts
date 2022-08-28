@@ -20,18 +20,18 @@ export const CHATS_CREATE_GROUP_MUTATION = gql`
     }
 `
 
-export type MessagesSendData = { message: { sent: Message } }
-export type MessagesSendVars = { message: MessageInputType  }
-export type MessageInputType  = {
+export type MessagesSendData = { message: { send: Message } }
+export type MessagesSendVars = { input: SentMessageInputType  }
+export type SentMessageInputType  = {
     text: string
     chatId: string
 }
 export const MESSAGES_SEND_MUTATION = gql`
     ${MESSAGE_FRAGMENT}
-    mutation MessageSent($message: MessageInputType!){
+    mutation MessageSent($input: SentMessageInputType!){
         message {
-            sent(message: $message){
-                ...ChatFragment
+            send(input: $input){
+                ...MessageFragment
             }
         }
     }

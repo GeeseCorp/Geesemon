@@ -1,7 +1,7 @@
 import {Chat, ChatKind, Message} from "./types";
 import {createSlice, PayloadAction,} from "@reduxjs/toolkit";
 import {User} from "../auth/types";
-import {CreateGroupChatInputType, MessageInputType} from "./mutations";
+import {CreateGroupChatInputType, SentMessageInputType} from "./mutations";
 
 type InitialState = {
     chats: Chat[],
@@ -247,7 +247,7 @@ const slice = createSlice({
         },
 
         createGroupChatAsync: (state, action: PayloadAction<CreateGroupChatInputType>) => state,
-        messageSendAsync: (state, action: PayloadAction<MessageInputType>) => state,
+        messageSendAsync: (state, action: PayloadAction<SentMessageInputType>) => state,
     },
 });
 

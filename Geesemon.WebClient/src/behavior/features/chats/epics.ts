@@ -55,13 +55,13 @@ export const messageSendAsyncEpic: Epic<ReturnType<typeof chatActions.messageSen
         mergeMap(action =>
             from(client.mutate<MessagesSendData, MessagesSendVars>({
                 mutation: MESSAGES_SEND_MUTATION,
-                variables: {message: action.payload}
+                variables: {input: action.payload}
             })).pipe(
                 mergeMap(response => [
-                    chatActions.addMessagesInEnd({
-                        chatId: action.payload.chatId,
-                        messages: [response.data?.message.sent as Message],
-                    }),
+                    // chatActions.addMessagesInEnd({
+                    //     chatId: action.payload.chatId,
+                    //     messages: [response.data?.message.send as Message],
+                    // }),
                 ]),
                 catchError(error => of(notificationsActions.addError(error.message))),
             )

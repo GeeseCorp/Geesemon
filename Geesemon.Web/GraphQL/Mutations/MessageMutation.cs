@@ -15,7 +15,7 @@ namespace Geesemon.Web.GraphQL.Mutations
             IHttpContextAccessor httpContextAccessor, MessageManager messageManager)
         {
             Field<MessageType>()
-                .Name("Sent")
+                .Name("Send")
                 .Argument<NonNullGraphType<SentMessageInputType>>("Input")
                 .ResolveAsync(async context =>
                     {

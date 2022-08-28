@@ -19,7 +19,7 @@ export const CHAT_FRAGMENT = gql`
 
 export const MESSAGE_FRAGMENT = gql`
     ${USER_FRAGMENT}
-    fragment ChatFragment on MessageType {
+    fragment MessageFragment on MessageType {
         text
         type
         fromId
@@ -27,5 +27,6 @@ export const MESSAGE_FRAGMENT = gql`
             ...UserFragment
         }
         chatId
+        isEdited
     }
 `
