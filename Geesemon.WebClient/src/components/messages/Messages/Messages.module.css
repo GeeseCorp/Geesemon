@@ -8,12 +8,17 @@
 }
 
 .messages {
+    scrollbar-color: #444444 #181818;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 5px;
     padding: 3px;
     flex: 1;
+}
+
+.messages::-webkit-scrollbar {
+    background: #181818;
 }
 
 .messageFromImages {

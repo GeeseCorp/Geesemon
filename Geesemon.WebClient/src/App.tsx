@@ -3,7 +3,6 @@ import {useSelector} from "react-redux";
 import {RootState, useAppDispatch} from "./behavior/store";
 import {me} from "./behavior/features/auth/thunks";
 import {Triangle} from "react-loader-spinner";
-import {Row} from "antd";
 import {Navigate, Route, Routes, useLocation} from "react-router-dom";
 import {Auth} from "./components/auth/Auth";
 import {Messages} from "./components/messages/Messages/Messages";
@@ -35,40 +34,38 @@ export const App = () => {
     return (
         <div className={'wrapperApp'}>
             <div className={'app'}>
-                <Row className={'innerApp'}>
-                    <Notifications/>
-                    <NavigateTo/>
-                    {!isAuthorized
-                        ? <Routes location={modal || location}>
-                            <Route path="/auth/*" element={<Auth/>}/>
-                            <Route path="*" element={<Navigate replace to="/auth"/>}/>
+                <Notifications/>
+                <NavigateTo/>
+                {!isAuthorized
+                    ? <Routes location={modal || location}>
+                        <Route path="/auth/*" element={<Auth/>}/>
+                        <Route path="*" element={<Navigate replace to="/auth"/>}/>
+                    </Routes>
+                    : <div className={'authedRoutes'}>
+                        <Routes location={modal || location}>
+                            <Route path={'/'} element={<Sidebar/>}/>
+                            <Route path={'/:chatId'} element={<Sidebar/>}/>
+                            <Route path={'/auth'} element={<Navigate to={'/'}/>}/>
                         </Routes>
-                        : <div className={'authedRoutes'}>
+                        <div className={'messages'}>
                             <Routes location={modal || location}>
-                                <Route path={'/'} element={<Sidebar/>}/>
-                                <Route path={'/:chatId'} element={<Sidebar/>}/>
-                                <Route path={'/auth'} element={<Navigate to={'/'}/>}/>
+                                <Route path={'/'} element={<div className={'center'}>Select a chat</div>}/>
+                                <Route path={'/:chatId'} element={
+                                    <>
+                                        <ChatInfo/>
+                                        <Messages/>
+                                    </>
+                                }/>
                             </Routes>
-                            <div className={'messages'}>
-                                <Routes location={modal || location}>
-                                    <Route path={'/'} element={<div className={'center'}>Select a chat</div>}/>
-                                    <Route path={'/:chatId'} element={
-                                        <>
-                                            <ChatInfo/>
-                                            <Messages/>
-                                        </>
-                                    }/>
-                                </Routes>
-                            </div>
-                            {modal &&
-                                <Routes>
-                                    <Route path={'/create-group-chat'} element={<ChatsCreateGroup/>}/>
-                                    <Route path={'/create-group-chat/members'} element={<ChatsCreateGroupMembers/>}/>
-                                </Routes>
-                            }
                         </div>
-                    }
-                </Row>
+                        {modal &&
+                            <Routes>
+                                <Route path={'/create-group-chat'} element={<ChatsCreateGroup/>}/>
+                                <Route path={'/create-group-chat/members'} element={<ChatsCreateGroupMembers/>}/>
+                            </Routes>
+                        }
+                    </div>
+                }
             </div>
         </div>
     );
