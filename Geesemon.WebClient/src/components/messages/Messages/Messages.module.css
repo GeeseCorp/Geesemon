@@ -27,7 +27,7 @@
     position: relative;
 }
 
-.innerMessageFromImages{
+.innerMessageFromImages {
     position: absolute;
     bottom: 0;
 }
@@ -42,6 +42,7 @@
     justify-content: space-between;
     gap: 10px;
     max-width: 70%;
+    overflow-wrap: break-word;
 }
 
 .messageMy {
@@ -54,15 +55,19 @@
     color: rgba(255, 255, 255, 0.53);
 }
 
-.messageSystem{
+.messageSystem {
     align-self: center;
     background-color: rgba(136, 52, 137, 0.5);
     border-radius: 60px;
     padding: 2px 10px;
 }
 
+.messageText {
+    min-width: 0;
+    max-width: calc(100% - 72px);
+}
 
-.messageInfo{
+.messageInfo {
     display: flex;
     gap: 5px;
     align-items: end;
