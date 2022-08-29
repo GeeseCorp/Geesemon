@@ -19,6 +19,13 @@ namespace Geesemon.DataAccess.Providers.UserProvider
                     .FirstOrDefaultAsync(e => e.Login == login);
         }
 
+        public virtual Task<User?> GetByEmailAsync(string email, params Expression<Func<User, object>>[] includes)
+        {
+            return includes.Aggregate(context.Users.AsQueryable(),
+                (current, include) => current.Include(include))
+                    .FirstOrDefaultAsync(e => e.Email == email);
+        }
+
         public Task<List<User>> GetAsync(Guid chatId)
         {
             return context.Users.Include(c => c.UserChats)

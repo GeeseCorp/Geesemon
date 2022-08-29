@@ -1,5 +1,6 @@
 ﻿using Geesemon.DataAccess.Managers;
 using Geesemon.Model.Enums;
+using Geesemon.Web.Extensions;
 using Geesemon.Web.GraphQL.Auth;
 using Geesemon.Web.GraphQL.Types;
 using Geesemon.Web.Utils.SettingsAccess;
@@ -31,9 +32,19 @@ public class AuthService
         using var scope = serviceProvider.CreateScope();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager>();
         var user = await userManager.GetByLoginAsync(loginAuthInput.Login);
-        if (user == null || user.Password != loginAuthInput.Password)
+
+        if(user == null)
             throw new Exception("Login or password not valid.");
+
+        var saltedPassword = loginAuthInput.Password + user.Id;
+
+        var test = saltedPassword.CreateMD5();
+
+        if (user.Password != test)
+            throw new Exception("Login or password not valid.");
+
         var token = GenerateAccessToken(user.Id, user.Login, user.Role);
+
         return new AuthResponse() { Token = token, User = user };
     }
 
