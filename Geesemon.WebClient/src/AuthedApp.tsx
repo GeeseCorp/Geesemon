@@ -27,13 +27,13 @@ export const AuthedApp: FC<Props> = ({}) => {
     useEffect(() => {
         const data = messageActionSubscription.data;
         if (data) {
-            console.log(data)
-            switch (data?.actions.type) {
+            switch (data?.messageActions.type) {
                 case MessageActionKind.Create:
-                    dispatch(chatActions.addMessagesInEnd({
-                        chatId: data.actions.message.chatId,
-                        messages: [data.actions.message],
-                    }))
+                    dispatch(chatActions.addMessage(data.messageActions.message))
+                    break;
+                case MessageActionKind.Delete:
+                    dispatch(chatActions.deleteMessage(data.messageActions.message))
+                    break;
             }
 
         }

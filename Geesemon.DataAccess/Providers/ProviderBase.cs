@@ -52,7 +52,7 @@ namespace Geesemon.DataAccess.Providers
 
         public virtual async Task<T> RemoveAsync(Guid id)
         {
-            T entity = await GetByIdAsync(id);
+            T? entity = await GetByIdAsync(id);
             if (entity == null)
                 throw new NullReferenceException("This record with given id doesn't exist.");
             context.Set<T>().Remove(entity);

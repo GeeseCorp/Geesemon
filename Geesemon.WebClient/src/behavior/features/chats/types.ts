@@ -44,7 +44,7 @@ export enum MessageActionKind {
     Delete = "DELETE",
 }
 
-export type MessageAction = {
+export type MessageActions = {
     type:MessageActionKind,
     message: Message,
 }

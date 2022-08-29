@@ -1,13 +1,13 @@
-import {MessageAction} from "./types";
+import {MessageActions} from "./types";
 import {gql} from "@apollo/client";
 import {MESSAGE_FRAGMENT} from "./fragments";
 
-export type MessageActionsData = { actions: MessageAction }
+export type MessageActionsData = { messageActions: MessageActions }
 export type MessageActionsVars = {}
 export const MESSAGE_ACTIONS_SUBSCRIPTIONS = gql`
     ${MESSAGE_FRAGMENT}
     subscription MessageActions {
-        actions {
+        messageActions {
             type
             message {
                 ...MessageFragment

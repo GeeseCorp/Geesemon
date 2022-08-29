@@ -1,4 +1,4 @@
-import React, {FC, useRef, useState} from 'react';
+import React, {FC, KeyboardEvent, useRef, useState} from 'react';
 import s from './SendMessageForm.module.css';
 import smile from "../../../assets/svg/smile.svg";
 import send from "../../../assets/svg/send.svg";
@@ -10,8 +10,9 @@ import {useAppDispatch} from "../../../behavior/store";
 import {chatActions} from "../../../behavior/features/chats";
 import {useParams} from "react-router-dom";
 
-type Props = {};
-export const SendMessageForm: FC<Props> = () => {
+const INPUT_TEXT_DEFAULT_HEIGHT = '25px';
+
+export const SendMessageForm: FC = () => {
     const inputTextRef = useRef<HTMLTextAreaElement | null>(null)
     const [messageText, setMessageText] = useState('');
     const dispatch = useAppDispatch();
@@ -23,7 +24,7 @@ export const SendMessageForm: FC<Props> = () => {
             const newMessageText = inputTextRef.current?.value;
             setMessageText(newMessageText)
             if (!newMessageText) {
-                inputTextRef.current.style.height = '25px';
+                inputTextRef.current.style.height = INPUT_TEXT_DEFAULT_HEIGHT;
                 return;
             }
             if (inputTextRef.current.scrollHeight > 400 || inputTextRef.current.scrollHeight < 25)
@@ -34,10 +35,27 @@ export const SendMessageForm: FC<Props> = () => {
     }
 
     const sendMessageHandler = () => {
+        if(!messageText)
+            return;
         dispatch(chatActions.messageSendAsync({
             chatId,
             text: messageText,
         }))
+        setMessageText('');
+        if (inputTextRef.current)
+            inputTextRef.current.style.height = INPUT_TEXT_DEFAULT_HEIGHT;
+    }
+
+    const onKeyUpInputText = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+        if (e.code === 'Enter' && !e.shiftKey) {
+            sendMessageHandler();
+        }
+    }
+
+    const onKeyDownInputText = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+        if (e.code === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+        }
     }
 
     return (
@@ -50,6 +68,8 @@ export const SendMessageForm: FC<Props> = () => {
                     ref={inputTextRef}
                     onInput={onInputText}
                     className={s.inputText}
+                    onKeyUp={onKeyUpInputText}
+                    onKeyDown={onKeyDownInputText}
                 />
                 <img src={clip} className={s.inputTextButton}/>
             </div>

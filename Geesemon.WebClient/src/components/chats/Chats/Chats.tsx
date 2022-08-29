@@ -31,7 +31,7 @@ export const Chats = () => {
 
     return (
         <div className={s.chats} onScroll={onScroll}>
-            {chats.map(chat => {
+            {chats.slice(0).reverse().map(chat => {
                 const parts = chat.name?.split(' ')[0] || [];
                 const firstName = parts.length ? parts[0] : '';
                 const lastName = parts.length > 1 ? parts[1] : '';

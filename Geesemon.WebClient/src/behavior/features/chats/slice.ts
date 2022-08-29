@@ -1,226 +1,14 @@
-import {Chat, ChatKind, Message} from "./types";
+import {Chat, Message} from "./types";
 import {createSlice, PayloadAction,} from "@reduxjs/toolkit";
-import {User} from "../auth/types";
-import {CreateGroupChatInputType, SentMessageInputType} from "./mutations";
+import {CreateGroupChatInputType, DeleteMessageInputType, SentMessageInputType} from "./mutations";
+import {sortChat} from "../../../utils/chatUtils";
 
 type InitialState = {
     chats: Chat[],
 }
 
 const initialState: InitialState = {
-    chats: [
-        {
-            id: '1',
-            name: 'Yehor',
-            type: ChatKind.Personal,
-            creatorId: '',
-            messages: [
-                {
-                    id: '1',
-                    from: {} as User,
-                    fromId: '1',
-                    chatId: '1',
-                    text: 'GG WP',
-                    readMessages: [],
-                    createdAt: '2022-08-19T16:13:12Z',
-                    updatedAt: '2022-08-19T16:13:12Z',
-                },
-                {
-                    id: '10',
-                    from: {} as User,
-                    fromId: '822a004a-cab1-4f3d-88e0-7ef725a05298',
-                    chatId: '1',
-                    text: 'GG WP',
-                    readMessages: [],
-                    createdAt: '2022-08-19T16:13:12Z',
-                    updatedAt: '2022-08-19T16:13:12Z',
-                },
-                {
-                    id: '11',
-                    from: {} as User,
-                    fromId: '822a004a-cab1-4f3d-88e0-7ef725a05298',
-                    chatId: '1',
-                    text: 'GG WP',
-                    readMessages: [],
-                    createdAt: '2022-08-19T16:13:12Z',
-                    updatedAt: '2022-08-19T16:13:12Z',
-                },
-                {
-                    id: '3',
-                    from: {} as User,
-                    fromId: '1',
-                    chatId: '1',
-                    text: 'Gg wp #2',
-                    readMessages: [],
-                    createdAt: '2022-08-19T16:13:12Z',
-                    updatedAt: '2022-08-19T16:13:13Z',
-                },
-                {
-                    id: '30',
-                    from: {} as User,
-                    fromId: '1',
-                    chatId: '1',
-                    text: 'Gg wp #2',
-                    readMessages: [],
-                    createdAt: '2022-08-20T16:13:12Z',
-                    updatedAt: '2022-08-20T16:13:13Z',
-                },
-                {
-                    id: '1',
-                    from: {} as User,
-                    fromId: '1',
-                    chatId: '1',
-                    text: 'GG WP',
-                    readMessages: [],
-                    createdAt: '2022-08-19T16:13:12Z',
-                    updatedAt: '2022-08-19T16:13:12Z',
-                },
-                {
-                    id: '10',
-                    from: {} as User,
-                    fromId: '822a004a-cab1-4f3d-88e0-7ef725a05298',
-                    chatId: '1',
-                    text: 'GG WP',
-                    readMessages: [],
-                    createdAt: '2022-08-19T16:13:12Z',
-                    updatedAt: '2022-08-19T16:13:12Z',
-                },
-                {
-                    id: '11',
-                    from: {} as User,
-                    fromId: '822a004a-cab1-4f3d-88e0-7ef725a05298',
-                    chatId: '1',
-                    text: 'GG WP',
-                    readMessages: [],
-                    createdAt: '2022-08-19T16:13:12Z',
-                    updatedAt: '2022-08-19T16:13:12Z',
-                },
-                {
-                    id: '3',
-                    from: {} as User,
-                    fromId: '1',
-                    chatId: '1',
-                    text: 'Gg wp #2',
-                    readMessages: [],
-                    createdAt: '2022-08-19T16:13:12Z',
-                    updatedAt: '2022-08-19T16:13:13Z',
-                },
-                {
-                    id: '30',
-                    from: {} as User,
-                    fromId: '1',
-                    chatId: '1',
-                    text: 'Gg wp #2',
-                    readMessages: [],
-                    createdAt: '2022-08-20T16:13:12Z',
-                    updatedAt: '2022-08-20T16:13:13Z',
-                },
-                {
-                    id: '1',
-                    from: {} as User,
-                    fromId: '1',
-                    chatId: '1',
-                    text: 'GG WP',
-                    readMessages: [],
-                    createdAt: '2022-08-19T16:13:12Z',
-                    updatedAt: '2022-08-19T16:13:12Z',
-                },
-                {
-                    id: '10',
-                    from: {} as User,
-                    fromId: '822a004a-cab1-4f3d-88e0-7ef725a05298',
-                    chatId: '1',
-                    text: 'GG WP',
-                    readMessages: [],
-                    createdAt: '2022-08-19T16:13:12Z',
-                    updatedAt: '2022-08-19T16:13:12Z',
-                },
-                {
-                    id: '11',
-                    from: {} as User,
-                    fromId: '822a004a-cab1-4f3d-88e0-7ef725a05298',
-                    chatId: '1',
-                    text: 'GG WP',
-                    readMessages: [],
-                    createdAt: '2022-08-19T16:13:12Z',
-                    updatedAt: '2022-08-19T16:13:12Z',
-                },
-                {
-                    id: '3',
-                    from: {} as User,
-                    fromId: '1',
-                    chatId: '1',
-                    text: 'Gg wp #2',
-                    readMessages: [],
-                    createdAt: '2022-08-19T16:13:12Z',
-                    updatedAt: '2022-08-19T16:13:13Z',
-                },
-                {
-                    id: '30',
-                    from: {} as User,
-                    fromId: '1',
-                    chatId: '1',
-                    text: 'Gg wp #2',
-                    readMessages: [],
-                    createdAt: '2022-08-20T16:13:12Z',
-                    updatedAt: '2022-08-20T16:13:13Z',
-                },
-                {
-                    id: '1',
-                    from: {} as User,
-                    fromId: '1',
-                    chatId: '1',
-                    text: 'GG WP',
-                    readMessages: [],
-                    createdAt: '2022-08-19T16:13:12Z',
-                    updatedAt: '2022-08-19T16:13:12Z',
-                },
-                {
-                    id: '10',
-                    from: {} as User,
-                    fromId: '822a004a-cab1-4f3d-88e0-7ef725a05298',
-                    chatId: '1',
-                    text: 'GG WP',
-                    readMessages: [],
-                    createdAt: '2022-08-19T16:13:12Z',
-                    updatedAt: '2022-08-19T16:13:12Z',
-                },
-                {
-                    id: '11',
-                    from: {} as User,
-                    fromId: '822a004a-cab1-4f3d-88e0-7ef725a05298',
-                    chatId: '1',
-                    text: 'GG WP',
-                    readMessages: [],
-                    createdAt: '2022-08-19T16:13:12Z',
-                    updatedAt: '2022-08-19T16:13:12Z',
-                },
-                {
-                    id: '3',
-                    from: {} as User,
-                    fromId: '1',
-                    chatId: '1',
-                    text: 'Gg wp #2',
-                    readMessages: [],
-                    createdAt: '2022-08-19T16:13:12Z',
-                    updatedAt: '2022-08-19T16:13:13Z',
-                },
-                {
-                    id: '30',
-                    from: {} as User,
-                    fromId: '1',
-                    chatId: '1',
-                    text: 'Gg wp #2',
-                    readMessages: [],
-                    createdAt: '2022-08-20T16:13:12Z',
-                    updatedAt: '2022-08-20T16:13:13Z',
-                },
-            ],
-            users: [],
-            createdAt: '2022-08-19T16:13:12Z',
-            updatedAt: '2022-08-19T16:13:13Z',
-        },
-    ],
+    chats: [],
 };
 
 const slice = createSlice({
@@ -231,23 +19,28 @@ const slice = createSlice({
             state.chats = [...state.chats, ...action.payload]
         },
         getAsync: (state) => state,
-        addMessagesInBegin: (state, action: PayloadAction<{ chatId: string, messages: Message[] }>) => {
-            state.chats = state.chats.map(chat => {
-                if (chat.id === action.payload.chatId)
-                    chat.messages = [...action.payload.messages, ...chat.messages]
-                return chat
+        addMessage: (state, action: PayloadAction<Message>) => {
+            const newChats = state.chats.map(chat => {
+                if (chat.id === action.payload.chatId) {
+                    chat.messages = [...chat.messages, action.payload];
+                    chat.messages.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+                }
+                return chat;
             })
+            state.chats = sortChat(newChats)
         },
-        addMessagesInEnd: (state, action: PayloadAction<{ chatId: string, messages: Message[] }>) => {
-            state.chats = state.chats.map(chat => {
-                if (chat.id === action.payload.chatId)
-                    chat.messages = [...chat.messages, ...action.payload.messages]
-                return chat
+        deleteMessage: (state, action: PayloadAction<Message>) => {
+            const newChats = state.chats.map(chat => {
+                chat.messages = chat.messages.filter(m => m.id !== action.payload.id)
+                return chat;
             })
+            state.chats = sortChat(newChats)
         },
 
         createGroupChatAsync: (state, action: PayloadAction<CreateGroupChatInputType>) => state,
         messageSendAsync: (state, action: PayloadAction<SentMessageInputType>) => state,
+
+        messageDeleteAsync: (state, action: PayloadAction<DeleteMessageInputType>) => state,
     },
 });
 

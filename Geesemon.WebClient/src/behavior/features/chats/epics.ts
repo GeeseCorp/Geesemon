@@ -6,12 +6,12 @@ import client from "../../client";
 import {CHATS_GET_QUERY, ChatsGetData, ChatsGetVars} from "./queries";
 import {notificationsActions} from "../notifications/slice";
 import {
-    CHATS_CREATE_GROUP_MUTATION,
-    ChatsCreateGroupData,
-    ChatsCreateGroupVars,
-    MESSAGES_SEND_MUTATION,
-    MessagesSendData,
-    MessagesSendVars
+    CHAT_CREATE_GROUP_MUTATION,
+    ChatCreateGroupData,
+    ChatCreateGroupVars, MESSAGE_DELETE_MUTATION,
+    MESSAGE_SEND_MUTATION, MessageDeleteData, MessageDeleteVars,
+    MessageSendData,
+    MessageSendVars
 } from "./mutations";
 import {Chat, Message} from "./types";
 import {navigateActions} from "../navigate/slice";
@@ -36,8 +36,8 @@ export const createGroupChatAsyncEpic: Epic<ReturnType<typeof chatActions.create
     action$.pipe(
         ofType(chatActions.createGroupChatAsync.type),
         mergeMap(action =>
-            from(client.mutate<ChatsCreateGroupData, ChatsCreateGroupVars>({
-                mutation: CHATS_CREATE_GROUP_MUTATION,
+            from(client.mutate<ChatCreateGroupData, ChatCreateGroupVars>({
+                mutation: CHAT_CREATE_GROUP_MUTATION,
                 variables: {input: action.payload}
             })).pipe(
                 mergeMap(response => [
@@ -53,16 +53,25 @@ export const messageSendAsyncEpic: Epic<ReturnType<typeof chatActions.messageSen
     action$.pipe(
         ofType(chatActions.messageSendAsync.type),
         mergeMap(action =>
-            from(client.mutate<MessagesSendData, MessagesSendVars>({
-                mutation: MESSAGES_SEND_MUTATION,
+            from(client.mutate<MessageSendData, MessageSendVars>({
+                mutation: MESSAGE_SEND_MUTATION,
                 variables: {input: action.payload}
             })).pipe(
-                mergeMap(response => [
-                    // chatActions.addMessagesInEnd({
-                    //     chatId: action.payload.chatId,
-                    //     messages: [response.data?.message.send as Message],
-                    // }),
-                ]),
+                mergeMap(response => []),
+                catchError(error => of(notificationsActions.addError(error.message))),
+            )
+        )
+    );
+
+export const messageDeleteAsyncEpic: Epic<ReturnType<typeof chatActions.messageDeleteAsync>, any, RootState> = (action$, state$) =>
+    action$.pipe(
+        ofType(chatActions.messageDeleteAsync.type),
+        mergeMap(action =>
+            from(client.mutate<MessageDeleteData, MessageDeleteVars>({
+                mutation: MESSAGE_DELETE_MUTATION,
+                variables: {input: action.payload}
+            })).pipe(
+                mergeMap(response => []),
                 catchError(error => of(notificationsActions.addError(error.message))),
             )
         )
@@ -73,4 +82,5 @@ export const chatEpics = combineEpics(
     // @ts-ignore
     createGroupChatAsyncEpic,
     messageSendAsyncEpic,
+    messageDeleteAsyncEpic,
 )
