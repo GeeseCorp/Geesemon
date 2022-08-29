@@ -12,7 +12,11 @@ import {useParams} from "react-router-dom";
 
 const INPUT_TEXT_DEFAULT_HEIGHT = '25px';
 
-export const SendMessageForm: FC = () => {
+type Props = {
+    scrollToBottom: () => void
+}
+
+export const SendMessageForm: FC<Props> = ({scrollToBottom}) => {
     const inputTextRef = useRef<HTMLTextAreaElement | null>(null)
     const [messageText, setMessageText] = useState('');
     const dispatch = useAppDispatch();
@@ -37,6 +41,7 @@ export const SendMessageForm: FC = () => {
     const sendMessageHandler = () => {
         if(!messageText)
             return;
+
         dispatch(chatActions.messageSendAsync({
             chatId,
             text: messageText,
@@ -44,6 +49,7 @@ export const SendMessageForm: FC = () => {
         setMessageText('');
         if (inputTextRef.current)
             inputTextRef.current.style.height = INPUT_TEXT_DEFAULT_HEIGHT;
+        scrollToBottom();
     }
 
     const onKeyUpInputText = (e: KeyboardEvent<HTMLTextAreaElement>) => {

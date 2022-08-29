@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC, useEffect, useRef, useState} from 'react';
 import {useAppDispatch, useAppSelector} from "../../../behavior/store";
 import {useParams} from "react-router-dom";
 import s from './Messages.module.css';
@@ -12,13 +12,54 @@ import {chatActions} from "../../../behavior/features/chats";
 export const Messages: FC = () => {
     const authedUser = useAppSelector(s => s.auth.authedUser);
     const params = useParams();
-    const chatId = params.chatId;
+    const chatId = params.chatId as string;
+    const messageGetLoading = useAppSelector(s => s.chats.messageGetLoading);
     const messages = useAppSelector(s => s.chats.chats.find(c => c.id === chatId)?.messages) || [];
     const dispatch = useAppDispatch();
+    const [isAutoScroll, setIsAutoScroll] = useState(false);
+    const bottomOfMessagesRef = useRef<HTMLDivElement>(null);
+    // const [firstMessageId, setFirstMessageId] = useState<string | null>(null)
+    // let firstMessageRef = useRef<HTMLDivElement>(null);
+
+    const scrollToBottom = () => {
+        bottomOfMessagesRef.current?.scrollIntoView({behavior: 'smooth'})
+    };
+
+    useEffect(() => {
+        if (isAutoScroll) {
+            console.log(isAutoScroll, 'scrollToBottom')
+            scrollToBottom();
+        }
+        // else {
+        //     console.log(firstMessageRef.current)
+        //     firstMessageRef.current?.scrollIntoView();
+        // }
+    }, [messages])
+
+    useEffect(() => {
+        bottomOfMessagesRef.current?.scrollIntoView();
+    }, [chatId])
+
+    const onScrollHandler = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
+        const element = e.currentTarget;
+        let scrollPosition = Math.abs(element.scrollHeight - element.scrollTop) - element.clientHeight;
+        if (scrollPosition < 70)
+            !isAutoScroll && setIsAutoScroll(true);
+        else
+            isAutoScroll && setIsAutoScroll(false);
+
+        if (element.scrollTop < 100 && !messageGetLoading) {
+            // messages.length && setFirstMessageId(messages[0].id)
+            dispatch(chatActions.messageGetAsync({
+                chatId,
+                skip: messages.length,
+            }))
+        }
+    };
 
     return (
         <div className={s.wrapperPage}>
-            <div className={s.messages}>
+            <div className={s.messages} onScroll={onScrollHandler}>
                 {messages.flatMap((message, i) => {
                     const isMessageMy = message.fromId === authedUser?.id;
                     const returnJsx: React.ReactNode[] = []
@@ -55,6 +96,12 @@ export const Messages: FC = () => {
                         >
                             <div
                                 className={[s.message, isMessageMy ? s.messageMy : null].join(' ')}
+                                // ref={ref => {
+                                //     if (message.id === firstMessageId) {
+                                //         // @ts-ignore
+                                //         firstMessageRef.current = ref;
+                                //     }
+                                // }}
                             >
                                 <div>{message.text}</div>
                                 {message.createdAt !== message.updatedAt &&
@@ -67,8 +114,9 @@ export const Messages: FC = () => {
                     )
                     return returnJsx;
                 })}
+                <div ref={bottomOfMessagesRef}/>
             </div>
-            <SendMessageForm/>
+            <SendMessageForm scrollToBottom={scrollToBottom}/>
         </div>
     );
 };

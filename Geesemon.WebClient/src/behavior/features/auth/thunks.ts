@@ -1,6 +1,6 @@
 import {ApolloError, FetchResult,} from "@apollo/client";
 import {createAsyncThunk} from "@reduxjs/toolkit";
-import client from "../../client";
+import {client} from "../../client";
 import {loginQuery, meQuery, registerQuery} from "./queries";
 import {LoginQueryResponse, LoginRequest, MeQueryResponse, RegisterQueryResponse, RegisterRequest,} from "./types";
 import {authActions} from "./slice";

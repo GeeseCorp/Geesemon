@@ -1,6 +1,6 @@
 import {ApolloError, FetchResult} from "@apollo/client";
 import {createAsyncThunk} from "@reduxjs/toolkit";
-import client from "../../client";
+import {client} from "../../client";
 import {GetAllUsersQuery} from "./query";
 import {GetAllQueryResponseType} from "./types";
 import {usersActions} from "./slice";

@@ -5,7 +5,6 @@ import {WebSocketLink} from "@apollo/client/link/ws";
 import {SubscriptionClient} from "subscriptions-transport-ws";
 import {createUploadLink} from 'apollo-upload-client';
 
-const cache = new InMemoryCache();
 const httpsLink = createUploadLink({
     uri: `https://localhost:7195/graphql`,
 });
@@ -43,9 +42,19 @@ const authLink = setContext((_, {headers}) => {
     };
 });
 
-const client = new ApolloClient({
-    cache,
+export const client = new ApolloClient({
     link: authLink.concat(splitLink),
+    cache: new InMemoryCache(),
+    defaultOptions: {
+        watchQuery: {
+            fetchPolicy: 'no-cache',
+            errorPolicy: 'all',
+            notifyOnNetworkStatusChange: true,
+        },
+        query: {
+            fetchPolicy: 'no-cache',
+            errorPolicy: 'all',
+            notifyOnNetworkStatusChange: true,
+        },
+    },
 });
-
-export default client;

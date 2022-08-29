@@ -11,13 +11,18 @@ namespace Geesemon.DataAccess.Providers.MessageProvider
         {
         }
 
-        public async Task<List<Message>> GetByChatIdAsync(Guid chatId, int skipMessageCout, int getMessageCount = 20)
+        public async Task<List<Message>> GetByChatIdAsync(Guid chatId, int skipMessageCount, int getMessageCount = 30)
         {
-            return await context.Messages
-                .Where(m => m.ChatId == chatId)
-                .Skip(skipMessageCout)
-                .Take(getMessageCount)
-                .OrderBy(m => m.CreatedAt)
+            return await context.Messages.FromSqlRaw(@"
+                    select * from messages
+                    where chatId = {0}
+                    order by createdAt desc
+                    OFFSET {1} ROWS FETCH NEXT {2} ROWS ONLY", chatId, skipMessageCount, getMessageCount)
+                .OrderBy(x => x.CreatedAt)
+                //.Where(m => m.ChatId == chatId)
+                //.OrderBy(m => m.CreatedAt)
+                //.Skip(skipMessageCout)
+                //.Take(getMessageCount)
                 .ToListAsync();
         }
     }

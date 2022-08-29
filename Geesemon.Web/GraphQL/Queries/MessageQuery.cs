@@ -34,7 +34,7 @@ namespace Geesemon.Web.GraphQL.Queries
 
 
 
-                    return await messageManager.GetByChatIdAsync(chat.Id, skip, take ?? 20);
+                    return await messageManager.GetByChatIdAsync(chat.Id, skip, take ?? 30);
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
         }
