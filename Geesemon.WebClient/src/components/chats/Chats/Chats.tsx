@@ -1,7 +1,6 @@
 import {useAppSelector} from "../../../behavior/store";
 import {Link, useLocation, useParams} from "react-router-dom";
 import s from './Chat.module.css';
-import {Col, Row} from "antd";
 import {AvatarWithoutImage} from "../../common/AvatarWithoutImage/AvatarWithoutImage";
 import {getTimeWithoutSeconds} from "../../../utils/dateUtils";
 import {useEffect, useState} from "react";
@@ -53,26 +52,23 @@ export const Chats = () => {
                                 to={`/${chat.id}`}
                                 className={s.chatLink}
                             >
-                                <Row justify={'space-between'} align={'top'}>
-                                    <Row align={'top'} gutter={10}>
-                                        <Col>
-                                            {chat.imageUrl
-                                                ? <Avatar imageUrl={chat.imageUrl}/>
-                                                : <AvatarWithoutImage
-                                                    firstName={firstName}
-                                                    lastName={lastName}
-                                                    backgroundColor={chat.imageUrl}
-                                                />
-                                            }
-                                        </Col>
-                                        <Col>
-                                            <div className={'bold'}>{chat.name}</div>
-                                            <div className={'secondary light'}>{lastMessage?.text}</div>
-                                        </Col>
-                                    </Row>
+                                <div className={s.chatInner}>
+                                    {chat.imageUrl
+                                        ? <Avatar imageUrl={chat.imageUrl}/>
+                                        : <AvatarWithoutImage
+                                            firstName={firstName}
+                                            lastName={lastName}
+                                            backgroundColor={chat.imageUrl}
+                                        />
+                                    }
+                                    <div className={s.chatInfo}>
+                                        <div className={'bold'}>{chat.name}</div>
+                                        <div
+                                            className={['secondary light', s.chatLastMessage].join(' ')}>{lastMessage?.text}</div>
+                                    </div>
                                     <div
                                         className={'small light'}>{lastMessage && getTimeWithoutSeconds(new Date(lastMessage.createdAt))}</div>
-                                </Row>
+                                </div>
                             </Link>
                         </div>
                     </ContextMenu>

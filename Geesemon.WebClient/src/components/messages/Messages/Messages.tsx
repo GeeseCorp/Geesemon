@@ -103,12 +103,14 @@ export const Messages: FC = () => {
                                 //     }
                                 // }}
                             >
-                                <div>{message.text}</div>
-                                {message.createdAt !== message.updatedAt &&
-                                    <div className={['small', s.small].join(' ')}>Edited</div>}
-                                <div
-                                    className={['small', s.small].join(' ')}>{getTimeWithoutSeconds(new Date(message.createdAt))}</div>
-                                {isMessageMy && <Checks double={!!message.readMessages?.length}/>}
+                                <div className={s.messageText}>{message.text}</div>
+                                <div className={s.messageInfo}>
+                                    {message.createdAt !== message.updatedAt &&
+                                        <div className={['small', s.small].join(' ')}>Edited</div>}
+                                    <div
+                                        className={['small', s.small].join(' ')}>{getTimeWithoutSeconds(new Date(message.createdAt))}</div>
+                                    {isMessageMy && <Checks double={!!message.readMessages?.length}/>}
+                                </div>
                             </div>
                         </ContextMenu>
                     )
