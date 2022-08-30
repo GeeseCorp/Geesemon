@@ -1,5 +1,6 @@
 ﻿using Geesemon.Model.Common;
 using Geesemon.Model.Enums;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace Geesemon.Model.Models;
@@ -28,6 +29,8 @@ public class User : Entity
     public UserRole Role { get; set; }
 
     public string? ImageUrl { get; set; }
+
+    public string AvatarColor { get; set; } = "#000000";
 
     public List<Message>? Messages { get; set; }
 

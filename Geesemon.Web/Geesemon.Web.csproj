@@ -7,6 +7,13 @@
     <UserSecretsId>047981d3-8616-48fb-b93e-240122ccf675</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="ClientApp\**" />
+    <Content Remove="ClientApp\**" />
+    <EmbeddedResource Remove="ClientApp\**" />
+    <None Remove="ClientApp\**" />
+  </ItemGroup>
+
 	<ItemGroup>
 		<PackageReference Include="CloudinaryDotNet" Version="1.19.0" />
 
@@ -26,10 +33,6 @@
 		</PackageReference>
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 	</ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="ClientApp\" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Geesemon.DataAccess\Geesemon.DataAccess.csproj" />

@@ -44,6 +44,10 @@ namespace Geesemon.Web.GraphQL.Types
             Field<NonNullGraphType<UserRoleType>, UserRole>()
                .Name("Role")
                .Resolve(context => context.Source.Role);
+
+            Field<NonNullGraphType<StringGraphType>, string>()
+               .Name("AvatarColor")
+               .Resolve(context => context.Source.AvatarColor);
         }
     }
 }

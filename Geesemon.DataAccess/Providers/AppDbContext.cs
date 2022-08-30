@@ -40,11 +40,15 @@ namespace Geesemon.DataAccess.Providers
                 .Where(x => x.Entity is Entity && (x.State == EntityState.Added || x.State == EntityState.Modified));
             foreach (var entity in entities)
             {
-                DateTime now = DateTime.Now;
+                DateTime now = DateTime.UtcNow;
                 if (entity.State == EntityState.Added)
                 {
-                    ((Entity)entity.Entity).CreatedAt = now;
-                    ((Entity)entity.Entity).Id = Guid.NewGuid();
+                    var initialEntity = entity.Entity as Entity;
+
+                    initialEntity.CreatedAt = now;
+
+                    if(initialEntity.Id == Guid.Empty)
+                        initialEntity.Id = Guid.NewGuid();
                 }
                 ((Entity)entity.Entity).UpdatedAt = now;
             }
@@ -57,6 +61,11 @@ namespace Geesemon.DataAccess.Providers
 
             modelBuilder.Entity<UserChat>()
                 .HasKey(c => new { c.UserId, c.ChatId });
+
+            modelBuilder.Entity<User>(entity => {
+                entity.HasIndex(e => e.Login).IsUnique();
+                entity.HasIndex(e => e.Email).IsUnique();
+            });
 
             modelBuilder.Entity<Message>()
                 .HasOne(m => m.From)
