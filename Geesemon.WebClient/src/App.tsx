@@ -1,6 +1,6 @@
 import React, {useEffect} from "react";
 import {useSelector} from "react-redux";
-import {RootState, useAppDispatch} from "./behavior/store";
+import {RootState, useAppDispatch, useAppSelector} from "./behavior/store";
 import {me} from "./behavior/features/auth/thunks";
 import {Triangle} from "react-loader-spinner";
 import {Navigate, Route, Routes, useLocation} from "react-router-dom";
@@ -11,6 +11,7 @@ import {NavigateTo} from "./components/navigate/NavigateTo";
 import {AuthedApp} from "./AuthedApp";
 
 export const App = () => {
+    const initialised = useAppSelector(s => s.app.initialised)
     const isAuthorized = useSelector((state: RootState) => state.auth.isAuthorized);
     const isLoading = useSelector((state: RootState) => state.auth.isLoading);
     const dispatch = useAppDispatch();
@@ -22,7 +23,7 @@ export const App = () => {
         dispatch(me());
     }, [dispatch]);
 
-    if (isLoading)
+    if (isLoading || !initialised)
         return (
             <Triangle height={250} width={250} wrapperClass={'center'}/>
         );

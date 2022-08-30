@@ -5,6 +5,7 @@ import {loginQuery, meQuery, registerQuery} from "./queries";
 import {LoginQueryResponse, LoginRequest, MeQueryResponse, RegisterQueryResponse, RegisterRequest,} from "./types";
 import {authActions} from "./slice";
 import {notificationsActions} from "../notifications/slice";
+import {appActions} from "../../app/slice";
 
 export const me = createAsyncThunk(
     "user/me",
@@ -14,11 +15,13 @@ export const me = createAsyncThunk(
                 query: meQuery,
             });
             if (response.data) {
+                dispatch(appActions.setInitialised(true));
                 dispatch(authActions.authorize(response.data.auth.me));
                 return response.data.auth.me;
             }
         } catch (err) {
             let error = err as ApolloError;
+            dispatch(appActions.setInitialised(true));
             dispatch(notificationsActions.addError(error.message));
             return rejectWithValue(error.message);
         }
