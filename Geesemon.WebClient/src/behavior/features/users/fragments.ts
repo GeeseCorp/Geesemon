@@ -13,5 +13,6 @@ export const USER_FRAGMENT = gql`
         updatedAt
         dateOfBirth
         role
+        avatarColor
     }
 `;

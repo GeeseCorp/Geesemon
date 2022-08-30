@@ -25,13 +25,14 @@ export const meAsyncEpic: Epic<ReturnType<typeof authActions.meAsync>, any, Root
             })).pipe(
                 mergeMap(response => [
                     authActions.authorize(response.data.auth.me),
-                ]),
-                catchError(error => of(notificationsActions.addError(error.message))),
-                startWith(authActions.setIsLoading(true)),
-                endWith(from([
                     appActions.setInitialised(true),
-                    authActions.setIsLoading(false),
-                ])),
+                ]),
+                catchError(error => of(
+                    notificationsActions.addError(error.message),
+                    appActions.setInitialised(true),
+                )),
+                startWith(authActions.setIsLoading(true)),
+                endWith(authActions.setIsLoading(false)),
             )
         )
     );

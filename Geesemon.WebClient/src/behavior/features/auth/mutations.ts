@@ -14,7 +14,7 @@ export const AUTH_LOGIN_MUTATION = gql`
         auth {
             login(input: $input) {
                 user {
-                    ...userFragment
+                    ...UserFragment
                 }
                 token
             }
@@ -37,7 +37,7 @@ export const AUTH_REGISTER_MUTATION = gql`
         auth {
             register(input: $input) {
                 user {
-                    ...userFragment
+                    ...UserFragment
                 }
                 token
             }

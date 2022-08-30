@@ -10,7 +10,7 @@ export const AUTH_ME_QUERY = gql`
         auth {
             me {
                 user {
-                    ...userFragment
+                    ...UserFragment
                 }
                 token
             }

@@ -1,5 +1,5 @@
 import {AuthResponseType, User} from "./types";
-import {ActionReducerMapBuilder, AsyncThunk, createSlice, PayloadAction,} from "@reduxjs/toolkit";
+import {createSlice, PayloadAction,} from "@reduxjs/toolkit";
 import {LoginInputType, RegisterInputType} from "./mutations";
 
 type InitialState = {
