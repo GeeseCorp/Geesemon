@@ -8,6 +8,7 @@ import {combineEpics, createEpicMiddleware} from "redux-observable";
 import {chatEpics} from "./features/chats/epics";
 import {navigateReducer} from "./features/navigate/slice";
 import {appReducer} from "./app/slice";
+import {authEpics} from "./features/auth/epics";
 
 const epicMiddleware = createEpicMiddleware();
 
@@ -26,6 +27,7 @@ export const store = configureStore({
 
 const rootEpic = combineEpics(
     chatEpics,
+    authEpics,
 );
 // @ts-ignore
 epicMiddleware.run(rootEpic);

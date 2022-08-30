@@ -1,59 +1,21 @@
-import { gql } from "@apollo/client";
+import {gql} from "@apollo/client";
+import {USER_FRAGMENT} from "../users/fragments";
+import {AuthResponseType} from "./types";
 
-const USER_FRAGMENT = gql`
-  fragment userFragment on UserType {
-    id
-    lastName
-    firstName
-    login
-    email
-    description
-    phoneNumber
-    createdAt
-    updatedAt
-    dateOfBirth
-    role
-  }
-`;
-
-export const meQuery = gql`
-  query MeQuery {
-    auth {
-      me {
-        user {
-          ...userFragment
+export type AuthMeData = { auth: { me: AuthResponseType } }
+export type AuthMeVars = {}
+export const AUTH_ME_QUERY = gql`
+    ${USER_FRAGMENT}
+    query MeQuery {
+        auth {
+            me {
+                user {
+                    ...userFragment
+                }
+                token
+            }
         }
-        token
-      }
     }
-  }
-  ${USER_FRAGMENT}
 `;
 
-export const loginQuery = gql`
-  mutation LoginQuery($input: LoginInputType!) {
-    auth {
-      login(input: $input) {
-        user {
-          ...userFragment
-        }
-        token
-      }
-    }
-  }
-  ${USER_FRAGMENT}
-`;
 
-export const registerQuery = gql`
-  mutation RegisterQuery($input: RegisterInputType!) {
-    auth {
-      register(input: $input) {
-        user {
-          ...userFragment
-        }
-        token
-      }
-    }
-  }
-  ${USER_FRAGMENT}
-`;

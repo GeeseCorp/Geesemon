@@ -1,8 +1,8 @@
 import {Button, Form, Input, Row} from "antd";
-import {RegisterRequest} from "../../behavior/features/auth/types";
+import {RegisterInputType} from "../../behavior/features/auth/mutations";
 
 type Props = {
-    onFinish: (values: RegisterRequest) => void;
+    onFinish: (values: RegisterInputType) => void;
 };
 
 export const RegisterForm = ({onFinish}: Props) => {

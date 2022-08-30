@@ -13,43 +13,13 @@ export type User = {
     role: UserRole;
 };
 
-export type MeQueryResponse = {
-    auth: {
-        me: AuthResponseType;
-    };
-};
-
-export type LoginQueryResponse = {
-    auth: {
-        login: AuthResponseType;
-    };
-};
-
-export type RegisterQueryResponse = {
-    auth: {
-        register: AuthResponseType;
-    };
-};
+export enum UserRole {
+    Admin = 'ADMIN',
+    User = 'USER',
+}
 
 export type AuthResponseType = {
     user: User;
     token: string;
 };
 
-export type LoginRequest = {
-    login: string;
-    password: string;
-};
-
-export type RegisterRequest = {
-    firstName: string;
-    lastName: string;
-    login: string;
-    email: string;
-    password: string;
-};
-
-export enum UserRole {
-    admin,
-    user,
-}

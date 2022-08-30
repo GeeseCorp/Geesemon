@@ -1,13 +1,13 @@
 import {Link} from "react-router-dom";
 import {useAppDispatch} from "../../behavior/store";
-import {login} from "../../behavior/features/auth/thunks";
-import {LoginRequest} from "../../behavior/features/auth/types";
 import {LoginForm} from "./LoginForm";
+import {LoginInputType} from "../../behavior/features/auth/mutations";
+import {authActions} from "../../behavior/features/auth/slice";
 
 export const LoginBlock = () => {
     const dispatch = useAppDispatch();
-    const onFinish = (values: LoginRequest) => {
-        dispatch(login(values));
+    const onFinish = (values: LoginInputType) => {
+        dispatch(authActions.loginAsync(values));
     };
 
     return (

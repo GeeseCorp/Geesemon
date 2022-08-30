@@ -1,21 +1,21 @@
 import {useAppDispatch} from "../../behavior/store";
-import {login, register} from "../../behavior/features/auth/thunks";
-import {LoginRequest, RegisterRequest} from "../../behavior/features/auth/types";
 import {LoginForm} from "./LoginForm";
 import {RegisterForm} from "./RegisterForm";
 import style from "./auth.module.scss";
 import {useRef} from "react";
+import {authActions} from "../../behavior/features/auth/slice";
+import {LoginInputType, RegisterInputType} from "../../behavior/features/auth/mutations";
 
 export const Auth = () => {
     const dispatch = useAppDispatch();
     const container = useRef<HTMLDivElement>(null);
 
-    const onLoginFinish = (values: LoginRequest) => {
-        dispatch(login(values));
+    const onLoginFinish = (values: LoginInputType) => {
+        dispatch(authActions.loginAsync(values));
     };
 
-    const onRegisterFinish = (values: RegisterRequest) => {
-        dispatch(register(values));
+    const onRegisterFinish = (values: RegisterInputType) => {
+        dispatch(authActions.registerAsync(values));
     };
 
     const signIn = () => {

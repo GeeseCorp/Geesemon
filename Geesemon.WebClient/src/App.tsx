@@ -1,7 +1,6 @@
 import React, {useEffect} from "react";
 import {useSelector} from "react-redux";
 import {RootState, useAppDispatch, useAppSelector} from "./behavior/store";
-import {me} from "./behavior/features/auth/thunks";
 import {Triangle} from "react-loader-spinner";
 import {Navigate, Route, Routes, useLocation} from "react-router-dom";
 import {Auth} from "./components/auth/Auth";
@@ -9,6 +8,7 @@ import "./App.css";
 import {Notifications} from "./components/notifications/Notifications";
 import {NavigateTo} from "./components/navigate/NavigateTo";
 import {AuthedApp} from "./AuthedApp";
+import {authActions} from "./behavior/features/auth/slice";
 
 export const App = () => {
     const initialised = useAppSelector(s => s.app.initialised)
@@ -20,7 +20,7 @@ export const App = () => {
     const modal = location.state && location.state.modal;
 
     useEffect(() => {
-        dispatch(me());
+        dispatch(authActions.meAsync());
     }, [dispatch]);
 
     if (isLoading || !initialised)

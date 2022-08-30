@@ -1,8 +1,8 @@
 import {Button, Form, Input} from "antd";
-import {LoginRequest} from "../../behavior/features/auth/types";
+import {LoginInputType} from "../../behavior/features/auth/mutations";
 
 type Props = {
-    onFinish: (values: LoginRequest) => void;
+    onFinish: (values: LoginInputType) => void;
 };
 
 export const LoginForm = ({onFinish}: Props) => {

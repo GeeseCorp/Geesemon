@@ -1,70 +1,40 @@
 import {AuthResponseType, User} from "./types";
 import {ActionReducerMapBuilder, AsyncThunk, createSlice, PayloadAction,} from "@reduxjs/toolkit";
-import {login, me, register} from "./thunks";
+import {LoginInputType, RegisterInputType} from "./mutations";
 
 type InitialState = {
-  authedUser?: User | null;
-  isAuthorized: boolean;
-  isLoading: boolean;
+    authedUser?: User | null;
+    isAuthorized: boolean;
+    isLoading: boolean;
 };
 
 const initialState: InitialState = {
-  isAuthorized: false,
-  authedUser: null,
-  isLoading: false,
-};
-
-const authorizeReducer = (
-    state: InitialState,
-    {payload}: PayloadAction<AuthResponseType>
-) => {
-  state.authedUser = payload.user;
-  localStorage.setItem("token", payload.token);
-  state.isAuthorized = true;
-};
-
-const setIsLoadingReducer = (
-    state: InitialState,
-    action: PayloadAction<boolean>
-) => {
-  state.isLoading = action.payload;
-};
-
-const logoutReducer = (state: InitialState) => {
-  state.isAuthorized = false;
-  state.authedUser = null;
-  localStorage.removeItem("token");
-};
-
-const addCasesFor = (
-    thunk: AsyncThunk<any, any, {}>,
-    builder: ActionReducerMapBuilder<InitialState>
-) => {
-  builder
-      .addCase(thunk.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(thunk.fulfilled, (state) => {
-        state.isLoading = false;
-      })
-      .addCase(thunk.rejected, (state) => {
-        state.isLoading = false;
-      });
+    isAuthorized: false,
+    authedUser: null,
+    isLoading: false,
 };
 
 const slice = createSlice({
-  name: "users",
-  initialState,
-  reducers: {
-    authorize: authorizeReducer,
-    setIsLoading: setIsLoadingReducer,
-    logout: logoutReducer,
-  },
-  extraReducers: (builder) => {
-    addCasesFor(me, builder);
-    addCasesFor(login, builder);
-    addCasesFor(register, builder);
-  },
+    name: "users",
+    initialState,
+    reducers: {
+        meAsync: (state: InitialState, action: PayloadAction) => state,
+        loginAsync: (state: InitialState, action: PayloadAction<LoginInputType>) => state,
+        registerAsync: (state: InitialState, action: PayloadAction<RegisterInputType>) => state,
+        authorize: (state: InitialState, action: PayloadAction<AuthResponseType>) => {
+            state.authedUser = action.payload.user;
+            localStorage.setItem("token", action.payload.token);
+            state.isAuthorized = true;
+        },
+        setIsLoading: (state: InitialState, action: PayloadAction<boolean>) => {
+            state.isLoading = action.payload;
+        },
+        logout: (state: InitialState) => {
+            state.isAuthorized = false;
+            state.authedUser = null;
+            localStorage.removeItem("token");
+        },
+    },
 });
 
 export const authReducer = slice.reducer;
