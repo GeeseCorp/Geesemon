@@ -6,7 +6,6 @@ using Geesemon.Web.Services;
 using Geesemon.Web.Services.ChatActionsSubscription;
 using Geesemon.Web.Services.MessageSubscription;
 using Geesemon.Web.Utils.SettingsAccess;
-using GraphQL.Server.Transports.AspNetCore;
 using GraphQL.Server.Transports.Subscriptions.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
@@ -53,7 +52,6 @@ var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
 {
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -74,7 +72,10 @@ app.UseGraphQLUpload<ApplicationSchema>()
 
 app.UseGraphQLAltair();
 
-app.MapFallbackToFile("index.html");
+app.UseSpa(spa =>
+{
+    spa.Options.SourcePath = "wwwroot";
+});
 
 app.Run();
 

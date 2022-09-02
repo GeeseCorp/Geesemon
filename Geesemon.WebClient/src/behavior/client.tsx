@@ -6,11 +6,11 @@ import {SubscriptionClient} from "subscriptions-transport-ws";
 import {createUploadLink} from 'apollo-upload-client';
 
 const httpsLink = createUploadLink({
-    uri: `https://localhost:7195/graphql`,
+    uri: !process.env.NODE_ENV || process.env.NODE_ENV === 'development' ? 'https://localhost:7195/graphql' : '/graphql',
 });
 
 const wsLink = new WebSocketLink(
-    new SubscriptionClient("wss://localhost:7195/graphql", {
+    new SubscriptionClient(!process.env.NODE_ENV || process.env.NODE_ENV === 'development' ? 'wss://localhost:7195/graphql' : `wss://${window.location.host}/graphql`, {
         connectionParams: {
             Authorization: "Bearer " + localStorage.getItem("token"),
         },
