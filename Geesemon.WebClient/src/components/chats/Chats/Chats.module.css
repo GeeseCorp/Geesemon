@@ -51,7 +51,8 @@
 }
 
 .buttonCreateChat {
-    position: absolute;
-    right: 5px;
+    position: fixed;
+    bottom: 5px;
+    transform: translateX(-65px);
 }
 

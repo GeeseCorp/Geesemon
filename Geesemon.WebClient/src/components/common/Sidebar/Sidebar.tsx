@@ -1,29 +1,37 @@
-import React, {FC, useCallback, useState} from 'react';
+import React, {FC, useCallback, useEffect, useState} from 'react';
 import s from './Sidebar.module.css';
 import {Chats} from "../../chats/Chats/Chats";
-import {
-    AnimatePresence,
-    AnimationControls,
-    motion,
-    PanInfo,
-    TargetAndTransition,
-    Transition,
-    useMotionValue,
-    VariantLabels
-} from "framer-motion";
+import {AnimatePresence, motion, PanInfo, useMotionValue} from "framer-motion";
 import menu from "../../../assets/svg/menu.svg";
 import search from "../../../assets/svg/search.svg";
 import back from "../../../assets/svg/back.svg";
 import saved from "../../../assets/svg/saved.svg";
 import settings from "../../../assets/svg/settings.svg";
 import {Menu, MenuItem} from "../Menu/Menu";
+import {useIsMobile} from "../../../hooks/useIsMobile";
+import {HeaderButton} from "../HeaderButton/HeaderButton";
 
 export const Sidebar: FC = () => {
+    const isMobile = useIsMobile();
     const [isMenuVisible, setIsMenuVisible] = useState(false);
     const [isEnabledSearchMode, setIsEnabledSearchMode] = useState(false);
     const [inputSearchFocused, setInputSearchFocused] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
     const mWidth = useMotionValue(400);
+
+    useEffect(() => {
+        const updateSize = () => mWidth.set(window.innerWidth)
+
+        if (isMobile) {
+            console.log('isMobile')
+            window.addEventListener('resize', updateSize);
+            updateSize();
+        } else {
+            console.log('not isMobile')
+            window.removeEventListener('resize', updateSize);
+        }
+        return () => window.removeEventListener('resize', updateSize);
+    }, [isMobile])
 
     const handleDrag = useCallback((event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
         let newWidth = mWidth.get() + info.delta.x;
@@ -41,23 +49,6 @@ export const Sidebar: FC = () => {
         setInputSearchFocused(false)
     }
 
-    const animate: AnimationControls | TargetAndTransition | VariantLabels = {
-        scale: [0.5, 1],
-        rotate: [180, 360],
-    }
-
-    const transition: Transition = {
-        duration: 0.3,
-        ease: "easeInOut",
-    }
-
-    const whileHover: VariantLabels | TargetAndTransition = {
-        backgroundColor: 'rgba(128,128,128, 0.3)',
-        opacity: 0.5,
-        transition: {duration: 0.5},
-    }
-    const whileTap: VariantLabels | TargetAndTransition = {scale: 0.9};
-
     const menuItems: MenuItem[] = [
         {icon: <img src={saved} className={s.menuItem}/>, content: 'Saved', type: 'default'},
         {icon: <img src={settings} className={s.menuItem}/>, content: 'Settings', type: 'default'},
@@ -73,30 +64,19 @@ export const Sidebar: FC = () => {
                     <div className={s.wrapperExtraButton}>
                         <AnimatePresence>
                             {isEnabledSearchMode
-                                ? <motion.div
-                                    onClick={() => setIsEnabledSearchMode(false)}
-                                    className={s.extraButton}
-                                    key={'back'}
-                                    animate={animate}
-                                    transition={transition}
-                                    whileHover={whileHover}
-                                    whileTap={whileTap}
-                                >
+                                ? <HeaderButton onClick={() => {
+                                    setIsEnabledSearchMode(false)
+                                    console.log('click1')
+                                }}>
                                     <img src={back} width={25}/>
-                                </motion.div>
+                                </HeaderButton>
                                 : <>
-                                    <motion.div
-                                        onClick={() => setIsMenuVisible(true)}
-                                        className={s.extraButton}
-                                        key={'menu'}
-                                        animate={animate}
-                                        transition={transition}
-                                        whileHover={whileHover}
-                                        whileTap={whileTap}
-                                    >
+                                    <HeaderButton onClick={() => {
+                                        setIsMenuVisible(true)
+                                        console.log('click2')
+                                    }}>
                                         <img src={menu} width={20}/>
-
-                                    </motion.div>
+                                    </HeaderButton>
                                     {isMenuVisible &&
                                         <Menu
                                             items={menuItems}
@@ -121,19 +101,21 @@ export const Sidebar: FC = () => {
                 </div>
                 {isEnabledSearchMode
                     ? null
-                    : <Chats/>
+                    : <Chats leftOffsetForButtonCreate={mWidth}/>
                 }
             </motion.div>
-            <motion.div
-                className={s.sidebarResizer}
-                drag="x"
-                dragConstraints={{top: 0, left: 0, right: 0, bottom: 0}}
-                dragElastic={0}
-                dragMomentum={false}
-                onDrag={handleDrag}
-                onDragEnd={() => setIsDragging(false)}
-                onDragStart={() => setIsDragging(true)}
-            />
+            {!isMobile &&
+                <motion.div
+                    className={s.sidebarResizer}
+                    drag="x"
+                    dragConstraints={{top: 0, left: 0, right: 0, bottom: 0}}
+                    dragElastic={0}
+                    dragMomentum={false}
+                    onDrag={handleDrag}
+                    onDragEnd={() => setIsDragging(false)}
+                    onDragStart={() => setIsDragging(true)}
+                />
+            }
         </div>
     );
 };

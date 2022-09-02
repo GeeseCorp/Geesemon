@@ -19,6 +19,7 @@ export const Messages: FC = () => {
     const dispatch = useAppDispatch();
     const [isAutoScroll, setIsAutoScroll] = useState(false);
     const bottomOfMessagesRef = useRef<HTMLDivElement>(null);
+    const inputTextRef = useRef<HTMLTextAreaElement | null>(null)
     // const [firstMessageId, setFirstMessageId] = useState<string | null>(null)
     // let firstMessageRef = useRef<HTMLDivElement>(null);
 
@@ -58,6 +59,12 @@ export const Messages: FC = () => {
         }
     };
 
+    const setInUpdateMessage = (messageId: string) => {
+        dispatch(chatActions.setInUpdateMessageId(messageId))
+        dispatch(chatActions.setMode('Updating'))
+        inputTextRef.current?.focus();
+    }
+
     return (
         <div className={s.wrapperPage}>
             <div className={s.messages} onScroll={onScrollHandler}>
@@ -90,10 +97,7 @@ export const Messages: FC = () => {
                                 {
                                     content: 'Update',
                                     icon: <DeleteOutlined/>,
-                                    onClick: () => {
-                                        dispatch(chatActions.setInUpdateMessageId(message.id))
-                                        dispatch(chatActions.setMode('Updating'))
-                                    },
+                                    onClick: () => setInUpdateMessage(message.id),
                                     type: 'default',
                                 },
                                 {
@@ -128,7 +132,7 @@ export const Messages: FC = () => {
                 })}
                 <div ref={bottomOfMessagesRef}/>
             </div>
-            <SendMessageForm scrollToBottom={scrollToBottom}/>
+            <SendMessageForm scrollToBottom={scrollToBottom} inputTextRef={inputTextRef}/>
         </div>
     );
 };

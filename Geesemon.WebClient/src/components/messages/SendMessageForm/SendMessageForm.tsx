@@ -1,4 +1,4 @@
-import React, {FC, KeyboardEvent, useEffect, useRef, useState} from 'react';
+import React, {FC, KeyboardEvent, useEffect, useState} from 'react';
 import s from './SendMessageForm.module.css';
 import smile from "../../../assets/svg/smile.svg";
 import send from "../../../assets/svg/send.svg";
@@ -17,19 +17,18 @@ const INPUT_TEXT_DEFAULT_HEIGHT = '25px';
 
 type Props = {
     scrollToBottom: () => void
+    inputTextRef: React.MutableRefObject<HTMLTextAreaElement | null>
 }
 
-export const SendMessageForm: FC<Props> = ({scrollToBottom,}) => {
+export const SendMessageForm: FC<Props> = ({scrollToBottom, inputTextRef}) => {
     const mode = useAppSelector(s => s.chats.mode);
     const inUpdateMessageId = useAppSelector(s => s.chats.inUpdateMessageId);
-    const inputTextRef = useRef<HTMLTextAreaElement | null>(null)
     const [messageText, setMessageText] = useState('');
     const dispatch = useAppDispatch();
     const params = useParams()
     const chatId = params.chatId as string;
     const messages = useAppSelector(s => s.chats.chats.find(c => c.id === chatId)?.messages) || [];
     const inUpdateMessage = messages.find(m => m.id === inUpdateMessageId);
-
 
     useEffect(() => {
         if (inUpdateMessageId && inUpdateMessage) {
@@ -73,7 +72,7 @@ export const SendMessageForm: FC<Props> = ({scrollToBottom,}) => {
 
     const onKeyUpInputText = (e: KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.code === 'Enter' && !e.shiftKey) {
-            sendMessageHandler();
+            strongButtonClickHandler();
         }
     }
 
@@ -84,8 +83,23 @@ export const SendMessageForm: FC<Props> = ({scrollToBottom,}) => {
     }
 
     const closeExtraBlockHandler = () => {
-        setNewMessageText('');
-        dispatch(chatActions.setInUpdateMessageId(null));
+        switch (mode) {
+            case "Updating":
+                setNewMessageText('');
+                dispatch(chatActions.setInUpdateMessageId(null));
+                break;
+        }
+
+    }
+
+    const updateMessageHandler = () => {
+        if (inUpdateMessageId) {
+            dispatch(chatActions.messageUpdateAsync({
+                messageId: inUpdateMessageId,
+                text: messageText,
+            }))
+            closeExtraBlockHandler();
+        }
     }
 
     const strongButtonClickHandler = () => {
@@ -94,13 +108,7 @@ export const SendMessageForm: FC<Props> = ({scrollToBottom,}) => {
                 sendMessageHandler();
                 break;
             case "Updating":
-                if (inUpdateMessageId) {
-                    dispatch(chatActions.messageUpdateAsync({
-                        messageId: inUpdateMessageId,
-                        text: messageText,
-                    }))
-                    closeExtraBlockHandler();
-                }
+                updateMessageHandler();
                 break;
         }
     }

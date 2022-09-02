@@ -46,10 +46,15 @@
     display: flex;
     gap: 5px;
     padding: 0 10px;
-    border: 2px solid #707070;
+    border: 1px solid gray;
     border-radius: 50px;
     background-color: #181818;
     margin-right: 10px;
+    transition: .3s all ease;
+}
+
+.wrapperInputSearch:hover{
+    border: 1px solid #aaa;
 }
 
 .inputSearch {

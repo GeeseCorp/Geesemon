@@ -37,6 +37,7 @@
     flex: 1;
     position: relative;
     height: 100vh;
+    min-width: 0;
 }
 
 .small {

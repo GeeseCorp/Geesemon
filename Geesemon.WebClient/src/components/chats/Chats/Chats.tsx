@@ -1,9 +1,9 @@
 import {useAppSelector} from "../../../behavior/store";
 import {Link, useLocation, useParams} from "react-router-dom";
-import s from './Chat.module.css';
+import s from './Chats.module.css';
 import {AvatarWithoutImage} from "../../common/AvatarWithoutImage/AvatarWithoutImage";
 import {getTimeWithoutSeconds} from "../../../utils/dateUtils";
-import {useEffect, useState} from "react";
+import {FC, useEffect} from "react";
 import {useDispatch} from "react-redux";
 import {chatActions} from "../../../behavior/features/chats";
 import {ContextMenu} from "../../common/ContextMenu/ContextMenu";
@@ -11,25 +11,26 @@ import {DeleteOutlined} from "@ant-design/icons";
 import {StrongButton} from "../../common/StrongButton/StrongButton";
 import pencil from '../../../assets/svg/pencil-filled.svg'
 import {Avatar} from "../../common/Avatar/Avatar";
+import {motion, MotionValue} from "framer-motion";
 
-export const Chats = () => {
+type Props = {
+    leftOffsetForButtonCreate: MotionValue<number>
+}
+
+export const Chats: FC<Props> = ({leftOffsetForButtonCreate}) => {
     const params = useParams()
     const chatId = params.chatId;
     const chats = useAppSelector(s => s.chats.chats);
     const dispatch = useDispatch();
-    const [scrolledHeight, setScrolledHeight] = useState(0);
     const location = useLocation();
 
     useEffect(() => {
-        dispatch(chatActions.getAsync());
+        if (!chats.length)
+            dispatch(chatActions.getAsync());
     }, [])
 
-    const onScroll = (e: React.UIEvent<HTMLDivElement>) => {
-        setScrolledHeight(e.currentTarget.scrollTop + e.currentTarget.offsetHeight);
-    }
-
     return (
-        <div className={s.chats} onScroll={onScroll}>
+        <div className={s.chats}>
             {chats.slice(0).reverse().map(chat => {
                 const parts = chat.name?.split(' ')[0] || [];
                 const firstName = parts.length ? parts[0] : '';
@@ -75,13 +76,13 @@ export const Chats = () => {
                 )
             })}
             {/*<div className={s.buttonCreateChat} style={{top: `${scrolledHeight - 60}px`}}>*/}
-            <div className={s.buttonCreateChat} style={{bottom: `5px`}}>
+            <motion.div className={s.buttonCreateChat} style={{left: leftOffsetForButtonCreate}}>
                 <Link to={'/create-group-chat'} state={{modal: location}}>
                     <StrongButton>
                         <img src={pencil} width={20}/>
                     </StrongButton>
                 </Link>
-            </div>
+            </motion.div>
         </div>
     );
 }

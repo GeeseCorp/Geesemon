@@ -14,9 +14,11 @@ import {
 import {MessageActionKind} from "./behavior/features/chats/types";
 import {useAppDispatch} from "./behavior/store";
 import {chatActions} from "./behavior/features/chats";
+import {useIsMobile} from "./hooks/useIsMobile";
 
 type Props = {};
 export const AuthedApp: FC<Props> = ({}) => {
+    const isMobile = useIsMobile();
     const dispatch = useAppDispatch();
     const location = useLocation();
     // @ts-ignore
@@ -45,30 +47,47 @@ export const AuthedApp: FC<Props> = ({}) => {
         }
     }, [messageActionSubscription.data])
 
+    console.log(isMobile)
+
     return (
         <div className={'authedRoutes'}>
-            <Routes location={modal || location}>
-                <Route path={'/'} element={<Sidebar/>}/>
-                <Route path={'/:chatId'} element={<Sidebar/>}/>
-                <Route path={'/auth'} element={<Navigate to={'/'}/>}/>
-            </Routes>
-            <div className={'messages'}>
-                <Routes location={modal || location}>
-                    <Route path={'/'} element={<div className={'center'}>Select a chat</div>}/>
+            {isMobile
+                ? <Routes location={modal || location}>
+                    <Route path={'/'} element={<Sidebar/>}/>
                     <Route path={'/:chatId'} element={
-                        <>
+                        <div className={'messages'}>
                             <ChatInfo/>
                             <Messages/>
-                        </>
+                        </div>
                     }/>
+                    <Route path={'/auth'} element={<Navigate to={'/'}/>}/>
                 </Routes>
-            </div>
-            {modal &&
-                <Routes>
-                    <Route path={'/create-group-chat'} element={<ChatsCreateGroup/>}/>
-                    <Route path={'/create-group-chat/members'} element={<ChatsCreateGroupMembers/>}/>
-                </Routes>
+                : <>
+                    <Routes location={modal || location}>
+                        <Route path={'/'} element={<Sidebar/>}/>
+                        <Route path={'/:chatId'} element={<Sidebar/>}/>
+                        <Route path={'/auth'} element={<Navigate to={'/'}/>}/>
+                    </Routes>
+                    <div className={'messages'}>
+                        <Routes location={modal || location}>
+                            <Route path={'/'} element={<div className={'center'}>Select a chat</div>}/>
+                            <Route path={'/:chatId'} element={
+                                <>
+                                    <ChatInfo/>
+                                    <Messages/>
+                                </>
+                            }/>
+                        </Routes>
+                    </div>
+                    {modal &&
+                        <Routes>
+                            <Route path={'/create-group-chat'} element={<ChatsCreateGroup/>}/>
+                            <Route path={'/create-group-chat/members'} element={<ChatsCreateGroupMembers/>}/>
+                        </Routes>
+                    }
+                </>
             }
+
         </div>
     );
 };
