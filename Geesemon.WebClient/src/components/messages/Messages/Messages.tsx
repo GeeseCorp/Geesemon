@@ -13,6 +13,7 @@ export const Messages: FC = () => {
     const authedUser = useAppSelector(s => s.auth.authedUser);
     const params = useParams();
     const chatId = params.chatId as string;
+    const inUpdateMessageId = useAppSelector(s => s.chats.inUpdateMessageId);
     const messageGetLoading = useAppSelector(s => s.chats.messageGetLoading);
     const messages = useAppSelector(s => s.chats.chats.find(c => c.id === chatId)?.messages) || [];
     const dispatch = useAppDispatch();
@@ -86,6 +87,15 @@ export const Messages: FC = () => {
                         <ContextMenu
                             key={message.id}
                             items={[
+                                {
+                                    content: 'Update',
+                                    icon: <DeleteOutlined/>,
+                                    onClick: () => {
+                                        dispatch(chatActions.setInUpdateMessageId(message.id))
+                                        dispatch(chatActions.setMode('Updating'))
+                                    },
+                                    type: 'default',
+                                },
                                 {
                                     content: 'Delete',
                                     icon: <DeleteOutlined/>,

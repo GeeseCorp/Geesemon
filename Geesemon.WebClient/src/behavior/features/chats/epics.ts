@@ -17,11 +17,11 @@ import {
     ChatCreateGroupData,
     ChatCreateGroupVars,
     MESSAGE_DELETE_MUTATION,
-    MESSAGE_SEND_MUTATION,
+    MESSAGE_SEND_MUTATION, MESSAGE_UPDATE_MUTATION,
     MessageDeleteData,
     MessageDeleteVars,
     MessageSendData,
-    MessageSendVars
+    MessageSendVars, MessageUpdateData, MessageUpdateVars
 } from "./mutations";
 import {Chat} from "./types";
 import {navigateActions} from "../navigate/slice";
@@ -73,6 +73,20 @@ export const messageSendAsyncEpic: Epic<ReturnType<typeof chatActions.messageSen
         )
     );
 
+export const messageUpdateAsyncEpic: Epic<ReturnType<typeof chatActions.messageUpdateAsync>, any, RootState> = (action$, state$) =>
+    action$.pipe(
+        ofType(chatActions.messageUpdateAsync.type),
+        mergeMap(action =>
+            from(client.mutate<MessageUpdateData, MessageUpdateVars>({
+                mutation: MESSAGE_UPDATE_MUTATION,
+                variables: {input: action.payload}
+            })).pipe(
+                mergeMap(response => []),
+                catchError(error => of(notificationsActions.addError(error.message))),
+            )
+        )
+    );
+
 export const messageGetAsyncEpic: Epic<ReturnType<typeof chatActions.messageGetAsync>, any, RootState> = (action$, state$) =>
     action$.pipe(
         ofType(chatActions.messageGetAsync.type),
@@ -113,6 +127,7 @@ export const chatEpics = combineEpics(
     // @ts-ignore
     createGroupChatAsyncEpic,
     messageSendAsyncEpic,
+    messageUpdateAsyncEpic,
     messageGetAsyncEpic,
     messageDeleteAsyncEpic,
 )

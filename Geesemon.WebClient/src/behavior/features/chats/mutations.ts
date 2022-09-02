@@ -37,6 +37,23 @@ export const MESSAGE_SEND_MUTATION = gql`
     }
 `
 
+export type MessageUpdateData = { message: { update: Message } }
+export type MessageUpdateVars = { input: UpdateMessageInputType  }
+export type UpdateMessageInputType  = {
+    messageId: string
+    text: string
+}
+export const MESSAGE_UPDATE_MUTATION = gql`
+    ${MESSAGE_FRAGMENT}
+    mutation MessageUpdate($input: UpdateMessageInputType!) {
+        message{
+            update(input: $input) {
+                ...MessageFragment
+            }
+        }
+    }
+`
+
 export type MessageDeleteData = { message: { delete: Message } }
 export type MessageDeleteVars = { input: DeleteMessageInputType  }
 export type DeleteMessageInputType  = {

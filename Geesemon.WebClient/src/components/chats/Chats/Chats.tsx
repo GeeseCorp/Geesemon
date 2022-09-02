@@ -9,7 +9,7 @@ import {chatActions} from "../../../behavior/features/chats";
 import {ContextMenu} from "../../common/ContextMenu/ContextMenu";
 import {DeleteOutlined} from "@ant-design/icons";
 import {StrongButton} from "../../common/StrongButton/StrongButton";
-import pencil from '../../../assets/svg/pencil.svg'
+import pencil from '../../../assets/svg/pencil-filled.svg'
 import {Avatar} from "../../common/Avatar/Avatar";
 
 export const Chats = () => {
