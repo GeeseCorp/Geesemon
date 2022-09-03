@@ -21,9 +21,10 @@ export const ChatInfo: FC<Props> = ({}) => {
 
     return (
         <div className={s.wrapper}>
-            {isMobile && <HeaderButton onClick={() => navigate(-1)}>
-                <img src={back} width={25}/>
-            </HeaderButton>
+            {isMobile &&
+                <HeaderButton key={'back'} onClick={() => navigate(-1)}>
+                    <img src={back} width={25}/>
+                </HeaderButton>
             }
             <div className={s.inner}>
                 <Link to={''}>

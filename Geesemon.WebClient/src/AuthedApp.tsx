@@ -47,8 +47,6 @@ export const AuthedApp: FC<Props> = ({}) => {
         }
     }, [messageActionSubscription.data])
 
-    console.log(isMobile)
-
     return (
         <div className={'authedRoutes'}>
             {isMobile

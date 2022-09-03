@@ -3,10 +3,11 @@ import s from './HeaderButton.module.css';
 import {AnimationControls, motion, TargetAndTransition, Transition, VariantLabels} from "framer-motion";
 
 type Props = {
+    key: string
     children: React.ReactNode
     onClick?: MouseEventHandler | undefined;
 };
-export const HeaderButton: FC<Props> = ({children, onClick}) => {
+export const HeaderButton: FC<Props> = ({children, onClick, key}) => {
     const animate: AnimationControls | TargetAndTransition | VariantLabels = {
         scale: [0.5, 1],
         rotate: [180, 360],
@@ -30,7 +31,7 @@ export const HeaderButton: FC<Props> = ({children, onClick}) => {
         <motion.div
             onClick={onClick}
             className={s.wrapperButton}
-            key={Date.now()}
+            key={key}
             animate={animate}
             transition={transition}
             whileHover={whileHover}

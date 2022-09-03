@@ -42,6 +42,7 @@
     justify-content: space-between;
     gap: 10px;
     max-width: 70%;
+    min-width: 0;
     overflow-wrap: break-word;
 }
 

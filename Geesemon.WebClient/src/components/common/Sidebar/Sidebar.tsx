@@ -23,11 +23,9 @@ export const Sidebar: FC = () => {
         const updateSize = () => mWidth.set(window.innerWidth)
 
         if (isMobile) {
-            console.log('isMobile')
             window.addEventListener('resize', updateSize);
             updateSize();
         } else {
-            console.log('not isMobile')
             window.removeEventListener('resize', updateSize);
         }
         return () => window.removeEventListener('resize', updateSize);
@@ -64,14 +62,14 @@ export const Sidebar: FC = () => {
                     <div className={s.wrapperExtraButton}>
                         <AnimatePresence>
                             {isEnabledSearchMode
-                                ? <HeaderButton onClick={() => {
+                                ? <HeaderButton key={'back'} onClick={() => {
                                     setIsEnabledSearchMode(false)
                                     console.log('click1')
                                 }}>
                                     <img src={back} width={25}/>
                                 </HeaderButton>
                                 : <>
-                                    <HeaderButton onClick={() => {
+                                    <HeaderButton key={'menu'} onClick={() => {
                                         setIsMenuVisible(true)
                                         console.log('click2')
                                     }}>

@@ -122,7 +122,7 @@ export const SendMessageForm: FC<Props> = ({scrollToBottom, inputTextRef}) => {
                             <div className={s.icon}>
                                 <img src={pencilOutlined} alt="" width={20}/>
                             </div>
-                            <div>
+                            <div className={s.actionAndText}>
                                 <div className={s.action}>Updating</div>
                                 <div className={s.text}>{inUpdateMessage.text}</div>
                             </div>

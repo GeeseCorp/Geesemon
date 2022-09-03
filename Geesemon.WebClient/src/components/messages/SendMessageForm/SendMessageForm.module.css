@@ -26,6 +26,7 @@
     background-color: #212121;
     padding: 13px;
     flex: 1;
+    min-width: 0;
 }
 
 .extraBlockWrapper {
@@ -53,6 +54,12 @@
     display: flex;
     align-items: stretch;
     gap: 10px;
+    min-width: 0;
+}
+
+.actionAndText{
+    width: calc(100% - 60px);
+
 }
 
 .extraBlockWrapper .icon {
@@ -73,12 +80,16 @@
     color: #aaa;
     margin-top: -3px;
     margin-bottom: -1px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .innerInputText {
     display: flex;
     align-items: end;
     gap: 20px;
+
 }
 
 .inputText {
