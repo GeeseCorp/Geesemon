@@ -1,9 +1,15 @@
 .wrapper {
-    width: 100%;
+    width: calc(100% - 20px);
+    margin: 5px 10px 15px 10px;
+}
+
+.inner {
+    max-width: 600px;
+    margin: 0 auto;
     display: flex;
     align-items: end;
-    margin: 2px 1px 10px 1px;
-    gap: 15px;
+    gap: 10px;
+    position: relative;
 }
 
 .inputTextButton {
@@ -17,14 +23,14 @@
     transition: 0.5s all ease;
 }
 
-.inputTextButton:hover{
+.inputTextButton:hover {
     background-color: #2C2C2C;
 }
 
 .wrapperInputText {
     border-radius: 10px;
     background-color: #212121;
-    padding: 13px;
+    padding: 10px;
     flex: 1;
     min-width: 0;
 }
@@ -46,7 +52,7 @@
     transition: 0.5s all ease;
 }
 
-.extraBlockWrapper .close:hover{
+.extraBlockWrapper .close:hover {
     background-color: #2C2C2C;
 }
 
@@ -57,9 +63,8 @@
     min-width: 0;
 }
 
-.actionAndText{
+.actionAndText {
     width: calc(100% - 60px);
-
 }
 
 .extraBlockWrapper .icon {
@@ -73,7 +78,6 @@
 
 .extraBlockWrapper .action {
     color: #8774E1;
-    margin-top: -3px;
 }
 
 .extraBlockWrapper .text {
@@ -89,7 +93,6 @@
     display: flex;
     align-items: end;
     gap: 20px;
-
 }
 
 .inputText {
@@ -102,5 +105,12 @@
 }
 
 .buttonSend {
-    margin: 0 2px 2px 0;
+    position: absolute;
+    right: -55px;
+}
+
+@media (max-width: 1200px) {
+    .wrapper {
+        width: calc(100% - 75px);
+    }
 }

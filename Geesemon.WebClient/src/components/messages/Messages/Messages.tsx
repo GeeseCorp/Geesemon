@@ -66,70 +66,72 @@ export const Messages: FC = () => {
     }
 
     return (
-        <div className={s.wrapperPage}>
+        <div className={s.wrapper}>
             <div className={s.messages} onScroll={onScrollHandler}>
-                {messages.flatMap((message, i) => {
-                    const isMessageMy = message.fromId === authedUser?.id;
-                    const returnJsx: React.ReactNode[] = []
-                    if (i === 0)
-                        returnJsx.push(
-                            <div
-                                key={messages[i].createdAt}
-                                className={[s.message, s.messageSystem].join(' ')}
-                            >
-                                {getDayAndMonth(new Date(messages[i].createdAt))}
-                            </div>
-                        )
-                    if (i + 1 < messages.length && getDate(new Date(message.createdAt)) !== getDate(new Date(messages[i + 1].createdAt))) {
-                        returnJsx.push(
-                            <div
-                                key={messages[i + 1].createdAt}
-                                className={[s.message, s.messageSystem].join(' ')}
-                            >
-                                {getDayAndMonth(new Date(messages[i + 1].createdAt))}
-                            </div>
-                        )
-                    }
-                    returnJsx.push(
-                        <ContextMenu
-                            key={message.id}
-                            items={[
-                                {
-                                    content: 'Update',
-                                    icon: <DeleteOutlined/>,
-                                    onClick: () => setInUpdateMessage(message.id),
-                                    type: 'default',
-                                },
-                                {
-                                    content: 'Delete',
-                                    icon: <DeleteOutlined/>,
-                                    onClick: () => dispatch(chatActions.messageDeleteAsync({messageId: message.id})),
-                                    type: 'danger',
-                                },
-                            ]}
-                        >
-                            <div
-                                className={[s.message, isMessageMy ? s.messageMy : null].join(' ')}
-                                // ref={ref => {
-                                //     if (message.id === firstMessageId) {
-                                //         // @ts-ignore
-                                //         firstMessageRef.current = ref;
-                                //     }
-                                // }}
-                            >
-                                <div className={s.messageText}>{message.text}</div>
-                                <div className={s.messageInfo}>
-                                    {message.createdAt !== message.updatedAt &&
-                                        <div className={['small', s.small].join(' ')}>Edited</div>}
-                                    <div
-                                        className={['small', s.small].join(' ')}>{getTimeWithoutSeconds(new Date(message.createdAt))}</div>
-                                    {isMessageMy && <Checks double={!!message.readMessages?.length}/>}
+                <div className={s.messagesInner}>
+                    {messages.flatMap((message, i) => {
+                        const isMessageMy = message.fromId === authedUser?.id;
+                        const returnJsx: React.ReactNode[] = []
+                        if (i === 0)
+                            returnJsx.push(
+                                <div
+                                    key={messages[i].createdAt}
+                                    className={[s.message, s.messageSystem].join(' ')}
+                                >
+                                    {getDayAndMonth(new Date(messages[i].createdAt))}
                                 </div>
-                            </div>
-                        </ContextMenu>
-                    )
-                    return returnJsx;
-                })}
+                            )
+                        if (i + 1 < messages.length && getDate(new Date(message.createdAt)) !== getDate(new Date(messages[i + 1].createdAt))) {
+                            returnJsx.push(
+                                <div
+                                    key={messages[i + 1].createdAt}
+                                    className={[s.message, s.messageSystem].join(' ')}
+                                >
+                                    {getDayAndMonth(new Date(messages[i + 1].createdAt))}
+                                </div>
+                            )
+                        }
+                        returnJsx.push(
+                            <ContextMenu
+                                key={message.id}
+                                items={[
+                                    {
+                                        content: 'Update',
+                                        icon: <DeleteOutlined/>,
+                                        onClick: () => setInUpdateMessage(message.id),
+                                        type: 'default',
+                                    },
+                                    {
+                                        content: 'Delete',
+                                        icon: <DeleteOutlined/>,
+                                        onClick: () => dispatch(chatActions.messageDeleteAsync({messageId: message.id})),
+                                        type: 'danger',
+                                    },
+                                ]}
+                            >
+                                <div
+                                    className={[s.message, isMessageMy ? s.messageMy : null].join(' ')}
+                                    // ref={ref => {
+                                    //     if (message.id === firstMessageId) {
+                                    //         // @ts-ignore
+                                    //         firstMessageRef.current = ref;
+                                    //     }
+                                    // }}
+                                >
+                                    <div className={s.messageText}>{message.text}</div>
+                                    <div className={s.messageInfo}>
+                                        {message.createdAt !== message.updatedAt &&
+                                            <div className={['small', s.small].join(' ')}>Edited</div>}
+                                        <div
+                                            className={['small', s.small].join(' ')}>{getTimeWithoutSeconds(new Date(message.createdAt))}</div>
+                                        {isMessageMy && <Checks double={!!message.readMessages?.length}/>}
+                                    </div>
+                                </div>
+                            </ContextMenu>
+                        )
+                        return returnJsx;
+                    })}
+                </div>
                 <div ref={bottomOfMessagesRef}/>
             </div>
             <SendMessageForm scrollToBottom={scrollToBottom} inputTextRef={inputTextRef}/>

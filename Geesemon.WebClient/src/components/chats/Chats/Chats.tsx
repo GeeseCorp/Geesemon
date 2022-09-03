@@ -11,13 +11,12 @@ import {DeleteOutlined} from "@ant-design/icons";
 import {StrongButton} from "../../common/StrongButton/StrongButton";
 import pencil from '../../../assets/svg/pencil-filled.svg'
 import {Avatar} from "../../common/Avatar/Avatar";
-import {motion, MotionValue} from "framer-motion";
+import {useLeftSidebar} from "../../../hooks/useLeftSidebar";
 
-type Props = {
-    leftOffsetForButtonCreate: MotionValue<number>
-}
+type Props = {}
 
-export const Chats: FC<Props> = ({leftOffsetForButtonCreate}) => {
+export const Chats: FC<Props> = ({}) => {
+    const [leftSidebar, setLeftSidebar] = useLeftSidebar();
     const params = useParams()
     const chatId = params.chatId;
     const chats = useAppSelector(s => s.chats.chats);
@@ -76,13 +75,13 @@ export const Chats: FC<Props> = ({leftOffsetForButtonCreate}) => {
                 )
             })}
             {/*<div className={s.buttonCreateChat} style={{top: `${scrolledHeight - 60}px`}}>*/}
-            <motion.div className={s.buttonCreateChat} style={{left: leftOffsetForButtonCreate}}>
-                <Link to={'/create-group-chat'} state={{modal: location}}>
-                    <StrongButton>
-                        <img src={pencil} width={20}/>
-                    </StrongButton>
-                </Link>
-            </motion.div>
+            <div className={s.buttonCreateChat} onClick={() => {
+                // setLeftSidebar('create-group-chat-members')
+            }}>
+                <StrongButton>
+                    <img src={pencil} width={20}/>
+                </StrongButton>
+            </div>
         </div>
     );
 }

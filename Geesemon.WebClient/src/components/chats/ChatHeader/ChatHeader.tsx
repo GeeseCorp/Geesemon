@@ -1,5 +1,5 @@
 import React, {FC} from 'react';
-import s from './ChatInfo.module.css';
+import s from './ChatHeader.module.css';
 import {Link, useNavigate, useParams} from "react-router-dom";
 import {useAppSelector} from "../../../behavior/store";
 import {Avatar} from "../../common/Avatar/Avatar";
@@ -9,7 +9,7 @@ import {HeaderButton} from "../../common/HeaderButton/HeaderButton";
 import back from "../../../assets/svg/back.svg";
 
 type Props = {};
-export const ChatInfo: FC<Props> = ({}) => {
+export const ChatHeader: FC<Props> = ({}) => {
     const isMobile = useIsMobile()
     const navigate = useNavigate();
     const params = useParams();
@@ -20,7 +20,7 @@ export const ChatInfo: FC<Props> = ({}) => {
     const lastName = parts.length > 1 ? parts[1] : '';
 
     return (
-        <div className={s.wrapper}>
+        <div className={[s.wrapper, 'header'].join(' ')}>
             {isMobile &&
                 <HeaderButton key={'back'} onClick={() => navigate(-1)}>
                     <img src={back} width={25}/>
