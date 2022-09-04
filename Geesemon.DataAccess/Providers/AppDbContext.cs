@@ -24,33 +24,45 @@ namespace Geesemon.DataAccess.Providers
 
         public override int SaveChanges()
         {
-            AddTimestamps();
+            InitEntities();
             return base.SaveChanges();
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            AddTimestamps();
+            InitEntities();
             return base.SaveChangesAsync(cancellationToken);
         }
 
-        private void AddTimestamps()
+        private void InitEntities()
         {
+            var rnd = new Random();
             var entities = ChangeTracker.Entries()
                 .Where(x => x.Entity is Entity && (x.State == EntityState.Added || x.State == EntityState.Modified));
-            foreach (var entity in entities)
+            foreach (var entityEntry in entities)
             {
+                var entity = entityEntry.Entity as Entity;
                 DateTime now = DateTime.UtcNow;
-                if (entity.State == EntityState.Added)
-                {
-                    var initialEntity = entity.Entity as Entity;
+                if (entityEntry.State == EntityState.Added)
+                { 
+                    entity.CreatedAt = now;
 
-                    initialEntity.CreatedAt = now;
-
-                    if(initialEntity.Id == Guid.Empty)
-                        initialEntity.Id = Guid.NewGuid();
+                    if(entity.Id == Guid.Empty)
+                        entity.Id = Guid.NewGuid();
                 }
-                ((Entity)entity.Entity).UpdatedAt = now;
+                entity.UpdatedAt = now;
+
+                if(entity is Chat)
+                {
+                    var chat = (Chat)entity;
+                    chat.ImageColor = colors[rnd.Next(0, colors.Count - 1)];
+                }
+
+                if (entity is User)
+                {
+                    var user = (User)entity;
+                    user.AvatarColor = colors[rnd.Next(0, colors.Count - 1)];
+                }
             }
         }
 
@@ -77,5 +89,10 @@ namespace Geesemon.DataAccess.Providers
                 .WithMany(u => u.AuthoredChats)
                 .OnDelete(DeleteBehavior.SetNull);
         }
+
+        public static readonly List<string> colors = new List<string>() { "#1abc9c", "#2ecc71", "#3498db", "#9b59b6",
+                                                                    "#16a085", "#27ae60", "#2980b9", "#8e44ad",
+                                                                    "#f1c40f", "#e67e22", "#e74c3c", "#f39c12",
+                                                                    "#d35400", "#c0392b", "#6ab04c", "#be2edd"};
     }
 }
