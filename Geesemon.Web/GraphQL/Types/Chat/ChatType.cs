@@ -27,6 +27,10 @@ namespace Geesemon.Web.GraphQL.Types
                 .Name("CreatorId")
                 .Resolve(context => context.Source.CreatorId);
 
+            Field<StringGraphType, string>()
+                .Name("ImageColor")
+                .Resolve(context => context.Source.ImageColor);
+
             Field<ListGraphType<UserType>, IList<User>>()
                 .Name("Users")
                 .ResolveAsync(ResolveUsers);
