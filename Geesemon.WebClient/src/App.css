@@ -1,40 +1,91 @@
-.App {
-  /* text-align: center; */
-  margin: 0px;
-  height: 100%;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    color: white;
+    font-size: 16px;
+    scrollbar-color: #444444 #212121;
+    scrollbar-width: thin;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+*::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+    background: #212121;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+*::-webkit-scrollbar-thumb {
+    background: #444444;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.wrapperApp {
+    background-color: #181818;
 }
 
-.App-link {
-  color: #61dafb;
+.app {
+    height: 100vh;
+    max-width: 1682px;
+    margin: 0 auto;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.authedRoutes {
+    display: flex;
+    width: 100%;
 }
+
+.messages {
+    flex: 1;
+    position: relative;
+    height: 100vh;
+    min-width: 0;
+}
+
+.small {
+    font-size: 12px;
+    color: rgb(104, 108, 114);
+}
+
+.light {
+    color: rgba(255, 255, 255, 0.53);
+}
+
+.secondary {
+    color: rgb(104, 108, 114);
+}
+
+.bold {
+    font-weight: 650;
+}
+
+.center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.danger, .danger * {
+    color: red;
+}
+
+.danger:hover {
+    background-color: #322525;
+}
+
+.ant-comment-avatar img {
+    width: inherit !important;
+    height: inherit !important;
+    border-radius: inherit !important;
+}
+
+body {
+    position: relative;
+}
+
+#modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+

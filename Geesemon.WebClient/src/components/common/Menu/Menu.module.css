@@ -1,0 +1,31 @@
+.menuItems {
+    background-color: #212121;
+    padding: 5px;
+    box-shadow: 0 0 3px #2B2B2B;
+    border-radius: 5px;
+    position: fixed;
+    z-index: 1000;
+}
+
+.menuItem {
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+}
+
+.menuItem:hover {
+    background-color: #2B2B2B;
+}
+
+.menuItem td:first-child {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+.menuItem td:last-child {
+    border-bottom-right-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.icon, .content {
+    padding: 5px 10px;
+}

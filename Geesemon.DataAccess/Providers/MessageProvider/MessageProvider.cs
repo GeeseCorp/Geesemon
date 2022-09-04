@@ -1,6 +1,5 @@
 ﻿using Geesemon.Model.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 
 namespace Geesemon.DataAccess.Providers.MessageProvider
 {
@@ -11,11 +10,12 @@ namespace Geesemon.DataAccess.Providers.MessageProvider
         {
         }
 
-        public async Task<List<Message>> GetByChatIdAsync(Guid chatId, int skipMessageCout, int getMessageCount = 20)
+        public async Task<List<Message>> GetByChatIdAsync(Guid chatId, int skipMessageCount, int getMessageCount = 30)
         {
             return await context.Messages
                 .Where(m => m.ChatId == chatId)
-                .Skip(skipMessageCout)
+                .OrderByDescending(m => m.CreatedAt)
+                .Skip(skipMessageCount)
                 .Take(getMessageCount)
                 .OrderBy(m => m.CreatedAt)
                 .ToListAsync();

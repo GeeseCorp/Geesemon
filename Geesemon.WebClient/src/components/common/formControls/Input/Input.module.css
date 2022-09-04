@@ -1,0 +1,47 @@
+.wrapperInput {
+    position: relative;
+    padding-top: 24px;
+}
+
+.wrapperInput > input {
+    display: block;
+    width: 100%;
+    padding: 2px 8px;
+    border: 1px solid #ccc;
+}
+
+.wrapperInput input::-webkit-input-placeholder {
+    color: white;
+}
+
+.wrapperInput > input:focus + label {
+}
+
+.wrapperInput > label {
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: #333;
+    transition: all .15s ease-in-out;
+    cursor: text;
+}
+
+.wrapperInput input:placeholder-shown + label {
+    left: 9px;
+    top: 27px;
+    font-size: 0.95rem;
+}
+
+.wrapperInput > input {
+    border: none;
+    border-bottom: 1px solid #313C49;
+    background-color: #212121;
+    outline: none;
+}
+
+.wrapperInput > label {
+    color: #313C49;
+    left: 9px;
+    font-size: 0.9rem;
+    font-weight: 650;
+}

@@ -1,0 +1,21 @@
+.checks{
+    position: relative;
+    width: 15px;
+    height: 15px;
+}
+
+.check{
+    width: 10px;
+    height: 10px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.checkLeft{
+    left: 0;
+}
+
+.checkRight{
+    right: 0;
+}

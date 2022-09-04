@@ -26,7 +26,7 @@
 		<PackageReference Include="GraphQL.SystemReactive" Version="4.7.1" />
 		<PackageReference Include="GraphQL.Upload.AspNetCore" Version="2.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.8" />
-		<PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="6.0.5" />
+		<PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="6.0.8" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.7">
 		  <PrivateAssets>all</PrivateAssets>
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -37,6 +37,10 @@
   <ItemGroup>
     <ProjectReference Include="..\Geesemon.DataAccess\Geesemon.DataAccess.csproj" />
     <ProjectReference Include="..\Geesemon.DomainModel\Geesemon.Model.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
 </Project>

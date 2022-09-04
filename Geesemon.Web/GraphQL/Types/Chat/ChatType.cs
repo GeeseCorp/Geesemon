@@ -61,7 +61,7 @@ namespace Geesemon.Web.GraphQL.Types
             var messageManager = scope.ServiceProvider.GetRequiredService<MessageManager>();
             var chatId = context.Source.Id;
 
-            return await messageManager.GetByChatIdAsync(chatId, skip, take ?? 20);
+            return await messageManager.GetByChatIdAsync(chatId, skip, take ?? 30);
         }
     }
 }

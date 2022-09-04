@@ -1,0 +1,20 @@
+.wrapper {
+    background-color: #212121;
+    padding: 0 15px;
+    height: 56px;
+    margin: 0 1px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.inner{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chatInfo {
+    display: flex;
+    gap: 10px;
+}

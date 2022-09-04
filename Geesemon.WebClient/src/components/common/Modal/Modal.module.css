@@ -1,0 +1,11 @@
+.innerModel{
+    background-color: #212121;
+    padding: 40px 30px 10px 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 3px #2B2B2B;
+}
+
+.modalOpened{
+    pointer-events: none;
+    filter: blur(1px);
+}

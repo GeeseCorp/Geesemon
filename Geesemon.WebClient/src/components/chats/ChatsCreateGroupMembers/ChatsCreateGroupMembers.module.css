@@ -1,0 +1,12 @@
+.buttons{
+    margin-top: 20px;
+    display: flex;
+    justify-content: end;
+}
+
+.innerButtons{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+

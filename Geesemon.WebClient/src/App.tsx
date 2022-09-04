@@ -1,34 +1,46 @@
-import { useEffect, useState } from "react";
+import React, {useEffect} from "react";
+import {useSelector} from "react-redux";
+import {RootState, useAppDispatch, useAppSelector} from "./behavior/store";
+import {Triangle} from "react-loader-spinner";
+import {Navigate, Route, Routes, useLocation} from "react-router-dom";
+import {Auth} from "./components/auth/Auth";
 import "./App.css";
-import { useSelector } from "react-redux";
-import { RootState, useAppDispatch } from "./behavior/store";
-import { me } from "./behavior/auth/thunk";
-import { Triangle } from "react-loader-spinner";
+import {Notifications} from "./components/notifications/Notifications";
+import {NavigateTo} from "./components/navigate/NavigateTo";
+import {AuthedApp} from "./AuthedApp";
+import {authActions} from "./behavior/features/auth/slice";
 
-import { BrowserRouter as Router, Routes } from "react-router-dom";
-import styles from "./components/common/styles/site.module.css";
-import { ApplicationRoutes } from "./components/Routes/ApplicationRoutes";
+export const App = () => {
+    const initialised = useAppSelector(s => s.app.initialised)
+    const isAuthorized = useSelector((state: RootState) => state.auth.isAuthorized);
+    const isLoading = useSelector((state: RootState) => state.auth.isLoading);
+    const dispatch = useAppDispatch();
+    const location = useLocation();
+    // @ts-ignore
+    const modal = location.state && location.state.modal;
 
-function App() {
-  let isLoading = useSelector((state: RootState) => state.user.isLoading);
-  const dispatch = useAppDispatch();
+    useEffect(() => {
+        dispatch(authActions.meAsync());
+    }, [dispatch]);
 
-  useEffect(() => {
-    dispatch(me());
-  }, [dispatch]);
+    if (isLoading || !initialised)
+        return (
+            <Triangle height={250} width={250} wrapperClass={'center'}/>
+        );
 
-  if (isLoading)
     return (
-      <Triangle height={250} width={250} wrapperClass={styles.screenCenter} />
+        <div className={'wrapperApp'}>
+            <div className={'app'}>
+                <Notifications/>
+                <NavigateTo/>
+                {!isAuthorized
+                    ? <Routes location={modal || location}>
+                        <Route path="/auth/*" element={<Auth/>}/>
+                        <Route path="*" element={<Navigate replace to="/auth"/>}/>
+                    </Routes>
+                    : <AuthedApp/>
+                }
+            </div>
+        </div>
     );
-
-  return (
-    <div className="App">
-      <Router>
-        <ApplicationRoutes />
-      </Router>
-    </div>
-  );
 }
-
-export default App;

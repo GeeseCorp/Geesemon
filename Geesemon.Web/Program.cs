@@ -6,7 +6,6 @@ using Geesemon.Web.Services;
 using Geesemon.Web.Services.ChatActionsSubscription;
 using Geesemon.Web.Services.MessageSubscription;
 using Geesemon.Web.Utils.SettingsAccess;
-using GraphQL.Server.Transports.AspNetCore;
 using GraphQL.Server.Transports.Subscriptions.Abstractions;
 using Microsoft.EntityFrameworkCore;
 
@@ -41,19 +40,18 @@ builder.Services.AddServices();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: MyAllowSpecificOrigins,
-                      policy =>
-                      {
-                          policy.WithOrigins("https://localhost:44470")
-                          .AllowAnyHeader()
-                          .AllowAnyMethod();
-                      });
+        policy =>
+        {
+            policy.WithOrigins("https://localhost:3000")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+        });
 });
 
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
 {
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -69,12 +67,15 @@ app.UseWebSockets();
 
 app.UseGraphQLWebSockets<ApplicationSchema>();
 
-app.UseGraphQL<ApplicationSchema, GraphQLHttpMiddleware<ApplicationSchema>>()
-    .UseGraphQLUpload<ApplicationSchema>();
+app.UseGraphQLUpload<ApplicationSchema>()
+    .UseGraphQL<ApplicationSchema>();
 
 app.UseGraphQLAltair();
 
-app.MapFallbackToFile("index.html");
+app.UseSpa(spa =>
+{
+    spa.Options.SourcePath = "wwwroot";
+});
 
 app.Run();
 

@@ -1,0 +1,30 @@
+import {Button, Form, Input} from "antd";
+import {LoginInputType} from "../../behavior/features/auth/mutations";
+
+type Props = {
+    onFinish: (values: LoginInputType) => void;
+};
+
+export const LoginForm = ({onFinish}: Props) => {
+    return (
+        <Form name="register" onFinish={onFinish}>
+            <Form.Item
+                name="login"
+                rules={[{required: true, message: "Please input your username!"}]}
+            >
+                <Input/>
+            </Form.Item>
+            <Form.Item
+                name="password"
+                rules={[{required: true, message: "Please input your password!"}]}
+            >
+                <Input.Password/>
+            </Form.Item>
+            <Form.Item wrapperCol={{offset: 8, span: 16}}>
+                <Button type="primary" htmlType="submit">
+                    Submit
+                </Button>
+            </Form.Item>
+        </Form>
+    );
+};
