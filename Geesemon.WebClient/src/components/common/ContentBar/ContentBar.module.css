@@ -2,4 +2,5 @@
     flex: 1;
     height: 100vh;
     min-width: 0;
+    position: relative;
 }

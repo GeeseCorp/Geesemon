@@ -1,12 +1,14 @@
 import {AnimatePresence, motion} from 'framer-motion';
 import React, {Dispatch, FC, useEffect, useRef} from 'react';
 import s from "./Menu.module.css";
+import {Link} from "react-router-dom";
 
 export type MenuItem = {
     icon?: React.ReactNode,
     content: React.ReactNode,
     onClick?: () => void,
     type: 'default' | 'danger'
+    link?: string
 }
 
 type Props = {
@@ -52,6 +54,16 @@ export const Menu: FC<Props> = ({items, x, y, setOpen}) => {
                     const onClick = () => {
                         item.onClick && item.onClick();
                         setOpen(false)
+                    }
+                    if (item.link) {
+                        return (
+                            <Link to={item.link}>
+                                <div key={i} className={[s.menuItem, item.type === 'danger' && 'danger'].join(' ')}>
+                                    <div className={s.icon}>{item.icon}</div>
+                                    <div className={s.content}>{item.content}</div>
+                                </div>
+                            </Link>
+                        )
                     }
                     return (
                         <div key={i} onClick={onClick}

@@ -9,14 +9,13 @@ import saved from "../../../assets/svg/saved.svg";
 import settings from "../../../assets/svg/settings.svg";
 import {Menu, MenuItem} from "../Menu/Menu";
 import {HeaderButton} from "../HeaderButton/HeaderButton";
-import {useSearchParams} from "react-router-dom";
-import {useLeftSidebar} from "../../../hooks/useLeftSidebar";
+import {useAppSelector} from "../../../behavior/store";
 
 export const LeftSidebar: FC = () => {
     const [isMenuVisible, setIsMenuVisible] = useState(false);
     const [isEnabledSearchMode, setIsEnabledSearchMode] = useState(false);
     const [inputSearchFocused, setInputSearchFocused] = useState(false);
-    const [leftSidebar, setLeftSidebar] = useLeftSidebar();
+    const authedUser = useAppSelector(s => s.auth.authedUser)
 
     const onInputSearchFocus = () => {
         setInputSearchFocused(true)
@@ -28,7 +27,7 @@ export const LeftSidebar: FC = () => {
     }
 
     const menuItems: MenuItem[] = [
-        {icon: <img src={saved} className={s.menuItem}/>, content: 'Saved', type: 'default'},
+        {icon: <img src={saved} className={s.menuItem}/>, content: 'Saved', type: 'default', link: `/${authedUser?.id}`},
         {icon: <img src={settings} className={s.menuItem}/>, content: 'Settings', type: 'default'},
     ];
 

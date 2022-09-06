@@ -2,10 +2,12 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit'
 
 export type InitialState = {
     initialised: boolean
+    isRightSidebarVisible: boolean
 }
 
 const initialState: InitialState = {
     initialised: false,
+    isRightSidebarVisible: false,
 }
 
 export const appSlice = createSlice({
@@ -14,6 +16,9 @@ export const appSlice = createSlice({
     reducers: {
         setInitialised: (state, action: PayloadAction<boolean>) => {
             state.initialised = action.payload
+        },
+        setIsRightSidebarVisible: (state, action: PayloadAction<boolean>) => {
+            state.isRightSidebarVisible = action.payload
         },
     },
 })

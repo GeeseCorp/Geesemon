@@ -4,9 +4,9 @@ import smile from "../../../assets/svg/smile.svg";
 import send from "../../../assets/svg/send.svg";
 import check from "../../../assets/svg/check.svg";
 import clip from "../../../assets/svg/clip.svg";
-import pencilOutlined from "../../../assets/svg/pencil-outlined.svg";
+import pencilOutlined from "../../../assets/svg/pencilOutlined.svg";
 import microphone from "../../../assets/svg/microphone.svg";
-import crossFilled from "../../../assets/svg/cross-filled.svg";
+import crossFilled from "../../../assets/svg/crossFilled.svg";
 import {AnimatePresence, motion} from "framer-motion"
 import {StrongButton} from "../../common/StrongButton/StrongButton";
 import {useAppDispatch, useAppSelector} from "../../../behavior/store";

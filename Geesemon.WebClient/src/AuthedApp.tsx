@@ -1,5 +1,5 @@
 import React, {FC, useEffect} from 'react';
-import {Navigate, Route, Routes, useLocation, useSearchParams} from "react-router-dom";
+import {Navigate, Route, Routes} from "react-router-dom";
 import {LeftSidebar} from "./components/common/LeftSidebar/LeftSidebar";
 import {useSubscription} from "@apollo/client";
 import {
@@ -8,7 +8,7 @@ import {
     MessageActionsVars
 } from "./behavior/features/chats/subscriptions";
 import {MessageActionKind} from "./behavior/features/chats/types";
-import {useAppDispatch} from "./behavior/store";
+import {useAppDispatch, useAppSelector} from "./behavior/store";
 import {chatActions} from "./behavior/features/chats";
 import {useIsMobile} from "./hooks/useIsMobile";
 import {ContentBar} from "./components/common/ContentBar/ContentBar";
@@ -18,10 +18,7 @@ type Props = {};
 export const AuthedApp: FC<Props> = ({}) => {
     const isMobile = useIsMobile();
     const dispatch = useAppDispatch();
-    const location = useLocation();
-    // @ts-ignore
-    const modal = location.state && location.state.modal;
-
+    const isRightSidebarVisible = useAppSelector(s => s.app.isRightSidebarVisible)
     const messageActionSubscription = useSubscription<MessageActionsData, MessageActionsVars>(MESSAGE_ACTIONS_SUBSCRIPTIONS);
 
     useEffect(() => {
@@ -48,30 +45,30 @@ export const AuthedApp: FC<Props> = ({}) => {
     return (
         <div className={'authedRoutes'}>
             {isMobile
-                ? <Routes location={modal || location}>
+                ? <Routes>
                     <Route path={'/'} element={<LeftSidebar/>}/>
-                    <Route path={'/:chatId'} element={<ContentBar/>}/>
+                    <Route path={'/:chatId'} element={
+                        isRightSidebarVisible
+                            ? <RightSidebar/>
+                            : <ContentBar/>
+                    }/>
                     <Route path={'/auth'} element={<Navigate to={'/'}/>}/>
                 </Routes>
                 : <>
-                    <Routes location={modal || location}>
+                    <Routes>
                         <Route path={'/'} element={<LeftSidebar/>}/>
                         <Route path={'/:chatId'} element={<LeftSidebar/>}/>
                         <Route path={'/auth'} element={<Navigate to={'/'}/>}/>
                     </Routes>
-                    <Routes location={modal || location}>
-                        <Route path={'/'} element={<div className={'center'}>Select a chat</div>}/>
+                    <Routes>
+                        <Route path={'/'} element={<ContentBar/>}/>
                         <Route path={'/:chatId'} element={<ContentBar/>}/>
                         <Route path={'/auth'} element={<Navigate to={'/'}/>}/>
                     </Routes>
-
-                    <RightSidebar/>
-                    {/*{modal &&*/}
-                    {/*    <Routes>*/}
-                    {/*        <Route path={'/create-group-chat'} element={<ChatsCreateGroup/>}/>*/}
-                    {/*        <Route path={'/create-group-chat/members'} element={<ChatsCreateGroupMembers/>}/>*/}
-                    {/*    </Routes>*/}
-                    {/*}*/}
+                    <Routes>
+                        <Route path={'/:chatId'} element={<RightSidebar/>}/>
+                        <Route path={'*'} element={<RightSidebar/>}/>
+                    </Routes>
                 </>
             }
 

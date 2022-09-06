@@ -9,14 +9,12 @@ import {chatActions} from "../../../behavior/features/chats";
 import {ContextMenu} from "../../common/ContextMenu/ContextMenu";
 import {DeleteOutlined} from "@ant-design/icons";
 import {StrongButton} from "../../common/StrongButton/StrongButton";
-import pencil from '../../../assets/svg/pencil-filled.svg'
+import pencil from '../../../assets/svg/pencilFilled.svg'
 import {Avatar} from "../../common/Avatar/Avatar";
-import {useLeftSidebar} from "../../../hooks/useLeftSidebar";
 
 type Props = {}
 
 export const Chats: FC<Props> = ({}) => {
-    const [leftSidebar, setLeftSidebar] = useLeftSidebar();
     const params = useParams()
     const chatId = params.chatId;
     const chats = useAppSelector(s => s.chats.chats);
@@ -31,9 +29,6 @@ export const Chats: FC<Props> = ({}) => {
     return (
         <div className={s.chats}>
             {chats.slice(0).reverse().map(chat => {
-                const parts = chat.name?.split(' ')[0] || [];
-                const firstName = parts.length ? parts[0] : '';
-                const lastName = parts.length > 1 ? parts[1] : '';
                 const lastMessage = chat.messages?.length ? chat.messages?.reduce((a, b) => a.createdAt > b.createdAt ? a : b, chat.messages[0]) : null;
                 return (
                     <ContextMenu
@@ -56,8 +51,7 @@ export const Chats: FC<Props> = ({}) => {
                                     {chat.imageUrl
                                         ? <Avatar imageUrl={chat.imageUrl}/>
                                         : <AvatarWithoutImage
-                                            firstName={firstName}
-                                            lastName={lastName}
+                                            name={chat.name || ''}
                                             backgroundColor={chat.imageUrl}
                                         />
                                     }
@@ -75,9 +69,7 @@ export const Chats: FC<Props> = ({}) => {
                 )
             })}
             {/*<div className={s.buttonCreateChat} style={{top: `${scrolledHeight - 60}px`}}>*/}
-            <div className={s.buttonCreateChat} onClick={() => {
-                // setLeftSidebar('create-group-chat-members')
-            }}>
+            <div className={s.buttonCreateChat} /*onClick={() => setLeftSidebar('create-group-chat-members')}*/>
                 <StrongButton>
                     <img src={pencil} width={20}/>
                 </StrongButton>
