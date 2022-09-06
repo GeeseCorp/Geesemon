@@ -11,6 +11,8 @@ public class Chat : Entity
 
     public string? ImageUrl { get; set; }
 
+    public string ImageColor { get; set; } = "#000000";
+
     public Guid? CreatorId { get; set; }
     public User? Creator { get; set; }
 

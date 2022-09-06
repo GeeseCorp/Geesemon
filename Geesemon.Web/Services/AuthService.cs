@@ -38,9 +38,8 @@ public class AuthService
 
         var saltedPassword = loginAuthInput.Password + user.Id;
 
-        var test = saltedPassword.CreateMD5();
 
-        if (user.Password != test)
+        if (user.Password != saltedPassword.CreateMD5())
             throw new Exception("Login or password not valid.");
 
         var token = GenerateAccessToken(user.Id, user.Login, user.Role);
