@@ -72,16 +72,17 @@ export const ChatsCreateGroup: FC<Props> = () => {
                             />
                             <img
                                 src={image ? URL.createObjectURL(image) : camera}
-                                width={image ? 80 : 50}
+                                width={image ? 100 : 60}
                                 className={image ? s.image : ''}
                             />
                         </div>
-                        <Input
-                            name={'groupName'}
-                            placeholder={'Group name'}
-                            value={groupName}
-                            setValue={setGroupName}
-                        />
+                        <div className={s.inputGroupName}>
+                            <Input
+                                placeholder={'Group name'}
+                                value={groupName}
+                                setValue={setGroupName}
+                            />
+                        </div>
                     </div>
                     <div className={s.nextButton}>
                         <StrongButton onClick={createGroupHandler} loading={createGroupLoading}>

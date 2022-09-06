@@ -10,16 +10,18 @@
 }
 
 .wrapperFormItems{
+    margin-top: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 20px;
 }
 
 .wrapperInputPhoto{
     background-image: linear-gradient(to right bottom, #7FA8FF, #6A6AFF);
     border-radius: 50%;
-    width: 80px;
-    height: 80px;
+    width: 100px;
+    height: 100px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -32,6 +34,14 @@
 
 .inputFile{
     display: none;
+}
+
+.inputGroupName{
+    width: calc(100% - 2rem);
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .nextButton{

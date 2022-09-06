@@ -1,24 +1,34 @@
-import React, {FC} from 'react';
+import React, {FC, useState} from 'react';
 import s from './Input.module.css';
 
 type Props = {
     placeholder?: string
-    name?: string
-    value?: string,
-    setValue?: (value: string) => void
+    value: string
+    setValue: (value: string) => void
+    onFocus?: () => void
 };
-export const Input: FC<Props> = ({placeholder, name, value, setValue}) => {
+export const Input: FC<Props> = ({placeholder, value, setValue, onFocus}) => {
+    const [inputSearchFocused, setInputSearchFocused] = useState(false);
+
+    const onInputSearchFocus = () => {
+        setInputSearchFocused(true)
+        onFocus && onFocus();
+    }
+
+    const onInputSearchBlur = () => {
+        setInputSearchFocused(false)
+    }
+
     return (
-        <div className={s.wrapperInput}>
+        <div className={[s.wrapperInputSearch, inputSearchFocused && s.focused].join(' ')}>
             <input
-                type="text"
-                placeholder={''}
-                name={name}
-                id={name}
                 value={value}
-                onChange={e => setValue && setValue(e.target.value)}
+                onChange={e => setValue(e.target.value)}
+                placeholder={placeholder}
+                className={s.inputSearch}
+                onFocus={onInputSearchFocus}
+                onBlur={onInputSearchBlur}
             />
-            <label htmlFor={name}>{placeholder}</label>
         </div>
     );
 };

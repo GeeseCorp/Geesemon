@@ -82,8 +82,15 @@
 }
 
 .buttonCreateChat {
-    position: absolute;
+    position: fixed;
     bottom: 5px;
-    right: 0;
+    left: 330px;
+}
+
+@media (max-width: 700px) {
+    .buttonCreateChat {
+        left: auto;
+        right: 10px;
+    }
 }
 
