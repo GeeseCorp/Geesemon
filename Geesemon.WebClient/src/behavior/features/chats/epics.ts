@@ -58,6 +58,8 @@ export const createGroupChatAsyncEpic: Epic<ReturnType<typeof chatActions.create
                     appActions.setLeftSidebarState(LeftSidebarState.Chats),
                 ]),
                 catchError(error => of(notificationsActions.addError(error.message))),
+                startWith(chatActions.setCreateGroupLoading(true)),
+                endWith(chatActions.setCreateGroupLoading(false)),
             )
         )
     );

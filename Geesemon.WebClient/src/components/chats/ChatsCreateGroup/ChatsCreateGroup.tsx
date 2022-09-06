@@ -4,15 +4,15 @@ import s from './ChatsCreateGroup.module.css';
 import camera from '../../../assets/svg/camera.svg';
 import next from '../../../assets/svg/next.svg';
 import {chatActions} from "../../../behavior/features/chats";
-import {useAppDispatch} from "../../../behavior/store";
+import {useAppDispatch, useAppSelector} from "../../../behavior/store";
 import {StrongButton} from "../../common/StrongButton/StrongButton";
-import {AnimatePresence} from "framer-motion";
 import {appActions, LeftSidebarState} from "../../../behavior/app/slice";
 import {HeaderButton} from "../../common/HeaderButton/HeaderButton";
 import back from "../../../assets/svg/back.svg";
 
 type Props = {};
 export const ChatsCreateGroup: FC<Props> = () => {
+    const createGroupLoading = useAppSelector(s => s.chats.createGroupLoading);
     const inputFileRef = useRef<HTMLInputElement | null>(null);
     const [groupName, setGroupName] = useState('')
     const [image, setImage] = useState<File | null>(null)
@@ -37,14 +37,12 @@ export const ChatsCreateGroup: FC<Props> = () => {
             {state === 'Members'
                 ? <>
                     <div className={['header', s.header].join(' ')}>
-                        <AnimatePresence>
-                            <HeaderButton
-                                key={'back'}
-                                onClick={() => dispatch(appActions.setLeftSidebarState(LeftSidebarState.Chats))}
-                            >
-                                <img src={back} width={25}/>
-                            </HeaderButton>
-                        </AnimatePresence>
+                        <HeaderButton
+                            key={'back'}
+                            onClick={() => dispatch(appActions.setLeftSidebarState(LeftSidebarState.Chats))}
+                        >
+                            <img src={back} width={25}/>
+                        </HeaderButton>
                         <div className={'headerTitle'}>Add members</div>
                     </div>
                     <div className={s.nextButton}>
@@ -55,14 +53,12 @@ export const ChatsCreateGroup: FC<Props> = () => {
                 </>
                 : <>
                     <div className={['header', s.header].join(' ')}>
-                        <AnimatePresence>
-                            <HeaderButton
-                                key={'back'}
-                                onClick={() => setState('Members')}
-                            >
-                                <img src={back} width={25}/>
-                            </HeaderButton>
-                        </AnimatePresence>
+                        <HeaderButton
+                            key={'back'}
+                            onClick={() => setState('Members')}
+                        >
+                            <img src={back} width={25}/>
+                        </HeaderButton>
                         <div className={'headerTitle'}>New Group</div>
                     </div>
                     <div className={s.wrapperFormItems}>
@@ -88,7 +84,7 @@ export const ChatsCreateGroup: FC<Props> = () => {
                         />
                     </div>
                     <div className={s.nextButton}>
-                        <StrongButton onClick={createGroupHandler}>
+                        <StrongButton onClick={createGroupHandler} loading={createGroupLoading}>
                             <img src={next} width={25}/>
                         </StrongButton>
                     </div>
