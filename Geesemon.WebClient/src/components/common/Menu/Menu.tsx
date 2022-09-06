@@ -41,10 +41,7 @@ export const Menu: FC<Props> = ({items, x, y, setOpen}) => {
                 exit={{opacity: 0, scale: 0.5}}
                 transition={{duration: .25}}
                 className={s.menuItems}
-                ref={menu => {
-                    if (menuRef)
-                        menuRef.current = menu
-                }}
+                ref={menuRef}
                 style={{
                     left: x,
                     top: y,
@@ -58,7 +55,11 @@ export const Menu: FC<Props> = ({items, x, y, setOpen}) => {
                     if (item.link) {
                         return (
                             <Link to={item.link}>
-                                <div key={i} className={[s.menuItem, item.type === 'danger' && 'danger'].join(' ')}>
+                                <div
+                                    key={i}
+                                    onClick={() => setOpen(false)}
+                                    className={[s.menuItem, item.type === 'danger' && 'danger'].join(' ')}
+                                >
                                     <div className={s.icon}>{item.icon}</div>
                                     <div className={s.content}>{item.content}</div>
                                 </div>
@@ -66,8 +67,11 @@ export const Menu: FC<Props> = ({items, x, y, setOpen}) => {
                         )
                     }
                     return (
-                        <div key={i} onClick={onClick}
-                             className={[s.menuItem, item.type === 'danger' && 'danger'].join(' ')}>
+                        <div
+                            key={i}
+                            onClick={onClick}
+                            className={[s.menuItem, item.type === 'danger' && 'danger'].join(' ')}
+                        >
                             <div className={s.icon}>{item.icon}</div>
                             <div className={s.content}>{item.content}</div>
                         </div>

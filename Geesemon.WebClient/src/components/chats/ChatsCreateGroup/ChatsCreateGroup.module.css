@@ -1,3 +1,14 @@
+.wrapper{
+    position: relative;
+    height: 100%;
+}
+
+.header {
+    display: flex;
+    gap: 25px;
+    align-items: center;
+}
+
 .wrapperFormItems{
     display: flex;
     flex-direction: column;
@@ -23,15 +34,8 @@
     display: none;
 }
 
-.buttons{
-    margin-top: 20px;
-    display: flex;
-    justify-content: end;
+.nextButton{
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
 }
-
-.innerButtons{
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-

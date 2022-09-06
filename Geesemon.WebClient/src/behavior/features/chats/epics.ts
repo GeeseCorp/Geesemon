@@ -17,14 +17,17 @@ import {
     ChatCreateGroupData,
     ChatCreateGroupVars,
     MESSAGE_DELETE_MUTATION,
-    MESSAGE_SEND_MUTATION, MESSAGE_UPDATE_MUTATION,
+    MESSAGE_SEND_MUTATION,
+    MESSAGE_UPDATE_MUTATION,
     MessageDeleteData,
     MessageDeleteVars,
     MessageSendData,
-    MessageSendVars, MessageUpdateData, MessageUpdateVars
+    MessageSendVars,
+    MessageUpdateData,
+    MessageUpdateVars
 } from "./mutations";
 import {Chat} from "./types";
-import {navigateActions} from "../navigate/slice";
+import {appActions, LeftSidebarState} from "../../app/slice";
 
 export const getAsyncEpic: Epic<ReturnType<typeof chatActions.getAsync>, any, RootState> = (action$, state$) =>
     action$.pipe(
@@ -52,7 +55,7 @@ export const createGroupChatAsyncEpic: Epic<ReturnType<typeof chatActions.create
             })).pipe(
                 mergeMap(response => [
                     chatActions.addChats([response.data?.chat.createGroup as Chat]),
-                    navigateActions.navigate(-2),
+                    appActions.setLeftSidebarState(LeftSidebarState.Chats),
                 ]),
                 catchError(error => of(notificationsActions.addError(error.message))),
             )

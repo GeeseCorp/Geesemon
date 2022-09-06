@@ -21,6 +21,7 @@ export type Chat = {
     name?: string | null
     type: ChatKind
     imageUrl?: string | null
+    imageColor: string
     creatorId: string,
     messages: Message[]
     users: User[]

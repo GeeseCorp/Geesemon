@@ -1,13 +1,20 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit'
 
+export enum LeftSidebarState{
+    Chats,
+    CreateGroup,
+}
+
 export type InitialState = {
     initialised: boolean
     isRightSidebarVisible: boolean
+    leftSidebarState: LeftSidebarState
 }
 
 const initialState: InitialState = {
     initialised: false,
     isRightSidebarVisible: false,
+    leftSidebarState: LeftSidebarState.Chats,
 }
 
 export const appSlice = createSlice({
@@ -19,6 +26,9 @@ export const appSlice = createSlice({
         },
         setIsRightSidebarVisible: (state, action: PayloadAction<boolean>) => {
             state.isRightSidebarVisible = action.payload
+        },
+        setLeftSidebarState: (state, action: PayloadAction<LeftSidebarState>) => {
+            state.leftSidebarState = action.payload
         },
     },
 })

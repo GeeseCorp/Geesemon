@@ -76,3 +76,8 @@ body {
 .danger:hover {
     background-color: #322525;
 }
+
+.headerTitle {
+    font-size: 20px;
+    font-weight: 600;
+}

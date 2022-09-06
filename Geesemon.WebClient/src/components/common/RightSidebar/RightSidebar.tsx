@@ -30,15 +30,13 @@ export const RightSidebar: FC<Props> = ({}) => {
                     animate={{width: '400px'}}
                 >
                     <div className={['header', s.header].join(' ')}>
-                        <div className={s.closeAndHeaderName}>
-                            <HeaderButton
-                                key={'RightSidebar/Close'}
-                                onClick={() => dispatch(appActions.setIsRightSidebarVisible(false))}
-                            >
-                                <img src={crossFilled} width={15}/>
-                            </HeaderButton>
-                            <div className={s.headerName}>Profile</div>
-                        </div>
+                        <HeaderButton
+                            key={'RightSidebar/Close'}
+                            onClick={() => dispatch(appActions.setIsRightSidebarVisible(false))}
+                        >
+                            <img src={crossFilled} width={15}/>
+                        </HeaderButton>
+                        <div className={'headerTitle'}>Profile</div>
                     </div>
                     <div className={s.chatInfo}>
                         <div className={s.imageAndName}>
@@ -50,7 +48,7 @@ export const RightSidebar: FC<Props> = ({}) => {
                                 : <>
                                     <AvatarWithoutImage
                                         name={selectedChat?.name || ''}
-                                        backgroundColor={selectedChat?.imageUrl}
+                                        backgroundColor={selectedChat?.imageColor}
                                         width={100}
                                         height={100}
                                     />

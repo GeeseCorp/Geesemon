@@ -40,7 +40,7 @@ export const ChatHeader: FC<Props> = ({}) => {
                         />
                         : <AvatarWithoutImage
                             name={selectedChat?.name || ''}
-                            backgroundColor={selectedChat?.imageUrl}
+                            backgroundColor={selectedChat?.imageColor}
                             width={40}
                             height={40}
                         />
