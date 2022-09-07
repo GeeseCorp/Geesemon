@@ -3,7 +3,7 @@ import {Link, useParams} from "react-router-dom";
 import s from './Chats.module.css';
 import {AvatarWithoutImage} from "../../common/AvatarWithoutImage/AvatarWithoutImage";
 import {getTimeWithoutSeconds} from "../../../utils/dateUtils";
-import React, {FC, useEffect, useState} from "react";
+import React, {FC, useEffect, useRef, useState} from "react";
 import {chatActions} from "../../../behavior/features/chats";
 import {ContextMenu} from "../../common/ContextMenu/ContextMenu";
 import {DeleteOutlined} from "@ant-design/icons";
@@ -32,11 +32,24 @@ export const Chats: FC<Props> = ({}) => {
     const chats = useAppSelector(s => s.chats.chats);
     const [searchValue, setSearchValue] = useState('');
     const dispatch = useAppDispatch();
+    const chatsRef = useRef<HTMLDivElement>(null)
+    const [offsetLeft, setOffsetLeft] = useState(0);
 
     useEffect(() => {
         if (!chats.length)
             dispatch(chatActions.getAsync());
     }, [])
+
+    useEffect(() => {
+        function handleResize() {
+            setOffsetLeft(chatsRef.current?.getBoundingClientRect().left || 0)
+        }
+
+        window.addEventListener('resize', handleResize)
+        return () => {
+            window.removeEventListener('resize', handleResize)
+        }
+    })
 
     const menuItems: MenuItem[] = [
         {
@@ -84,7 +97,7 @@ export const Chats: FC<Props> = ({}) => {
             </div>
             {isEnabledSearchMode
                 ? <div>search</div>
-                : <div className={s.chats}>
+                : <div className={s.chats} ref={chatsRef}>
                     {chats.slice(0).reverse().map(chat => {
                         const lastMessage = chat.messages?.length ? chat.messages?.reduce((a, b) => a.createdAt > b.createdAt ? a : b, chat.messages[0]) : null;
                         return (
@@ -128,12 +141,14 @@ export const Chats: FC<Props> = ({}) => {
                     <div
                         className={s.buttonCreateChat}
                         onClick={() => dispatch(appActions.setLeftSidebarState(LeftSidebarState.CreateGroup))}
+                        style={{left: `${offsetLeft + 325}px`}}
                     >
                         <StrongButton>
                             <img src={pencilFilled} width={20}/>
                         </StrongButton>
                     </div>
-                </div>}
+                </div>
+            }
         </div>
     );
 }
