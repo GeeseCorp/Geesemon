@@ -1,4 +1,4 @@
-* {
+*:not(path, svg) {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -80,4 +80,8 @@ body {
 .headerTitle {
     font-size: 20px;
     font-weight: 600;
+}
+
+.ant-message .ant-message-custom-content > span:last-child{
+    color: black !important;
 }

@@ -118,14 +118,16 @@ export const Messages: FC = () => {
                                     //     }
                                     // }}
                                 >
-                                    <div className={s.messageText}>{message.text}</div>
-                                    <div className={s.messageInfo}>
+                                    <span className={s.messageText}>{message.text}</span>
+                                    <span className={s.messageInfo}>
                                         {message.createdAt !== message.updatedAt &&
-                                            <div className={['small', s.small].join(' ')}>Edited</div>}
-                                        <div
-                                            className={['small', s.small].join(' ')}>{getTimeWithoutSeconds(new Date(message.createdAt))}</div>
+                                            <span className={['small', s.small].join(' ')}>Edited</span>
+                                        }
+                                        <span className={['small', s.small].join(' ')}>
+                                            {getTimeWithoutSeconds(new Date(message.createdAt))}
+                                        </span>
                                         {isMessageMy && <Checks double={!!message.readMessages?.length}/>}
-                                    </div>
+                                    </span>
                                 </div>
                             </ContextMenu>
                         )

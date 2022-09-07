@@ -10,6 +10,7 @@ export const Notifications = () => {
 
     useEffect(() => {
         if (notifications.length) {
+            console.log(notifications)
             notifications.map(n => {
                 switch (n.type) {
                     case 'Success':
