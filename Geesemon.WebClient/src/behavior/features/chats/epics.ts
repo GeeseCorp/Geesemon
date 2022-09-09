@@ -27,7 +27,7 @@ import {
     MessageUpdateVars
 } from "./mutations";
 import {Chat} from "./types";
-import {appActions, LeftSidebarState} from "../../app/slice";
+import { appActions, LeftSidebarState } from "../app/slice";
 
 export const getAsyncEpic: Epic<ReturnType<typeof chatActions.getAsync>, any, RootState> = (action$, state$) =>
     action$.pipe(

@@ -83,6 +83,10 @@ const slice = createSlice({
             }
         },
         messageDeleteAsync: (state, action: PayloadAction<DeleteMessageInputType>) => state,
+
+        clear: (state, action: PayloadAction) => {
+            state = initialState;
+        },
     },
 });
 

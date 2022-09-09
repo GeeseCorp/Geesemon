@@ -1,28 +1,30 @@
-import {useAppDispatch, useAppSelector} from "../../../behavior/store";
-import {Link, useParams} from "react-router-dom";
-import s from './Chats.module.css';
-import {AvatarWithoutImage} from "../../common/AvatarWithoutImage/AvatarWithoutImage";
-import {getTimeWithoutSeconds} from "../../../utils/dateUtils";
-import React, {FC, useEffect, useRef, useState} from "react";
-import {chatActions} from "../../../behavior/features/chats";
-import {ContextMenu} from "../../common/ContextMenu/ContextMenu";
-import {DeleteOutlined} from "@ant-design/icons";
-import {StrongButton} from "../../common/StrongButton/StrongButton";
-import {Avatar} from "../../common/Avatar/Avatar";
-import {appActions, LeftSidebarState} from "../../../behavior/app/slice";
-import pencilFilled from '../../../assets/svg/pencilFilled.svg'
-import {AnimatePresence} from "framer-motion";
-import {HeaderButton} from "../../common/HeaderButton/HeaderButton";
-import menu from "../../../assets/svg/menu.svg";
-import {Menu, MenuItem} from "../../common/Menu/Menu";
+import { AnimatePresence } from "framer-motion";
+import { FC, useEffect, useRef, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import back from "../../../assets/svg/back.svg";
-import {Search} from "../../common/formControls/Search/Search";
+import logout from "../../../assets/svg/logout.svg";
+import menu from "../../../assets/svg/menu.svg";
+import pencilFilled from '../../../assets/svg/pencilFilled.svg';
 import saved from "../../../assets/svg/saved.svg";
 import settings from "../../../assets/svg/settings.svg";
+import deleteSvg from "../../../assets/svg/delete.svg";
+import { appActions, LeftSidebarState } from "../../../behavior/features/app/slice";
+import { authActions } from "../../../behavior/features/auth/slice";
+import { chatActions } from "../../../behavior/features/chats";
+import { useAppDispatch, useAppSelector } from "../../../behavior/store";
+import { getTimeWithoutSeconds } from "../../../utils/dateUtils";
+import { Avatar } from "../../common/Avatar/Avatar";
+import { AvatarWithoutImage } from "../../common/AvatarWithoutImage/AvatarWithoutImage";
+import { ContextMenu } from "../../common/ContextMenu/ContextMenu";
+import { Search } from "../../common/formControls/Search/Search";
+import { HeaderButton } from "../../common/HeaderButton/HeaderButton";
+import { Menu, MenuItem } from "../../common/Menu/Menu";
+import { SmallPrimaryButton } from "../../common/SmallPrimaryButton/SmallPrimaryButton";
+import s from './Chats.module.css';
 
 type Props = {}
 
-export const Chats: FC<Props> = ({}) => {
+export const Chats: FC<Props> = ({ }) => {
     const [isEnabledSearchMode, setIsEnabledSearchMode] = useState(false);
     const authedUser = useAppSelector(s => s.auth.authedUser)
     const [isMenuVisible, setIsMenuVisible] = useState(false);
@@ -53,12 +55,22 @@ export const Chats: FC<Props> = ({}) => {
 
     const menuItems: MenuItem[] = [
         {
-            icon: <img src={saved} className={s.menuItem}/>,
+            icon: <img src={saved} className={s.menuItem} />,
             content: 'Saved',
             type: 'default',
             link: `/${authedUser?.id}`
         },
-        {icon: <img src={settings} className={s.menuItem}/>, content: 'Settings', type: 'default'},
+        {
+            icon: <img src={settings} className={s.menuItem} />,
+            content: 'Settings',
+            type: 'default'
+        },
+        {
+            icon: <img src={logout} className={s.menuItem} />,
+            content: 'Logout',
+            onClick: () => dispatch(authActions.logout()),
+            type: 'default'
+        },
     ];
 
     return (
@@ -71,11 +83,11 @@ export const Chats: FC<Props> = ({}) => {
                                 key={'back'}
                                 onClick={() => setIsEnabledSearchMode(false)}
                             >
-                                <img src={back} width={25}/>
+                                <img src={back} width={25} />
                             </HeaderButton>
                             : <>
                                 <HeaderButton key={'menu'} onClick={() => setIsMenuVisible(true)}>
-                                    <img src={menu} width={20}/>
+                                    <img src={menu} width={20} />
                                 </HeaderButton>
                                 {isMenuVisible &&
                                     <Menu
@@ -106,7 +118,7 @@ export const Chats: FC<Props> = ({}) => {
                                 items={[
                                     {
                                         content: 'Delete chat',
-                                        icon: <DeleteOutlined/>,
+                                        icon: <img src={deleteSvg} width={20}/>,
                                         // onClick: () => dispatch(),
                                         type: 'danger',
                                     },
@@ -119,10 +131,12 @@ export const Chats: FC<Props> = ({}) => {
                                     >
                                         <div className={s.chatInner}>
                                             {chat.imageUrl
-                                                ? <Avatar imageUrl={chat.imageUrl}/>
+                                                ? <Avatar imageUrl={chat.imageUrl} width={54} height={54} />
                                                 : <AvatarWithoutImage
                                                     name={chat.name || ''}
                                                     backgroundColor={chat.imageColor}
+                                                    width={54}
+                                                    height={54}
                                                 />
                                             }
                                             <div className={s.chatInfo}>
@@ -141,11 +155,11 @@ export const Chats: FC<Props> = ({}) => {
                     <div
                         className={s.buttonCreateChat}
                         onClick={() => dispatch(appActions.setLeftSidebarState(LeftSidebarState.CreateGroup))}
-                        style={{left: `${offsetLeft + 325}px`}}
+                        style={{ left: `${offsetLeft + 325}px` }}
                     >
-                        <StrongButton>
-                            <img src={pencilFilled} width={20}/>
-                        </StrongButton>
+                        <SmallPrimaryButton>
+                            <img src={pencilFilled} width={20} />
+                        </SmallPrimaryButton>
                     </div>
                 </div>
             }

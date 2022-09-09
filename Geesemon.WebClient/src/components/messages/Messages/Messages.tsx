@@ -8,6 +8,8 @@ import {DeleteOutlined} from "@ant-design/icons";
 import {ContextMenu} from "../../common/ContextMenu/ContextMenu";
 import {SendMessageForm} from "../SendMessageForm/SendMessageForm";
 import {chatActions} from "../../../behavior/features/chats";
+import deleteSvg from "../../../assets/svg/delete.svg";
+import pencilOutlinedSvg from "../../../assets/svg/pencilOutlined.svg";
 
 export const Messages: FC = () => {
     const authedUser = useAppSelector(s => s.auth.authedUser);
@@ -97,13 +99,13 @@ export const Messages: FC = () => {
                                 items={[
                                     {
                                         content: 'Update',
-                                        icon: <DeleteOutlined/>,
+                                        icon: <img src={pencilOutlinedSvg} width={17}/>,
                                         onClick: () => setInUpdateMessage(message.id),
                                         type: 'default',
                                     },
                                     {
                                         content: 'Delete',
-                                        icon: <DeleteOutlined/>,
+                                        icon: <img src={deleteSvg} width={20}/>,
                                         onClick: () => dispatch(chatActions.messageDeleteAsync({messageId: message.id})),
                                         type: 'danger',
                                     },

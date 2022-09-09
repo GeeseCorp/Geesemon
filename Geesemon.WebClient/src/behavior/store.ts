@@ -7,7 +7,7 @@ import {usersReducer} from "./features/users/slice";
 import {combineEpics, createEpicMiddleware} from "redux-observable";
 import {chatEpics} from "./features/chats/epics";
 import {navigateReducer} from "./features/navigate/slice";
-import {appReducer} from "./app/slice";
+import {appReducer} from "./features/app/slice";
 import {authEpics} from "./features/auth/epics";
 
 const epicMiddleware = createEpicMiddleware();
