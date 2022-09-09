@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { FormEvent, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { authActions } from '../../../behavior/features/auth/slice';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
@@ -12,7 +12,8 @@ export const Login = () => {
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
 
-    const loginHandler = () => {
+    const loginHandler = (e: FormEvent) => {
+        e.preventDefault()
         dispatch(authActions.loginAsync({
             login,
             password,
@@ -22,14 +23,14 @@ export const Login = () => {
     return (
         <div className={s.wrapper}>
             <h1 className={s.title}>Login in Geesmon</h1>
-            <div className={s.form}>
+            <form className={s.form} onSubmit={loginHandler}>
                 <Input value={login} setValue={setLogin} placeholder='Login' />
                 <Input value={password} setValue={setPassword} placeholder='Password' />
-                <BigStrongButton onClick={loginHandler} loading={loginLoading}>
+                <BigStrongButton loading={loginLoading} type='submit'>
                     Login
                 </BigStrongButton>
                 <Link to='/auth/register'>Register</Link>
-            </div>
+            </form>
         </div>
     );
 };

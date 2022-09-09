@@ -45,7 +45,7 @@ export const ChatHeader: FC<Props> = ({}) => {
                             height={42}
                         />
                     }
-                    <div className={'bold'}>{selectedChat?.name}</div>
+                    <div className={['bold', s.name].join(' ')}>{selectedChat?.name}</div>
                 </div>
             </div>
             <div className={s.extraButtons}>
