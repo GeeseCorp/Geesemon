@@ -8,4 +8,4 @@
 **/bin/
 **/.vscode/
 
-.github\workflows\Geesemon.yml
+/.github/workflows/Geesemon.yml
