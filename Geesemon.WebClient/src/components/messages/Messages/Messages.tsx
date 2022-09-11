@@ -8,6 +8,8 @@ import {DeleteOutlined} from "@ant-design/icons";
 import {ContextMenu} from "../../common/ContextMenu/ContextMenu";
 import {SendMessageForm} from "../SendMessageForm/SendMessageForm";
 import {chatActions} from "../../../behavior/features/chats";
+import deleteSvg from "../../../assets/svg/delete.svg";
+import pencilOutlinedSvg from "../../../assets/svg/pencilOutlined.svg";
 
 export const Messages: FC = () => {
     const authedUser = useAppSelector(s => s.auth.authedUser);
@@ -97,13 +99,13 @@ export const Messages: FC = () => {
                                 items={[
                                     {
                                         content: 'Update',
-                                        icon: <DeleteOutlined/>,
+                                        icon: <img src={pencilOutlinedSvg} width={17}/>,
                                         onClick: () => setInUpdateMessage(message.id),
                                         type: 'default',
                                     },
                                     {
                                         content: 'Delete',
-                                        icon: <DeleteOutlined/>,
+                                        icon: <img src={deleteSvg} width={20}/>,
                                         onClick: () => dispatch(chatActions.messageDeleteAsync({messageId: message.id})),
                                         type: 'danger',
                                     },
@@ -118,14 +120,16 @@ export const Messages: FC = () => {
                                     //     }
                                     // }}
                                 >
-                                    <div className={s.messageText}>{message.text}</div>
-                                    <div className={s.messageInfo}>
+                                    <span className={s.messageText}>{message.text}</span>
+                                    <span className={s.messageInfo}>
                                         {message.createdAt !== message.updatedAt &&
-                                            <div className={['small', s.small].join(' ')}>Edited</div>}
-                                        <div
-                                            className={['small', s.small].join(' ')}>{getTimeWithoutSeconds(new Date(message.createdAt))}</div>
+                                            <span className={['small', s.small].join(' ')}>Edited</span>
+                                        }
+                                        <span className={['small', s.small].join(' ')}>
+                                            {getTimeWithoutSeconds(new Date(message.createdAt))}
+                                        </span>
                                         {isMessageMy && <Checks double={!!message.readMessages?.length}/>}
-                                    </div>
+                                    </span>
                                 </div>
                             </ContextMenu>
                         )

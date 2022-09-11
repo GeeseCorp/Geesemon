@@ -4,7 +4,6 @@ import {catchError, endWith, from, mergeMap, of, startWith} from "rxjs";
 import {client} from "../../client";
 import {notificationsActions} from "../notifications/slice";
 import {authActions} from "./slice";
-import {appActions} from "../../app/slice";
 import {AUTH_ME_QUERY, AuthMeData, AuthMeVars} from "./queries";
 import {
     AUTH_LOGIN_MUTATION,
@@ -14,6 +13,7 @@ import {
     AuthRegisterData,
     AuthRegisterVars
 } from "./mutations";
+import { appActions } from "../app/slice";
 
 export const meAsyncEpic: Epic<ReturnType<typeof authActions.meAsync>, any, RootState> = (action$, state$) =>
     action$.pipe(
@@ -24,15 +24,15 @@ export const meAsyncEpic: Epic<ReturnType<typeof authActions.meAsync>, any, Root
                 variables: {}
             })).pipe(
                 mergeMap(response => [
-                    authActions.authorize(response.data.auth.me),
+                    authActions.login(response.data.auth.me),
                     appActions.setInitialised(true),
                 ]),
                 catchError(error => of(
                     notificationsActions.addError(error.message),
                     appActions.setInitialised(true),
                 )),
-                startWith(authActions.setIsLoading(true)),
-                endWith(authActions.setIsLoading(false)),
+                startWith(authActions.setMeLoading(true)),
+                endWith(authActions.setMeLoading(false)),
             )
         )
     );
@@ -46,11 +46,11 @@ export const loginAsyncEpic: Epic<ReturnType<typeof authActions.loginAsync>, any
                 variables: {input: action.payload}
             })).pipe(
                 mergeMap(response => [
-                    authActions.authorize(response.data.auth.login),
+                    authActions.login(response.data.auth.login),
                 ]),
                 catchError(error => of(notificationsActions.addError(error.message))),
-                startWith(authActions.setIsLoading(true)),
-                endWith(authActions.setIsLoading(false)),
+                startWith(authActions.setLoginLoading(true)),
+                endWith(authActions.setLoginLoading(false)),
             )
         )
     );
@@ -64,11 +64,11 @@ export const registerAsyncEpic: Epic<ReturnType<typeof authActions.registerAsync
                 variables: {input: action.payload}
             })).pipe(
                 mergeMap(response => [
-                    authActions.authorize(response.data.auth.register),
+                    authActions.login(response.data.auth.register),
                 ]),
                 catchError(error => of(notificationsActions.addError(error.message))),
-                startWith(authActions.setIsLoading(true)),
-                endWith(authActions.setIsLoading(false)),
+                startWith(authActions.setRegisterLoading(true)),
+                endWith(authActions.setRegisterLoading(false)),
             )
         )
     );

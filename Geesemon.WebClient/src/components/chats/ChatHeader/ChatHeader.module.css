@@ -7,9 +7,13 @@
 }
 
 .backAndChatInfo{
+    flex: 1;
     display: flex;
     gap: 10px;
     align-items: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .chatInfo {

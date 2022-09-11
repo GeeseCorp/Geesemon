@@ -1,5 +1,5 @@
 import React, {FC, MouseEventHandler} from 'react';
-import s from './StrongButton.module.css';
+import s from './SmallPrimaryButton.module.css';
 import {SmallLoading} from "../SmallLoading/SmallLoading";
 
 type Props = {
@@ -8,7 +8,7 @@ type Props = {
     loading?: boolean
 };
 
-export const StrongButton: FC<Props> = ({children, onClick, loading = false}) => {
+export const SmallPrimaryButton: FC<Props> = ({children, onClick, loading = false}) => {
     return (
         <div className={[s.strongButton, loading ? s.disabled : ''].join(' ')} onClick={onClick}>
             {loading

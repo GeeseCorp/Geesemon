@@ -1,11 +1,13 @@
 .checks{
+    display: inline-block;
     position: relative;
     width: 15px;
     height: 15px;
+    vertical-align: bottom;
 }
 
 .check{
-    width: 10px;
+    width: 11px;
     height: 10px;
     position: absolute;
     top: 50%;

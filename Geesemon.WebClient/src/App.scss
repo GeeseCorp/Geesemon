@@ -1,11 +1,21 @@
-* {
+$surface-color: #212121 !default;
+$primary-color: #8774E1 !default;
+
+*:not(path, svg) {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     color: white;
-    font-size: 16px;
     scrollbar-color: #444444 #212121;
     scrollbar-width: thin;
+}
+
+*:not(h1,h2,h3,h4,h5,h6){
+    font-size: 16px;
+}
+
+svg{
+    fill: white;
 }
 
 *::-webkit-scrollbar {
@@ -24,12 +34,14 @@ body {
 
 .wrapperApp {
     background-color: #181818;
+    position: relative;
 }
 
 .app {
     height: 100vh;
     max-width: 1682px;
     margin: 0 auto;
+    position: relative;
 }
 
 .authedRoutes {
@@ -69,7 +81,8 @@ body {
     transform: translate(-50%, -50%);
 }
 
-.danger, .danger * {
+.danger,
+.danger * {
     color: red;
 }
 
@@ -80,4 +93,8 @@ body {
 .headerTitle {
     font-size: 20px;
     font-weight: 600;
+}
+
+.ant-message .ant-message-custom-content>span:last-child {
+    color: black !important;
 }

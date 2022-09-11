@@ -8,7 +8,7 @@ import pencilOutlined from "../../../assets/svg/pencilOutlined.svg";
 import microphone from "../../../assets/svg/microphone.svg";
 import crossFilled from "../../../assets/svg/crossFilled.svg";
 import {AnimatePresence, motion} from "framer-motion"
-import {StrongButton} from "../../common/StrongButton/StrongButton";
+import {SmallPrimaryButton} from "../../common/SmallPrimaryButton/SmallPrimaryButton";
 import {useAppDispatch, useAppSelector} from "../../../behavior/store";
 import {chatActions} from "../../../behavior/features/chats";
 import {useParams} from "react-router-dom";
@@ -152,7 +152,7 @@ export const SendMessageForm: FC<Props> = ({scrollToBottom, inputTextRef}) => {
                     </div>
                 </div>
                 <div className={s.buttonSend}>
-                    <StrongButton onClick={strongButtonClickHandler}>
+                    <SmallPrimaryButton onClick={strongButtonClickHandler}>
                         <AnimatePresence>
                             {inUpdateMessageId
                                 ? <motion.img
@@ -178,7 +178,7 @@ export const SendMessageForm: FC<Props> = ({scrollToBottom, inputTextRef}) => {
                                     />
                             }
                         </AnimatePresence>
-                    </StrongButton>
+                    </SmallPrimaryButton>
                 </div>
             </div>
         </div>

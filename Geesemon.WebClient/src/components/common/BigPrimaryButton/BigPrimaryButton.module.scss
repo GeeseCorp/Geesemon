@@ -1,0 +1,29 @@
+@import '../../../App.scss';
+
+.strongButton {
+    outline: none;
+    border: none;
+    width: 100%;
+    background-color: $primary-color;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    text-transform: uppercase;
+    height: 54px;
+    font-weight: 600;
+}
+
+.disabled{
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.loading{
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+}

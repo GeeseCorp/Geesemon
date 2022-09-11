@@ -5,9 +5,9 @@ import {useAppDispatch, useAppSelector} from "../../../behavior/store";
 import {HeaderButton} from "../HeaderButton/HeaderButton";
 import crossFilled from "../../../assets/svg/crossFilled.svg";
 import atSign from "../../../assets/svg/atSign.svg";
-import {appActions} from "../../../behavior/app/slice";
 import {useParams} from "react-router-dom";
 import {AvatarWithoutImage} from "../AvatarWithoutImage/AvatarWithoutImage";
+import { appActions } from '../../../behavior/features/app/slice';
 
 type Props = {};
 export const RightSidebar: FC<Props> = ({}) => {

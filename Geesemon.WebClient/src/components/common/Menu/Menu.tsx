@@ -54,7 +54,10 @@ export const Menu: FC<Props> = ({items, x, y, setOpen}) => {
                     }
                     if (item.link) {
                         return (
-                            <Link to={item.link}>
+                            <Link
+                                key={i}
+                                to={item.link}
+                            >
                                 <div
                                     key={i}
                                     onClick={() => setOpen(false)}

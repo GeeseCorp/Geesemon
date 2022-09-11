@@ -5,10 +5,10 @@ import camera from '../../../assets/svg/camera.svg';
 import next from '../../../assets/svg/next.svg';
 import {chatActions} from "../../../behavior/features/chats";
 import {useAppDispatch, useAppSelector} from "../../../behavior/store";
-import {StrongButton} from "../../common/StrongButton/StrongButton";
-import {appActions, LeftSidebarState} from "../../../behavior/app/slice";
+import {SmallPrimaryButton} from "../../common/SmallPrimaryButton/SmallPrimaryButton";
 import {HeaderButton} from "../../common/HeaderButton/HeaderButton";
 import back from "../../../assets/svg/back.svg";
+import { appActions, LeftSidebarState } from '../../../behavior/features/app/slice';
 
 type Props = {};
 export const ChatsCreateGroup: FC<Props> = () => {
@@ -46,9 +46,9 @@ export const ChatsCreateGroup: FC<Props> = () => {
                         <div className={'headerTitle'}>Add members</div>
                     </div>
                     <div className={s.nextButton}>
-                        <StrongButton onClick={() => setState('ImageAndName')}>
+                        <SmallPrimaryButton onClick={() => setState('ImageAndName')}>
                             <img src={next} width={25}/>
-                        </StrongButton>
+                        </SmallPrimaryButton>
                     </div>
                 </>
                 : <>
@@ -85,9 +85,9 @@ export const ChatsCreateGroup: FC<Props> = () => {
                         </div>
                     </div>
                     <div className={s.nextButton}>
-                        <StrongButton onClick={createGroupHandler} loading={createGroupLoading}>
+                        <SmallPrimaryButton onClick={createGroupHandler} loading={createGroupLoading}>
                             <img src={next} width={25}/>
-                        </StrongButton>
+                        </SmallPrimaryButton>
                     </div>
                 </>
             }
