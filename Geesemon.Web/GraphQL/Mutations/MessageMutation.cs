@@ -12,7 +12,7 @@ namespace Geesemon.Web.GraphQL.Mutations
     public class MessageMutation : ObjectGraphType<object>
     {
         public MessageMutation(IMessageActionSubscriptionService subscriptionService,
-            IHttpContextAccessor httpContextAccessor, MessageManager messageManager)
+            IHttpContextAccessor httpContextAccessor, MessageManager messageManager, ChatManager chatManager)
         {
             Field<MessageType>()
                 .Name("Send")
@@ -20,7 +20,11 @@ namespace Geesemon.Web.GraphQL.Mutations
                 .ResolveAsync(async context =>
                     {
                         var receivedMessage = context.GetArgument<SentMessageInput>("Input");
-                        var currentUserId = httpContextAccessor?.HttpContext?.User.Claims.GetUserId();
+                        var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
+
+                        var isUserInChat = await chatManager.IsUserInChat(currentUserId, receivedMessage.ChatId);
+                        if (!isUserInChat)
+                            throw new Exception("User can sent messages only to chats that he participate.");
 
                         Message newMessage = new Message()
                         {

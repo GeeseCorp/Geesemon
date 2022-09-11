@@ -31,6 +31,12 @@ namespace Geesemon.Web.GraphQL.Mutations
                 .ResolveAsync(ResolveCreateGroup)
                 .AuthorizeWith(AuthPolicies.Authenticated);
 
+            Field<ChatType, Chat>()
+                .Name("Delete")
+                .Argument<GuidGraphType>("Input", "Chat id for delete chat.")
+                .ResolveAsync(ResolveDelete)
+                .AuthorizeWith(AuthPolicies.Authenticated);
+
             this.httpContextAccessor = httpContextAccessor;
             this.fileManagerService = fileManagerService;
             this.subscriptionService = subscriptionService;
@@ -76,6 +82,47 @@ namespace Geesemon.Web.GraphQL.Mutations
         }
 
         private async Task<Chat?> ResolveCreateGroup(IResolveFieldContext context)
+        {
+            var chatManager = context.RequestServices.GetRequiredService<ChatManager>();
+            var userChatManager = context.RequestServices.GetRequiredService<UserChatManager>();
+            var userManager = context.RequestServices.GetRequiredService<UserManager>();
+            var chatInput = context.GetArgument<CreateGroupChatInput>("Input");
+            var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
+
+            foreach (var userId in chatInput.UsersId)
+            {
+                var user = await userManager.GetByIdAsync(userId);
+                if (user == null)
+                    throw new Exception($"User with id {userId} not found");
+            }
+            string imageURL = null;
+
+            if (chatInput.Image != null)
+                imageURL = await fileManagerService.UploadFileAsync(FileManagerService.GroupImagesFolder, chatInput.Image);
+
+            var chat = new Chat
+            {
+                Type = ChatKind.Group,
+                CreatorId = currentUserId,
+                Name = chatInput.Name,
+                ImageUrl = imageURL,
+            };
+            chat = await chatManager.CreateAsync(chat);
+
+
+            var userChat = new List<UserChat>(){
+                        new UserChat { UserId = currentUserId, ChatId = chat.Id }
+                    };
+            foreach (var userId in chatInput.UsersId)
+                userChat.Add(new UserChat { UserId = userId, ChatId = chat.Id });
+            await userChatManager.CreateManyAsync(userChat);
+
+            subscriptionService.Notify(chat, ChatActionKind.Create);
+
+            return chat;
+        }
+
+        private async Task<Chat?> ResolveDelete(IResolveFieldContext context)
         {
             var chatManager = context.RequestServices.GetRequiredService<ChatManager>();
             var userChatManager = context.RequestServices.GetRequiredService<UserChatManager>();
