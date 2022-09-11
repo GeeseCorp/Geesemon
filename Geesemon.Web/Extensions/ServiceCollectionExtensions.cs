@@ -41,7 +41,7 @@ namespace Geesemon.Web.Extensions
             return services;
         }
 
-        public static IServiceCollection AddJwtAuthorization(this IServiceCollection services)
+        public static IServiceCollection AddJwtAuthorization(this IServiceCollection services, ConfigurationManager configurationManager)
         {
             services.AddAuthentication(options =>
             {
@@ -57,10 +57,10 @@ namespace Geesemon.Web.Extensions
                     ValidateAudience = true,
                     ValidateIssuer = true,
                     ValidateIssuerSigningKey = true,
-                    ValidAudience = Environment.GetEnvironmentVariable("AuthValidAudience"),
-                    ValidIssuer = Environment.GetEnvironmentVariable("AuthValidIssuer"),
+                    ValidAudience = configurationManager.GetSection("AuthValidAudience").Value,
+                    ValidIssuer = configurationManager.GetSection("AuthValidIssuer").Value,
                     RequireSignedTokens = false,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("AuthIssuerSigningKey"))),
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configurationManager.GetSection("AuthIssuerSigningKey").Value)),
                 };
                 options.RequireHttpsMetadata = false;
                 options.SaveToken = true;

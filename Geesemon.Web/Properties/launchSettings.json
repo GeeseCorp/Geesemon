@@ -14,13 +14,7 @@
       "launchBrowser": true,
       "applicationUrl": "https://localhost:7195;http://localhost:5195",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-
-        "ConnectionString": "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=GeesemonDB_dev;Integrated Security=True;Connect Timeout=60;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False;",
-        "Cloudinary": "cloudinary://341881919798127:xRV9uCcELtMlmttBaIhbAX3vGSs@hwogy3jdt",
-        "AuthValidIssuer": "GessemonCorp",
-        "AuthValidAudience": "Gessemon",
-        "AuthIssuerSigningKey": "rsaojpigareopignapeorgairjgja[rjga]"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
     "IIS Express": {
