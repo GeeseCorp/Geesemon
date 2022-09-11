@@ -16,6 +16,7 @@ type InitialState = {
     messageGetLoading: boolean
     inUpdateMessageId?: string | null
     mode: Mode
+    createGroupLoading: boolean
 }
 
 const initialState: InitialState = {
@@ -23,6 +24,7 @@ const initialState: InitialState = {
     messageGetLoading: false,
     inUpdateMessageId: null,
     mode: 'Text',
+    createGroupLoading: false,
 };
 
 const slice = createSlice({
@@ -63,6 +65,9 @@ const slice = createSlice({
             state.chats = sortChat(newChats)
         },
 
+        setCreateGroupLoading: (state, action: PayloadAction<boolean>) => {
+            state.createGroupLoading = action.payload;
+        },
         createGroupChatAsync: (state, action: PayloadAction<CreateGroupChatInputType>) => state,
 
         messageSendAsync: (state, action: PayloadAction<SentMessageInputType>) => state,

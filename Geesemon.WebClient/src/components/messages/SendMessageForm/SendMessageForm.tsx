@@ -4,9 +4,9 @@ import smile from "../../../assets/svg/smile.svg";
 import send from "../../../assets/svg/send.svg";
 import check from "../../../assets/svg/check.svg";
 import clip from "../../../assets/svg/clip.svg";
-import pencilOutlined from "../../../assets/svg/pencil-outlined.svg";
+import pencilOutlined from "../../../assets/svg/pencilOutlined.svg";
 import microphone from "../../../assets/svg/microphone.svg";
-import crossFilled from "../../../assets/svg/cross-filled.svg";
+import crossFilled from "../../../assets/svg/crossFilled.svg";
 import {AnimatePresence, motion} from "framer-motion"
 import {StrongButton} from "../../common/StrongButton/StrongButton";
 import {useAppDispatch, useAppSelector} from "../../../behavior/store";
@@ -115,69 +115,71 @@ export const SendMessageForm: FC<Props> = ({scrollToBottom, inputTextRef}) => {
 
     return (
         <div className={s.wrapper}>
-            <div className={s.wrapperInputText}>
-                {inUpdateMessage &&
-                    <div className={s.extraBlockWrapper}>
-                        <div className={s.extraBlockInner}>
-                            <div className={s.icon}>
-                                <img src={pencilOutlined} alt="" width={20}/>
+            <div className={s.inner}>
+                <div className={s.wrapperInputText}>
+                    {inUpdateMessage &&
+                        <div className={s.extraBlockWrapper}>
+                            <div className={s.extraBlockInner}>
+                                <div className={s.icon}>
+                                    <img src={pencilOutlined} alt="" width={20}/>
+                                </div>
+                                <div className={s.actionAndText}>
+                                    <div className={s.action}>Updating</div>
+                                    <div className={s.text}>{inUpdateMessage.text}</div>
+                                </div>
                             </div>
-                            <div>
-                                <div className={s.action}>Updating</div>
-                                <div className={s.text}>{inUpdateMessage.text}</div>
+                            <div onClick={closeExtraBlockHandler} className={s.close}>
+                                <img src={crossFilled} alt="" width={15}/>
                             </div>
                         </div>
-                        <div onClick={closeExtraBlockHandler} className={s.close}>
-                            <img src={crossFilled} alt="" width={15}/>
+                    }
+                    <div className={s.innerInputText}>
+                        <div className={s.inputTextButton}>
+                            <img src={smile} width={20}/>
                         </div>
-                    </div>
-                }
-                <div className={s.innerInputText}>
-                    <div className={s.inputTextButton}>
-                        <img src={smile} width={20}/>
-                    </div>
-                    <textarea
-                        value={messageText}
-                        placeholder={'Message'}
-                        ref={inputTextRef}
-                        onInput={onInputText}
-                        className={s.inputText}
-                        onKeyUp={onKeyUpInputText}
-                        onKeyDown={onKeyDownInputText}
-                    />
-                    <div className={s.inputTextButton}>
-                        <img src={clip} width={20}/>
+                        <textarea
+                            value={messageText}
+                            placeholder={'Message'}
+                            ref={inputTextRef}
+                            onInput={onInputText}
+                            className={s.inputText}
+                            onKeyUp={onKeyUpInputText}
+                            onKeyDown={onKeyDownInputText}
+                        />
+                        <div className={s.inputTextButton}>
+                            <img src={clip} width={20}/>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div className={s.buttonSend}>
-                <StrongButton onClick={strongButtonClickHandler}>
-                    <AnimatePresence>
-                        {inUpdateMessageId
-                            ? <motion.img
-                                key={'update'}
-                                initial={{scale: 0, opacity: 0}}
-                                animate={{scale: 1, opacity: 1}}
-                                src={check}
-                                width={25}
-                            />
-                            : messageText
+                <div className={s.buttonSend}>
+                    <StrongButton onClick={strongButtonClickHandler}>
+                        <AnimatePresence>
+                            {inUpdateMessageId
                                 ? <motion.img
-                                    key={'send'}
+                                    key={'update'}
                                     initial={{scale: 0, opacity: 0}}
                                     animate={{scale: 1, opacity: 1}}
-                                    src={send}
-                                />
-                                : <motion.img
-                                    key={'microphone'}
-                                    initial={{scale: 0, opacity: 0}}
-                                    animate={{scale: 1, opacity: 1}}
-                                    src={microphone}
+                                    src={check}
                                     width={25}
                                 />
-                        }
-                    </AnimatePresence>
-                </StrongButton>
+                                : messageText
+                                    ? <motion.img
+                                        key={'send'}
+                                        initial={{scale: 0, opacity: 0}}
+                                        animate={{scale: 1, opacity: 1}}
+                                        src={send}
+                                    />
+                                    : <motion.img
+                                        key={'microphone'}
+                                        initial={{scale: 0, opacity: 0}}
+                                        animate={{scale: 1, opacity: 1}}
+                                        src={microphone}
+                                        width={25}
+                                    />
+                            }
+                        </AnimatePresence>
+                    </StrongButton>
+                </div>
             </div>
         </div>
     );

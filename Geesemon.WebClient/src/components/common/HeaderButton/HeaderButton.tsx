@@ -3,12 +3,14 @@ import s from './HeaderButton.module.css';
 import {AnimationControls, motion, TargetAndTransition, Transition, VariantLabels} from "framer-motion";
 
 type Props = {
+    key: string
     children: React.ReactNode
-    onClick?: MouseEventHandler | undefined;
+    onClick?: MouseEventHandler | undefined
+    borderRadius?: string
 };
-export const HeaderButton: FC<Props> = ({children, onClick}) => {
+export const HeaderButton: FC<Props> = ({children, onClick, key, borderRadius = '50px'}) => {
     const animate: AnimationControls | TargetAndTransition | VariantLabels = {
-        scale: [0.5, 1],
+        scale: [0.8, 1],
         rotate: [180, 360],
     }
 
@@ -19,18 +21,16 @@ export const HeaderButton: FC<Props> = ({children, onClick}) => {
 
     const whileHover: VariantLabels | TargetAndTransition = {
         backgroundColor: 'rgba(128,128,128, 0.3)',
-        opacity: 0.5,
         transition: {duration: 0.5},
     }
     const whileTap: VariantLabels | TargetAndTransition = {scale: 0.9};
-
-    console.log('rerender')
 
     return (
         <motion.div
             onClick={onClick}
             className={s.wrapperButton}
-            key={Date.now()}
+            style={{borderRadius}}
+            key={key}
             animate={animate}
             transition={transition}
             whileHover={whileHover}

@@ -1,0 +1,25 @@
+.wrapper {
+    width: 100%;
+    background-color: #212121;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.backAndChatInfo{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.chatInfo {
+    display: flex;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.extraButtons{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}

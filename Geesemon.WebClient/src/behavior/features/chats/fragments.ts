@@ -26,6 +26,7 @@ export const CHAT_FRAGMENT = gql`
         name
         type
         imageUrl
+        imageColor
         creatorId
         users {
             ...UserFragment

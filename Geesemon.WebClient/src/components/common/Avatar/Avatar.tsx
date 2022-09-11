@@ -1,5 +1,4 @@
-import {FC} from "react";
-
+import {FC, memo} from "react";
 import style from "./Avatar.module.scss";
 
 type Props = {
@@ -9,12 +8,12 @@ type Props = {
     imageUrl: string,
 };
 
-export const Avatar: FC<Props> = ({
-                                      width = 50,
-                                      height = 50,
-                                      borderRadius = 100,
-                                      imageUrl,
-                                  }) => {
+export const Avatar: FC<Props> = memo(({
+                                           width = 50,
+                                           height = 50,
+                                           borderRadius = 100,
+                                           imageUrl,
+                                       }) => {
     const avatarStyle = {
         width,
         height,
@@ -26,4 +25,4 @@ export const Avatar: FC<Props> = ({
             <img src={imageUrl} width={width} height={height} style={{borderRadius}}/>
         </div>
     );
-}
+});

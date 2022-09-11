@@ -1,12 +1,14 @@
 import {AnimatePresence, motion} from 'framer-motion';
 import React, {Dispatch, FC, useEffect, useRef} from 'react';
 import s from "./Menu.module.css";
+import {Link} from "react-router-dom";
 
 export type MenuItem = {
     icon?: React.ReactNode,
     content: React.ReactNode,
     onClick?: () => void,
     type: 'default' | 'danger'
+    link?: string
 }
 
 type Props = {
@@ -39,10 +41,7 @@ export const Menu: FC<Props> = ({items, x, y, setOpen}) => {
                 exit={{opacity: 0, scale: 0.5}}
                 transition={{duration: .25}}
                 className={s.menuItems}
-                ref={menu => {
-                    if (menuRef)
-                        menuRef.current = menu
-                }}
+                ref={menuRef}
                 style={{
                     left: x,
                     top: y,
@@ -53,9 +52,26 @@ export const Menu: FC<Props> = ({items, x, y, setOpen}) => {
                         item.onClick && item.onClick();
                         setOpen(false)
                     }
+                    if (item.link) {
+                        return (
+                            <Link to={item.link}>
+                                <div
+                                    key={i}
+                                    onClick={() => setOpen(false)}
+                                    className={[s.menuItem, item.type === 'danger' && 'danger'].join(' ')}
+                                >
+                                    <div className={s.icon}>{item.icon}</div>
+                                    <div className={s.content}>{item.content}</div>
+                                </div>
+                            </Link>
+                        )
+                    }
                     return (
-                        <div key={i} onClick={onClick}
-                             className={[s.menuItem, item.type === 'danger' && 'danger'].join(' ')}>
+                        <div
+                            key={i}
+                            onClick={onClick}
+                            className={[s.menuItem, item.type === 'danger' && 'danger'].join(' ')}
+                        >
                             <div className={s.icon}>{item.icon}</div>
                             <div className={s.content}>{item.content}</div>
                         </div>

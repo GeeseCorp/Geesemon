@@ -1,24 +1,26 @@
-.wrapperPage {
-    margin: 0 auto;
-    max-width: 700px;
-    height: calc(100vh - 57px);
+.wrapper {
+    height: calc(100% - 56px);
     display: flex;
     flex-direction: column;
-    padding: 0 15px;
 }
 
 .messages {
     scrollbar-color: #444444 #181818;
     overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    padding: 3px;
     flex: 1;
+    padding: 0 3px;
 }
 
 .messages::-webkit-scrollbar {
     background: #181818;
+}
+
+.messagesInner{
+    margin: 0 auto;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
 
 .messageFromImages {
@@ -42,6 +44,7 @@
     justify-content: space-between;
     gap: 10px;
     max-width: 70%;
+    min-width: 0;
     overflow-wrap: break-word;
 }
 
@@ -72,10 +75,4 @@
     display: flex;
     gap: 5px;
     align-items: end;
-}
-
-@media (max-width: 700px) {
-    .wrapperPage {
-        max-width: 100%;
-    }
 }

@@ -1,14 +1,27 @@
+.wrapper{
+    position: relative;
+    height: 100%;
+}
+
+.header {
+    display: flex;
+    gap: 25px;
+    align-items: center;
+}
+
 .wrapperFormItems{
+    margin-top: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 20px;
 }
 
 .wrapperInputPhoto{
     background-image: linear-gradient(to right bottom, #7FA8FF, #6A6AFF);
     border-radius: 50%;
-    width: 80px;
-    height: 80px;
+    width: 100px;
+    height: 100px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -23,15 +36,16 @@
     display: none;
 }
 
-.buttons{
-    margin-top: 20px;
+.inputGroupName{
+    width: calc(100% - 2rem);
+    height: 50px;
     display: flex;
-    justify-content: end;
-}
-
-.innerButtons{
-    display: flex;
+    justify-content: center;
     align-items: center;
-    gap: 10px;
 }
 
+.nextButton{
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+}
