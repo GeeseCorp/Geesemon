@@ -4,36 +4,30 @@ namespace Geesemon.Web.Utils.SettingsAccess
 {
     public class SettingsProvider : ISettingsProvider
     {
-        private readonly IConfiguration config;
-
-        public SettingsProvider(IConfiguration config)
-        {
-            this.config = config;
-        }
 
         public string GetConnectionString(string connectionId = "Default")
         {
-            return config.GetConnectionString(connectionId);
+            return Environment.GetEnvironmentVariable("ConnectionString");
         }
 
         public string GetAuthValidAudience()
         {
-            return config.GetSection("AuthValidAudience").Value;
+            return Environment.GetEnvironmentVariable("AuthValidAudience");
         }
 
         public string GetAuthValidIssuer()
         {
-            return config.GetSection("AuthValidIssuer").Value;
+            return Environment.GetEnvironmentVariable("AuthValidIssuer");
         }
 
         public string GetAuthIssuerSigningKey()
         {
-            return config.GetSection("AuthIssuerSigningKey").Value;
+            return Environment.GetEnvironmentVariable("AuthIssuerSigningKey");
         }
 
         public string GetCloudinaryConnectionString()
         {
-            return config.GetSection("Cloudinary").Value;
+            return Environment.GetEnvironmentVariable("Cloudinary");
         }
     }
 }

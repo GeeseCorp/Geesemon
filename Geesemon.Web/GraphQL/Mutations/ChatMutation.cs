@@ -15,9 +15,13 @@ namespace Geesemon.Web.GraphQL.Mutations
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly FileManagerService fileManagerService;
         private readonly IChatActionSubscriptionService subscriptionService;
+        private readonly ChatManager chatManager;
+        private readonly UserChatManager userChatManager;
+        private readonly UserManager userManager;
 
         public ChatMutation(IHttpContextAccessor httpContextAccessor, FileManagerService fileManagerService, 
-            IChatActionSubscriptionService subscriptionService)
+            IChatActionSubscriptionService subscriptionService, ChatManager chatManager, UserChatManager userChatManager,
+            UserManager userManager)
         {
             Field<ChatType, Chat>()
                 .Name("CreatePersonal")
@@ -40,6 +44,9 @@ namespace Geesemon.Web.GraphQL.Mutations
             this.httpContextAccessor = httpContextAccessor;
             this.fileManagerService = fileManagerService;
             this.subscriptionService = subscriptionService;
+            this.chatManager = chatManager;
+            this.userChatManager = userChatManager;
+            this.userManager = userManager;
         }
 
         private async Task<Chat?> ResolveCreatePersonal(IResolveFieldContext context)
@@ -124,43 +131,24 @@ namespace Geesemon.Web.GraphQL.Mutations
 
         private async Task<Chat?> ResolveDelete(IResolveFieldContext context)
         {
-            var chatManager = context.RequestServices.GetRequiredService<ChatManager>();
-            var userChatManager = context.RequestServices.GetRequiredService<UserChatManager>();
-            var userManager = context.RequestServices.GetRequiredService<UserManager>();
-            var chatInput = context.GetArgument<CreateGroupChatInput>("Input");
+            var chatInput = context.GetArgument<Guid>("Input");
+
             var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
 
-            foreach (var userId in chatInput.UsersId)
-            {
-                var user = await userManager.GetByIdAsync(userId);
-                if (user == null)
-                    throw new Exception($"User with id {userId} not found");
-            }
-            string imageURL = null;
+            var chat = await chatManager.GetByIdAsync(chatInput);
 
-            if (chatInput.Image != null)
-                imageURL = await fileManagerService.UploadFileAsync(FileManagerService.GroupImagesFolder, chatInput.Image);
+            Exception exception = new Exception("User can only delete personal chats or chats he own.");
 
-            var chat = new Chat
-            {
-                Type = ChatKind.Group,
-                CreatorId = currentUserId,
-                Name = chatInput.Name,
-                ImageUrl = imageURL,
-            };
-            chat = await chatManager.CreateAsync(chat);
+            if (chat == null)
+                throw new Exception($"Chat with id {chatInput} doesn't exist.");
 
+            if (!await chatManager.IsUserInChat(currentUserId, chatInput))
+                throw exception;
 
-            var userChat = new List<UserChat>(){
-                        new UserChat { UserId = currentUserId, ChatId = chat.Id }
-                    };
-            foreach (var userId in chatInput.UsersId)
-                userChat.Add(new UserChat { UserId = userId, ChatId = chat.Id });
-            await userChatManager.CreateManyAsync(userChat);
+            if (chat.Type != ChatKind.Personal && chat.CreatorId != currentUserId)
+                throw exception;
 
-            subscriptionService.Notify(chat, ChatActionKind.Create);
-
-            return chat;
+            return await chatManager.RemoveAsync(chatInput); ;
         }
     }
 }

@@ -33,7 +33,7 @@ builder.Services.AddGraphQLApi();
 builder.Services.AddSingleton<IMessageActionSubscriptionService, MessageActionSubscriptionService>();
 builder.Services.AddSingleton<IChatActionSubscriptionService, ChatActionSubscriptionService>();
 
-builder.Services.AddJwtAuthorization(builder.Configuration);
+builder.Services.AddJwtAuthorization();
 
 builder.Services.AddServices();
 
