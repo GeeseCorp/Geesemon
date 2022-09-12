@@ -13,9 +13,12 @@ var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddSingleton<ISettingsProvider, SettingsProvider>();
+var settingsProvider = builder.Services.BuildServiceProvider().GetService<ISettingsProvider>();
+
 builder.Services.AddDbContext<AppDbContext>((options) =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Default"), b => b.MigrationsAssembly("Geesemon.DataAccess"));
+    options.UseSqlServer(settingsProvider.GetConnectionString(), b => b.MigrationsAssembly("Geesemon.DataAccess"));
 });
 
 builder.Services.AddScoped<UserManager>();
@@ -23,7 +26,6 @@ builder.Services.AddScoped<ChatManager>();
 builder.Services.AddScoped<MessageManager>();
 builder.Services.AddScoped<UserChatManager>();
 
-builder.Services.AddSingleton<ISettingsProvider, SettingsProvider>();
 
 builder.Services.AddHttpContextAccessor();
 
@@ -33,7 +35,7 @@ builder.Services.AddGraphQLApi();
 builder.Services.AddSingleton<IMessageActionSubscriptionService, MessageActionSubscriptionService>();
 builder.Services.AddSingleton<IChatActionSubscriptionService, ChatActionSubscriptionService>();
 
-builder.Services.AddJwtAuthorization(builder.Configuration);
+builder.Services.AddJwtAuthorization(settingsProvider);
 
 builder.Services.AddServices();
 

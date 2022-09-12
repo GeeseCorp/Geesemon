@@ -4,7 +4,7 @@ namespace Geesemon.Web.Utils.SettingsAccess
 {
     public interface ISettingsProvider
     {
-        string GetConnectionString(string connectionId = "Default");
+        string GetConnectionString();
 
         string GetAuthValidAudience();
 

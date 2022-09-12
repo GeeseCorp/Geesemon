@@ -2,6 +2,7 @@
 using Geesemon.Web.GraphQL;
 using Geesemon.Web.GraphQL.Auth;
 using Geesemon.Web.Services;
+using Geesemon.Web.Utils.SettingsAccess;
 using GraphQL;
 using GraphQL.Server;
 using GraphQL.SystemTextJson;
@@ -41,7 +42,7 @@ namespace Geesemon.Web.Extensions
             return services;
         }
 
-        public static IServiceCollection AddJwtAuthorization(this IServiceCollection services, ConfigurationManager configurationManager)
+        public static IServiceCollection AddJwtAuthorization(this IServiceCollection services, ISettingsProvider settingsProvider)
         {
             services.AddAuthentication(options =>
             {
@@ -57,10 +58,10 @@ namespace Geesemon.Web.Extensions
                     ValidateAudience = true,
                     ValidateIssuer = true,
                     ValidateIssuerSigningKey = true,
-                    ValidAudience = configurationManager.GetSection("AuthValidAudience").Value,
-                    ValidIssuer = configurationManager.GetSection("AuthValidIssuer").Value,
+                    ValidAudience = settingsProvider.GetAuthValidAudience(),
+                    ValidIssuer = settingsProvider.GetAuthValidIssuer(),
                     RequireSignedTokens = false,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configurationManager.GetSection("AuthIssuerSigningKey").Value)),
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(settingsProvider.GetAuthIssuerSigningKey())),
                 };
                 options.RequireHttpsMetadata = false;
                 options.SaveToken = true;
