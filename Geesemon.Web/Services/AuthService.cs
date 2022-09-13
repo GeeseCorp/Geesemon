@@ -14,38 +14,14 @@ namespace Geesemon.Web.Services;
 
 public class AuthService
 {
-    private readonly IServiceProvider serviceProvider;
-
     private readonly ISettingsProvider settingsProvider;
-    private readonly IHttpContextAccessor httpContextAccessor;
 
-    public AuthService(IServiceProvider serviceProvider, ISettingsProvider settingsProvider,
-        IHttpContextAccessor httpContextAccessor)
+    public AuthService(ISettingsProvider settingsProvider)
     {
-        this.serviceProvider = serviceProvider;
         this.settingsProvider = settingsProvider;
-        this.httpContextAccessor = httpContextAccessor;
     }
 
-    public async Task<AuthResponse> AuthenticateAsync(LoginInput loginAuthInput)
-    {
-        using var scope = serviceProvider.CreateScope();
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager>();
-        var user = await userManager.GetByLoginAsync(loginAuthInput.Login);
-
-        if(user == null)
-            throw new Exception("Login or password not valid.");
-
-        var saltedPassword = loginAuthInput.Password + user.Id;
-
-
-        if (user.Password != saltedPassword.CreateMD5())
-            throw new Exception("Login or password not valid.");
-
-        var token = GenerateAccessToken(user.Id, user.Login, user.Role);
-
-        return new AuthResponse() { Token = token, User = user };
-    }
+    public const string Bearer = "Bearer";
 
     public string GenerateAccessToken(Guid userId, string userLogin, UserRole userRole)
     {
@@ -59,30 +35,24 @@ public class AuthService
             new Claim(ClaimsIdentity.DefaultRoleClaimType, userRole.ToString()),
         };
         JwtSecurityToken token = new JwtSecurityToken(
-            issuer: settingsProvider.GetAuthValidIssuer(),
-            audience: settingsProvider.GetAuthValidAudience(),
-            claims: claims,
-            expires: DateTime.Now.AddDays(7),
-            signingCredentials: signingCredentials
-        );
-        return new JwtSecurityTokenHandler().WriteToken(token);
+                claims: claims,
+                expires: DateTime.Now.AddDays(30),
+                signingCredentials: signingCredentials);
+        return Bearer + " " + new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    public ClaimsPrincipal ValidateJWTToken(string token)
+    public ClaimsPrincipal ValidateAccessToken(string token)
     {
         try
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(settingsProvider.GetAuthIssuerSigningKey());
-            tokenHandler.ValidateToken(CleanJWTToken(token), new TokenValidationParameters
+            tokenHandler.ValidateToken(CleanBearerInToken(token), new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(key),
-                ValidIssuer = settingsProvider.GetAuthValidIssuer(),
-                ValidAudience = settingsProvider.GetAuthValidAudience(),
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ClockSkew = TimeSpan.Zero
+                ValidateIssuer = false,
+                ValidateAudience = false,
             }, out var validatedToken);
 
             var jwtToken = (JwtSecurityToken)validatedToken;
@@ -97,9 +67,9 @@ public class AuthService
         }
     }
 
-    private string CleanJWTToken(string token)
+    public string CleanBearerInToken(string token)
     {
-        return token.Replace("Bearer ", string.Empty);
+        return token.Replace(Bearer + " ", string.Empty);
     }
 
 }

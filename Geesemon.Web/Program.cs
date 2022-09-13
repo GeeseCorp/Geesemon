@@ -18,14 +18,14 @@ var settingsProvider = builder.Services.BuildServiceProvider().GetService<ISetti
 
 builder.Services.AddDbContext<AppDbContext>((options) =>
 {
-    options.UseSqlServer(settingsProvider.GetConnectionString(), b => b.MigrationsAssembly("Geesemon.DataAccess"));
+    options.UseSqlServer(settingsProvider.GetConnectionString() ?? AppDbContext.DefaultConnectionString, b => b.MigrationsAssembly("Geesemon.DataAccess"));
 });
 
 builder.Services.AddScoped<UserManager>();
 builder.Services.AddScoped<ChatManager>();
 builder.Services.AddScoped<MessageManager>();
 builder.Services.AddScoped<UserChatManager>();
-
+builder.Services.AddScoped<AccessTokenManager>();
 
 builder.Services.AddHttpContextAccessor();
 

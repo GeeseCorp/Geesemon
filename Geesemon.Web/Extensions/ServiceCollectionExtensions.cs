@@ -1,6 +1,7 @@
 ﻿using Geesemon.Model.Enums;
 using Geesemon.Web.GraphQL;
 using Geesemon.Web.GraphQL.Auth;
+using Geesemon.Web.Middlewares;
 using Geesemon.Web.Services;
 using Geesemon.Web.Utils.SettingsAccess;
 using GraphQL;
@@ -44,29 +45,9 @@ namespace Geesemon.Web.Extensions
 
         public static IServiceCollection AddJwtAuthorization(this IServiceCollection services, ISettingsProvider settingsProvider)
         {
-            services.AddAuthentication(options =>
-            {
-                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateAudience = true,
-                    ValidateIssuer = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidAudience = settingsProvider.GetAuthValidAudience(),
-                    ValidIssuer = settingsProvider.GetAuthValidIssuer(),
-                    RequireSignedTokens = false,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(settingsProvider.GetAuthIssuerSigningKey())),
-                };
-                options.RequireHttpsMetadata = false;
-                options.SaveToken = true;
-            });
-
+            services
+                 .AddAuthentication(BasicAuthenticationHandler.SchemeName)
+                 .AddScheme<BasicAuthenticationOptions, BasicAuthenticationHandler>(BasicAuthenticationHandler.SchemeName, _ => { });
             return services;
         }
 

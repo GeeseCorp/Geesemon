@@ -9,26 +9,17 @@ namespace Geesemon.Web.GraphQL.Queries
 {
     public class AuthQuery : ObjectGraphType
     {
-        public AuthQuery(IHttpContextAccessor httpContextAccessor)
+        public AuthQuery(IHttpContextAccessor httpContextAccessor, UserManager userManager)
         {
             Field<NonNullGraphType<AuthResponseType>, AuthResponse>()
                 .Name("Me")
                 .ResolveAsync(async context =>
                 {
-                    var userManager = context.RequestServices.GetRequiredService<UserManager>();
-                    var userLogin = httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == AuthClaimsIdentity.DefaultLoginClaimType).Value;
-                    var currentUser = await userManager.GetByLoginAsync(userLogin);
-
-                    if (currentUser == null)
-                        return new AuthResponse();
-
-                    var token = httpContextAccessor.HttpContext.Request.Headers[HeaderNames.Authorization]
-                    .ToString()
-                    .Replace("Bearer ", string.Empty);
+                    var userId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
                     return new AuthResponse()
                     {
-                        Token = token,
-                        User = currentUser,
+                        Token = httpContextAccessor.HttpContext.Request.Headers[HeaderNames.Authorization],
+                        User = await userManager.GetByIdAsync(userId),
                     };
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);

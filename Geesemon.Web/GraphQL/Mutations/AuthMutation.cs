@@ -2,16 +2,20 @@
 using Geesemon.Model.Enums;
 using Geesemon.Model.Models;
 using Geesemon.Web.Extensions;
+using Geesemon.Web.GraphQL.Auth;
 using Geesemon.Web.GraphQL.Types;
 using Geesemon.Web.Services;
 using GraphQL;
 using GraphQL.Types;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Net.Http.Headers;
 
 namespace Geesemon.Web.GraphQL.Mutations
 {
     public class AuthMutation : ObjectGraphType
     {
-        public AuthMutation(AuthService authService, UserManager userManager, ChatManager chatManager, UserChatManager userChatManager)
+        public AuthMutation(AuthService authService, UserManager userManager, ChatManager chatManager, UserChatManager userChatManager, AccessTokenManager accessTokenManager, IHttpContextAccessor httpContextAccessor)
         {
             Field<NonNullGraphType<AuthResponseType>, AuthResponse>()
                 .Name("Register")
@@ -56,9 +60,16 @@ namespace Geesemon.Web.GraphQL.Mutations
                     };
                     await userChatManager.CreateManyAsync(userChat);
 
+                    var accessToken = new AccessToken
+                    {
+                        Token = authService.GenerateAccessToken(user.Id, user.Email, user.Role),
+                        UserId = user.Id,
+                    };
+                    accessToken = await accessTokenManager.CreateAsync(accessToken);
+
                     return new AuthResponse()
                     {
-                        Token = authService.GenerateAccessToken(newUser.Id, newUser.Login, newUser.Role),
+                        Token = accessToken.Token,
                         User = newUser,
                     };
                 });
@@ -69,9 +80,39 @@ namespace Geesemon.Web.GraphQL.Mutations
                 .ResolveAsync(async context =>
                 {
                     var loginInput = context.GetArgument<LoginInput>("input");
+                    var user = await userManager.GetByLoginAsync(loginInput.Login);
 
-                    return await authService.AuthenticateAsync(loginInput);
+                    if (user == null)
+                        throw new Exception("Login or password not valid.");
+
+                    var saltedPassword = loginInput.Password + user.Id;
+                    if (user.Password != saltedPassword.CreateMD5())
+                        throw new Exception("Login or password not valid.");
+
+                    var accessToken = new AccessToken
+                    {
+                        Token = authService.GenerateAccessToken(user.Id, user.Login, user.Role),
+                        UserId = user.Id,
+                    };
+                    accessToken = await accessTokenManager.CreateAsync(accessToken);
+
+                    return new AuthResponse()
+                    {
+                        Token = accessToken.Token,
+                        User = user,
+                    };
                 });
+
+            Field<NonNullGraphType<BooleanGraphType>, bool>()
+                .Name("Logout")
+                .ResolveAsync(async context =>
+                {
+                    var userId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
+                    var token = httpContextAccessor.HttpContext.Request.Headers[HeaderNames.Authorization];
+                    await accessTokenManager.RemoveAsync(userId, token);
+                    return true;
+                })
+                .AuthorizeWith(AuthPolicies.Authenticated);
         }
     }
 }

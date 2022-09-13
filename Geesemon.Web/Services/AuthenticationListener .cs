@@ -28,7 +28,7 @@ namespace Geesemon.Web.Services
                 if (payload != null && payload.ContainsKey("Authorization"))
                 {
                     var token = payload.Value<string>("Authorization");
-                    var principal = authService.ValidateJWTToken(token);
+                    var principal = authService.ValidateAccessToken(token);
                     if (principal != null)
                     {
                         httpContextAccessor.HttpContext.User = principal;

@@ -22,6 +22,10 @@ namespace Geesemon.DataAccess.Providers
 
         public DbSet<UserChat> UserChats { get; set; }
 
+        public DbSet<AccessToken> AceessTokens { get; set; }
+
+        public const string DefaultConnectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=GeesemonDB_dev;Integrated Security=True;Connect Timeout=60;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False;";
+
         public override int SaveChanges()
         {
             InitEntities();
@@ -74,7 +78,8 @@ namespace Geesemon.DataAccess.Providers
             modelBuilder.Entity<UserChat>()
                 .HasKey(c => new { c.UserId, c.ChatId });
 
-            modelBuilder.Entity<User>(entity => {
+            modelBuilder.Entity<User>(entity => 
+            {
                 entity.HasIndex(e => e.Login).IsUnique();
                 entity.HasIndex(e => e.Email).IsUnique();
             });
@@ -88,6 +93,11 @@ namespace Geesemon.DataAccess.Providers
                 .HasOne(c => c.Creator)
                 .WithMany(u => u.AuthoredChats)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<AccessToken>(entity =>
+            {
+                entity.HasIndex(e => e.Token).IsUnique();
+            });
         }
 
         public static readonly List<string> colors = new List<string>() { "#1abc9c", "#2ecc71", "#3498db", "#9b59b6",

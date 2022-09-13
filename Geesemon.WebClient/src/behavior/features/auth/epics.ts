@@ -23,10 +23,19 @@ export const meAsyncEpic: Epic<ReturnType<typeof authActions.meAsync>, any, Root
                 query: AUTH_ME_QUERY,
                 variables: {}
             })).pipe(
-                mergeMap(response => [
-                    authActions.login(response.data.auth.me),
-                    appActions.setInitialised(true),
-                ]),
+                mergeMap(response => {
+                    if(response.errors?.length){
+                        console.log(response)
+                        return [
+                            ...response.errors.map(e => notificationsActions.addError(e.message)),
+                            appActions.setInitialised(true),
+                        ];
+                    }
+                    return [
+                        authActions.login(response.data.auth.me),
+                        appActions.setInitialised(true),
+                    ]
+                }),
                 catchError(error => of(
                     notificationsActions.addError(error.message),
                     appActions.setInitialised(true),
@@ -45,9 +54,13 @@ export const loginAsyncEpic: Epic<ReturnType<typeof authActions.loginAsync>, any
                 query: AUTH_LOGIN_MUTATION,
                 variables: {input: action.payload}
             })).pipe(
-                mergeMap(response => [
-                    authActions.login(response.data.auth.login),
-                ]),
+                mergeMap(response => {
+                    if(response.errors?.length)
+                        return response.errors.map(e => notificationsActions.addError(e.message));
+                    return [
+                        authActions.login(response.data.auth.login),
+                    ]
+                }),
                 catchError(error => of(notificationsActions.addError(error.message))),
                 startWith(authActions.setLoginLoading(true)),
                 endWith(authActions.setLoginLoading(false)),
