@@ -29,7 +29,7 @@ namespace Geesemon.Web.Services.ChatActionsSubscription
                 {
                     using var scope = serviceProvider.CreateScope();
                     var chatManager = scope.ServiceProvider.GetRequiredService<ChatManager>();
-                    var chats = chatManager.GetAsync(userId).GetAwaiter().GetResult();
+                    var chats = chatManager.GetAllForUserAsync(userId).GetAwaiter().GetResult();
                     var chatIdList = chats.Select(c => c.Id);
 
                     return chatIdList.Contains(m.Chat.Id);

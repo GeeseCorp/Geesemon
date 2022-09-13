@@ -19,7 +19,7 @@ namespace Geesemon.Web.GraphQL.Mutations
         private readonly UserChatManager userChatManager;
         private readonly UserManager userManager;
 
-        public ChatMutation(IHttpContextAccessor httpContextAccessor, FileManagerService fileManagerService, 
+        public ChatMutation(IHttpContextAccessor httpContextAccessor, FileManagerService fileManagerService,
             IChatActionSubscriptionService subscriptionService, ChatManager chatManager, UserChatManager userChatManager,
             UserManager userManager)
         {
@@ -77,10 +77,11 @@ namespace Geesemon.Web.GraphQL.Mutations
             chat.ImageUrl = oppositeUser.ImageUrl;
 
 
-            var userChat = new List<UserChat>(){
+            var userChat = new List<UserChat>()
+            {
                         new UserChat { UserId = currentUserId, ChatId = chat.Id },
                         new UserChat { UserId = chatInp.UserId, ChatId = chat.Id },
-                    };
+            };
             await userChatManager.CreateManyAsync(userChat);
 
             subscriptionService.Notify(chat, ChatActionKind.Create);

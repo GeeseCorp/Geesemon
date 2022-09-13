@@ -11,10 +11,23 @@ namespace Geesemon.DataAccess.Providers.ChatProvider
         {
         }
 
-        public Task<List<Chat>> GetAsync(Guid userId)
+        public Task<List<Chat>> GetAllForUserAsync(Guid userId)
         {
-            return context.Chats.Include(c => c.UserChats)
+            return context.Chats
+                .Include(c => c.UserChats)
                 .Where(c => c.UserChats.Any(uc => uc.UserId == userId))
+                .ToListAsync();
+        }
+
+        public Task<List<Chat>> GetPaginatedForUserAsync(Guid userId, int skipMessageCount, int takeMessageCount = 30)
+        {
+            return context.Chats
+                .Include(c => c.UserChats)
+                .Include(c => c.Messages)
+                .Where(c => c.UserChats.Any(uc => uc.UserId == userId))
+                .OrderByDescending(c => c.Messages.OrderByDescending(m => m.CreatedAt).FirstOrDefault() != null ? c.Messages.OrderByDescending(m => m.CreatedAt).First().CreatedAt : c.CreatedAt)
+                .Skip(skipMessageCount)
+                .Take(takeMessageCount)
                 .ToListAsync();
         }
 
