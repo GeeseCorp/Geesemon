@@ -148,7 +148,12 @@ namespace Geesemon.Web.GraphQL.Mutations
             if (chat.Type != ChatKind.Personal && chat.CreatorId != currentUserId)
                 throw exception;
 
-            return await chatManager.RemoveAsync(chatInput); ;
+            //NOTE: Because functionality in ChatActionSubscriptionService depends on chat being in database we need to run notify before deletion
+            subscriptionService.Notify(chat, ChatActionKind.Delete);
+
+            var removedChat = await chatManager.RemoveAsync(chatInput);
+
+            return removedChat;
         }
     }
 }
