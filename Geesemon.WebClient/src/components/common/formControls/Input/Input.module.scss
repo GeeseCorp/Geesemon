@@ -1,3 +1,5 @@
+@import '../../../../App.scss';
+
 .wrapperInputSearch {
     height: 58px;
     display: flex;
@@ -25,7 +27,7 @@
     height: 50px;
     border: none;
     outline: none;
-    border-radius: 50px;
+    border-radius: 2px;
 }
 
 .focused {

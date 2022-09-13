@@ -44,3 +44,14 @@ export const AUTH_REGISTER_MUTATION = gql`
         }
     }
 `;
+
+
+export type AuthLogoutData = { auth: { logout: Boolean } }
+export type AuthLogoutVars = { }
+export const AUTH_LOGOUT_MUTATION = gql`
+    mutation AuthLogout {
+        auth {
+            logout
+        }
+    }
+`;

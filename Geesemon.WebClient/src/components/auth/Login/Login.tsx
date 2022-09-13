@@ -25,7 +25,7 @@ export const Login = () => {
             <h1 className={s.title}>Login in Geesmon</h1>
             <form className={s.form} onSubmit={loginHandler}>
                 <Input value={login} setValue={setLogin} placeholder='Login' />
-                <Input value={password} setValue={setPassword} placeholder='Password' />
+                <Input value={password} setValue={setPassword} placeholder='Password' type={'password'}/>
                 <BigStrongButton loading={loginLoading} type='submit'>
                     Login
                 </BigStrongButton>

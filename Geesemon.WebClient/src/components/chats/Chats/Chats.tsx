@@ -21,11 +21,13 @@ import { HeaderButton } from "../../common/HeaderButton/HeaderButton";
 import { Menu, MenuItem } from "../../common/Menu/Menu";
 import { SmallPrimaryButton } from "../../common/SmallPrimaryButton/SmallPrimaryButton";
 import s from './Chats.module.css';
+import { SmallLoading } from "../../common/SmallLoading/SmallLoading";
 
 type Props = {}
 
 export const Chats: FC<Props> = ({ }) => {
     const [isEnabledSearchMode, setIsEnabledSearchMode] = useState(false);
+    const logoutLoading = useAppSelector(s => s.auth.logoutLoading)
     const authedUser = useAppSelector(s => s.auth.authedUser)
     const [isMenuVisible, setIsMenuVisible] = useState(false);
     const leftSidebarState = useAppSelector(s => s.app.leftSidebarState)
@@ -66,9 +68,9 @@ export const Chats: FC<Props> = ({ }) => {
             type: 'default'
         },
         {
-            icon: <img src={logout} className={s.menuItem} />,
+            icon: logoutLoading ? <SmallLoading/> : <img src={logout} className={s.menuItem} />,
             content: 'Logout',
-            onClick: () => dispatch(authActions.logout()),
+            onClick: () => dispatch(authActions.logoutAsync()),
             type: 'default'
         },
     ];

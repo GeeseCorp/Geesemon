@@ -9,6 +9,7 @@ type InitialState = {
     meLoading: boolean
     loginLoading: boolean
     registerLoading: boolean
+    logoutLoading: boolean
 };
 
 const initialState: InitialState = {
@@ -17,6 +18,7 @@ const initialState: InitialState = {
     meLoading: false,
     loginLoading: false,
     registerLoading: false,
+    logoutLoading: false,
 };
 
 const slice = createSlice({
@@ -40,6 +42,10 @@ const slice = createSlice({
         setRegisterLoading: (state: InitialState, action: PayloadAction<boolean>) => {
             state.registerLoading = action.payload;
         },
+        setLogoutLoading: (state: InitialState, action: PayloadAction<boolean>) => {
+            state.logoutLoading = action.payload;
+        },
+        logoutAsync: (state: InitialState, action: PayloadAction) => state,
         logout: (state: InitialState) => {
             state.isAuthorized = false;
             state.authedUser = null;

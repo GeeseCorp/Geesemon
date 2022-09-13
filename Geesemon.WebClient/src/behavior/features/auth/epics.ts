@@ -11,9 +11,11 @@ import {
     AuthLoginData,
     AuthLoginVars,
     AuthRegisterData,
-    AuthRegisterVars
+    AuthRegisterVars,
+    AUTH_LOGOUT_MUTATION
 } from "./mutations";
 import { appActions } from "../app/slice";
+import { navigateActions } from "../navigate/slice";
 
 export const meAsyncEpic: Epic<ReturnType<typeof authActions.meAsync>, any, RootState> = (action$, state$) =>
     action$.pipe(
@@ -86,9 +88,28 @@ export const registerAsyncEpic: Epic<ReturnType<typeof authActions.registerAsync
         )
     );
 
+export const logoutEpic: Epic<ReturnType<typeof authActions.logoutAsync>, any, RootState> = (action$, state$) =>
+    action$.pipe(
+    ofType(authActions.logoutAsync.type),
+    mergeMap(action =>
+        from(client.mutate<AuthLoginData, AuthLoginVars>({
+            mutation: AUTH_LOGOUT_MUTATION,
+        })).pipe(
+            mergeMap(response => [
+                authActions.logout(),
+                navigateActions.navigate("/auth/login")
+            ]),
+            catchError(error => of(notificationsActions.addError(error.message))),
+            startWith(authActions.setLogoutLoading(true)),
+            endWith(authActions.setLogoutLoading(false)),
+        )
+    )
+    );
+
 export const authEpics = combineEpics(
     meAsyncEpic,
     // @ts-ignore
     loginAsyncEpic,
     registerAsyncEpic,
+    logoutEpic
 )
