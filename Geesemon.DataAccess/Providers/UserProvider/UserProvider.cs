@@ -32,5 +32,10 @@ namespace Geesemon.DataAccess.Providers.UserProvider
                 .Where(c => c.UserChats.Any(uc => uc.ChatId == chatId))
                 .ToListAsync();
         }
+
+        public Task<List<User>> GetAsync(int take, int skip, string q)
+        {
+            return context.Users.Where(u => EF.Functions.FreeText(u.FirstName, q)).ToListAsync();
+        }
     }
 }

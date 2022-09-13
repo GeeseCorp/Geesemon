@@ -1,6 +1,5 @@
 ﻿using Geesemon.Model.Common;
 using Geesemon.Model.Enums;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace Geesemon.Model.Models;

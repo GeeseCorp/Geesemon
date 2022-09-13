@@ -9,23 +9,23 @@ namespace Geesemon.Web.GraphQL.Queries
 {
     public class UserQuery : ObjectGraphType
     {
-        public UserQuery()
+        public UserQuery(UserManager userManager)
         {
-            Field<ListGraphType<UserType>, List<User>>()
-                .Name("GetAll")
+            Field<NonNullGraphType<ListGraphType<UserType>>, List<User>>()
+                .Name("Get")
+                .Argument<UserGetInputType, UserGetInput>("Input", "")
                 .ResolveAsync(async context =>
                 {
-                    var userManager = context.RequestServices.GetRequiredService<UserManager>();
-                    return await userManager.GetAsync();
+                    var input = context.GetArgument<UserGetInput>("Input");
+                    return await userManager.GetAsync(input.Take, input.Skip, input.Q);
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
 
             Field<UserType, User>()
-                .Name("Get")
+                .Name("GetById")
                 .Argument<GuidGraphType>("UserId")
                 .ResolveAsync(async context =>
                 {
-                    var userManager = context.RequestServices.GetRequiredService<UserManager>();
                     return await userManager.GetByIdAsync(context.GetArgument<Guid>("UserId"));
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);

@@ -30,11 +30,11 @@ export const Register = () => {
         <div className={s.wrapper}>
             <h1 className={s.title}>Register in Geesmon</h1>
             <form className={s.form} onSubmit={registerHandler}>
-                <Input value={firstName} setValue={setFirstName} placeholder='First name' />
-                <Input value={lastName} setValue={setLastName} placeholder='Last name' />
-                <Input value={email} setValue={setEmail} placeholder='Email' />
-                <Input value={login} setValue={setLogin} placeholder='Login' />
-                <Input value={password} setValue={setPassword} placeholder='Password' />
+                <Input value={firstName} setValue={setFirstName} placeholder='First name' name='firstName'/>
+                <Input value={lastName} setValue={setLastName} placeholder='Last name' name='lastName' />
+                <Input value={email} setValue={setEmail} placeholder='Email' name='email'/>
+                <Input value={login} setValue={setLogin} placeholder='Login' name='login'/>
+                <Input value={password} setValue={setPassword} placeholder='Password' name='password' type='password' />
                 <BigStrongButton loading={registerLoading} type='submit'>
                     Register
                 </BigStrongButton>
