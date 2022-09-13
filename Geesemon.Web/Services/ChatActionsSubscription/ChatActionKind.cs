@@ -6,4 +6,6 @@ public enum ChatActionKind
     Update,
     Delete,
     Clear,
+    AddUser,
+    RemoveUser
 }
