@@ -14,12 +14,17 @@ namespace Geesemon.Web.GraphQL.Queries
         {
             Field<NonNullGraphType<ListGraphType<ChatType>>, List<Chat>>()
                 .Name("Get")
+                .Argument<NonNullGraphType<IntGraphType>, int>("Skip", "")
+                .Argument<IntGraphType, int?>("Take", "")
                 .ResolveAsync(async context =>
                 {
+                    var skip = context.GetArgument<int>("Skip");
+                    var take = context.GetArgument<int?>("Take");
+
                     var chatManager = context.RequestServices.GetRequiredService<ChatManager>();
                     var userManager = context.RequestServices.GetRequiredService<UserManager>();
                     var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
-                    var chats = await chatManager.GetAsync(currentUserId);
+                    var chats = await chatManager.GetPaginatedForUserAsync(currentUserId, skip, take ?? 30);
 
                     foreach (var chat in chats)
                     {

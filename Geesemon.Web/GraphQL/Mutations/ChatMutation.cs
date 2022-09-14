@@ -19,7 +19,7 @@ namespace Geesemon.Web.GraphQL.Mutations
         private readonly UserChatManager userChatManager;
         private readonly UserManager userManager;
 
-        public ChatMutation(IHttpContextAccessor httpContextAccessor, FileManagerService fileManagerService, 
+        public ChatMutation(IHttpContextAccessor httpContextAccessor, FileManagerService fileManagerService,
             IChatActionSubscriptionService subscriptionService, ChatManager chatManager, UserChatManager userChatManager,
             UserManager userManager)
         {
@@ -77,10 +77,11 @@ namespace Geesemon.Web.GraphQL.Mutations
             chat.ImageUrl = oppositeUser.ImageUrl;
 
 
-            var userChat = new List<UserChat>(){
+            var userChat = new List<UserChat>()
+            {
                         new UserChat { UserId = currentUserId, ChatId = chat.Id },
                         new UserChat { UserId = chatInp.UserId, ChatId = chat.Id },
-                    };
+            };
             await userChatManager.CreateManyAsync(userChat);
 
             subscriptionService.Notify(chat, ChatActionKind.Create);
@@ -148,7 +149,12 @@ namespace Geesemon.Web.GraphQL.Mutations
             if (chat.Type != ChatKind.Personal && chat.CreatorId != currentUserId)
                 throw exception;
 
-            return await chatManager.RemoveAsync(chatInput); ;
+            //NOTE: Because functionality in ChatActionSubscriptionService depends on chat being in database we need to run notify before deletion
+            subscriptionService.Notify(chat, ChatActionKind.Delete);
+
+            var removedChat = await chatManager.RemoveAsync(chatInput);
+
+            return removedChat;
         }
     }
 }

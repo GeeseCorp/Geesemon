@@ -1,5 +1,6 @@
 ﻿using Geesemon.Model.Common;
 using Geesemon.Model.Enums;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Geesemon.Model.Models;
 public class Message : Entity

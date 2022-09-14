@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Reflection;
 
 namespace Geesemon.Model.Common
@@ -6,50 +7,13 @@ namespace Geesemon.Model.Common
     public abstract class Entity
     {
         public Guid Id { get; set; }
-        [DateTimeKind(DateTimeKind.Utc)]
-        public DateTime CreatedAt { get; set; }
 
-        [DateTimeKind(DateTimeKind.Utc)]
-        public DateTime UpdatedAt { get; set; }
-    }
+        private DateTime createdAt;
 
-    [AttributeUsage(AttributeTargets.Property)]
-    public class DateTimeKindAttribute : Attribute
-    {
-        private readonly DateTimeKind _kind;
+        private DateTime updatedAt;
 
-        public DateTimeKindAttribute(DateTimeKind kind)
-        {
-            _kind = kind;
-        }
+        public DateTime CreatedAt { get => DateTime.SpecifyKind(createdAt, DateTimeKind.Utc); set => createdAt = value; }
 
-        public DateTimeKind Kind {
-            get { return _kind; }
-        }
-
-        public static void Apply(object entity)
-        {
-            if (entity == null)
-                return;
-
-            var properties = entity.GetType().GetProperties()
-                .Where(x => x.PropertyType == typeof(DateTime) || x.PropertyType == typeof(DateTime?));
-
-            foreach (var property in properties)
-            {
-                var attr = property.GetCustomAttribute<DateTimeKindAttribute>();
-                if (attr == null)
-                    continue;
-
-                var dt = property.PropertyType == typeof(DateTime?)
-                    ? (DateTime?)property.GetValue(entity)
-                    : (DateTime)property.GetValue(entity);
-
-                if (dt == null)
-                    continue;
-
-                property.SetValue(entity, DateTime.SpecifyKind(dt.Value, attr.Kind));
-            }
-        }
+        public DateTime UpdatedAt { get => DateTime.SpecifyKind(updatedAt, DateTimeKind.Utc); set => updatedAt = value; }
     }
 }
