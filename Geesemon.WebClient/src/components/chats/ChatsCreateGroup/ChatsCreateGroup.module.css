@@ -43,9 +43,3 @@
     justify-content: center;
     align-items: center;
 }
-
-.nextButton{
-    position: absolute;
-    bottom: 5px;
-    right: 5px;
-}

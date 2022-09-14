@@ -87,12 +87,6 @@
     color: white !important;
 }
 
-.buttonCreateChat {
-    position: fixed;
-    bottom: 5px;
-    /*left: 330px;*/
-}
-
 @media (max-width: 700px) {
     .buttonCreateChat {
         left: auto;

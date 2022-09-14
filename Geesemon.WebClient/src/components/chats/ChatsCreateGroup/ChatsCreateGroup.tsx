@@ -1,14 +1,15 @@
-import React, {ChangeEvent, FC, useRef, useState} from 'react';
-import {Input} from "../../common/formControls/Input/Input";
+import React, { ChangeEvent, FC, useRef, useState } from 'react';
+import { Input } from "../../common/formControls/Input/Input";
 import s from './ChatsCreateGroup.module.css';
 import camera from '../../../assets/svg/camera.svg';
 import next from '../../../assets/svg/next.svg';
-import {chatActions} from "../../../behavior/features/chats";
-import {useAppDispatch, useAppSelector} from "../../../behavior/store";
-import {SmallPrimaryButton} from "../../common/SmallPrimaryButton/SmallPrimaryButton";
-import {HeaderButton} from "../../common/HeaderButton/HeaderButton";
+import { chatActions } from "../../../behavior/features/chats";
+import { useAppDispatch, useAppSelector } from "../../../behavior/store";
+import { SmallPrimaryButton } from "../../common/SmallPrimaryButton/SmallPrimaryButton";
+import { HeaderButton } from "../../common/HeaderButton/HeaderButton";
 import back from "../../../assets/svg/back.svg";
 import { appActions, LeftSidebarState } from '../../../behavior/features/app/slice';
+import { LeftSidebarSmallPrimaryButton } from '../../common/LeftSidebarSmallPrimaryButton/LeftSidebarSmallPrimaryButton';
 
 type Props = {};
 export const ChatsCreateGroup: FC<Props> = () => {
@@ -41,15 +42,15 @@ export const ChatsCreateGroup: FC<Props> = () => {
                             key={'back'}
                             onClick={() => dispatch(appActions.setLeftSidebarState(LeftSidebarState.Chats))}
                         >
-                            <img src={back} width={25}/>
+                            <img src={back} width={25} />
                         </HeaderButton>
                         <div className={'headerTitle'}>Add members</div>
                     </div>
-                    <div className={s.nextButton}>
+                    <LeftSidebarSmallPrimaryButton>
                         <SmallPrimaryButton onClick={() => setState('ImageAndName')}>
-                            <img src={next} width={25}/>
+                            <img src={next} width={25} />
                         </SmallPrimaryButton>
-                    </div>
+                    </LeftSidebarSmallPrimaryButton>
                 </>
                 : <>
                     <div className={['header', s.header].join(' ')}>
@@ -57,7 +58,7 @@ export const ChatsCreateGroup: FC<Props> = () => {
                             key={'back'}
                             onClick={() => setState('Members')}
                         >
-                            <img src={back} width={25}/>
+                            <img src={back} width={25} />
                         </HeaderButton>
                         <div className={'headerTitle'}>New Group</div>
                     </div>
@@ -84,11 +85,11 @@ export const ChatsCreateGroup: FC<Props> = () => {
                             />
                         </div>
                     </div>
-                    <div className={s.nextButton}>
+                    <LeftSidebarSmallPrimaryButton>
                         <SmallPrimaryButton onClick={createGroupHandler} loading={createGroupLoading}>
-                            <img src={next} width={25}/>
+                            <img src={next} width={25} />
                         </SmallPrimaryButton>
-                    </div>
+                    </LeftSidebarSmallPrimaryButton>
                 </>
             }
         </div>

@@ -4,7 +4,6 @@ import { Link, useParams } from "react-router-dom";
 import back from "../../../assets/svg/back.svg";
 import logout from "../../../assets/svg/logout.svg";
 import menu from "../../../assets/svg/menu.svg";
-import pencilFilled from '../../../assets/svg/pencilFilled.svg';
 import saved from "../../../assets/svg/saved.svg";
 import settings from "../../../assets/svg/settings.svg";
 import deleteSvg from "../../../assets/svg/delete.svg";
@@ -22,6 +21,8 @@ import { Menu, MenuItem } from "../../common/Menu/Menu";
 import { SmallPrimaryButton } from "../../common/SmallPrimaryButton/SmallPrimaryButton";
 import s from './Chats.module.css';
 import { SmallLoading } from "../../common/SmallLoading/SmallLoading";
+import pencilFilled from '../../../assets/svg/pencilFilled.svg';
+import { LeftSidebarSmallPrimaryButton } from "../../common/LeftSidebarSmallPrimaryButton/LeftSidebarSmallPrimaryButton";
 
 type Props = {}
 
@@ -36,24 +37,13 @@ export const Chats: FC<Props> = ({ }) => {
     const chats = useAppSelector(s => s.chats.chats);
     const [searchValue, setSearchValue] = useState('');
     const dispatch = useAppDispatch();
-    const chatsRef = useRef<HTMLDivElement>(null)
-    const [offsetLeft, setOffsetLeft] = useState(0);
 
     useEffect(() => {
         if (!chats.length)
             dispatch(chatActions.chatsGetAsync());
     }, [])
 
-    useEffect(() => {
-        function handleResize() {
-            setOffsetLeft(chatsRef.current?.getBoundingClientRect().left || 0)
-        }
 
-        window.addEventListener('resize', handleResize)
-        return () => {
-            window.removeEventListener('resize', handleResize)
-        }
-    })
 
     const menuItems: MenuItem[] = [
         {
@@ -68,7 +58,7 @@ export const Chats: FC<Props> = ({ }) => {
             type: 'default'
         },
         {
-            icon: logoutLoading ? <SmallLoading/> : <img src={logout} className={s.menuItem} />,
+            icon: logoutLoading ? <SmallLoading /> : <img src={logout} className={s.menuItem} />,
             content: 'Logout',
             onClick: () => dispatch(authActions.logoutAsync()),
             type: 'default'
@@ -111,7 +101,7 @@ export const Chats: FC<Props> = ({ }) => {
             </div>
             {isEnabledSearchMode
                 ? <div>search</div>
-                : <div className={s.chats} ref={chatsRef}>
+                : <div className={s.chats}>
                     {chats.map(chat => {
                         const lastMessage = chat.messages?.length ? chat.messages?.reduce((a, b) => a.createdAt > b.createdAt ? a : b, chat.messages[0]) : null;
                         return (
@@ -120,7 +110,7 @@ export const Chats: FC<Props> = ({ }) => {
                                 items={[
                                     {
                                         content: 'Delete chat',
-                                        icon: <img src={deleteSvg} width={20}/>,
+                                        icon: <img src={deleteSvg} width={20} />,
                                         onClick: () => dispatch(chatActions.chatDeleteAsync(chat.id)),
                                         type: 'danger',
                                     },
@@ -154,15 +144,17 @@ export const Chats: FC<Props> = ({ }) => {
                             </ContextMenu>
                         )
                     })}
-                    <div
-                        className={s.buttonCreateChat}
-                        onClick={() => dispatch(appActions.setLeftSidebarState(LeftSidebarState.CreateGroup))}
-                        style={{ left: `${offsetLeft + 325}px` }}
-                    >
-                        <SmallPrimaryButton>
-                            <img src={pencilFilled} width={20} />
-                        </SmallPrimaryButton>
-                    </div>
+                    <LeftSidebarSmallPrimaryButton>
+                        <div
+                            className={s.smallPrimaryButton}
+                            onClick={() => dispatch(appActions.setLeftSidebarState(LeftSidebarState.CreateGroup))}
+
+                        >
+                            <SmallPrimaryButton>
+                                <img src={pencilFilled} width={20} />
+                            </SmallPrimaryButton>
+                        </div>
+                    </LeftSidebarSmallPrimaryButton>
                 </div>
             }
         </div>

@@ -5,6 +5,11 @@
     position: relative;
 }
 
+.leftSidebarSmallPrimaryButton {
+    position: fixed;
+    bottom: 5px;
+}
+
 @media (max-width: 700px) {
     .wrapper {
         width: 100% !important;

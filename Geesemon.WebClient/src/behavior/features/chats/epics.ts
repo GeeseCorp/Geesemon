@@ -57,7 +57,7 @@ export const createGroupChatAsyncEpic: Epic<ReturnType<typeof chatActions.create
                 variables: {input: action.payload}
             })).pipe(
                 mergeMap(response => [
-                    chatActions.addChats([response.data?.chat.createGroup as Chat]),
+                    // chatActions.addChats([response.data?.chat.createGroup as Chat]),
                     appActions.setLeftSidebarState(LeftSidebarState.Chats),
                 ]),
                 catchError(error => of(notificationsActions.addError(error.message))),
