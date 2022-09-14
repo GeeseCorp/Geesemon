@@ -35,7 +35,11 @@ namespace Geesemon.DataAccess.Providers.UserProvider
 
         public Task<List<User>> GetAsync(int take, int skip, string q)
         {
-            return context.Users.Where(u => EF.Functions.FreeText(u.FirstName, q)).ToListAsync();
+            return context.Users
+                .Where(u => u.Login.Contains(q) || u.Email.Contains(q))
+                .OrderBy(u => u.FirstName)
+                .ThenBy(u => u.LastName)
+                .ToListAsync();
         }
     }
 }

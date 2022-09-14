@@ -1,5 +1,5 @@
-import {User} from "../auth/types";
-import {Entity} from "../../common";
+import { User } from "../auth/types";
+import { Entity } from "../../common";
 
 export type Message = {
     text?: string | null
@@ -44,10 +44,19 @@ export enum MessageActionKind {
     Update = "UPDATE",
     Delete = "DELETE",
 }
-
 export type MessageActions = {
-    type:MessageActionKind,
+    type: MessageActionKind,
     message: Message,
 }
 
 
+export enum ChatActionKind {
+    Create = "CREATE",
+    Update = "UPDATE",
+    Delete = "DELETE",
+    Clear = " CLEAR",
+}
+export type ChatActions = {
+    type: ChatActionKind,
+    chat: Chat,
+}

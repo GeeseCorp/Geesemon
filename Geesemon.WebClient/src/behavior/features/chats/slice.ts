@@ -38,9 +38,27 @@ const slice = createSlice({
             state.inUpdateMessageId = action.payload;
         },
         addChats: (state, action: PayloadAction<Chat[]>) => {
-            state.chats = [...state.chats, ...action.payload]
+            state.chats = sortChat([...state.chats, ...action.payload])
         },
-        getAsync: (state) => state,
+        chatsGetAsync: (state) => state,
+
+        setCreateGroupLoading: (state, action: PayloadAction<boolean>) => {
+            state.createGroupLoading = action.payload;
+        },
+        createGroupChatAsync: (state, action: PayloadAction<CreateGroupChatInputType>) => state,
+
+        updateChat: (state, action: PayloadAction<Chat>) => {
+            state.chats = state.chats.map(chat =>
+                chat.id === action.payload.id
+                    ? action.payload
+                    : chat
+            )
+        },
+
+        deleteChat: (state, action: PayloadAction<string>) => {
+            state.chats = state.chats.filter(c => c.id !== action.payload);
+        },
+        chatDeleteAsync: (state, action: PayloadAction<string>) => state,
 
         setMessageGetLoading: (state, action: PayloadAction<boolean>) => {
             state.messageGetLoading = action.payload;
@@ -65,11 +83,6 @@ const slice = createSlice({
             state.chats = sortChat(newChats)
         },
 
-        setCreateGroupLoading: (state, action: PayloadAction<boolean>) => {
-            state.createGroupLoading = action.payload;
-        },
-        createGroupChatAsync: (state, action: PayloadAction<CreateGroupChatInputType>) => state,
-
         messageSendAsync: (state, action: PayloadAction<SentMessageInputType>) => state,
         messageUpdateAsync: (state, action: PayloadAction<UpdateMessageInputType>) => state,
         updateMessage: (state, action: PayloadAction<Message>) => {
@@ -84,7 +97,7 @@ const slice = createSlice({
         },
         messageDeleteAsync: (state, action: PayloadAction<DeleteMessageInputType>) => state,
 
-        clear: (state, action: PayloadAction) => {
+        toInitialState: (state, action: PayloadAction) => {
             state = initialState;
         },
     },

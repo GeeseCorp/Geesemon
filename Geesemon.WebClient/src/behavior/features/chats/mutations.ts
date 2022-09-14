@@ -1,6 +1,6 @@
-import {gql} from "@apollo/client";
-import {CHAT_FRAGMENT, MESSAGE_FRAGMENT} from "./fragments";
-import {Chat, Message} from "./types";
+import { gql } from "@apollo/client";
+import { CHAT_FRAGMENT, MESSAGE_FRAGMENT } from "./fragments";
+import { Chat, Message } from "./types";
 
 export type ChatCreateGroupData = { chat: { createGroup: Chat } }
 export type ChatCreateGroupVars = { input: CreateGroupChatInputType }
@@ -20,9 +20,23 @@ export const CHAT_CREATE_GROUP_MUTATION = gql`
     }
 `
 
+
+export type ChatDeleteData = { chat: { delete: Chat } }
+export type ChatDeleteVars = { input: string }
+export const CHAT_DELETE_MUTATION = gql`
+    ${CHAT_FRAGMENT}
+    mutation ChatDelete($input: Guid!) {
+        chat {
+            delete(input: $input) {
+                ...ChatFragment
+            }
+        }
+      }
+`
+
 export type MessageSendData = { message: { send: Message } }
-export type MessageSendVars = { input: SentMessageInputType  }
-export type SentMessageInputType  = {
+export type MessageSendVars = { input: SentMessageInputType }
+export type SentMessageInputType = {
     text: string
     chatId: string
 }
@@ -38,8 +52,8 @@ export const MESSAGE_SEND_MUTATION = gql`
 `
 
 export type MessageUpdateData = { message: { update: Message } }
-export type MessageUpdateVars = { input: UpdateMessageInputType  }
-export type UpdateMessageInputType  = {
+export type MessageUpdateVars = { input: UpdateMessageInputType }
+export type UpdateMessageInputType = {
     messageId: string
     text: string
 }
@@ -55,8 +69,8 @@ export const MESSAGE_UPDATE_MUTATION = gql`
 `
 
 export type MessageDeleteData = { message: { delete: Message } }
-export type MessageDeleteVars = { input: DeleteMessageInputType  }
-export type DeleteMessageInputType  = {
+export type MessageDeleteVars = { input: DeleteMessageInputType }
+export type DeleteMessageInputType = {
     messageId: string
 }
 export const MESSAGE_DELETE_MUTATION = gql`

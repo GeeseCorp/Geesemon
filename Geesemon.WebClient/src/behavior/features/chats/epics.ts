@@ -24,14 +24,17 @@ import {
     MessageSendData,
     MessageSendVars,
     MessageUpdateData,
-    MessageUpdateVars
+    MessageUpdateVars,
+    CHAT_DELETE_MUTATION,
+    ChatDeleteData,
+    ChatDeleteVars
 } from "./mutations";
 import {Chat} from "./types";
 import { appActions, LeftSidebarState } from "../app/slice";
 
-export const getAsyncEpic: Epic<ReturnType<typeof chatActions.getAsync>, any, RootState> = (action$, state$) =>
+export const chatsGetAsyncEpic: Epic<ReturnType<typeof chatActions.chatsGetAsync>, any, RootState> = (action$, state$) =>
     action$.pipe(
-        ofType(chatActions.getAsync.type),
+        ofType(chatActions.chatsGetAsync.type),
         mergeMap(action =>
             from(client.query<ChatsGetData, ChatsGetVars>({
                 query: CHATS_GET_QUERY,
@@ -60,6 +63,20 @@ export const createGroupChatAsyncEpic: Epic<ReturnType<typeof chatActions.create
                 catchError(error => of(notificationsActions.addError(error.message))),
                 startWith(chatActions.setCreateGroupLoading(true)),
                 endWith(chatActions.setCreateGroupLoading(false)),
+            )
+        )
+    );
+
+export const chatDeleteAsyncEpic: Epic<ReturnType<typeof chatActions.chatDeleteAsync>, any, RootState> = (action$, state$) =>
+    action$.pipe(
+        ofType(chatActions.chatDeleteAsync.type),
+        mergeMap(action =>
+            from(client.mutate<ChatDeleteData, ChatDeleteVars>({
+                mutation: CHAT_DELETE_MUTATION,
+                variables: {input: action.payload}
+            })).pipe(
+                mergeMap(response => []),
+                catchError(error => of(notificationsActions.addError(error.message))),
             )
         )
     );
@@ -128,9 +145,10 @@ export const messageDeleteAsyncEpic: Epic<ReturnType<typeof chatActions.messageD
     );
 
 export const chatEpics = combineEpics(
-    getAsyncEpic,
+    chatsGetAsyncEpic,
     // @ts-ignore
     createGroupChatAsyncEpic,
+    chatDeleteAsyncEpic,
     messageSendAsyncEpic,
     messageUpdateAsyncEpic,
     messageGetAsyncEpic,

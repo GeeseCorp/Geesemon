@@ -41,7 +41,7 @@ export const Chats: FC<Props> = ({ }) => {
 
     useEffect(() => {
         if (!chats.length)
-            dispatch(chatActions.getAsync());
+            dispatch(chatActions.chatsGetAsync());
     }, [])
 
     useEffect(() => {
@@ -112,7 +112,7 @@ export const Chats: FC<Props> = ({ }) => {
             {isEnabledSearchMode
                 ? <div>search</div>
                 : <div className={s.chats} ref={chatsRef}>
-                    {chats.slice(0).reverse().map(chat => {
+                    {chats.map(chat => {
                         const lastMessage = chat.messages?.length ? chat.messages?.reduce((a, b) => a.createdAt > b.createdAt ? a : b, chat.messages[0]) : null;
                         return (
                             <ContextMenu
@@ -121,7 +121,7 @@ export const Chats: FC<Props> = ({ }) => {
                                     {
                                         content: 'Delete chat',
                                         icon: <img src={deleteSvg} width={20}/>,
-                                        // onClick: () => dispatch(),
+                                        onClick: () => dispatch(chatActions.chatDeleteAsync(chat.id)),
                                         type: 'danger',
                                     },
                                 ]}

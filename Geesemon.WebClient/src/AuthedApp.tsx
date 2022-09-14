@@ -5,9 +5,12 @@ import { useSubscription } from "@apollo/client";
 import {
     MESSAGE_ACTIONS_SUBSCRIPTIONS,
     MessageActionsData,
-    MessageActionsVars
+    MessageActionsVars,
+    CHAT_ACTIONS_SUBSCRIPTIONS,
+    ChatActionsVars,
+    ChatActionsData
 } from "./behavior/features/chats/subscriptions";
-import { MessageActionKind } from "./behavior/features/chats/types";
+import { ChatActionKind, MessageActionKind } from "./behavior/features/chats/types";
 import { useAppDispatch, useAppSelector } from "./behavior/store";
 import { chatActions } from "./behavior/features/chats";
 import { useIsMobile } from "./hooks/useIsMobile";
@@ -20,6 +23,7 @@ export const AuthedApp: FC<Props> = ({ }) => {
     const dispatch = useAppDispatch();
     const isRightSidebarVisible = useAppSelector(s => s.app.isRightSidebarVisible)
     const messageActionSubscription = useSubscription<MessageActionsData, MessageActionsVars>(MESSAGE_ACTIONS_SUBSCRIPTIONS);
+    const chatActionSubscription = useSubscription<ChatActionsData, ChatActionsVars>(CHAT_ACTIONS_SUBSCRIPTIONS);
 
     useEffect(() => {
         const data = messageActionSubscription.data;
@@ -41,6 +45,24 @@ export const AuthedApp: FC<Props> = ({ }) => {
 
         }
     }, [messageActionSubscription.data])
+
+    useEffect(() => {
+        const data = chatActionSubscription.data;
+        if (data) {
+            switch (data?.chatActions.type) {
+                case ChatActionKind.Create:
+                    dispatch(chatActions.addChats([data.chatActions.chat]))
+                    break;
+                case ChatActionKind.Update:
+                    dispatch(chatActions.updateChat(data.chatActions.chat));
+                    break;
+                case ChatActionKind.Delete:
+                    dispatch(chatActions.deleteChat(data.chatActions.chat.id))
+                    break;
+            }
+
+        }
+    }, [chatActionSubscription.data])
 
     return (
         <div className={'authedRoutes'}>
@@ -71,7 +93,6 @@ export const AuthedApp: FC<Props> = ({ }) => {
                     </Routes>
                 </>
             }
-
         </div>
     );
 };
