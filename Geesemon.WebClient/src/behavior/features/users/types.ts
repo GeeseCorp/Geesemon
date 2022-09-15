@@ -1,11 +1,19 @@
-export type UserBase = {
-    id: string;
-    lastName: string;
-    firstName: string;
-};
+import { Entity } from "../../common";
 
-export type GetAllQueryResponseType = {
-    user: {
-        getAll: UserBase[];
-    };
-};
+export type User = {
+    firstName: string
+    lastName: string
+    login: string
+    email: string
+    phoneNumber : string
+    description: string
+    dateOfBirth: string
+    role: Role
+    imageUrl?: string
+    avatarColor: string
+} & Entity;
+
+export enum Role{
+    Admin = 'ADMIN',
+    User = 'USER',
+}

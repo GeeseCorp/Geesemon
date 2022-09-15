@@ -1,0 +1,42 @@
+.users {
+    background-color: #212121;
+    position: relative;
+    overflow-y: auto;
+    margin: 0 .3rem;
+    height: calc(100% - 56px);
+}
+
+.user {
+    height: 72px;
+    padding: 0 8px;
+    border-radius: 10px;
+    margin-right: 5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.user:hover {
+    background-color: #2C2C2C;
+    border-radius: 5px;
+}
+
+.userInner {
+    flex: 1;
+    min-width: 0;
+    height: 54px;
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+    align-items: start;
+}
+
+.checkbox{
+    align-self: center;
+}
+
+.userInfo{
+    flex: 1;
+    width: calc(100% - 150px);
+}

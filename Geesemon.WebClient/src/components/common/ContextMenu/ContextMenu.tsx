@@ -1,5 +1,8 @@
+import { AnimatePresence, motion } from 'framer-motion';
 import React, {FC, useEffect, useRef, useState} from 'react';
+import { Link } from 'react-router-dom';
 import {Menu, MenuItem} from "../Menu/Menu";
+import s from './ContextMenu.module.css';
 
 type Props = {
     items: MenuItem[],
@@ -14,6 +17,21 @@ export const ContextMenu: FC<Props> = ({children, items}) => {
         setLocation({x, y});
     };
 
+    const menuRef = useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+        document.addEventListener('mousedown', onClickOff);
+        return () => {
+            document.removeEventListener('mousedown', onClickOff);
+        }
+    }, [])
+
+    const onClickOff = (event: MouseEvent) => {
+        if (event.target !== menuRef.current && !menuRef.current?.contains(event.target as Node)) {
+            setOpen(false);
+        }
+    };
+
     return (
         <>
             {React.cloneElement(children, {
@@ -23,12 +41,54 @@ export const ContextMenu: FC<Props> = ({children, items}) => {
                 },
             })}
             {open && (
-                <Menu
-                    items={items}
-                    x={location.x}
-                    y={location.y}
-                    setOpen={setOpen}
-                />
+                <AnimatePresence>
+                <motion.div
+                    initial={{opacity: 0, scale: 0.5}}
+                    animate={{opacity: 1, scale: 1}}
+                    exit={{opacity: 0, scale: 0.5}}
+                    transition={{duration: .25}}
+                    className={s.menuItems}
+                    ref={menuRef}
+                    style={{
+                        left: location.x,
+                        top: location.y,
+                    }}
+                >
+                    {items.map((item, i) => {
+                        const onClick = () => {
+                            item.onClick && item.onClick();
+                            setOpen(false)
+                        }
+                        if (item.link) {
+                            return (
+                                <Link
+                                    key={i}
+                                    to={item.link}
+                                >
+                                    <div
+                                        key={i}
+                                        onClick={() => setOpen(false)}
+                                        className={[s.menuItem, item.type === 'danger' && 'danger'].join(' ')}
+                                    >
+                                        <div className={s.icon}>{item.icon}</div>
+                                        <div className={s.content}>{item.content}</div>
+                                    </div>
+                                </Link>
+                            )
+                        }
+                        return (
+                            <div
+                                key={i}
+                                onClick={onClick}
+                                className={[s.menuItem, item.type === 'danger' && 'danger'].join(' ')}
+                            >
+                                <div className={s.icon}>{item.icon}</div>
+                                <div className={s.content}>{item.content}</div>
+                            </div>
+                        )
+                    })}
+                </motion.div>
+            </AnimatePresence>
             )}
         </>
     );

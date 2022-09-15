@@ -67,9 +67,9 @@ public class AuthService
         }
     }
 
-    public string CleanBearerInToken(string token)
+    public string? CleanBearerInToken(string token)
     {
-        return token.Replace(Bearer + " ", string.Empty);
+        return token?.Replace(Bearer + " ", string.Empty);
     }
 
 }

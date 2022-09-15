@@ -2,6 +2,7 @@ import {Chat, Message} from "./types";
 import {createSlice, PayloadAction,} from "@reduxjs/toolkit";
 import {
     CreateGroupChatInputType,
+    CreatePersonalChatInputType,
     DeleteMessageInputType,
     SentMessageInputType,
     UpdateMessageInputType
@@ -16,7 +17,7 @@ type InitialState = {
     messageGetLoading: boolean
     inUpdateMessageId?: string | null
     mode: Mode
-    createGroupLoading: boolean
+    createChatLoading: boolean
 }
 
 const initialState: InitialState = {
@@ -24,7 +25,7 @@ const initialState: InitialState = {
     messageGetLoading: false,
     inUpdateMessageId: null,
     mode: 'Text',
-    createGroupLoading: false,
+    createChatLoading: false,
 };
 
 const slice = createSlice({
@@ -43,8 +44,9 @@ const slice = createSlice({
         chatsGetAsync: (state) => state,
 
         setCreateGroupLoading: (state, action: PayloadAction<boolean>) => {
-            state.createGroupLoading = action.payload;
+            state.createChatLoading = action.payload;
         },
+        createPersonalChatAsync: (state, action: PayloadAction<CreatePersonalChatInputType>) => state,
         createGroupChatAsync: (state, action: PayloadAction<CreateGroupChatInputType>) => state,
 
         updateChat: (state, action: PayloadAction<Chat>) => {

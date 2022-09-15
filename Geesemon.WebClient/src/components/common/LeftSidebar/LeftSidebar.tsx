@@ -2,7 +2,8 @@ import { FC, useEffect, useRef, useState } from 'react';
 import { LeftSidebarState } from '../../../behavior/features/app/slice';
 import { useAppSelector } from "../../../behavior/store";
 import { Chats } from "../../chats/Chats/Chats";
-import { ChatsCreateGroup } from "../../chats/ChatsCreateGroup/ChatsCreateGroup";
+import { ChatsCreateGroup as ChatsCreateGroupChat } from "../../chats/ChatsCreateGroup/ChatsCreateGroup";
+import { ChatsCreatePersonalChat } from '../../chats/ChatsCreatePersonalChat/ChatsCreatePersonalChat';
 import s from './LeftSidebar.module.css';
 
 export const leftSidebarSmallPrimaryButtonId = 'leftSidebarSmallPrimaryButtonId';
@@ -30,8 +31,10 @@ export const LeftSidebar: FC = () => {
         switch (leftSidebarState) {
             case LeftSidebarState.Chats:
                 return <Chats />;
-            case LeftSidebarState.CreateGroup:
-                return <ChatsCreateGroup />;
+            case LeftSidebarState.CreateGroupChat:
+                return <ChatsCreateGroupChat />;
+            case LeftSidebarState.CreatePersonalChat:
+                return <ChatsCreatePersonalChat />;
         }
     }
 

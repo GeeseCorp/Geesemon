@@ -9,10 +9,11 @@ export const USER_FRAGMENT = gql`
         email
         description
         phoneNumber
-        createdAt
-        updatedAt
         dateOfBirth
         role
+        imageUrl
         avatarColor
+        createdAt
+        updatedAt
     }
 `;

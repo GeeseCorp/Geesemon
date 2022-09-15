@@ -51,6 +51,10 @@ const slice = createSlice({
             state.authedUser = null;
             removeAuthToken();
         },
+
+        toInitialState: (state, action: PayloadAction) => {
+            state = initialState;
+        },
     },
 });
 

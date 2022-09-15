@@ -33,10 +33,6 @@ namespace Geesemon.Web.GraphQL.Types
                .Name("Description")
                .Resolve(context => context.Source.Description);
 
-            Field<NonNullGraphType<StringGraphType>, bool>()
-               .Name("IsEmailConfirmed")
-               .Resolve(context => context.Source.IsEmailConfirmed);
-
             Field<DateTimeGraphType, DateTime?>()
                .Name("DateOfBirth")
                .Resolve(context => context.Source.DateOfBirth);
@@ -45,6 +41,10 @@ namespace Geesemon.Web.GraphQL.Types
                .Name("Role")
                .Resolve(context => context.Source.Role);
 
+            Field<StringGraphType, string?>()
+               .Name("ImageUrl")
+               .Resolve(context => context.Source.ImageUrl);
+            
             Field<NonNullGraphType<StringGraphType>, string>()
                .Name("AvatarColor")
                .Resolve(context => context.Source.AvatarColor);

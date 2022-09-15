@@ -2,7 +2,8 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit'
 
 export enum LeftSidebarState{
     Chats,
-    CreateGroup,
+    CreateGroupChat,
+    CreatePersonalChat,
 }
 
 export type InitialState = {

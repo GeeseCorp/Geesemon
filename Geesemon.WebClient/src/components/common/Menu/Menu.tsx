@@ -12,12 +12,14 @@ export type MenuItem = {
 }
 
 type Props = {
-    items: MenuItem[],
-    x: number,
-    y: number,
+    items: MenuItem[]
+    left?: number
+    top?: number
+    right?: number
+    bottom?: number
     setOpen: Dispatch<React.SetStateAction<boolean>>
 };
-export const Menu: FC<Props> = ({items, x, y, setOpen}) => {
+export const Menu: FC<Props> = ({items, left, top, right, bottom, setOpen}) => {
     const menuRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
@@ -43,8 +45,10 @@ export const Menu: FC<Props> = ({items, x, y, setOpen}) => {
                 className={s.menuItems}
                 ref={menuRef}
                 style={{
-                    left: x,
-                    top: y,
+                    left,
+                    top,
+                    right,
+                    bottom,
                 }}
             >
                 {items.map((item, i) => {

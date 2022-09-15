@@ -1,12 +1,14 @@
 import { AnimatePresence } from "framer-motion";
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import back from "../../../assets/svg/back.svg";
+import deleteSvg from "../../../assets/svg/delete.svg";
 import logout from "../../../assets/svg/logout.svg";
 import menu from "../../../assets/svg/menu.svg";
+import pencilFilled from '../../../assets/svg/pencilFilled.svg';
 import saved from "../../../assets/svg/saved.svg";
 import settings from "../../../assets/svg/settings.svg";
-import deleteSvg from "../../../assets/svg/delete.svg";
+import crossFilled from "../../../assets/svg/crossFilled.svg";
 import { appActions, LeftSidebarState } from "../../../behavior/features/app/slice";
 import { authActions } from "../../../behavior/features/auth/slice";
 import { chatActions } from "../../../behavior/features/chats";
@@ -17,12 +19,11 @@ import { AvatarWithoutImage } from "../../common/AvatarWithoutImage/AvatarWithou
 import { ContextMenu } from "../../common/ContextMenu/ContextMenu";
 import { Search } from "../../common/formControls/Search/Search";
 import { HeaderButton } from "../../common/HeaderButton/HeaderButton";
+import { LeftSidebarSmallPrimaryButton } from "../../common/LeftSidebarSmallPrimaryButton/LeftSidebarSmallPrimaryButton";
 import { Menu, MenuItem } from "../../common/Menu/Menu";
+import { SmallLoading } from "../../common/SmallLoading/SmallLoading";
 import { SmallPrimaryButton } from "../../common/SmallPrimaryButton/SmallPrimaryButton";
 import s from './Chats.module.css';
-import { SmallLoading } from "../../common/SmallLoading/SmallLoading";
-import pencilFilled from '../../../assets/svg/pencilFilled.svg';
-import { LeftSidebarSmallPrimaryButton } from "../../common/LeftSidebarSmallPrimaryButton/LeftSidebarSmallPrimaryButton";
 
 type Props = {}
 
@@ -37,13 +38,12 @@ export const Chats: FC<Props> = ({ }) => {
     const chats = useAppSelector(s => s.chats.chats);
     const [searchValue, setSearchValue] = useState('');
     const dispatch = useAppDispatch();
+    const [isCreateChatMenuVisible, setIsCreateChatMenuVisible] = useState(false);
 
     useEffect(() => {
         if (!chats.length)
             dispatch(chatActions.chatsGetAsync());
     }, [])
-
-
 
     const menuItems: MenuItem[] = [
         {
@@ -62,6 +62,21 @@ export const Chats: FC<Props> = ({ }) => {
             content: 'Logout',
             onClick: () => dispatch(authActions.logoutAsync()),
             type: 'default'
+        },
+    ];
+
+    const createChatMenuItems: MenuItem[] = [
+        {
+            icon: <img src={saved} className={s.menuItem} />,
+            content: 'New group',
+            type: 'default',
+            onClick: () => dispatch(appActions.setLeftSidebarState(LeftSidebarState.CreateGroupChat)),
+        },
+        {
+            icon: <img src={saved} className={s.menuItem} />,
+            content: 'New personal chat',
+            type: 'default',
+            onClick: () => dispatch(appActions.setLeftSidebarState(LeftSidebarState.CreatePersonalChat)),
         },
     ];
 
@@ -84,8 +99,7 @@ export const Chats: FC<Props> = ({ }) => {
                                 {isMenuVisible &&
                                     <Menu
                                         items={menuItems}
-                                        x={20}
-                                        y={50}
+                                        top={50}
                                         setOpen={setIsMenuVisible}
                                     />
                                 }
@@ -147,16 +161,29 @@ export const Chats: FC<Props> = ({ }) => {
                     <LeftSidebarSmallPrimaryButton>
                         <div
                             className={s.smallPrimaryButton}
-                            onClick={() => dispatch(appActions.setLeftSidebarState(LeftSidebarState.CreateGroup))}
+                            onClick={isCreateChatMenuVisible
+                                ? () => setIsCreateChatMenuVisible(false)
+                                : () => setIsCreateChatMenuVisible(true)
+                            }
 
                         >
                             <SmallPrimaryButton>
-                                <img src={pencilFilled} width={20} />
+                                {isCreateChatMenuVisible
+                                    ? <img src={crossFilled} width={20} />
+                                    : <img src={pencilFilled} width={20} />}
                             </SmallPrimaryButton>
+                            {isCreateChatMenuVisible &&
+                                <Menu
+                                    items={createChatMenuItems}
+                                    top={-90}
+                                    right={0}
+                                    setOpen={setIsCreateChatMenuVisible}
+                                />
+                            }
                         </div>
                     </LeftSidebarSmallPrimaryButton>
-                </div>
+                </div >
             }
-        </div>
+        </div >
     );
 }

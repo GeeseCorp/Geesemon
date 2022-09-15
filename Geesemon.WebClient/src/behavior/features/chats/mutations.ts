@@ -21,6 +21,23 @@ export const CHAT_CREATE_GROUP_MUTATION = gql`
 `
 
 
+export type ChatCreatePersonalData = { chat: { createGroup: Chat } }
+export type ChatCreatePersonalVars = { input: CreatePersonalChatInputType }
+export type CreatePersonalChatInputType = {
+    userId: string
+}
+export const CHAT_CREATE_PERSONAL_MUTATION = gql`
+    ${CHAT_FRAGMENT}
+    mutation ChatCreatePersonal($input: CreatePersonalChatInputType!) {
+        chat {
+            createPersonal(input: $input) {
+                ...ChatFragment
+            }
+        }
+    }
+`
+
+
 export type ChatDeleteData = { chat: { delete: Chat } }
 export type ChatDeleteVars = { input: string }
 export const CHAT_DELETE_MUTATION = gql`

@@ -9,6 +9,7 @@ import {chatEpics} from "./features/chats/epics";
 import {navigateReducer} from "./features/navigate/slice";
 import {appReducer} from "./features/app/slice";
 import {authEpics} from "./features/auth/epics";
+import { userEpics } from "./features/users/epics";
 
 const epicMiddleware = createEpicMiddleware();
 
@@ -27,8 +28,9 @@ export const store = configureStore({
 
 const rootEpic = combineEpics(
     chatEpics,
-    // @ts-ignore
     authEpics,
+    // @ts-ignore
+    userEpics,
 );
 // @ts-ignore
 epicMiddleware.run(rootEpic);

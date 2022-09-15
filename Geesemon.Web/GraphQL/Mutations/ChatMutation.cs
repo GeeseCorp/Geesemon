@@ -68,7 +68,7 @@ namespace Geesemon.Web.GraphQL.Mutations
 
             var chat = new Chat
             {
-                Type = ChatKind.Personal,
+                Type = oppositeUser.Id == currentUserId ? ChatKind.Saved : ChatKind.Personal,
                 CreatorId = currentUserId
             };
             chat = await chatManager.CreateAsync(chat);
@@ -77,11 +77,12 @@ namespace Geesemon.Web.GraphQL.Mutations
             chat.ImageUrl = oppositeUser.ImageUrl;
 
 
-            var userChat = new List<UserChat>()
-            {
-                        new UserChat { UserId = currentUserId, ChatId = chat.Id },
-                        new UserChat { UserId = chatInp.UserId, ChatId = chat.Id },
+            var userChat = new List<UserChat>
+            { 
+                new UserChat { UserId = currentUserId, ChatId = chat.Id },
             };
+            if (oppositeUser.Id != currentUserId)
+                userChat.Add(new UserChat { UserId = chatInp.UserId, ChatId = chat.Id });
             await userChatManager.CreateManyAsync(userChat);
 
             subscriptionService.Notify(chat, ChatActionKind.Create);

@@ -10,25 +10,30 @@ import { HeaderButton } from "../../common/HeaderButton/HeaderButton";
 import back from "../../../assets/svg/back.svg";
 import { appActions, LeftSidebarState } from '../../../behavior/features/app/slice';
 import { LeftSidebarSmallPrimaryButton } from '../../common/LeftSidebarSmallPrimaryButton/LeftSidebarSmallPrimaryButton';
+import { Users } from '../../users/Users/Users';
+import { Search } from '../../common/formControls/Search/Search';
 
 type Props = {};
 export const ChatsCreateGroup: FC<Props> = () => {
-    const createGroupLoading = useAppSelector(s => s.chats.createGroupLoading);
+    const createGroupLoading = useAppSelector(s => s.chats.createChatLoading);
     const inputFileRef = useRef<HTMLInputElement | null>(null);
     const [groupName, setGroupName] = useState('')
+    const [userIds, setUserIds] = useState<string[]>([])
     const [image, setImage] = useState<File | null>(null)
     const [state, setState] = useState<'Members' | 'ImageAndName'>('Members')
     const dispatch = useAppDispatch();
+    const [searchUsersValue, setSearchUsersValue] = useState('');
 
     const changeInputFileHandler = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.files)
             setImage(e.target.files[0])
     }
 
+
     const createGroupHandler = async () => {
         dispatch(chatActions.createGroupChatAsync({
             name: groupName,
-            usersId: [],
+            usersId: userIds,
             image: image,
         }))
     }
@@ -44,8 +49,14 @@ export const ChatsCreateGroup: FC<Props> = () => {
                         >
                             <img src={back} width={25} />
                         </HeaderButton>
-                        <div className={'headerTitle'}>Add members</div>
+                        <Search
+                            value={searchUsersValue}
+                            setValue={setSearchUsersValue}
+                            placeholder={'Search members'}
+                        // onFocus={() => setIsEnabledSearchMode(true)}
+                        />
                     </div>
+                    <Users selectMultiple={true} onSelectedUserIdChange={setUserIds}/>
                     <LeftSidebarSmallPrimaryButton>
                         <SmallPrimaryButton onClick={() => setState('ImageAndName')}>
                             <img src={next} width={25} />

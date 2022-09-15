@@ -28,7 +28,7 @@ namespace Geesemon.DataAccess.Providers.UsersChatsProvider
         public async Task<List<UserChat>> GetPersonalByUserIds(params Guid[] userIds)
         {    
             var chat = await context.Chats.Include(uc => uc.UserChats)
-                .FirstOrDefaultAsync(c => c.Type == ChatKind.Personal && c.UserChats
+                .FirstOrDefaultAsync(c => (c.Type == ChatKind.Personal || c.Type == ChatKind.Saved) && c.UserChats
                 .All(uc => userIds.Contains(uc.UserId)));
 
             return chat?.UserChats ?? new List<UserChat>();

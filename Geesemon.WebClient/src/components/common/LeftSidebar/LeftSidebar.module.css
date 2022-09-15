@@ -14,4 +14,9 @@
     .wrapper {
         width: 100% !important;
     }
+
+    .leftSidebarSmallPrimaryButton {
+        left: auto !important;
+        right: 10px;
+    }
 }

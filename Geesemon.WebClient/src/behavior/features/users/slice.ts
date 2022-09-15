@@ -1,59 +1,34 @@
-import {GetAllQueryResponseType, UserBase} from "./types";
-import {ActionReducerMapBuilder, AsyncThunk, createSlice, PayloadAction,} from "@reduxjs/toolkit";
-import {getAllUsers} from "./thunk";
-
-type UserListState = UserBase[] | null;
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { UserGetInputType } from "./queries";
+import { User } from "./types";
 
 type InitialState = {
-  userList: UserListState;
-  isLoading: boolean;
+    users: User[]
+    usersGetLoading: boolean
 };
 
 const initialState: InitialState = {
-  userList: null,
-  isLoading: false,
+    users: [],
+    usersGetLoading: false,
 };
 
-const receiveAllUsersReducer = (
-    state: InitialState,
-    {payload}: PayloadAction<GetAllQueryResponseType>
-) => {
-  state.userList = payload.user.getAll;
-};
-
-const setIsLoadingReducer = (
-    state: InitialState,
-    action: PayloadAction<boolean>
-) => {
-  state.isLoading = action.payload;
-};
-
-const addCasesFor = (
-    thunk: AsyncThunk<any, any, {}>,
-    builder: ActionReducerMapBuilder<InitialState>
-) => {
-  builder
-      .addCase(thunk.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(thunk.fulfilled, (state) => {
-        state.isLoading = false;
-      })
-      .addCase(thunk.rejected, (state) => {
-        state.isLoading = false;
-      });
-};
 
 const slice = createSlice({
-  name: "userList",
-  initialState,
-  reducers: {
-    receiveAllUsers: receiveAllUsersReducer,
-    setIsLoading: setIsLoadingReducer,
-  },
-  extraReducers: (builder) => {
-    addCasesFor(getAllUsers, builder);
-  },
+    name: "users",
+    initialState,
+    reducers: {
+        addUsers: (state, action: PayloadAction<User[]>) => {
+            state.users = [...state.users, ...action.payload];
+        },
+        usersGetAsync: (state, action: PayloadAction<UserGetInputType>) => state,
+        setUsersGetLoading: (state, action: PayloadAction<boolean>) => {
+            state.usersGetLoading = action.payload;
+        },
+
+        toInitialState: (state, action: PayloadAction) => {
+            state = initialState;
+        },
+    },
 });
 
 export const usersReducer = slice.reducer;
