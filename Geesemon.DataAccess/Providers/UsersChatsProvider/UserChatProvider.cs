@@ -25,7 +25,7 @@ namespace Geesemon.DataAccess.Providers.UsersChatsProvider
             return userChat;
         }
 
-        // TODO: huge lox must fix this method
+        // TODO: huge lox must fix this method!!!
         public async Task<List<UserChat>> GetPersonalByUserIds(params Guid[] userIds)
         {    
             var chat = await context.Chats.Include(uc => uc.UserChats)
