@@ -1,4 +1,5 @@
 ﻿using Geesemon.DataAccess.Managers;
+using Geesemon.Model.Enums;
 using Geesemon.Model.Models;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -18,6 +19,25 @@ namespace Geesemon.Web.Services.MessageSubscription
         public Message Notify(Message message, MessageActionKind type)
         {
             messageActionStream.OnNext(new MessageAction { Message = message, Type = type });
+            return message;
+        }
+
+        public async Task<Message> SentSystemMessageAsync(string text, Guid chatId)
+        {
+            using var scope = serviceProvider.CreateScope();
+            var messageManager = scope.ServiceProvider.GetRequiredService<MessageManager>();
+
+            Message message = new Message()
+            {
+                ChatId = chatId,
+                Text = text,
+                FromId = Guid.Empty,
+                Type = MessageKind.System
+            };
+
+            message = await messageManager.CreateAsync(message);
+
+            messageActionStream.OnNext(new MessageAction { Message = message, Type = MessageActionKind.Create });
             return message;
         }
 
