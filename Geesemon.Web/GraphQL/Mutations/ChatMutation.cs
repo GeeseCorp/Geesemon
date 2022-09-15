@@ -5,6 +5,7 @@ using Geesemon.Web.GraphQL.Auth;
 using Geesemon.Web.GraphQL.Types;
 using Geesemon.Web.Services;
 using Geesemon.Web.Services.ChatActionsSubscription;
+using Geesemon.Web.Services.MessageSubscription;
 using GraphQL;
 using GraphQL.Types;
 
@@ -15,12 +16,13 @@ namespace Geesemon.Web.GraphQL.Mutations
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly FileManagerService fileManagerService;
         private readonly IChatActionSubscriptionService subscriptionService;
+        private readonly IMessageActionSubscriptionService messageSubscriptionService;
         private readonly ChatManager chatManager;
         private readonly UserChatManager userChatManager;
         private readonly UserManager userManager;
 
         public ChatMutation(IHttpContextAccessor httpContextAccessor, FileManagerService fileManagerService,
-            IChatActionSubscriptionService subscriptionService, ChatManager chatManager, UserChatManager userChatManager,
+            IChatActionSubscriptionService chatSubscriptionService, IMessageActionSubscriptionService messageSubscriptionService, ChatManager chatManager, UserChatManager userChatManager,
             UserManager userManager)
         {
             Field<ChatType, Chat>()
@@ -43,7 +45,8 @@ namespace Geesemon.Web.GraphQL.Mutations
 
             this.httpContextAccessor = httpContextAccessor;
             this.fileManagerService = fileManagerService;
-            this.subscriptionService = subscriptionService;
+            this.subscriptionService = chatSubscriptionService;
+            this.messageSubscriptionService = messageSubscriptionService;
             this.chatManager = chatManager;
             this.userChatManager = userChatManager;
             this.userManager = userManager;
@@ -127,6 +130,8 @@ namespace Geesemon.Web.GraphQL.Mutations
             await userChatManager.CreateManyAsync(userChat);
 
             subscriptionService.Notify(chat, ChatActionKind.Create);
+            //NOTE: This is test for system messages. This line should be removed after finishing testing.
+            await messageSubscriptionService.SentSystemMessageAsync("Hello! This is system message test!!!", chat.Id);
 
             return chat;
         }
