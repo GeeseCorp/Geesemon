@@ -87,13 +87,13 @@ export const Chats: FC<Props> = ({ }) => {
                     <AnimatePresence>
                         {isEnabledSearchMode
                             ? <HeaderButton
-                                key={'back'}
+                                keyName={'back'}
                                 onClick={() => setIsEnabledSearchMode(false)}
                             >
                                 <img src={back} width={25} />
                             </HeaderButton>
                             : <>
-                                <HeaderButton key={'menu'} onClick={() => setIsMenuVisible(true)}>
+                                <HeaderButton keyName={'menu'} onClick={() => setIsMenuVisible(true)}>
                                     <img src={menu} width={20} />
                                 </HeaderButton>
                                 {isMenuVisible &&

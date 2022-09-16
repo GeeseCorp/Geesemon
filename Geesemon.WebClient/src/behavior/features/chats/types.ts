@@ -3,11 +3,17 @@ import { Entity } from "../../common";
 
 export type Message = {
     text?: string | null
+    type: MessageKind
     fromId?: string | null
     from?: User | null
     chatId: string
     readMessages: ReadMessage[]
 } & Entity
+
+export enum MessageKind {
+    Regular = 'REGULAR',
+    System = 'SYSTEM',
+}
 
 export type ReadMessage = {
     messageId: string

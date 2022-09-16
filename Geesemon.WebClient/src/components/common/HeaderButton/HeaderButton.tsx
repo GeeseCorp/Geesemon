@@ -3,12 +3,12 @@ import s from './HeaderButton.module.css';
 import {AnimationControls, motion, TargetAndTransition, Transition, VariantLabels} from "framer-motion";
 
 type Props = {
-    key: string
+    keyName: string
     children: React.ReactNode
     onClick?: MouseEventHandler | undefined
     borderRadius?: string
 };
-export const HeaderButton: FC<Props> = ({children, onClick, key, borderRadius = '50px'}) => {
+export const HeaderButton: FC<Props> = ({children, onClick, keyName: key, borderRadius = '50px'}) => {
     const animate: AnimationControls | TargetAndTransition | VariantLabels = {
         scale: [0.8, 1],
         rotate: [180, 360],

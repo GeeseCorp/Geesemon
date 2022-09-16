@@ -24,7 +24,7 @@ export const ChatHeader: FC<Props> = ({}) => {
         <div className={[s.wrapper, 'header'].join(' ')}>
             <div className={s.backAndChatInfo}>
                 {isMobile &&
-                    <HeaderButton key={'back'} onClick={() => navigate(-1)}>
+                    <HeaderButton keyName={'back'} onClick={() => navigate(-1)}>
                         <img src={back} width={25}/>
                     </HeaderButton>
                 }
@@ -49,10 +49,10 @@ export const ChatHeader: FC<Props> = ({}) => {
                 </div>
             </div>
             <div className={s.extraButtons}>
-                <HeaderButton key={'ContentBar/ChatHeader/Search'}>
+                <HeaderButton keyName={'ContentBar/ChatHeader/Search'}>
                     <img src={search} width={20}/>
                 </HeaderButton>
-                <HeaderButton key={'ContentBar/ChatHeader/ThreeDots'}>
+                <HeaderButton keyName={'ContentBar/ChatHeader/ThreeDots'}>
                     <img src={threeDots} width={25}/>
                 </HeaderButton>
             </div>

@@ -31,7 +31,7 @@ namespace Geesemon.Web.Services.MessageSubscription
             {
                 ChatId = chatId,
                 Text = text,
-                FromId = Guid.Empty,
+                FromId = null,
                 Type = MessageKind.System
             };
 

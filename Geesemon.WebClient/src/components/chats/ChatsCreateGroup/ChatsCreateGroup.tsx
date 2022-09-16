@@ -12,6 +12,7 @@ import { appActions, LeftSidebarState } from '../../../behavior/features/app/sli
 import { LeftSidebarSmallPrimaryButton } from '../../common/LeftSidebarSmallPrimaryButton/LeftSidebarSmallPrimaryButton';
 import { Users } from '../../users/Users/Users';
 import { Search } from '../../common/formControls/Search/Search';
+import { usersActions } from '../../../behavior/features/users/slice';
 
 type Props = {};
 export const ChatsCreateGroup: FC<Props> = () => {
@@ -22,13 +23,13 @@ export const ChatsCreateGroup: FC<Props> = () => {
     const [image, setImage] = useState<File | null>(null)
     const [state, setState] = useState<'Members' | 'ImageAndName'>('Members')
     const dispatch = useAppDispatch();
-    const [searchUsersValue, setSearchUsersValue] = useState('');
+    const q = useAppSelector(s => s.users.q)
+    const [selectedUserIds, setSelectedUserIds] = useState<string[]>([])
 
     const changeInputFileHandler = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.files)
             setImage(e.target.files[0])
     }
-
 
     const createGroupHandler = async () => {
         dispatch(chatActions.createGroupChatAsync({
@@ -38,25 +39,37 @@ export const ChatsCreateGroup: FC<Props> = () => {
         }))
     }
 
+    const onQChange = (value: string) => {
+        dispatch(usersActions.setUsers([]));
+        dispatch(usersActions.setSkip(0));
+        dispatch(usersActions.setHasNext(true));
+        dispatch(usersActions.setQ(value));
+    }
+
     return (
         <div className={s.wrapper}>
             {state === 'Members'
                 ? <>
                     <div className={['header', s.header].join(' ')}>
                         <HeaderButton
-                            key={'back'}
+                            keyName={'back'}
                             onClick={() => dispatch(appActions.setLeftSidebarState(LeftSidebarState.Chats))}
                         >
                             <img src={back} width={25} />
                         </HeaderButton>
                         <Search
-                            value={searchUsersValue}
-                            setValue={setSearchUsersValue}
+                            value={q}
+                            setValue={onQChange}
                             placeholder={'Search members'}
                         // onFocus={() => setIsEnabledSearchMode(true)}
                         />
                     </div>
-                    <Users selectMultiple={true} onSelectedUserIdChange={setUserIds}/>
+                    <Users
+                        selectMultiple={true}
+                        onSelectedUserIdChange={setUserIds}
+                        selectedUserIds={selectedUserIds}
+                        setSelectedUserIds={setSelectedUserIds}
+                    />
                     <LeftSidebarSmallPrimaryButton>
                         <SmallPrimaryButton onClick={() => setState('ImageAndName')}>
                             <img src={next} width={25} />
@@ -66,7 +79,7 @@ export const ChatsCreateGroup: FC<Props> = () => {
                 : <>
                     <div className={['header', s.header].join(' ')}>
                         <HeaderButton
-                            key={'back'}
+                            keyName={'back'}
                             onClick={() => setState('Members')}
                         >
                             <img src={back} width={25} />

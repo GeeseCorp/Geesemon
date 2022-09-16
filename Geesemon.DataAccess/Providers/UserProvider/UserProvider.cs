@@ -39,6 +39,8 @@ namespace Geesemon.DataAccess.Providers.UserProvider
                 .Where(u => u.Login.Contains(q) || u.Email.Contains(q))
                 .OrderBy(u => u.FirstName)
                 .ThenBy(u => u.LastName)
+                .Skip(skip)
+                .Take(take)
                 .ToListAsync();
         }
     }

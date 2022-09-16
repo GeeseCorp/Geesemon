@@ -83,7 +83,7 @@ export const registerAsyncEpic: Epic<ReturnType<typeof authActions.registerAsync
             })).pipe(
                 mergeMap(response => {
                     if (response.errors?.length)
-                    return response.errors.map(e => notificationsActions.addError(e.message));
+                        return response.errors.map(e => notificationsActions.addError(e.message));
                     window.location.reload()
                     return [
                         authActions.login(response.data.auth.register),

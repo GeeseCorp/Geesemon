@@ -1,74 +1,90 @@
-import { FC, useEffect, useState } from "react";
-import { useAppSelector, useAppDispatch } from '../../../behavior/store';
-import { Avatar } from "../../common/Avatar/Avatar";
-import { AvatarWithoutImage } from "../../common/AvatarWithoutImage/AvatarWithoutImage";
-import s from './Users.module.scss';
+import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { usersActions } from '../../../behavior/features/users/slice';
-import { User } from "../../../behavior/features/auth/types";
+import { useAppDispatch, useAppSelector } from '../../../behavior/store';
+import { User } from "../User/User";
+import s from './Users.module.scss';
+import { SmallLoading } from '../../common/SmallLoading/SmallLoading';
 
 type Props = {
     onSelectedUserIdChange?: (selectedUserIds: string[]) => void
     selectMultiple?: boolean
+    selectedUserIds: string[]
+    setSelectedUserIds: (selectedUserIds: string[]) => void
 }
 
-export const Users: FC<Props> = ({ onSelectedUserIdChange, selectMultiple = false }) => {
+export const Users: FC<Props> = ({ onSelectedUserIdChange, selectMultiple = false, selectedUserIds, setSelectedUserIds }) => {
     const users = useAppSelector(s => s.users.users);
+    const usersGetLoading = useAppSelector(s => s.users.usersGetLoading);
+    const take = useAppSelector(s => s.users.take);
+    const skip = useAppSelector(s => s.users.skip);
+    const hasNext = useAppSelector(s => s.users.hasNext);
+    const q = useAppSelector(s => s.users.q);
     const dispatch = useAppDispatch();
-    const [selectedUserIds, setSelectedUserIds] = useState<string[]>([])
+    const observer = useRef<IntersectionObserver | null>(null);
+    const [isFirstTimeRendered, setIsFirstTimeRendered] = useState(false)
+
+    const lastUserElementRef = useCallback((node: HTMLDivElement) => {
+        if (usersGetLoading)
+            return;
+        if (observer.current)
+            observer.current.disconnect();
+        observer.current = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting && hasNext) {
+                console.log(skip + take);
+                dispatch(usersActions.setSkip(skip + take));
+            }
+        })
+        if (node)
+            observer.current.observe(node);
+    }, [usersGetLoading])
 
     useEffect(() => {
-        if (!users.length)
-            dispatch(usersActions.usersGetAsync({
-                take: 10,
-                skip: 0,
-                q: '',
-            }))
-    }, [])
+        dispatch(usersActions.usersGetAsync({
+            take,
+            skip,
+            q,
+        }))
+        return () => {
+            dispatch(usersActions.toInitialState());
+        }
+    }, [skip, take, q])
 
-    const onChangeHanlder = (userId: string) => {
-        let newSelectedUserIds: string[];
-        if (selectedUserIds.some(id => id === userId))
-            newSelectedUserIds = selectedUserIds.filter(id => id !== userId);
-        else
-            newSelectedUserIds = [...selectedUserIds, userId];
-        setSelectedUserIds(newSelectedUserIds);
-        onSelectedUserIdChange && onSelectedUserIdChange(newSelectedUserIds)
-    }
+    useEffect(() => {
+        if (isFirstTimeRendered) {
+            setIsFirstTimeRendered(true);
+            return;
+        }
+
+    }, [q])
 
     return (
         <div className={s.users}>
-            {users.map(user => {
-                const id = `user_${user.id}`
-                return (
-                    <div key={id} className={s.user} onClick={() => selectMultiple || onChangeHanlder(user.id)}>
-                        {selectMultiple &&
-                            <div className={s.checkbox}>
-                                <input
-                                    id={id}
-                                    type={'checkbox'}
-                                    checked={!!selectedUserIds.some(id => id === user.id)}
-                                    onChange={e => onChangeHanlder(user.id)}
-                                />
-                            </div>
-                        }
-                        <label htmlFor={id} className={s.userInner}>
-                            {user.imageUrl
-                                ? <Avatar imageUrl={user.imageUrl} width={54} height={54} />
-                                : <AvatarWithoutImage
-                                    name={`${user.firstName} ${user.lastName}`}
-                                    backgroundColor={user.avatarColor}
-                                    width={54}
-                                    height={54}
-                                />
-                            }
-                            <div className={s.userInfo}>
-                                <div className={'bold'}>{user.firstName} {user.lastName}</div>
-                                <div className={['secondary light'].join(' ')}>last seen</div>
-                            </div>
-                        </label>
+            {users.map((user, index) =>
+                users.length == index + 1
+                    ? <div key={user.id} ref={lastUserElementRef}>
+                        <User
+                            user={user}
+                            selectMultiple={selectMultiple}
+                            selectedUserIds={selectedUserIds}
+                            setSelectedUserIds={setSelectedUserIds}
+                            onSelectedUserIdChange={onSelectedUserIdChange}
+                        />
                     </div>
-                )
-            })}
+                    : <div key={user.id} >
+                        <User
+                            user={user}
+                            selectMultiple={selectMultiple}
+                            selectedUserIds={selectedUserIds}
+                            setSelectedUserIds={setSelectedUserIds}
+                            onSelectedUserIdChange={onSelectedUserIdChange}
+                        />
+                    </div>
+            )}
+            {usersGetLoading &&
+                <div className={s.loading}>
+                    <SmallLoading />
+                </div>
+            }
         </div>
     )
 }

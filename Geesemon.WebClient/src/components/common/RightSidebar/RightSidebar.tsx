@@ -31,7 +31,7 @@ export const RightSidebar: FC<Props> = ({}) => {
                 >
                     <div className={['header', s.header].join(' ')}>
                         <HeaderButton
-                            key={'RightSidebar/Close'}
+                            keyName={'RightSidebar/Close'}
                             onClick={() => dispatch(appActions.setIsRightSidebarVisible(false))}
                         >
                             <img src={crossFilled} width={15}/>
@@ -57,7 +57,7 @@ export const RightSidebar: FC<Props> = ({}) => {
                             }
                         </div>
                         <div className={s.chatInfoButtons}>
-                            <HeaderButton key={'RightSidebar/ChatInfo/Username'} borderRadius={'10px'}>
+                            <HeaderButton keyName={'RightSidebar/ChatInfo/Username'} borderRadius={'10px'}>
                                 <div className={s.chatInfoButton}>
                                     <img src={atSign} width={25}/>
                                     <div>

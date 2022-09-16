@@ -1,5 +1,5 @@
 import { combineEpics, Epic, ofType } from "redux-observable";
-import { catchError, endWith, from, mergeMap, of, startWith } from "rxjs";
+import { catchError, debounceTime, endWith, from, mergeMap, of, startWith } from "rxjs";
 import { client } from "../../client";
 import { RootState } from "../../store";
 import { notificationsActions } from "../notifications/slice";
@@ -8,6 +8,7 @@ import { usersActions } from "./slice";
 
 export const usersGetAsyncEpic: Epic<ReturnType<typeof usersActions.usersGetAsync>, any, RootState> = (action$, state$) =>
     action$.pipe(
+        debounceTime(500),
         ofType(usersActions.usersGetAsync.type),
         mergeMap(action =>
             from(client.query<UsersGetData, UsersGetVars>({
@@ -17,9 +18,12 @@ export const usersGetAsyncEpic: Epic<ReturnType<typeof usersActions.usersGetAsyn
                 mergeMap(response => {
                     if (response.errors?.length)
                         return response.errors.map(e => notificationsActions.addError(e.message));
-                    return [
-                        usersActions.addUsers(response.data.user.get),
-                    ]
+                    return response.data.user.get.length < action.payload.take
+                        ? [
+                            usersActions.setHasNext(false),
+                            usersActions.addUsers(response.data.user.get),
+                        ]
+                        : [usersActions.addUsers(response.data.user.get)]
                 }),
                 catchError(error => of(notificationsActions.addError(error.message))),
                 startWith(usersActions.setUsersGetLoading(true)),

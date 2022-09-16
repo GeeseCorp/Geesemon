@@ -1,15 +1,15 @@
-import React, {FC, useEffect, useRef, useState} from 'react';
-import {useAppDispatch, useAppSelector} from "../../../behavior/store";
-import {useParams} from "react-router-dom";
-import s from './Messages.module.css';
-import {getDate, getDayAndMonth, getTimeWithoutSeconds} from "../../../utils/dateUtils";
-import {Checks} from "../Checks/Checks";
-import {DeleteOutlined} from "@ant-design/icons";
-import {ContextMenu} from "../../common/ContextMenu/ContextMenu";
-import {SendMessageForm} from "../SendMessageForm/SendMessageForm";
-import {chatActions} from "../../../behavior/features/chats";
+import React, { FC, useEffect, useRef, useState } from 'react';
+import { useParams } from "react-router-dom";
 import deleteSvg from "../../../assets/svg/delete.svg";
 import pencilOutlinedSvg from "../../../assets/svg/pencilOutlined.svg";
+import { chatActions } from "../../../behavior/features/chats";
+import { Message, MessageKind } from '../../../behavior/features/chats/types';
+import { useAppDispatch, useAppSelector } from "../../../behavior/store";
+import { getDate, getDayAndMonth, getTimeWithoutSeconds } from "../../../utils/dateUtils";
+import { ContextMenu } from "../../common/ContextMenu/ContextMenu";
+import { Checks } from "../Checks/Checks";
+import { SendMessageForm } from "../SendMessageForm/SendMessageForm";
+import s from './Messages.module.css';
 
 export const Messages: FC = () => {
     const authedUser = useAppSelector(s => s.auth.authedUser);
@@ -22,11 +22,9 @@ export const Messages: FC = () => {
     const [isAutoScroll, setIsAutoScroll] = useState(false);
     const bottomOfMessagesRef = useRef<HTMLDivElement>(null);
     const inputTextRef = useRef<HTMLTextAreaElement | null>(null)
-    // const [firstMessageId, setFirstMessageId] = useState<string | null>(null)
-    // let firstMessageRef = useRef<HTMLDivElement>(null);
 
     const scrollToBottom = () => {
-        bottomOfMessagesRef.current?.scrollIntoView({behavior: 'smooth'})
+        bottomOfMessagesRef.current?.scrollIntoView({ behavior: 'smooth' })
     };
 
     useEffect(() => {
@@ -34,10 +32,6 @@ export const Messages: FC = () => {
             console.log(isAutoScroll, 'scrollToBottom')
             scrollToBottom();
         }
-        // else {
-        //     console.log(firstMessageRef.current)
-        //     firstMessageRef.current?.scrollIntoView();
-        // }
     }, [messages])
 
     useEffect(() => {
@@ -53,7 +47,6 @@ export const Messages: FC = () => {
             isAutoScroll && setIsAutoScroll(false);
 
         if (element.scrollTop < 100 && !messageGetLoading) {
-            // messages.length && setFirstMessageId(messages[0].id)
             dispatch(chatActions.messageGetAsync({
                 chatId,
                 skip: messages.length,
@@ -67,12 +60,40 @@ export const Messages: FC = () => {
         inputTextRef.current?.focus();
     }
 
+    const messageContent = (message: Message) => {
+        const isMessageMy = message.fromId === authedUser?.id;
+        switch (message.type) {
+            case MessageKind.System:
+                return (
+                    <div className={[s.message, s.messageSystem].join(' ')}>
+                        <span className={s.messageText}>{message.text}</span>
+                    </div>
+                )
+            default:
+                return (
+                    <div
+                        className={[s.message, isMessageMy ? s.messageMy : null].join(' ')}
+                    >
+                        <span className={s.messageText}>{message.text}</span>
+                        <span className={s.messageInfo}>
+                            {message.createdAt !== message.updatedAt &&
+                                <span className={['small', s.small].join(' ')}>Edited</span>
+                            }
+                            <span className={['small', s.small].join(' ')}>
+                                {getTimeWithoutSeconds(new Date(message.createdAt))}
+                            </span>
+                            {isMessageMy && <Checks double={!!message.readMessages?.length} />}
+                        </span>
+                    </div>
+                );
+        }
+    }
+
     return (
         <div className={s.wrapper}>
             <div className={s.messages} onScroll={onScrollHandler}>
                 <div className={s.messagesInner}>
                     {messages.flatMap((message, i) => {
-                        const isMessageMy = message.fromId === authedUser?.id;
                         const returnJsx: React.ReactNode[] = []
                         if (i === 0)
                             returnJsx.push(
@@ -99,46 +120,27 @@ export const Messages: FC = () => {
                                 items={[
                                     {
                                         content: 'Update',
-                                        icon: <img src={pencilOutlinedSvg} width={17}/>,
+                                        icon: <img src={pencilOutlinedSvg} width={17} />,
                                         onClick: () => setInUpdateMessage(message.id),
                                         type: 'default',
                                     },
                                     {
                                         content: 'Delete',
-                                        icon: <img src={deleteSvg} width={20}/>,
-                                        onClick: () => dispatch(chatActions.messageDeleteAsync({messageId: message.id})),
+                                        icon: <img src={deleteSvg} width={20} />,
+                                        onClick: () => dispatch(chatActions.messageDeleteAsync({ messageId: message.id })),
                                         type: 'danger',
                                     },
                                 ]}
                             >
-                                <div
-                                    className={[s.message, isMessageMy ? s.messageMy : null].join(' ')}
-                                    // ref={ref => {
-                                    //     if (message.id === firstMessageId) {
-                                    //         // @ts-ignore
-                                    //         firstMessageRef.current = ref;
-                                    //     }
-                                    // }}
-                                >
-                                    <span className={s.messageText}>{message.text}</span>
-                                    <span className={s.messageInfo}>
-                                        {message.createdAt !== message.updatedAt &&
-                                            <span className={['small', s.small].join(' ')}>Edited</span>
-                                        }
-                                        <span className={['small', s.small].join(' ')}>
-                                            {getTimeWithoutSeconds(new Date(message.createdAt))}
-                                        </span>
-                                        {isMessageMy && <Checks double={!!message.readMessages?.length}/>}
-                                    </span>
-                                </div>
+                                {messageContent(message)}
                             </ContextMenu>
                         )
                         return returnJsx;
                     })}
                 </div>
-                <div ref={bottomOfMessagesRef}/>
+                <div ref={bottomOfMessagesRef} />
             </div>
-            <SendMessageForm scrollToBottom={scrollToBottom} inputTextRef={inputTextRef}/>
+            <SendMessageForm scrollToBottom={scrollToBottom} inputTextRef={inputTextRef} />
         </div>
     );
 };
