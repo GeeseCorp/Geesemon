@@ -6,13 +6,13 @@ import s from './User.module.scss';
 
 type Props = {
     user: UserType
-    selectMultiple: boolean
+    selectMultiple?: boolean
     selectedUserIds: string[]
     setSelectedUserIds: (selectedUserIds: string[]) => void
     onSelectedUserIdChange?: (selectedUserIds: string[]) => void
 }
 
-export const User: FC<Props> = ({ user, selectMultiple, selectedUserIds, setSelectedUserIds, onSelectedUserIdChange }) => {
+export const User: FC<Props> = ({ user, selectMultiple = false, selectedUserIds, setSelectedUserIds, onSelectedUserIdChange }) => {
     const onChangeHanlder = (userId: string) => {
         let newSelectedUserIds: string[];
         if (selectMultiple) {

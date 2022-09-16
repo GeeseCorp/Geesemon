@@ -1,7 +1,8 @@
-import { AuthResponseType, User } from "./types";
+import { AuthResponseType } from "./types";
 import { createSlice, PayloadAction, } from "@reduxjs/toolkit";
 import { LoginInputType, RegisterInputType } from "./mutations";
 import { removeAuthToken, setAuthToken } from "../../../utils/localStorageUtils";
+import { User } from "../users/types";
 
 type InitialState = {
     authedUser?: User | null
