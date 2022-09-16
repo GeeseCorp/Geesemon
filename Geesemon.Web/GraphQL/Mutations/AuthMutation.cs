@@ -62,8 +62,8 @@ namespace Geesemon.Web.GraphQL.Mutations
 
                     var accessToken = new AccessToken
                     {
-                        Token = authService.GenerateAccessToken(user.Id, user.Email, user.Role),
-                        UserId = user.Id,
+                        Token = authService.GenerateAccessToken(newUser.Id, newUser.Email, newUser.Role),
+                        UserId = newUser.Id,
                     };
                     accessToken = await accessTokenManager.CreateAsync(accessToken);
 
