@@ -1,5 +1,5 @@
 import React, {FC, MouseEventHandler} from 'react';
-import s from './SmallPrimaryButton.module.css';
+import s from './SmallPrimaryButton.module.scss';
 import {SmallLoading} from "../SmallLoading/SmallLoading";
 
 type Props = {

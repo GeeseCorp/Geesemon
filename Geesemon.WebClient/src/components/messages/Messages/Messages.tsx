@@ -9,7 +9,7 @@ import { getDate, getDayAndMonth, getTimeWithoutSeconds } from "../../../utils/d
 import { ContextMenu } from "../../common/ContextMenu/ContextMenu";
 import { Checks } from "../Checks/Checks";
 import { SendMessageForm } from "../SendMessageForm/SendMessageForm";
-import s from './Messages.module.css';
+import s from './Messages.module.scss';
 
 export const Messages: FC = () => {
     const authedUser = useAppSelector(s => s.auth.authedUser);

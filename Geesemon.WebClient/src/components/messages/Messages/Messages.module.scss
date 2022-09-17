@@ -1,3 +1,5 @@
+@import '../../../App.scss';
+
 .wrapper {
     height: calc(100% - 56px);
     display: flex;
@@ -36,7 +38,7 @@
 
 .message {
     align-self: start;
-    background-color: #212121;
+    background-color: $surface-color;
     border-radius: 7px 7px 7px 0;
     padding: 6px 10px;
     max-width: 70%;

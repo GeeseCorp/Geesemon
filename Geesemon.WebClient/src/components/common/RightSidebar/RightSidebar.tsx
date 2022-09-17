@@ -101,16 +101,16 @@ export const RightSidebar: FC<Props> = ({ }) => {
                             </div>
                             <div className={s.chatInfoButton}>
                                 <img src={notificationOutlinedSvg} width={25} />
-                                <div>
+                                <div className={s.notifications}>
                                     <div className={s.chatInfoButtonText}>Notifications</div>
-
+                                    <Switch
+                                        checked={isEnabledNotifications}
+                                        setChecked={setIsEnabledNotifications}
+                                    />
                                 </div>
                             </div>
                         </div>
-                        {/* <Switch
-                            checked={isEnabledNotifications}
-                            setChecked={setIsEnabledNotifications}
-                        /> */}
+
                         <div className={s.divider}></div>
                         <div className={s.tabs}>
                             {(Object.keys(Tab) as Array<Tab>).map((tab) =>
@@ -118,6 +118,7 @@ export const RightSidebar: FC<Props> = ({ }) => {
                                     ? null
                                     : (
                                         <div
+                                            key={tab}
                                             className={[s.tab, tab === selectedTab && s.tabSelected].join(' ')}
                                             onClick={() => setSelectedTab(tab)}
                                         >

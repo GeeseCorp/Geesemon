@@ -1,3 +1,5 @@
+@import '../../../App.scss';
+
 .wrapper{
     height: 100%;
 }
@@ -31,7 +33,7 @@
 }
 
 .chats {
-    background-color: #212121;
+    background-color: $surface-color;
     position: relative;
     overflow-y: auto;
     margin: 0 .3rem;

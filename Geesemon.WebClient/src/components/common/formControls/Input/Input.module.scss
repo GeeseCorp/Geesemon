@@ -1,3 +1,5 @@
+@import '../../../../App.scss';
+
 .wrapperInputSearch {
     height: 58px;
     display: flex;
@@ -16,7 +18,7 @@
 }
 
 .innerInputSearch:not(.focused):hover {
-    border: 1px solid #8774E1;
+    border: 1px solid $primary-color;
 }
 
 .inputSearch {
@@ -29,5 +31,5 @@
 }
 
 .focused {
-    border: 2px solid #8774E1;
+    border: 2px solid $primary-color;
 }

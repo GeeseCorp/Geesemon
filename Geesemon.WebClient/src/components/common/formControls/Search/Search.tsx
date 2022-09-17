@@ -1,5 +1,5 @@
 import React, {FC, useState} from 'react';
-import s from './Search.module.css';
+import s from './Search.module.scss';
 import search from "../../../../assets/svg/search.svg";
 
 type Props = {

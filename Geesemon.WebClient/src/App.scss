@@ -1,6 +1,8 @@
 $surface-color: #212121 !default;
 $primary-color: #8774E1 !default;
-$secondary-color: #aaa !default;
+// $secondary-color: #aaa !default;
+$secondary-color: #707579 !default;
+$secondary-text-color: #aaa !default;
 $secondary-button-hover-color: rgba(128,128,128, 0.3) !default;
 
 *:not(path, svg) {
@@ -8,7 +10,7 @@ $secondary-button-hover-color: rgba(128,128,128, 0.3) !default;
     padding: 0;
     box-sizing: border-box;
     color: white;
-    scrollbar-color: #444444 #212121;
+    scrollbar-color: #444444 $surface-color;
     scrollbar-width: thin;
 }
 
@@ -23,7 +25,7 @@ svg{
 *::-webkit-scrollbar {
     height: 8px;
     width: 8px;
-    background: #212121;
+    background: $surface-color;
 }
 
 *::-webkit-scrollbar-thumb {
@@ -62,7 +64,7 @@ body {
 
 .small {
     font-size: 12px;
-    color: #aaa;
+    color: $secondary-text-color;
 }
 
 .light {
@@ -70,7 +72,7 @@ body {
 }
 
 .secondary {
-    color: #aaa;
+    color: $secondary-text-color;
 }
 
 .bold {

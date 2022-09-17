@@ -1,5 +1,5 @@
 import React, {FC, KeyboardEvent, useEffect, useState} from 'react';
-import s from './SendMessageForm.module.css';
+import s from './SendMessageForm.module.scss';
 import smile from "../../../assets/svg/smile.svg";
 import send from "../../../assets/svg/send.svg";
 import check from "../../../assets/svg/check.svg";

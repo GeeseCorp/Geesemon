@@ -14,9 +14,10 @@ export const Switch: FC<Props> = ({ checked, setChecked }) => {
                 checked={checked}
                 onChange={e => setChecked(e.target.checked)}
                 className={s.input}
-                type="checkbox" id={id}
+                type="checkbox"
+                id={id}
             />
-            <label className={s.label} htmlFor={id}/>
+            <label className={s.label} htmlFor={id} />
         </div>
     )
 }

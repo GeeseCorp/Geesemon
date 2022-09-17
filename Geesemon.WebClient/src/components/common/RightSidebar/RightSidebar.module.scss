@@ -2,7 +2,7 @@
 
 .wrapper {
     width: 400px;
-    background-color: #212121;
+    background-color: $surface-color;
     overflow: hidden;
 }
 
@@ -50,14 +50,16 @@
 }
 
 .chatInfoButton {
+    height: 55px;
     padding: 5px 15px;
     display: flex;
+    align-items: center;
     gap: 15px;
     border-radius: 10px;
     cursor: pointer;
 }
 
-.chatInfoButton:hover{
+.chatInfoButton:hover {
     background-color: $secondary-button-hover-color;
 }
 
@@ -66,8 +68,15 @@
 }
 
 .chatInfoButtonLabel {
-    color: #aaa;
+    color: $secondary-text-color;
     font-size: 0.9rem;
+}
+
+.notifications {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .divider {

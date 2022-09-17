@@ -23,7 +23,7 @@ import { LeftSidebarSmallPrimaryButton } from "../../common/LeftSidebarSmallPrim
 import { Menu, MenuItem } from "../../common/Menu/Menu";
 import { SmallLoading } from "../../common/SmallLoading/SmallLoading";
 import { SmallPrimaryButton } from "../../common/SmallPrimaryButton/SmallPrimaryButton";
-import s from './Chats.module.css';
+import s from './Chats.module.scss';
 
 type Props = {}
 

@@ -1,6 +1,8 @@
+@import '../../../App.scss';
+
 .wrapper {
     width: 400px;
-    background-color: #212121;
+    background-color: $surface-color;
     height: 100%;
     position: relative;
 }

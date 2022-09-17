@@ -1,6 +1,8 @@
+@import '../../../App.scss';
+
 .wrapper {
     width: 100%;
-    background-color: #212121;
+    background-color: $surface-color;
     display: flex;
     justify-content: space-between;
     align-items: center;

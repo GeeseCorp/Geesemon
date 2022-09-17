@@ -4,7 +4,7 @@ import { useAppSelector } from "../../../behavior/store";
 import { Chats } from "../../chats/Chats/Chats";
 import { ChatsCreateGroup as ChatsCreateGroupChat } from "../../chats/ChatsCreateGroup/ChatsCreateGroup";
 import { ChatsCreatePersonalChat } from '../../chats/ChatsCreatePersonalChat/ChatsCreatePersonalChat';
-import s from './LeftSidebar.module.css';
+import s from './LeftSidebar.module.scss';
 
 export const leftSidebarSmallPrimaryButtonId = 'leftSidebarSmallPrimaryButtonId';
 export const getLeftSidebarSmallPrimaryButtonElement = () => document.getElementById(leftSidebarSmallPrimaryButtonId);

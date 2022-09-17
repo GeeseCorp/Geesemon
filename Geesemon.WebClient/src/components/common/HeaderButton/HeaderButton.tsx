@@ -1,5 +1,5 @@
 import React, {FC, MouseEventHandler} from 'react';
-import s from './HeaderButton.module.css';
+import s from './HeaderButton.module.scss';
 import {AnimationControls, motion, TargetAndTransition, Transition, VariantLabels} from "framer-motion";
 
 type Props = {
@@ -19,10 +19,6 @@ export const HeaderButton: FC<Props> = ({children, onClick, keyName: key, border
         ease: "easeInOut",
     }
 
-    const whileHover: VariantLabels | TargetAndTransition = {
-        backgroundColor: 'rgba(128,128,128, 0.3)',
-        transition: {duration: 0.5},
-    }
     const whileTap: VariantLabels | TargetAndTransition = {scale: 0.9};
 
     return (
@@ -33,7 +29,6 @@ export const HeaderButton: FC<Props> = ({children, onClick, keyName: key, border
             key={key}
             animate={animate}
             transition={transition}
-            whileHover={whileHover}
             whileTap={whileTap}
         >
             {children}
