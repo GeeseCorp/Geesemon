@@ -1,28 +1,23 @@
 import { AnimatePresence } from "framer-motion";
 import { FC, useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
 import back from "../../../assets/svg/back.svg";
-import deleteSvg from "../../../assets/svg/delete.svg";
+import crossFilled from "../../../assets/svg/crossFilled.svg";
 import logout from "../../../assets/svg/logout.svg";
 import menu from "../../../assets/svg/menu.svg";
 import pencilFilled from '../../../assets/svg/pencilFilled.svg';
 import saved from "../../../assets/svg/saved.svg";
 import settings from "../../../assets/svg/settings.svg";
-import crossFilled from "../../../assets/svg/crossFilled.svg";
 import { appActions, LeftSidebarState } from "../../../behavior/features/app/slice";
 import { authActions } from "../../../behavior/features/auth/slice";
 import { chatActions } from "../../../behavior/features/chats";
 import { useAppDispatch, useAppSelector } from "../../../behavior/store";
-import { getTimeWithoutSeconds } from "../../../utils/dateUtils";
-import { Avatar } from "../../common/Avatar/Avatar";
-import { AvatarWithoutImage } from "../../common/AvatarWithoutImage/AvatarWithoutImage";
-import { ContextMenu } from "../../common/ContextMenu/ContextMenu";
 import { Search } from "../../common/formControls/Search/Search";
 import { HeaderButton } from "../../common/HeaderButton/HeaderButton";
 import { LeftSidebarSmallPrimaryButton } from "../../common/LeftSidebarSmallPrimaryButton/LeftSidebarSmallPrimaryButton";
 import { Menu, MenuItem } from "../../common/Menu/Menu";
 import { SmallLoading } from "../../common/SmallLoading/SmallLoading";
 import { SmallPrimaryButton } from "../../common/SmallPrimaryButton/SmallPrimaryButton";
+import { Chat } from "../Chat/Chat";
 import s from './Chats.module.scss';
 
 type Props = {}
@@ -33,8 +28,7 @@ export const Chats: FC<Props> = ({ }) => {
     const authedUser = useAppSelector(s => s.auth.authedUser)
     const [isMenuVisible, setIsMenuVisible] = useState(false);
     const leftSidebarState = useAppSelector(s => s.app.leftSidebarState)
-    const params = useParams()
-    const chatId = params.chatId;
+
     const chats = useAppSelector(s => s.chats.chats);
     const [searchValue, setSearchValue] = useState('');
     const dispatch = useAppDispatch();
@@ -116,48 +110,7 @@ export const Chats: FC<Props> = ({ }) => {
             {isEnabledSearchMode
                 ? <div>search</div>
                 : <div className={s.chats}>
-                    {chats.map(chat => {
-                        const lastMessage = chat.messages?.length ? chat.messages?.reduce((a, b) => a.createdAt > b.createdAt ? a : b, chat.messages[0]) : null;
-                        return (
-                            <ContextMenu
-                                key={chat.id}
-                                items={[
-                                    {
-                                        content: 'Delete chat',
-                                        icon: <img src={deleteSvg} width={20} />,
-                                        onClick: () => dispatch(chatActions.chatDeleteAsync(chat.id)),
-                                        type: 'danger',
-                                    },
-                                ]}
-                            >
-                                <div className={[s.chat, chat.id === chatId ? s.chatSelected : null].join(' ')}>
-                                    <Link
-                                        to={`/${chat.id}`}
-                                        className={s.chatLink}
-                                    >
-                                        <div className={s.chatInner}>
-                                            {chat.imageUrl
-                                                ? <Avatar imageUrl={chat.imageUrl} width={54} height={54} />
-                                                : <AvatarWithoutImage
-                                                    name={chat.name || ''}
-                                                    backgroundColor={chat.imageColor}
-                                                    width={54}
-                                                    height={54}
-                                                />
-                                            }
-                                            <div className={s.chatInfo}>
-                                                <div className={'bold'}>{chat.name}</div>
-                                                <div
-                                                    className={['secondary light', s.chatLastMessage].join(' ')}>{lastMessage?.text}</div>
-                                            </div>
-                                            <div
-                                                className={'small light'}>{lastMessage && getTimeWithoutSeconds(new Date(lastMessage.createdAt))}</div>
-                                        </div>
-                                    </Link>
-                                </div>
-                            </ContextMenu>
-                        )
-                    })}
+                    {chats.map(chat => <Chat key={chat.id} chat={chat} />)}
                     <LeftSidebarSmallPrimaryButton>
                         <div
                             className={s.smallPrimaryButton}
@@ -170,7 +123,7 @@ export const Chats: FC<Props> = ({ }) => {
                             <SmallPrimaryButton>
                                 {isCreateChatMenuVisible
                                     ? <img src={crossFilled} width={20} />
-                                    : <img src={pencilFilled} width={20} />}
+                                    : <img src={pencilFilled} width={25} />}
                             </SmallPrimaryButton>
                             {isCreateChatMenuVisible &&
                                 <Menu

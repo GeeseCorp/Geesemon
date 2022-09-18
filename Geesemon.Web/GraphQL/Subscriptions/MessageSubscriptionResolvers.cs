@@ -1,9 +1,5 @@
-﻿using Geesemon.Model.Models;
-using Geesemon.Web.GraphQL.Auth;
-using Geesemon.Web.GraphQL.Types;
-using Geesemon.Web.Services.MessageSubscription;
+﻿using Geesemon.Web.Services.MessageSubscription;
 using GraphQL;
-using GraphQL.Resolvers;
 using GraphQL.Types;
 
 namespace Geesemon.Web.GraphQL.Subscriptions
@@ -21,7 +17,7 @@ namespace Geesemon.Web.GraphQL.Subscriptions
         {
             var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
 
-            return await messageSubscriptionService.Subscribe(currentUserId);
+            return await messageActionSubscriptionService.Subscribe(currentUserId);
         }
     }
 }

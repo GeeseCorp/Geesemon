@@ -1,7 +1,7 @@
 @import '../../../../App.scss';
 
 .switch {
-	width: 30px;
+	width: 34px;
 	height: 20px;
 	display: flex;
 	align-items: center;
@@ -23,6 +23,7 @@
 	background: $secondary-color;
 	display: block;
 	border-radius: 100px;
+	transition: .5s;
 }
 
 .label:after {
@@ -35,13 +36,13 @@
 	background: #181818;
 	border-radius: 90px;
 	transition: .5s;
-	border: 3px solid $secondary-color;
+	border: 2px solid $secondary-color;
 }
 
 .input:checked+label:after {
 	left: auto;
 	right: 0;
-	border: 3px solid $primary-color;
+	border: 2px solid $primary-color;
 }
 
 .input:checked+label {

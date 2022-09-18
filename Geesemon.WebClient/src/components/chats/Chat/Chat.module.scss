@@ -1,0 +1,65 @@
+@import '../../../App.scss';
+
+.chat {
+    height: 72px;
+    padding: 0 8px;
+    border-radius: 10px;
+    margin-right: 5px;
+}
+
+.chat:hover:not(.chatSelected) {
+    background-color: #2C2C2C;
+    border-radius: 5px;
+}
+
+.chatLink {
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.chatInner {
+    flex: 1;
+    min-width: 0;
+    height: 54px;
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+    align-items: start;
+}
+
+.avatar{
+    position: relative;
+}
+
+.onlineIndicator{
+    width: 14px;
+    height: 14px;
+    background-color: $avatar-online-color;
+    position: absolute;
+    right: 1px;
+    bottom: 1px;
+    border-radius: 50%;
+    border: 2px solid $surface-color;
+}
+
+.chatInfo{
+    flex: 1;
+    width: calc(100% - 150px);
+}
+
+.chatLastMessage {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.chatSelected {
+    background-color: #766AC8;
+}
+
+.chatSelected * {
+    color: white !important;
+}

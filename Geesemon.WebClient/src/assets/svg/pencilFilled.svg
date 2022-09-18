@@ -1,40 +1,11 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!-- Generator: Adobe Illustrator 19.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 446.536 446.536" style="enable-background:new 0 0 446.536 446.536;" xml:space="preserve">
-<g>
-	<path fill="white" d="M282.488,68.589L351.077,0l95.458,95.458l-68.589,68.589L282.488,68.589z"/>
-	<polygon fill="white" points="0.001,446.536 117.523,412.737 33.8,329.014 	"/>
-	<path fill="white" d="M144.604,397.393l-95.458-95.458l212.13-212.13l95.458,95.458L144.604,397.393z"/>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    
+    <title>pencil</title>
+    <desc>Created with sketchtool.</desc>
+    <g id="web-app" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="pencil" fill="white">
+            <path d="M3,18 L14.9997108,6 L18,9 L6,21 L3,21 L3,18 Z M16,5 L17.9997108,3 L21,6 L18.9989741,8.00102587 L16,5 Z" id="Shape"></path>
+        </g>
+    </g>
 </svg>
