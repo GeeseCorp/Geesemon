@@ -7,8 +7,9 @@ type Props = {
     children: React.ReactNode
     onClick?: MouseEventHandler | undefined
     borderRadius?: string
+    className?: string
 };
-export const HeaderButton: FC<Props> = ({children, onClick, keyName: key, borderRadius = '50px'}) => {
+export const HeaderButton: FC<Props> = ({children, onClick, keyName: key, borderRadius = '50px', className}) => {
     const animate: AnimationControls | TargetAndTransition | VariantLabels = {
         scale: [0.8, 1],
         rotate: [180, 360],
@@ -24,7 +25,7 @@ export const HeaderButton: FC<Props> = ({children, onClick, keyName: key, border
     return (
         <motion.div
             onClick={onClick}
-            className={s.wrapperButton}
+            className={[s.wrapperButton, className].join(' ')}
             style={{borderRadius}}
             key={key}
             animate={animate}

@@ -67,7 +67,7 @@ namespace Geesemon.Web.GraphQL.Mutations
             var userChats = await userChatManager.GetPersonalByUserIds(oppositeUser.Id, currentUserId);
 
             if (userChats.Count != 0)
-                throw new Exception("Personal chat elready exist.");
+                throw new Exception("Personal chat already exist.");
 
             var chat = new Chat
             {

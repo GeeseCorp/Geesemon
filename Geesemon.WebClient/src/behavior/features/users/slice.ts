@@ -48,9 +48,7 @@ const slice = createSlice({
             state.q = action.payload;
         },
 
-        toInitialState: (state, action: PayloadAction) => {
-            state = initialState;
-        },
+        toInitialState: (state, action: PayloadAction) => initialState,
     },
 });
 

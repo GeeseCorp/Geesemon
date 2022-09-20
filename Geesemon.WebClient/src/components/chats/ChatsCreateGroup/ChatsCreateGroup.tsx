@@ -98,6 +98,7 @@ export const ChatsCreateGroup: FC<Props> = () => {
                             <img
                                 src={image ? URL.createObjectURL(image) : camera}
                                 width={image ? 100 : 60}
+                                height={image ? 100 : 60}
                                 className={image ? s.image : ''}
                             />
                         </div>

@@ -21,7 +21,6 @@ namespace Geesemon.Web.Extensions
         {
             services.AddHttpContextAccessor();
             services.AddTransient<IOperationMessageListener, AuthenticationListener>();
-            services.AddSingleton<IMessageTransport, CustomWebSocketTransport>();
             services.AddScoped<ApplicationSchema>();
             services.AddGraphQLUpload();
             services

@@ -53,9 +53,7 @@ const slice = createSlice({
             removeAuthToken();
         },
 
-        toInitialState: (state, action: PayloadAction) => {
-            state = initialState;
-        },
+        toInitialState: (state, action: PayloadAction) => initialState,
     },
 });
 

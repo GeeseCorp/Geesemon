@@ -38,11 +38,6 @@ namespace Geesemon.Web.Services
                     }
                 }
             }
-            else if(context.Message.Type == MessageType.GQL_CONNECTION_TERMINATE)
-            {
-                int a = 1;
-                int b = 2;
-            }
             return Task.CompletedTask;
         }
 
