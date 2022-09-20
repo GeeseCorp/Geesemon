@@ -1,5 +1,5 @@
-import {Chat, Message} from "./types";
-import {createSlice, PayloadAction,} from "@reduxjs/toolkit";
+import { Chat, Message } from "./types";
+import { createSlice, PayloadAction, } from "@reduxjs/toolkit";
 import {
     CreateGroupChatInputType,
     CreatePersonalChatInputType,
@@ -7,8 +7,8 @@ import {
     SentMessageInputType,
     UpdateMessageInputType
 } from "./mutations";
-import {sortChat} from "../../../utils/chatUtils";
-import {MessageGetVars} from "./queries";
+import { sortChat } from "../../../utils/chatUtils";
+import { MessageGetVars } from "./queries";
 
 export type Mode = 'Text' | 'Audio' | 'Updating' | 'Reply';
 
@@ -99,9 +99,7 @@ const slice = createSlice({
         },
         messageDeleteAsync: (state, action: PayloadAction<DeleteMessageInputType>) => state,
 
-        toInitialState: (state, action: PayloadAction) => {
-            state = initialState;
-        },
+        toInitialState: (state, action: PayloadAction) => initialState,
     },
 });
 

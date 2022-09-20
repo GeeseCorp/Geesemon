@@ -1,5 +1,5 @@
 import React, {FC} from 'react';
-import s from './ChatHeader.module.css';
+import s from './ChatHeader.module.scss';
 import {useNavigate, useParams} from "react-router-dom";
 import {useAppDispatch, useAppSelector} from "../../../behavior/store";
 import {Avatar} from "../../common/Avatar/Avatar";

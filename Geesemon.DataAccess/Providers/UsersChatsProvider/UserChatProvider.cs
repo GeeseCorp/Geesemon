@@ -25,13 +25,12 @@ namespace Geesemon.DataAccess.Providers.UsersChatsProvider
             return userChat;
         }
 
-        // TODO: huge lox must fix this method!!!
-        public async Task<List<UserChat>> GetPersonalByUserIds(params Guid[] userIds)
+        public async Task<List<UserChat>> GetPersonalByUserIds(Guid userId1, Guid userId2)
         {    
-            var chat = await context.Chats.Include(uc => uc.UserChats)
-                .FirstOrDefaultAsync(c => (c.Type == ChatKind.Personal || c.Type == ChatKind.Saved) && c.UserChats
-                .All(uc => userIds.Contains(uc.UserId)));
-
+            var chat = await context.Chats
+                .Include(c => c.UserChats)
+                .FirstOrDefaultAsync(c => c.Type == ChatKind.Personal 
+                    && c.UserChats.All(uc => uc.UserId == userId1 || uc.UserId == userId2));
             return chat?.UserChats ?? new List<UserChat>();
         }
     }

@@ -1,9 +1,11 @@
+@import '../../../App.scss';
+
 .menuItems {
-    background-color: #212121;
+    background-color: $surface-color;
     padding: 5px;
     box-shadow: 0 0 3px #2B2B2B;
     border-radius: 5px;
-    position: fixed;
+    position: absolute;
     z-index: 1000;
 }
 
@@ -28,4 +30,5 @@
 
 .icon, .content {
     padding: 5px 10px;
+    white-space: nowrap;
 }

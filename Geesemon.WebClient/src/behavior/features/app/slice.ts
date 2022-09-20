@@ -6,16 +6,23 @@ export enum LeftSidebarState{
     CreatePersonalChat,
 }
 
+export enum RightSidebarState{
+    Profile,
+    UpdateGroup,
+}
+
 export type InitialState = {
     initialised: boolean
     isRightSidebarVisible: boolean
     leftSidebarState: LeftSidebarState
+    rightSidebarState: RightSidebarState
 }
 
 const initialState: InitialState = {
     initialised: false,
     isRightSidebarVisible: false,
     leftSidebarState: LeftSidebarState.Chats,
+    rightSidebarState: RightSidebarState.Profile,
 }
 
 export const appSlice = createSlice({
@@ -30,6 +37,9 @@ export const appSlice = createSlice({
         },
         setLeftSidebarState: (state, action: PayloadAction<LeftSidebarState>) => {
             state.leftSidebarState = action.payload
+        },
+        setRightSidebarState: (state, action: PayloadAction<RightSidebarState>) => {
+            state.rightSidebarState = action.payload
         },
     },
 })

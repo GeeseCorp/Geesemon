@@ -1,22 +1,22 @@
-﻿using System.Security.Claims;
+﻿using Geesemon.Web.Services.ChatActivitySubscription;
 using GraphQL.Server.Transports.Subscriptions.Abstractions;
-using GraphQLParser;
-using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json.Linq;
 
 namespace Geesemon.Web.Services
 {
     public class AuthenticationListener : IOperationMessageListener
     {
-        public static readonly string PRINCIPAL_KEY = "User";
+        public const string PRINCIPAL_KEY = "User";
 
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly AuthService authService;
+        private readonly IChatActivitySubscriptionService chatActivitySubscriptionService;
 
-        public AuthenticationListener(IHttpContextAccessor contextAccessor, AuthService authService)
+        public AuthenticationListener(IHttpContextAccessor contextAccessor, AuthService authService, IChatActivitySubscriptionService chatActivitySubscriptionService)
         {
             this.httpContextAccessor = contextAccessor;
             this.authService = authService;
+            this.chatActivitySubscriptionService = chatActivitySubscriptionService;
         }
 
         public Task BeforeHandleAsync(MessageHandlingContext context)
@@ -31,6 +31,8 @@ namespace Geesemon.Web.Services
                     var principal = authService.ValidateAccessToken(token);
                     if (principal != null)
                     {
+                        var userId = principal.Claims.GetUserId();
+                        chatActivitySubscriptionService.Notify(userId);
                         httpContextAccessor.HttpContext.User = principal;
                         context.Properties[PRINCIPAL_KEY] = principal;
                     }

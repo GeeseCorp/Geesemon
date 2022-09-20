@@ -1,6 +1,6 @@
 import {AnimatePresence, motion} from 'framer-motion';
 import React, {Dispatch, FC, useEffect, useRef} from 'react';
-import s from "./Menu.module.css";
+import s from "./Menu.module.scss";
 import {Link} from "react-router-dom";
 
 export type MenuItem = {

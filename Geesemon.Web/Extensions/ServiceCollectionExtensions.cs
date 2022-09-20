@@ -3,15 +3,15 @@ using Geesemon.Web.GraphQL;
 using Geesemon.Web.GraphQL.Auth;
 using Geesemon.Web.Middlewares;
 using Geesemon.Web.Services;
+using Geesemon.Web.Services.ChatActionsSubscription;
+using Geesemon.Web.Services.ChatActivitySubscription;
+using Geesemon.Web.Services.MessageSubscription;
 using Geesemon.Web.Utils.SettingsAccess;
 using GraphQL;
 using GraphQL.Server;
+using GraphQL.Server.Transports.Subscriptions.Abstractions;
 using GraphQL.SystemTextJson;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
-using System.Text;
 
 namespace Geesemon.Web.Extensions
 {
@@ -19,6 +19,8 @@ namespace Geesemon.Web.Extensions
     {
         public static IServiceCollection AddGraphQLApi(this IServiceCollection services)
         {
+            services.AddHttpContextAccessor();
+            services.AddTransient<IOperationMessageListener, AuthenticationListener>();
             services.AddScoped<ApplicationSchema>();
             services.AddGraphQLUpload();
             services
@@ -53,8 +55,15 @@ namespace Geesemon.Web.Extensions
 
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
+            services.AddSingleton<ISettingsProvider, SettingsProvider>();
+
             services.AddSingleton<AuthService>();
             services.AddSingleton<FileManagerService>();
+
+            services.AddSingleton<IMessageActionSubscriptionService, MessageActionSubscriptionService>();
+            services.AddSingleton<IChatActionSubscriptionService, ChatActionSubscriptionService>();
+            services.AddSingleton<IChatActivitySubscriptionService, ChatActivitySubscriptionService>();
+
             return services;
         }
     }

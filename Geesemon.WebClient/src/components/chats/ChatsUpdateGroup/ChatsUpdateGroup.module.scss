@@ -1,15 +1,10 @@
-.wrapper {
-    position: relative;
-    height: 100%;
-}
-
 .header {
     display: flex;
-    gap: 15px;
+    gap: 25px;
     align-items: center;
 }
 
-.wrapperFormItems {
+.form {
     margin: 10px 20px 0 20px;
     display: flex;
     flex-direction: column;
@@ -36,11 +31,4 @@
 
 .inputFile {
     display: none;
-}
-
-.inputGroupName {
-    height: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }

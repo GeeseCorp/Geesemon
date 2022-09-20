@@ -1,4 +1,4 @@
-import { ChatActions, MessageActions } from "./types";
+import { Chat, ChatActions, MessageActions } from "./types";
 import { gql } from "@apollo/client";
 import { CHAT_FRAGMENT, MESSAGE_FRAGMENT } from "./fragments";
 
@@ -29,4 +29,16 @@ export const CHAT_ACTIONS_SUBSCRIPTIONS = gql`
           }
         }
       }
+`
+
+
+export type ChatActivityData = { chatActivity: Chat }
+export type ChatActivityVars = { chatId: string }
+export const CHAT_ACTIVITY_SUBSCRIPTIONS = gql`
+    ${CHAT_FRAGMENT}
+    subscription ChatActivity($chatId: Guid!){
+      chatActivity(chatId: $chatId){
+        ...ChatFragment
+      }
+    }
 `

@@ -1,5 +1,5 @@
-import { User } from "../auth/types";
 import { Entity } from "../../common";
+import { User } from "../users/types";
 
 export type Message = {
     text?: string | null
@@ -43,6 +43,7 @@ export type UserChat = {
 export enum ChatKind {
     Personal = 'PERSONAL',
     Group = 'GROUP',
+    Saved = 'SAVED',
 }
 
 export enum MessageActionKind {

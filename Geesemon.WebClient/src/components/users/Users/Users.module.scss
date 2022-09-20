@@ -1,5 +1,7 @@
+@import '../../../App.scss';
+
 .users {
-    background-color: #212121;
+    background-color: $surface-color;
     position: relative;
     overflow-y: auto;
     margin: 0 .3rem;

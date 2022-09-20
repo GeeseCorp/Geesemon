@@ -1,5 +1,7 @@
+@import '../../../App.scss';
+
 .strongButton {
-    background-color: #8774E1;
+    background-color: $primary-color;
     height: 50px;
     width: 50px;
     border-radius: 50%;

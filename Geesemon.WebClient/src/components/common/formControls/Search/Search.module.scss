@@ -1,3 +1,5 @@
+@import '../../../../App.scss';
+
 .wrapperInputSearch {
     width: 100%;
     display: flex;
@@ -8,8 +10,8 @@
     background-color: #181818;
 }
 
-.wrapperInputSearch:not(.focused):hover{
-    border: 1px solid #aaa;
+.wrapperInputSearch:not(.focused):hover {
+    border: 1px solid $secondary-text-color;
 }
 
 .inputSearch {
@@ -23,5 +25,5 @@
 }
 
 .focused {
-    border: 2px solid #8774E1;
+    border: 2px solid $primary-color;
 }

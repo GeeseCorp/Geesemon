@@ -1,6 +1,6 @@
 import React, {FC, ReactNode, useEffect, useRef} from 'react';
 import {createPortal} from "react-dom";
-import s from './Modal.module.css';
+import s from './Modal.module.scss';
 
 type Props = {
     children: ReactNode,
