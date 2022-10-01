@@ -1,4 +1,4 @@
-import React, {FC, useState} from 'react';
+import React, { FC, useState } from 'react';
 import s from './Search.module.scss';
 import search from "../../../../assets/svg/search.svg";
 
@@ -8,7 +8,7 @@ type Props = {
     value: string
     setValue: (value: string) => void
 };
-export const Search: FC<Props> = ({onFocus, placeholder = 'Search', value, setValue}) => {
+export const Search: FC<Props> = ({ onFocus, placeholder = 'Search', value, setValue }) => {
     const [inputSearchFocused, setInputSearchFocused] = useState(false);
 
     const onInputSearchFocus = () => {
@@ -22,7 +22,7 @@ export const Search: FC<Props> = ({onFocus, placeholder = 'Search', value, setVa
 
     return (
         <div className={[s.wrapperInputSearch, inputSearchFocused && s.focused].join(' ')}>
-            <img src={search} width={20}/>
+            <img src={search} width={20} className={inputSearchFocused ? 'primarySvg' : 'secondaryTextSvg'} />
             <input
                 value={value}
                 onChange={e => setValue(e.target.value)}

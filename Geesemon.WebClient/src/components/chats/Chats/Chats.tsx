@@ -7,6 +7,7 @@ import menu from "../../../assets/svg/menu.svg";
 import pencilFilled from '../../../assets/svg/pencilFilled.svg';
 import saved from "../../../assets/svg/saved.svg";
 import settings from "../../../assets/svg/settings.svg";
+import personSvg from "../../../assets/svg/person.svg";
 import { appActions, LeftSidebarState } from "../../../behavior/features/app/slice";
 import { authActions } from "../../../behavior/features/auth/slice";
 import { chatActions } from "../../../behavior/features/chats";
@@ -41,18 +42,18 @@ export const Chats: FC<Props> = ({ }) => {
 
     const menuItems: MenuItem[] = [
         {
-            icon: <img src={saved} className={s.menuItem} />,
+            icon: <img src={saved} className={[s.menuItem, 'secondaryTextSvg'].join(' ')} />,
             content: 'Saved',
             type: 'default',
             link: `/${authedUser?.id}`
         },
         {
-            icon: <img src={settings} className={s.menuItem} />,
+            icon: <img src={settings} className={[s.menuItem, 'secondaryTextSvg'].join(' ')} />,
             content: 'Settings',
             type: 'default'
         },
         {
-            icon: logoutLoading ? <SmallLoading /> : <img src={logout} className={s.menuItem} />,
+            icon: logoutLoading ? <SmallLoading /> : <img src={logout} className={[s.menuItem, 'secondaryTextSvg'].join(' ')} />,
             content: 'Logout',
             onClick: () => dispatch(authActions.logoutAsync()),
             type: 'default'
@@ -61,13 +62,13 @@ export const Chats: FC<Props> = ({ }) => {
 
     const createChatMenuItems: MenuItem[] = [
         {
-            icon: <img src={saved} className={s.menuItem} />,
+            icon: <img src={personSvg} className={[s.menuItem, 'secondaryTextSvg'].join(' ')} />,
             content: 'New group',
             type: 'default',
             onClick: () => dispatch(appActions.setLeftSidebarState(LeftSidebarState.CreateGroupChat)),
         },
         {
-            icon: <img src={saved} className={s.menuItem} />,
+            icon: <img src={personSvg} className={[s.menuItem, 'secondaryTextSvg'].join(' ')} />,
             content: 'New personal chat',
             type: 'default',
             onClick: () => dispatch(appActions.setLeftSidebarState(LeftSidebarState.CreatePersonalChat)),
@@ -84,11 +85,11 @@ export const Chats: FC<Props> = ({ }) => {
                                 keyName={'back'}
                                 onClick={() => setIsEnabledSearchMode(false)}
                             >
-                                <img src={back} width={25} />
+                                <img src={back} width={25} className={'secondaryTextSvg'}/>
                             </HeaderButton>
                             : <>
                                 <HeaderButton keyName={'menu'} onClick={() => setIsMenuVisible(true)}>
-                                    <img src={menu} width={20} />
+                                    <img src={menu} width={20} className={'secondaryTextSvg'} />
                                 </HeaderButton>
                                 {isMenuVisible &&
                                     <Menu
@@ -122,8 +123,8 @@ export const Chats: FC<Props> = ({ }) => {
                         >
                             <SmallPrimaryButton>
                                 {isCreateChatMenuVisible
-                                    ? <img src={crossFilled} width={20} />
-                                    : <img src={pencilFilled} width={25} />}
+                                    ? <img src={crossFilled} width={15} className={'primaryTextSvg'} />
+                                    : <img src={pencilFilled} width={25} className={'primaryTextSvg'} />}
                             </SmallPrimaryButton>
                             {isCreateChatMenuVisible &&
                                 <Menu

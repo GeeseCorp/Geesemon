@@ -1,18 +1,18 @@
-import React, {FC} from 'react';
+import React, { FC } from 'react';
 import s from './ChatHeader.module.scss';
-import {useNavigate, useParams} from "react-router-dom";
-import {useAppDispatch, useAppSelector} from "../../../behavior/store";
-import {Avatar} from "../../common/Avatar/Avatar";
-import {AvatarWithoutImage} from '../../common/AvatarWithoutImage/AvatarWithoutImage';
-import {useIsMobile} from "../../../hooks/useIsMobile";
-import {HeaderButton} from "../../common/HeaderButton/HeaderButton";
+import { useNavigate, useParams } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../../behavior/store";
+import { Avatar } from "../../common/Avatar/Avatar";
+import { AvatarWithoutImage } from '../../common/AvatarWithoutImage/AvatarWithoutImage';
+import { useIsMobile } from "../../../hooks/useIsMobile";
+import { HeaderButton } from "../../common/HeaderButton/HeaderButton";
 import back from "../../../assets/svg/back.svg";
 import search from "../../../assets/svg/search.svg";
 import threeDots from "../../../assets/svg/threeDots.svg";
 import { appActions } from '../../../behavior/features/app/slice';
 
 type Props = {};
-export const ChatHeader: FC<Props> = ({}) => {
+export const ChatHeader: FC<Props> = ({ }) => {
     const isMobile = useIsMobile()
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
@@ -25,7 +25,7 @@ export const ChatHeader: FC<Props> = ({}) => {
             <div className={s.backAndChatInfo}>
                 {isMobile &&
                     <HeaderButton keyName={'back'} onClick={() => navigate(-1)}>
-                        <img src={back} width={25}/>
+                        <img src={back} width={25} className={'secondaryTextSvg'} />
                     </HeaderButton>
                 }
                 <div
@@ -50,10 +50,10 @@ export const ChatHeader: FC<Props> = ({}) => {
             </div>
             <div className={s.extraButtons}>
                 <HeaderButton keyName={'ContentBar/ChatHeader/Search'}>
-                    <img src={search} width={20}/>
+                    <img src={search} width={20} className={'secondaryTextSvg'} />
                 </HeaderButton>
                 <HeaderButton keyName={'ContentBar/ChatHeader/ThreeDots'}>
-                    <img src={threeDots} width={25}/>
+                    <img src={threeDots} width={25} className={'secondaryTextSvg'} />
                 </HeaderButton>
             </div>
         </div>

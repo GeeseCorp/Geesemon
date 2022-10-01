@@ -120,13 +120,13 @@ export const Messages: FC = () => {
                                 items={[
                                     {
                                         content: 'Update',
-                                        icon: <img src={pencilOutlinedSvg} width={17} />,
+                                        icon: <img src={pencilOutlinedSvg} width={15} className={'primarySvg'}/>,
                                         onClick: () => setInUpdateMessage(message.id),
                                         type: 'default',
                                     },
                                     {
                                         content: 'Delete',
-                                        icon: <img src={deleteSvg} width={20} />,
+                                        icon: <img src={deleteSvg} width={20} className={'dangerSvg'}/>,
                                         onClick: () => dispatch(chatActions.messageDeleteAsync({ messageId: message.id })),
                                         type: 'danger',
                                     },

@@ -1,10 +1,23 @@
 $surface-color: #212121 !default;
+
 $primary-color: #8774E1 !default;
+$primary-filter: invert(52%) sepia(11%) saturate(2791%) hue-rotate(210deg) brightness(95%) contrast(84%) !default;
+
+$primary-text-color: white;
+$primary-text-filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(93deg) brightness(103%) contrast(103%) !default;
+
 // $secondary-color: #aaa !default;
 $secondary-color: #707579 !default;
+
 $secondary-text-color: #aaa !default;
-$secondary-button-hover-color: rgba(128,128,128, 0.3) !default;
+$secondary-text-filter: invert(94%) sepia(0%) saturate(1221%) hue-rotate(143deg) brightness(78%) contrast(74%) !default;
+
+$secondary-button-hover-color: rgba(128, 128, 128, 0.3) !default;
+
 $avatar-online-color: #0ac630 !default;
+
+$danger-color: red;
+$danger-filter: invert(31%) sepia(100%) saturate(7440%) hue-rotate(358deg) brightness(100%) contrast(112%);
 
 *:not(path, svg) {
     margin: 0;
@@ -15,11 +28,11 @@ $avatar-online-color: #0ac630 !default;
     scrollbar-width: thin;
 }
 
-*:not(h1,h2,h3,h4,h5,h6){
+*:not(h1, h2, h3, h4, h5, h6) {
     font-size: 16px;
 }
 
-svg{
+svg {
     fill: white;
 }
 
@@ -89,7 +102,7 @@ body {
 
 .danger,
 .danger * {
-    color: red;
+    color: $danger-color;
 }
 
 .danger:hover {
@@ -103,4 +116,20 @@ body {
 
 .ant-message .ant-message-custom-content>span:last-child {
     color: black !important;
+}
+
+.secondaryTextSvg {
+    filter: $secondary-text-filter;
+}
+
+.primaryTextSvg {
+    filter: $primary-text-filter;
+}
+
+.primarySvg {
+    filter: $primary-filter;
+}
+
+.dangerSvg {
+    filter: $danger-filter;
 }

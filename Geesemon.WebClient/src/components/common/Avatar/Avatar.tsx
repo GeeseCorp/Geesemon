@@ -22,7 +22,7 @@ export const Avatar: FC<Props> = memo(({
 
     return (
         <div className={style.avatar} style={avatarStyle}>
-            <img src={imageUrl} width={width} height={height} style={{borderRadius}}/>
+            <img src={imageUrl} width={width} height={height} style={{borderRadius, objectFit: 'cover'}}/>
         </div>
     );
 });

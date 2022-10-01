@@ -31,7 +31,7 @@ export const Chat: FC<Props> = ({ chat }) => {
             items={[
                 {
                     content: 'Delete chat',
-                    icon: <img src={deleteSvg} width={20} />,
+                    icon: <img src={deleteSvg} width={20} className={'dangerSvg'} />,
                     onClick: () => dispatch(chatActions.chatDeleteAsync(chat.id)),
                     type: 'danger',
                 },
@@ -58,12 +58,14 @@ export const Chat: FC<Props> = ({ chat }) => {
                             }
                         </div>
                         <div className={s.chatInfo}>
-                            <div className={'bold'}>{chat.name}</div>
+                            <div className={s.chatTitle}>
+                                <div className={['bold', s.name].join(' ')}>{chat.name}</div>
+                                <div className={'small light'}>{lastMessage && getTimeWithoutSeconds(new Date(lastMessage.createdAt))}</div>
+                            </div>
                             <div
                                 className={['secondary light', s.chatLastMessage].join(' ')}>{lastMessage?.text}</div>
                         </div>
-                        <div
-                            className={'small light'}>{lastMessage && getTimeWithoutSeconds(new Date(lastMessage.createdAt))}</div>
+
                     </div>
                 </Link>
             </div >

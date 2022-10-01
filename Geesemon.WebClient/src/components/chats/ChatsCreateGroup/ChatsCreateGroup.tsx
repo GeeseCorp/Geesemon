@@ -55,7 +55,7 @@ export const ChatsCreateGroup: FC<Props> = () => {
                             keyName={'back'}
                             onClick={() => dispatch(appActions.setLeftSidebarState(LeftSidebarState.Chats))}
                         >
-                            <img src={back} width={25} />
+                            <img src={back} width={25} className={'secondaryTextSvg'} />
                         </HeaderButton>
                         <Search
                             value={q}
@@ -72,7 +72,7 @@ export const ChatsCreateGroup: FC<Props> = () => {
                     />
                     <LeftSidebarSmallPrimaryButton>
                         <SmallPrimaryButton onClick={() => setState('ImageAndName')}>
-                            <img src={next} width={25} />
+                            <img src={next} width={25} className={'primaryTextSvg'} />
                         </SmallPrimaryButton>
                     </LeftSidebarSmallPrimaryButton>
                 </>
@@ -82,7 +82,7 @@ export const ChatsCreateGroup: FC<Props> = () => {
                             keyName={'back'}
                             onClick={() => setState('Members')}
                         >
-                            <img src={back} width={25} />
+                            <img src={back} width={25} className={'secondaryTextSvg'}/>
                         </HeaderButton>
                         <div className={'headerTitle'}>New Group</div>
                     </div>
@@ -99,7 +99,7 @@ export const ChatsCreateGroup: FC<Props> = () => {
                                 src={image ? URL.createObjectURL(image) : camera}
                                 width={image ? 100 : 60}
                                 height={image ? 100 : 60}
-                                className={image ? s.image : ''}
+                                className={[image ? s.image : '', 'primaryTextSvg'].join(' ')}
                             />
                         </div>
                         <div className={s.inputGroupName}>
@@ -112,7 +112,7 @@ export const ChatsCreateGroup: FC<Props> = () => {
                     </div>
                     <LeftSidebarSmallPrimaryButton>
                         <SmallPrimaryButton onClick={createGroupHandler} loading={createGroupLoading}>
-                            <img src={next} width={25} />
+                            <img src={next} width={25} className={'primaryTextSvg'} />
                         </SmallPrimaryButton>
                     </LeftSidebarSmallPrimaryButton>
                 </>

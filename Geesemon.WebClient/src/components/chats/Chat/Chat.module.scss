@@ -30,11 +30,11 @@
     align-items: start;
 }
 
-.avatar{
+.avatar {
     position: relative;
 }
 
-.onlineIndicator{
+.onlineIndicator {
     width: 14px;
     height: 14px;
     background-color: $avatar-online-color;
@@ -45,9 +45,22 @@
     border: 2px solid $surface-color;
 }
 
-.chatInfo{
+.chatInfo {
     flex: 1;
     width: calc(100% - 150px);
+}
+
+.chatTitle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .chatLastMessage {

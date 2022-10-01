@@ -36,7 +36,7 @@ export const ChatsUpdateGroup: FC<Props> = ({ chat }) => {
                     keyName={'RightSidebar/ChatsUpdateGroup/Back'}
                     onClick={() => dispatch(appActions.setRightSidebarState(RightSidebarState.Profile))}
                 >
-                    <img src={backSvg} width={20} />
+                    <img src={backSvg} width={20} className={'secondaryTextSvg'} />
                 </HeaderButton>
                 <div className={'headerTitle'}>Update</div>
             </div>
@@ -54,13 +54,13 @@ export const ChatsUpdateGroup: FC<Props> = ({ chat }) => {
                             src={newImage ? URL.createObjectURL(newImage) : cameraSvg}
                             width={newImage ? 100 : 60}
                             height={newImage ? 100 : 60}
-                            className={newImage ? s.image : ''}
+                            className={[newImage ? s.image : '', 'secondaryTextSvg'].join(' ')}
                         />
                         : <img
                             src={image ? image : cameraSvg}
                             width={image ? 100 : 60}
                             height={image ? 100 : 60}
-                            className={image ? s.image : ''}
+                            className={[image ? s.image : '', 'primaryTextSvg'].join(' ')}
                         />
                     }
 

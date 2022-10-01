@@ -57,7 +57,7 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
                         keyName={'RightSidebar/Close'}
                         onClick={() => dispatch(appActions.setIsRightSidebarVisible(false))}
                     >
-                        <img src={crossFilled} width={15} />
+                        <img src={crossFilled} width={15} className={'secondaryTextSvg'} />
                     </HeaderButton>
                     <div className={'headerTitle'}>Profile</div>
                 </div>
@@ -66,7 +66,7 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
                         keyName={'RightSidebar/UpdateGroup'}
                         onClick={() => dispatch(appActions.setRightSidebarState(RightSidebarState.UpdateGroup))}
                     >
-                        <img src={pencilOutlinedSvg} width={20} />
+                        <img src={pencilOutlinedSvg} width={20} className={'secondaryTextSvg'} />
                     </HeaderButton>
                 }
             </div>
@@ -90,7 +90,7 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
                 </div>
                 <div className={s.chatInfoButtons}>
                     <div className={s.chatInfoButton}>
-                        <img src={atSign} width={25} />
+                        <img src={atSign} width={25} className={'secondaryTextSvg'} />
                         <div>
                             {/* TODO add username on server */}
                             <div className={s.chatInfoButtonText}>{chat.name}</div>
@@ -98,7 +98,7 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
                         </div>
                     </div>
                     <div className={s.chatInfoButton}>
-                        <img src={notificationOutlinedSvg} width={25} />
+                        <img src={notificationOutlinedSvg} width={25} className={'secondaryTextSvg'} />
                         <div className={s.notifications}>
                             <div className={s.chatInfoButtonText}>Notifications</div>
                             <Switch
