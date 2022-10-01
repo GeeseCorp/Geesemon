@@ -82,7 +82,7 @@ export const ChatsCreateGroup: FC<Props> = () => {
                             keyName={'back'}
                             onClick={() => setState('Members')}
                         >
-                            <img src={back} width={25} className={'secondaryTextSvg'}/>
+                            <img src={back} width={25} className={'secondaryTextSvg'} />
                         </HeaderButton>
                         <div className={'headerTitle'}>New Group</div>
                     </div>
@@ -99,7 +99,7 @@ export const ChatsCreateGroup: FC<Props> = () => {
                                 src={image ? URL.createObjectURL(image) : camera}
                                 width={image ? 100 : 60}
                                 height={image ? 100 : 60}
-                                className={[image ? s.image : '', 'primaryTextSvg'].join(' ')}
+                                className={image ? s.image : 'primaryTextSvg'}
                             />
                         </div>
                         <div className={s.inputGroupName}>

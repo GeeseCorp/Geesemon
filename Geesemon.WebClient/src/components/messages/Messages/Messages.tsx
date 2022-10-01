@@ -120,7 +120,7 @@ export const Messages: FC = () => {
                                 items={[
                                     {
                                         content: 'Update',
-                                        icon: <img src={pencilOutlinedSvg} width={15} className={'primarySvg'}/>,
+                                        icon: <img src={pencilOutlinedSvg} width={15} className={'primaryTextSvg'}/>,
                                         onClick: () => setInUpdateMessage(message.id),
                                         type: 'default',
                                     },

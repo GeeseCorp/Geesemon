@@ -54,13 +54,13 @@ export const ChatsUpdateGroup: FC<Props> = ({ chat }) => {
                             src={newImage ? URL.createObjectURL(newImage) : cameraSvg}
                             width={newImage ? 100 : 60}
                             height={newImage ? 100 : 60}
-                            className={[newImage ? s.image : '', 'secondaryTextSvg'].join(' ')}
+                            className={newImage ? s.image : 'secondaryTextSvg'}
                         />
                         : <img
                             src={image ? image : cameraSvg}
                             width={image ? 100 : 60}
                             height={image ? 100 : 60}
-                            className={[image ? s.image : '', 'primaryTextSvg'].join(' ')}
+                            className={image ? s.image : 'secondaryTextSvg'}
                         />
                     }
 
