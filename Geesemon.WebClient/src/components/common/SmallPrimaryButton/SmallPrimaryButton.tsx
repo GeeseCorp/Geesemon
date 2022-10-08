@@ -1,20 +1,27 @@
-import React, {FC, MouseEventHandler} from 'react';
+import React, { FC, MouseEventHandler } from 'react';
 import s from './SmallPrimaryButton.module.scss';
-import {SmallLoading} from "../SmallLoading/SmallLoading";
+import { SmallLoading } from "../SmallLoading/SmallLoading";
 
 type Props = {
     children?: React.ReactNode
     onClick?: MouseEventHandler | undefined
     loading?: boolean
+    type?: 'submit' | 'reset' | 'button'
+    disabled?: boolean
 };
 
-export const SmallPrimaryButton: FC<Props> = ({children, onClick, loading = false}) => {
+export const SmallPrimaryButton: FC<Props> = ({ children, onClick, loading = false, type = 'button', disabled = false }) => {
     return (
-        <div className={[s.strongButton, loading ? s.disabled : ''].join(' ')} onClick={onClick}>
+        <button
+            disabled={loading || disabled}
+            type={type}
+            className={[s.smallButton, loading || disabled ? s.disabled : ''].join(' ')}
+            onClick={onClick}
+        >
             {loading
-                ? <SmallLoading/>
+                ? <SmallLoading />
                 : children
             }
-        </div>
+        </button>
     );
 };

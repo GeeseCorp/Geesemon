@@ -1,15 +1,18 @@
-import React, { FC, HTMLInputTypeAttribute, useState } from 'react';
+import { ChangeEventHandler, FC, FocusEventHandler, useState } from 'react';
 import s from './Input.module.scss';
 
 type Props = {
     placeholder?: string
-    name?: string
+    name: string
     value: string
-    setValue: (value: string) => void
+    onChange: ChangeEventHandler
     onFocus?: () => void
-    type?: 'text' | 'password';
+    type?: 'text' | 'password'
+    onBlur?: FocusEventHandler
+    touched?: boolean
+    errors?: string
 };
-export const Input: FC<Props> = ({ placeholder, name, value, setValue, onFocus, type = 'text' }) => {
+export const Input: FC<Props> = ({ placeholder, name, value, onChange, onFocus, type = 'text', onBlur, touched, errors }) => {
     const [inputSearchFocused, setInputSearchFocused] = useState(false);
 
     const onInputSearchFocus = () => {
@@ -17,24 +20,27 @@ export const Input: FC<Props> = ({ placeholder, name, value, setValue, onFocus, 
         onFocus && onFocus();
     }
 
-    const onInputSearchBlur = () => {
-        setInputSearchFocused(false)
+    const onInputSearchBlur = (e: any) => {
+        setInputSearchFocused(false);
+        onBlur && onBlur(e);
     }
 
     return (
-        <div className={s.wrapperInputSearch}>
-            <div className={[s.innerInputSearch, inputSearchFocused && s.focused].join(' ')}>
+        <div className={s.wrapperInput}>
+            <div className={[s.innerInput, inputSearchFocused && s.focused].join(' ')}>
                 <input
-                    type={type}
-                    value={value}
+                    id={name}
                     name={name}
-                    onChange={e => setValue(e.target.value)}
+                    type={type}
                     placeholder={placeholder}
-                    className={s.inputSearch}
+                    className={s.input}
+                    value={value}
+                    onChange={onChange}
                     onFocus={onInputSearchFocus}
                     onBlur={onInputSearchBlur}
                 />
             </div>
+            {touched && errors && <div className={['small', s.errors].join(' ')}>{errors}</div>}
         </div>
     );
 };

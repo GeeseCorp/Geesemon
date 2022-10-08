@@ -34,6 +34,7 @@ import {
 } from "./mutations";
 import { Chat } from "./types";
 import { appActions, LeftSidebarState } from "../app/slice";
+import { navigateActions } from '../navigate/slice';
 
 export const chatsGetAsyncEpic: Epic<ReturnType<typeof chatActions.chatsGetAsync>, any, RootState> = (action$, state$) =>
     action$.pipe(
@@ -62,6 +63,7 @@ export const createGroupChatAsyncEpic: Epic<ReturnType<typeof chatActions.create
                 mergeMap(response => [
                     // chatActions.addChats([response.data?.chat.createGroup as Chat]),
                     appActions.setLeftSidebarState(LeftSidebarState.Chats),
+                    navigateActions.navigate(`./${response.data?.chat.createGroup.id}`),
                 ]),
                 catchError(error => of(notificationsActions.addError(error.message))),
                 startWith(chatActions.setCreateGroupLoading(true)),
@@ -82,6 +84,7 @@ export const createPersonalChatAsyncEpic: Epic<ReturnType<typeof chatActions.cre
                 mergeMap(response => [
                     // chatActions.addChats([response.data?.chat.createGroup as Chat]),
                     appActions.setLeftSidebarState(LeftSidebarState.Chats),
+                    navigateActions.navigate(`./${response.data?.chat.createPersonal.id}`),
                 ]),
                 catchError(error => of(notificationsActions.addError(error.message))),
                 startWith(chatActions.setCreateGroupLoading(true)),

@@ -16,12 +16,12 @@
     font-weight: 600;
 }
 
-.disabled{
-    pointer-events: none;
+.disabled {
     opacity: 0.5;
+    cursor: not-allowed;
 }
 
-.loading{
+.loading {
     position: absolute;
     right: 10px;
     top: 50%;

@@ -13,30 +13,48 @@ import { LeftSidebarSmallPrimaryButton } from '../../common/LeftSidebarSmallPrim
 import { Users } from '../../users/Users/Users';
 import { Search } from '../../common/formControls/Search/Search';
 import { usersActions } from '../../../behavior/features/users/slice';
+import { nameof } from '../../../utils/typeUtils';
+import * as Yup from 'yup';
+import { useFormik } from 'formik';
 
-type Props = {};
-export const ChatsCreateGroup: FC<Props> = () => {
+type FormValues = {
+    groupName: string
+}
+
+const schema: Yup.SchemaOf<FormValues> = Yup.object({
+    groupName: Yup.string()
+        .max(100, 'Must be 100 characters or less')
+        .required('Required'),
+})
+
+export const ChatsCreateGroup: FC = () => {
     const createGroupLoading = useAppSelector(s => s.chats.createChatLoading);
     const inputFileRef = useRef<HTMLInputElement | null>(null);
-    const [groupName, setGroupName] = useState('')
     const [userIds, setUserIds] = useState<string[]>([])
     const [image, setImage] = useState<File | null>(null)
     const [state, setState] = useState<'Members' | 'ImageAndName'>('Members')
     const dispatch = useAppDispatch();
     const q = useAppSelector(s => s.users.q)
     const [selectedUserIds, setSelectedUserIds] = useState<string[]>([])
+    const formik = useFormik<FormValues>({
+        initialValues: {
+            groupName: '',
+        },
+        validationSchema: schema,
+        onSubmit: ({ groupName }) => {
+            console.log('submit');
+            
+            dispatch(chatActions.createGroupChatAsync({
+                name: groupName,
+                usersId: userIds,
+                image: image,
+            }))
+        },
+    });
 
     const changeInputFileHandler = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.files)
             setImage(e.target.files[0])
-    }
-
-    const createGroupHandler = async () => {
-        dispatch(chatActions.createGroupChatAsync({
-            name: groupName,
-            usersId: userIds,
-            image: image,
-        }))
     }
 
     const onQChange = (value: string) => {
@@ -86,7 +104,7 @@ export const ChatsCreateGroup: FC<Props> = () => {
                         </HeaderButton>
                         <div className={'headerTitle'}>New Group</div>
                     </div>
-                    <div className={s.wrapperFormItems}>
+                    <form className={s.wrapperFormItems} onSubmit={formik.handleSubmit}>
                         <div className={s.wrapperInputPhoto} onClick={() => inputFileRef.current?.click()}>
                             <input
                                 type="file"
@@ -102,19 +120,25 @@ export const ChatsCreateGroup: FC<Props> = () => {
                                 className={image ? s.image : 'primaryTextSvg'}
                             />
                         </div>
-                        <div className={s.inputGroupName}>
-                            <Input
-                                placeholder={'Group name'}
-                                value={groupName}
-                                setValue={setGroupName}
-                            />
-                        </div>
-                    </div>
-                    <LeftSidebarSmallPrimaryButton>
-                        <SmallPrimaryButton onClick={createGroupHandler} loading={createGroupLoading}>
-                            <img src={next} width={25} className={'primaryTextSvg'} />
-                        </SmallPrimaryButton>
-                    </LeftSidebarSmallPrimaryButton>
+                        <Input
+                            placeholder='Group name'
+                            name={nameof<FormValues>('groupName')}
+                            value={formik.values.groupName}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            touched={formik.touched.groupName}
+                            errors={formik.errors.groupName}
+                        />
+                        <LeftSidebarSmallPrimaryButton>
+                            <SmallPrimaryButton
+                                onClick={formik.submitForm}
+                                loading={createGroupLoading}
+                                disabled={!(formik.isValid && formik.dirty)}
+                            >
+                                <img src={next} width={25} className={'primaryTextSvg'} />
+                            </SmallPrimaryButton>
+                        </LeftSidebarSmallPrimaryButton>
+                    </form>
                 </>
             }
         </div>

@@ -39,6 +39,7 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
             case Tab.Members:
                 return chat?.users.map(user => (
                     <User
+                        key={user.id}
                         user={user}
                         selectedUserIds={selectedUserIds}
                         setSelectedUserIds={setSelectedUserIds}

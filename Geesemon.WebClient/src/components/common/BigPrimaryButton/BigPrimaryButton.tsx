@@ -6,12 +6,18 @@ type Props = {
     children?: React.ReactNode
     onClick?: MouseEventHandler | undefined
     loading?: boolean
-    type?: 'submit' | 'reset' | 'button';
+    type?: 'submit' | 'reset' | 'button'
+    disabled?: boolean
 };
 
-export const BigStrongButton: FC<Props> = ({ children, onClick, loading = false, type = 'button' }) => {
+export const BigStrongButton: FC<Props> = ({ children, onClick, loading = false, type = 'button', disabled = false }) => {
     return (
-        <button type={type} className={[s.strongButton, loading ? s.disabled : ''].join(' ')} onClick={onClick}>
+        <button
+            disabled={loading || disabled}
+            type={type}
+            className={[s.strongButton, loading || disabled ? s.disabled : ''].join(' ')}
+            onClick={onClick}
+        >
             {children}
             {loading &&
                 <div className={s.loading}>

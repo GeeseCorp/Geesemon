@@ -6,9 +6,11 @@
         "@ant-design/icons": "^4.7.0",
         "@apollo/client": "^3.6.4",
         "@reduxjs/toolkit": "^1.8.1",
+        "@types/yup": "^0.32.0",
         "antd": "^4.20.5",
         "apollo-upload-client": "^17.0.0",
         "css-modules": "^0.3.0",
+        "formik": "^2.2.9",
         "framer-motion": "^7.2.1",
         "graphql": "^16.5.0",
         "react": "^18.1.0",
@@ -22,7 +24,8 @@
         "redux-observable": "^2.0.0",
         "rxjs": "^7.5.6",
         "sass": "^1.52.3",
-        "subscriptions-transport-ws": "^0.11.0"
+        "subscriptions-transport-ws": "^0.11.0",
+        "yup": "^0.32.11"
     },
     "devDependencies": {
         "@types/apollo-upload-client": "^17.0.1",

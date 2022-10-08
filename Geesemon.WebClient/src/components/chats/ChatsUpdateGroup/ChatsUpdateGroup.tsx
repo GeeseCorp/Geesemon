@@ -7,26 +7,41 @@ import { appActions, RightSidebarState } from "../../../behavior/features/app/sl
 import backSvg from "../../../assets/svg/back.svg";
 import cameraSvg from "../../../assets/svg/camera.svg";
 import { Input } from "../../common/formControls/Input/Input";
+import { nameof } from "../../../utils/typeUtils";
+import * as Yup from 'yup';
+import { useFormik } from "formik";
 
 type Props = {
     chat: Chat
 }
+
+type FormValues = {
+    groupName: string
+}
+
+const schema: Yup.SchemaOf<FormValues> = Yup.object({
+    groupName: Yup.string()
+        .max(100, 'Must be 100 characters or less')
+        .required('Required'),
+})
 
 export const ChatsUpdateGroup: FC<Props> = ({ chat }) => {
     const dispatch = useAppDispatch();
     const inputFileRef = useRef<HTMLInputElement | null>(null);
     const [image, setImage] = useState<string | null | undefined>(chat.imageUrl)
     const [newImage, setNewImage] = useState<File | null>(null)
-    const [groupName, setGroupName] = useState(chat.name || '')
-    // const [description, setDescription] = useState(chat.de)
+    const formik = useFormik<FormValues>({
+        initialValues: {
+            groupName: '',
+        },
+        validationSchema: schema,
+        onSubmit: ({ groupName }) => {
+        },
+    });
 
     const changeInputFileHandler = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.files)
             setNewImage(e.target.files[0])
-    }
-
-    const updateChatGroupHandler = () => {
-
     }
 
     return (
@@ -40,7 +55,7 @@ export const ChatsUpdateGroup: FC<Props> = ({ chat }) => {
                 </HeaderButton>
                 <div className={'headerTitle'}>Update</div>
             </div>
-            <form onSubmit={updateChatGroupHandler} className={s.form}>
+            <form onSubmit={formik.handleSubmit} className={s.form}>
                 <div className={s.wrapperInputPhoto} onClick={() => inputFileRef.current?.click()}>
                     <input
                         type="file"
@@ -54,21 +69,25 @@ export const ChatsUpdateGroup: FC<Props> = ({ chat }) => {
                             src={newImage ? URL.createObjectURL(newImage) : cameraSvg}
                             width={newImage ? 100 : 60}
                             height={newImage ? 100 : 60}
-                            className={newImage ? s.image : 'secondaryTextSvg'}
+                            className={newImage ? s.image : 'primaryTextSvg'}
                         />
                         : <img
                             src={image ? image : cameraSvg}
                             width={image ? 100 : 60}
                             height={image ? 100 : 60}
-                            className={image ? s.image : 'secondaryTextSvg'}
+                            className={image ? s.image : 'primaryTextSvg'}
                         />
                     }
 
                 </div>
                 <Input
-                    placeholder={'Group name'}
-                    value={groupName}
-                    setValue={setGroupName}
+                    placeholder='Group name'
+                    name={nameof<FormValues>('groupName')}
+                    value={formik.values.groupName}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    touched={formik.touched.groupName}
+                    errors={formik.errors.groupName}
                 />
 
                 {/* <Input

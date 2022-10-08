@@ -1,13 +1,11 @@
 @import '../../../../App.scss';
 
-.wrapperInputSearch {
+.wrapperInput {
     width: 100%;
-    height: 58px;
-    display: flex;
-    align-items: center;
+    height: 78px;
 }
 
-.innerInputSearch {
+.innerInput {
     width: 100%;
     display: flex;
     gap: 5px;
@@ -18,11 +16,11 @@
     background-color: inherit;
 }
 
-.innerInputSearch:not(.focused):hover {
+.innerInput:not(.focused):hover {
     border: 1px solid $primary-color;
 }
 
-.inputSearch {
+.input {
     background-color: inherit;
     width: 100%;
     height: 50px;
@@ -33,4 +31,9 @@
 
 .focused {
     border: 2px solid $primary-color;
+}
+
+.errors {
+    color: $danger-color;
+    margin-left: 10px;
 }

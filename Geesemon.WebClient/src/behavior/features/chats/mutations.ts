@@ -21,7 +21,7 @@ export const CHAT_CREATE_GROUP_MUTATION = gql`
 `
 
 
-export type ChatCreatePersonalData = { chat: { createGroup: Chat } }
+export type ChatCreatePersonalData = { chat: { createPersonal: Chat } }
 export type ChatCreatePersonalVars = { input: CreatePersonalChatInputType }
 export type CreatePersonalChatInputType = {
     userId: string

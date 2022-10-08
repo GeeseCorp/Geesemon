@@ -37,7 +37,7 @@ export const ChatsCreatePersonalChat: FC<Props> = () => {
                     keyName={'back'}
                     onClick={() => dispatch(appActions.setLeftSidebarState(LeftSidebarState.Chats))}
                 >
-                    <img src={back} width={25} />
+                    <img src={back} width={25} className={'secondaryTextSvg'} />
                 </HeaderButton>
                 <Search
                     value={q}
