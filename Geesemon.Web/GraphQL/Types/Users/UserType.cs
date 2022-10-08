@@ -1,4 +1,5 @@
-﻿using Geesemon.Model.Enums;
+﻿using Geesemon.DataAccess.Managers;
+using Geesemon.Model.Enums;
 using Geesemon.Model.Models;
 using GraphQL.Types;
 
@@ -6,7 +7,7 @@ namespace Geesemon.Web.GraphQL.Types
 {
     public class UserType : EntityType<User>
     {
-        public UserType()
+        public UserType(IServiceProvider serviceProvider)
             : base()
         {
             Field<NonNullGraphType<StringGraphType>, string>()
@@ -48,6 +49,26 @@ namespace Geesemon.Web.GraphQL.Types
             Field<NonNullGraphType<StringGraphType>, string>()
                .Name("AvatarColor")
                .Resolve(context => context.Source.AvatarColor);
+            
+            Field<DateTimeGraphType, DateTime?>()
+               .Name("LastTimeOnline")
+               .ResolveAsync(async context =>
+               {
+                   using var scope = serviceProvider.CreateScope();
+                   var sessionManager = scope.ServiceProvider.GetRequiredService<SessionManager>();
+                   var session = await sessionManager.GetLastActive(context.Source.Id);
+                   return session?.LastTimeOnline;
+               });
+            
+            Field<BooleanGraphType, bool?>()
+               .Name("IsOnline")
+               .ResolveAsync(async context =>
+               {
+                   using var scope = serviceProvider.CreateScope();
+                   var sessionManager = scope.ServiceProvider.GetRequiredService<SessionManager>();
+                   var session = await sessionManager.GetLastActive(context.Source.Id);
+                   return session?.IsOnline;
+               });
         }
     }
 }

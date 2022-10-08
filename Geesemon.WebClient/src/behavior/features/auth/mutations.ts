@@ -1,6 +1,6 @@
-import {gql} from "@apollo/client";
-import {USER_FRAGMENT} from "../users/fragments";
-import {AuthResponseType} from "./types";
+import { gql } from "@apollo/client";
+import { USER_FRAGMENT } from "../users/fragments";
+import { AuthResponseType } from "./types";
 
 export type AuthLoginData = { auth: { login: AuthResponseType } }
 export type AuthLoginVars = { input: LoginInputType }
@@ -47,11 +47,22 @@ export const AUTH_REGISTER_MUTATION = gql`
 
 
 export type AuthLogoutData = { auth: { logout: Boolean } }
-export type AuthLogoutVars = { }
+export type AuthLogoutVars = {}
 export const AUTH_LOGOUT_MUTATION = gql`
     mutation AuthLogout {
         auth {
             logout
+        }
+    }
+`;
+
+
+export type AuthToggleOnlineData = { auth: { toggleOnline: Boolean } }
+export type AuthToggleOnlineVars = { isOnline: boolean }
+export const AUTH_TOGGLE_ONLINE_MUTATION = gql`
+    mutation AuthToggleOnline($isOnline: Boolean!) {
+        auth {
+            toggleOnline(isOnline: $isOnline)
         }
     }
 `;

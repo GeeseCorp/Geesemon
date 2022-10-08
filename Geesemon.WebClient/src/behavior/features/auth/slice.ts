@@ -53,6 +53,8 @@ const slice = createSlice({
             removeAuthToken();
         },
 
+        toggleOnlineAsync: (state: InitialState, action: PayloadAction<boolean>) => state,
+
         toInitialState: (state, action: PayloadAction) => initialState,
     },
 });

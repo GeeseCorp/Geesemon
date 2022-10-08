@@ -16,6 +16,7 @@ import { chatActions } from "./behavior/features/chats";
 import { useIsMobile } from "./hooks/useIsMobile";
 import { ContentBar } from "./components/common/ContentBar/ContentBar";
 import { RightSidebar } from "./components/common/RightSidebar/RightSidebar";
+import { authActions } from './behavior/features/auth/slice';
 
 type Props = {};
 export const AuthedApp: FC<Props> = ({ }) => {
@@ -24,6 +25,19 @@ export const AuthedApp: FC<Props> = ({ }) => {
     const isRightSidebarVisible = useAppSelector(s => s.app.isRightSidebarVisible)
     const messageActionSubscription = useSubscription<MessageActionsData, MessageActionsVars>(MESSAGE_ACTIONS_SUBSCRIPTIONS);
     const chatActionSubscription = useSubscription<ChatActionsData, ChatActionsVars>(CHAT_ACTIONS_SUBSCRIPTIONS);
+
+    const makeOfflineAsync = (e: BeforeUnloadEvent) => {
+        e.preventDefault();
+        dispatch(authActions.toggleOnlineAsync(false));
+    }
+
+    useEffect(() => {
+        dispatch(authActions.toggleOnlineAsync(true));
+        window.addEventListener("beforeunload", makeOfflineAsync);
+        return () => {
+            window.removeEventListener("beforeunload", makeOfflineAsync);
+        }
+    }, [])
 
     useEffect(() => {
         const data = messageActionSubscription.data;

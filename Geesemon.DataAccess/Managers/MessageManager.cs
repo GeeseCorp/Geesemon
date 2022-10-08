@@ -1,5 +1,4 @@
-﻿using Geesemon.DataAccess.Providers;
-using Geesemon.DataAccess.Providers.MessageProvider;
+﻿using Geesemon.DataAccess.Providers.MessageProvider;
 using Geesemon.Model.Models;
 
 namespace Geesemon.DataAccess.Managers

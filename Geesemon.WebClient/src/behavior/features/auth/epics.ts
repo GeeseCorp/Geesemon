@@ -12,7 +12,10 @@ import {
     AuthLoginVars,
     AuthRegisterData,
     AuthRegisterVars,
-    AUTH_LOGOUT_MUTATION
+    AUTH_LOGOUT_MUTATION,
+    AuthToggleOnlineData,
+    AuthToggleOnlineVars,
+    AUTH_TOGGLE_ONLINE_MUTATION
 } from "./mutations";
 import { appActions } from "../app/slice";
 import { navigateActions } from "../navigate/slice";
@@ -119,10 +122,30 @@ export const logoutEpic: Epic<ReturnType<typeof authActions.logoutAsync>, any, R
         )
     );
 
+
+export const toggleOnlineAsyncEpic: Epic<ReturnType<typeof authActions.toggleOnlineAsync>, any, RootState> = (action$, state$) =>
+    action$.pipe(
+        ofType(authActions.toggleOnlineAsync.type),
+        mergeMap(action =>
+            from(client.mutate<AuthToggleOnlineData, AuthToggleOnlineVars>({
+                mutation: AUTH_TOGGLE_ONLINE_MUTATION,
+                variables: {
+                    isOnline: action.payload,
+                }
+            })).pipe(
+                mergeMap(response => {
+                    return []
+                }),
+                catchError(error => of(notificationsActions.addError(error.message))),
+            )
+        )
+    );
+
 export const authEpics = combineEpics(
     meAsyncEpic,
     // @ts-ignore
     loginAsyncEpic,
     registerAsyncEpic,
-    logoutEpic
+    logoutEpic,
+    toggleOnlineAsyncEpic,
 )

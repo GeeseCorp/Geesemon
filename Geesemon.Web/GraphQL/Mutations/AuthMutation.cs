@@ -7,16 +7,20 @@ using Geesemon.Web.GraphQL.Types;
 using Geesemon.Web.Services;
 using GraphQL;
 using GraphQL.Types;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Net.Http.Headers;
+using MyCSharp.HttpUserAgentParser;
+using Newtonsoft.Json;
 
 namespace Geesemon.Web.GraphQL.Mutations
 {
     public class AuthMutation : ObjectGraphType
     {
-        public AuthMutation(AuthService authService, UserManager userManager, ChatManager chatManager, UserChatManager userChatManager, AccessTokenManager accessTokenManager, IHttpContextAccessor httpContextAccessor)
+        private readonly IHttpContextAccessor httpContextAccessor;
+
+        public AuthMutation(AuthService authService, UserManager userManager, ChatManager chatManager, UserChatManager userChatManager, SessionManager sessionManager, IHttpContextAccessor httpContextAccessor)
         {
+            this.httpContextAccessor = httpContextAccessor;
+
             Field<NonNullGraphType<AuthResponseType>, AuthResponse>()
                 .Name("Register")
                 .Argument<NonNullGraphType<RegisterInputType>, RegisterInput>("input", "Argument to register new User")
@@ -55,21 +59,23 @@ namespace Geesemon.Web.GraphQL.Mutations
                     };
                     savedChat = await chatManager.CreateAsync(savedChat);
 
-                    var userChat = new List<UserChat>(){
+                    var userChat = new List<UserChat>
+                    {
                         new UserChat { UserId = newUser.Id, ChatId = savedChat.Id },
                     };
                     await userChatManager.CreateManyAsync(userChat);
 
-                    var accessToken = new AccessToken
+                    var session = new Session
                     {
                         Token = authService.GenerateAccessToken(user.Id, user.Email, user.Role),
                         UserId = user.Id,
                     };
-                    accessToken = await accessTokenManager.CreateAsync(accessToken);
+                    session = await FillSession(session, true);
+                    session = await sessionManager.CreateAsync(session);
 
                     return new AuthResponse()
                     {
-                        Token = accessToken.Token,
+                        Token = session.Token,
                         User = newUser,
                     };
                 });
@@ -89,16 +95,17 @@ namespace Geesemon.Web.GraphQL.Mutations
                     if (user.Password != saltedPassword.CreateMD5())
                         throw new Exception("Login or password not valid.");
 
-                    var accessToken = new AccessToken
+                    var session = new Session
                     {
                         Token = authService.GenerateAccessToken(user.Id, user.Login, user.Role),
                         UserId = user.Id,
                     };
-                    accessToken = await accessTokenManager.CreateAsync(accessToken);
+                    session = await FillSession(session, true);
+                    session = await sessionManager.CreateAsync(session);
 
                     return new AuthResponse()
                     {
-                        Token = accessToken.Token,
+                        Token = session.Token,
                         User = user,
                     };
                 });
@@ -109,10 +116,53 @@ namespace Geesemon.Web.GraphQL.Mutations
                 {
                     var userId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
                     var token = httpContextAccessor.HttpContext.Request.Headers[HeaderNames.Authorization];
-                    await accessTokenManager.RemoveAsync(userId, token);
+                    await sessionManager.RemoveAsync(userId, token);
                     return true;
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
+
+            Field<NonNullGraphType<BooleanGraphType>, bool>()
+                .Name("ToggleOnline")
+                .Argument<NonNullGraphType<BooleanGraphType>, bool>("IsOnline", "")
+                .ResolveAsync(async context =>
+                {
+                    var isOnline = context.GetArgument<bool>("IsOnline");
+                    var token = httpContextAccessor.HttpContext.Request.Headers[HeaderNames.Authorization];
+                    var session = await sessionManager.GetByToken(token);
+                    session = await FillSession(session, isOnline);
+                    await sessionManager.UpdateAsync(session);
+                    return true;
+                })
+                .AuthorizeWith(AuthPolicies.Authenticated);
+            
+            Field<NonNullGraphType<SessionType>, Session>()
+                .Name("RemoveSession")
+                .Argument<NonNullGraphType<GuidGraphType>, Guid>("SessionId", "")
+                .ResolveAsync(async context =>
+                {
+                    var sessionId = context.GetArgument<Guid>("SessionId");
+                    return await sessionManager.RemoveAsync(sessionId);
+                })
+                .AuthorizeWith(AuthPolicies.Authenticated);
+        }
+
+
+        private async Task<Session> FillSession(Session session, bool isOnline)
+        {
+            var ipAddress = httpContextAccessor.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Add("apikey", "kKeJir32sWslTj4Oav624x0APp9avBRO");
+            var result = await client.GetAsync($"https://api.apilayer.com/ip_to_location/{ipAddress}");
+            dynamic response = JsonConvert.DeserializeObject(await result.Content.ReadAsStringAsync());
+            var location = $"{response.region_name}, {response.country_name}";
+            var userAgentString = httpContextAccessor.HttpContext.Request.Headers["User-Agent"].ToString();
+            var userAgent = HttpUserAgentParser.Parse(userAgentString);
+            session.LastTimeOnline = DateTime.UtcNow;
+            session.IsOnline = isOnline;
+            session.IpAddress = ipAddress;
+            session.UserAgent = $"{userAgent.Name}, {userAgent.Platform.Value.Name}";
+            session.Location = location;
+            return session;
         }
     }
 }

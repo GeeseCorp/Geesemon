@@ -1,5 +1,6 @@
 ﻿using Geesemon.Model.Common;
 using Geesemon.Model.Enums;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace Geesemon.Model.Models;
@@ -30,6 +31,10 @@ public class User : Entity
     public string? ImageUrl { get; set; }
 
     public string AvatarColor { get; set; } = "#000000";
+    [NotMapped]
+    public DateTime LastTimeOnline { get; set; }
+    [NotMapped]
+    public bool IsOnline { get; set; }
 
     public List<Message>? Messages { get; set; }
 

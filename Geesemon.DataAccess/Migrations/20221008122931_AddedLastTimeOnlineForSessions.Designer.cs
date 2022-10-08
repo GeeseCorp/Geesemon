@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Geesemon.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220827215148_addIsEditedFieldToMessage")]
-    partial class addIsEditedFieldToMessage
+    [Migration("20221008122931_AddedLastTimeOnlineForSessions")]
+    partial class AddedLastTimeOnlineForSessions
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -34,6 +34,10 @@ namespace Geesemon.DataAccess.Migrations
 
                     b.Property<Guid?>("CreatorId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ImageColor")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
@@ -107,11 +111,50 @@ namespace Geesemon.DataAccess.Migrations
                     b.ToTable("ReadMessages");
                 });
 
+            modelBuilder.Entity("Geesemon.Model.Models.Session", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsOnline")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("LastTimeOnline")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Token")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Sessions");
+                });
+
             modelBuilder.Entity("Geesemon.Model.Models.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AvatarColor")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -124,7 +167,7 @@ namespace Geesemon.DataAccess.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -142,7 +185,7 @@ namespace Geesemon.DataAccess.Migrations
 
                     b.Property<string>("Login")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Password")
                         .IsRequired()
@@ -158,6 +201,12 @@ namespace Geesemon.DataAccess.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("Login")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });
@@ -224,6 +273,17 @@ namespace Geesemon.DataAccess.Migrations
                     b.Navigation("Message");
 
                     b.Navigation("ReadBy");
+                });
+
+            modelBuilder.Entity("Geesemon.Model.Models.Session", b =>
+                {
+                    b.HasOne("Geesemon.Model.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Geesemon.Model.Models.UserChat", b =>

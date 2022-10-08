@@ -1,7 +1,4 @@
-﻿using Geesemon.Model.Common;
-using System.Linq.Expressions;
-
-namespace Geesemon.DataAccess.Providers
+﻿namespace Geesemon.DataAccess.Providers
 {
     public interface IManyToManyProviderBase<T> where T : class
     {

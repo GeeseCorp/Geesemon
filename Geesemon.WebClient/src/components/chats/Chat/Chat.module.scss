@@ -34,16 +34,7 @@
     position: relative;
 }
 
-.onlineIndicator {
-    width: 14px;
-    height: 14px;
-    background-color: $avatar-online-color;
-    position: absolute;
-    right: 1px;
-    bottom: 1px;
-    border-radius: 50%;
-    border: 2px solid $surface-color;
-}
+
 
 .chatInfo {
     flex: 1;

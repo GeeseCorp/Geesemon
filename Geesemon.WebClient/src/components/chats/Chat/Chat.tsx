@@ -6,10 +6,12 @@ import { Avatar } from "../../common/Avatar/Avatar";
 import { AvatarWithoutImage } from "../../common/AvatarWithoutImage/AvatarWithoutImage";
 import { ContextMenu } from "../../common/ContextMenu/ContextMenu";
 import s from './Chat.module.scss';
-import { useAppDispatch } from '../../../behavior/store';
+import { useAppDispatch, useAppSelector } from '../../../behavior/store';
 import deleteSvg from "../../../assets/svg/delete.svg";
 import { useSubscription } from '@apollo/client';
 import { ChatActivityData, ChatActivityVars, CHAT_ACTIVITY_SUBSCRIPTIONS } from '../../../behavior/features/chats/subscriptions';
+import { ChatKind } from '../../../behavior/features/chats/types';
+import { OnlineIndicator } from "../../common/OnlineIndicator/OnlineIndicator";
 
 type Props = {
     chat: ChatType
@@ -19,10 +21,14 @@ export const Chat: FC<Props> = ({ chat }) => {
     const params = useParams()
     const selectedChatId = params.chatId as string;
     const dispatch = useAppDispatch();
-    const chatActivity = useSubscription<ChatActivityData, ChatActivityVars>(CHAT_ACTIVITY_SUBSCRIPTIONS, {
-        variables: { chatId: chat.id }
-    });
+    const authedUser = useAppSelector(s => s.auth.authedUser);
+    // const chatActivity = useSubscription<ChatActivityData, ChatActivityVars>(CHAT_ACTIVITY_SUBSCRIPTIONS, {
+    //     variables: { chatId: chat.id }
+    // });
 
+    const oppositeUser = chat.type === ChatKind.Personal ? chat.users.filter(u => u.id !== authedUser?.id)[0] : null;
+    const isOnline = chat.type === ChatKind.Personal && oppositeUser?.isOnline
+    // const lastTimeOnline = chat.type === ChatKind.Personal && oppositeUser?.lastTimeOnline
     const lastMessage = chat.messages?.length ? chat.messages?.reduce((a, b) => a.createdAt > b.createdAt ? a : b, chat.messages[0]) : null;
 
     return (
@@ -53,9 +59,7 @@ export const Chat: FC<Props> = ({ chat }) => {
                                     height={54}
                                 />
                             }
-                            {chatActivity.data?.chatActivity &&
-                                <div className={s.onlineIndicator} />
-                            }
+                            {isOnline && <OnlineIndicator right={1} bottom={1}/>}
                         </div>
                         <div className={s.chatInfo}>
                             <div className={s.chatTitle}>

@@ -18,7 +18,7 @@ public class BasicAuthenticationOptions : AuthenticationSchemeOptions
 public class BasicAuthenticationHandler : AuthenticationHandler<BasicAuthenticationOptions>
 {
     public const string SchemeName = "GeesemonSchemeName";
-    private readonly AccessTokenManager accessTokenManager;
+    private readonly SessionManager sessionManager;
     private readonly ISettingsProvider settingsProvider;
     private readonly AuthService authService;
 
@@ -27,11 +27,11 @@ public class BasicAuthenticationHandler : AuthenticationHandler<BasicAuthenticat
         ILoggerFactory logger,
         UrlEncoder encoder,
         ISystemClock clock,
-        AccessTokenManager accessTokenManager,
+        SessionManager sessionManager,
         ISettingsProvider settingsProvider,
         AuthService authService) : base(options, logger, encoder, clock)
     {
-        this.accessTokenManager = accessTokenManager;
+        this.sessionManager = sessionManager;
         this.settingsProvider = settingsProvider;
         this.authService = authService;
     }
@@ -51,8 +51,8 @@ public class BasicAuthenticationHandler : AuthenticationHandler<BasicAuthenticat
         {
             var claimsPrincipal = handler.ValidateToken(authService.CleanBearerInToken(token), validations, out var tokenSecure);
             var userId = claimsPrincipal.Claims.GetUserId();
-            var tokens = await accessTokenManager.GetAsync(t => t.UserId == userId);
-            if (!tokens.Any(t => t.Token == token))
+            var sessions = await sessionManager.GetAsync(t => t.UserId == userId);
+            if (!sessions.Any(t => t.Token == token))
                 throw new Exception("Bad token");
             var ticket = new AuthenticationTicket(claimsPrincipal, new AuthenticationProperties { IsPersistent = false }, SchemeName);
             return AuthenticateResult.Success(ticket);

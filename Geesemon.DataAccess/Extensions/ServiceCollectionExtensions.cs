@@ -1,5 +1,4 @@
 ﻿using Geesemon.DataAccess.Managers;
-using Geesemon.DataAccess.Providers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,7 +16,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ChatManager>();
         services.AddScoped<MessageManager>();
         services.AddScoped<UserChatManager>();
-        services.AddScoped<AccessTokenManager>();
+        services.AddScoped<SessionManager>();
         return services;
     }
 }

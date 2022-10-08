@@ -1,0 +1,10 @@
+@import '../../../App.scss';
+
+.onlineIndicator {
+    width: 14px;
+    height: 14px;
+    background-color: $avatar-online-color;
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid $surface-color;
+}

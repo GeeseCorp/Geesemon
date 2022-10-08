@@ -11,6 +11,8 @@ export type User = {
     role: Role
     imageUrl?: string
     avatarColor: string
+    lastTimeOnline: string
+    isOnline: boolean
 } & Entity;
 
 export enum Role{

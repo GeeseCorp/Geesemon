@@ -13,6 +13,8 @@ export const USER_FRAGMENT = gql`
         role
         imageUrl
         avatarColor
+        lastTimeOnline
+        isOnline
         createdAt
         updatedAt
     }

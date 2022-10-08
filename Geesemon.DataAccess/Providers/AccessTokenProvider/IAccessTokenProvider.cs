@@ -1,8 +1,10 @@
 ﻿using Geesemon.Model.Models;
 
 namespace Geesemon.DataAccess.Providers.AccessTokenProvider;
-public interface IAccessTokenProvider : IProviderBase<AccessToken>
+public interface ISessionProvider : IProviderBase<Session>
 {
+    Task<Session?> GetByToken(string token);
+    Task<Session?> GetLastActive(Guid userId);
     Task RemoveAsync(Guid userId, string token);
     Task RemoveAllForUserAsync(Guid userId);
 }

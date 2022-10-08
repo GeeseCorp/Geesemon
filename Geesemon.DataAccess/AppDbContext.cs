@@ -2,7 +2,7 @@
 using Geesemon.Model.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Geesemon.DataAccess.Providers
+namespace Geesemon.DataAccess
 {
     public class AppDbContext : DbContext
     {
@@ -22,7 +22,7 @@ namespace Geesemon.DataAccess.Providers
 
         public DbSet<UserChat> UserChats { get; set; }
 
-        public DbSet<AccessToken> AceessTokens { get; set; }
+        public DbSet<Session> Sessions { get; set; }
 
         public const string DefaultConnectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=GeesemonDB_dev;Integrated Security=True;Connect Timeout=60;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False;";
 
@@ -46,17 +46,17 @@ namespace Geesemon.DataAccess.Providers
             foreach (var entityEntry in entities)
             {
                 var entity = entityEntry.Entity as Entity;
-                DateTime now = DateTime.UtcNow;
+                var now = DateTime.UtcNow;
                 if (entityEntry.State == EntityState.Added)
-                { 
+                {
                     entity.CreatedAt = now;
 
-                    if(entity.Id == Guid.Empty)
+                    if (entity.Id == Guid.Empty)
                         entity.Id = Guid.NewGuid();
                 }
                 entity.UpdatedAt = now;
 
-                if(entity is Chat)
+                if (entity is Chat)
                 {
                     var chat = (Chat)entity;
                     chat.ImageColor = colors[rnd.Next(0, colors.Count - 1)];
@@ -78,7 +78,7 @@ namespace Geesemon.DataAccess.Providers
             modelBuilder.Entity<UserChat>()
                 .HasKey(c => new { c.UserId, c.ChatId });
 
-            modelBuilder.Entity<User>(entity => 
+            modelBuilder.Entity<User>(entity =>
             {
                 entity.HasIndex(e => e.Login).IsUnique();
                 entity.HasIndex(e => e.Email).IsUnique();
@@ -94,15 +94,18 @@ namespace Geesemon.DataAccess.Providers
                 .WithMany(u => u.AuthoredChats)
                 .OnDelete(DeleteBehavior.SetNull);
 
-            modelBuilder.Entity<AccessToken>(entity =>
+            modelBuilder.Entity<Session>(entity =>
             {
                 entity.HasIndex(e => e.Token).IsUnique();
             });
         }
 
-        public static readonly List<string> colors = new List<string>() { "#1abc9c", "#2ecc71", "#3498db", "#9b59b6",
-                                                                    "#16a085", "#27ae60", "#2980b9", "#8e44ad",
-                                                                    "#f1c40f", "#e67e22", "#e74c3c", "#f39c12",
-                                                                    "#d35400", "#c0392b", "#6ab04c", "#be2edd"};
+        public static readonly List<string> colors = new List<string>()
+        {
+            "#1abc9c", "#2ecc71", "#3498db", "#9b59b6",
+            "#16a085", "#27ae60", "#2980b9", "#8e44ad",
+            "#f1c40f", "#e67e22", "#e74c3c", "#f39c12",
+            "#d35400", "#c0392b", "#6ab04c", "#be2edd",
+        };
     }
 }

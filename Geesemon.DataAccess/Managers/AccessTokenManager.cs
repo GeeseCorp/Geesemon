@@ -1,12 +1,11 @@
-﻿using Geesemon.DataAccess.Providers;
-using Geesemon.DataAccess.Providers.AccessTokenProvider;
+﻿using Geesemon.DataAccess.Providers.AccessTokenProvider;
 using Geesemon.Model.Models;
 
 namespace Geesemon.DataAccess.Managers
 {
-    public class AccessTokenManager : AccessTokenProvider, IManager<AccessToken>
+    public class SessionManager : SessionProvider, IManager<Session>
     {
-        public AccessTokenManager(AppDbContext appContext) 
+        public SessionManager(AppDbContext appContext) 
             : base(appContext)
         { }
     }
