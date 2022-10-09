@@ -17,6 +17,7 @@ const schema: Yup.SchemaOf<FormValues> = Yup.object({
     login: Yup.string()
         .max(100, 'Must be 100 characters or less')
         .required('Required'),
+        
     password: Yup.string()
         .max(100, 'Must be 100 characters or less')
         .required('Required'),

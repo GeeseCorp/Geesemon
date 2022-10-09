@@ -10,7 +10,7 @@ export type LoginInputType = {
 }
 export const AUTH_LOGIN_MUTATION = gql`
     ${USER_FRAGMENT}
-    mutation AuthLogin($input: LoginInputType!) {
+    mutation AuthLogin($input: AuthLoginInputType!) {
         auth {
             login(input: $input) {
                 user {
@@ -26,14 +26,14 @@ export type AuthRegisterData = { auth: { register: AuthResponseType } }
 export type AuthRegisterVars = { input: RegisterInputType }
 export type RegisterInputType = {
     firstName: string
-    lastName: string
+    lastName?: string | null
     login: string
-    email: string
+    email?: string | null
     password: string
 }
 export const AUTH_REGISTER_MUTATION = gql`
     ${USER_FRAGMENT}
-    mutation AuthRegister($input: RegisterInputType!) {
+    mutation AuthRegister($input: AuthRegisterInputType!) {
         auth {
             register(input: $input) {
                 user {

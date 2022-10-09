@@ -14,7 +14,7 @@ namespace Geesemon.Web.GraphQL.Types
                .Name("FirstName")
                .Resolve(context => context.Source.FirstName);
 
-            Field<NonNullGraphType<StringGraphType>, string>()
+            Field<StringGraphType, string>()
                .Name("LastName")
                .Resolve(context => context.Source.LastName);
 
@@ -22,7 +22,7 @@ namespace Geesemon.Web.GraphQL.Types
                .Name("Login")
                .Resolve(context => context.Source.Login);
 
-            Field<NonNullGraphType<StringGraphType>, string>()
+            Field<StringGraphType, string>()
                .Name("Email")
                .Resolve(context => context.Source.Email);
 

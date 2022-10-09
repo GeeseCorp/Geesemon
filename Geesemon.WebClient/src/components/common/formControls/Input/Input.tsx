@@ -4,7 +4,7 @@ import s from './Input.module.scss';
 type Props = {
     placeholder?: string
     name: string
-    value: string
+    value?: string
     onChange: ChangeEventHandler
     onFocus?: () => void
     type?: 'text' | 'password'

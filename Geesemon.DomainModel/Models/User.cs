@@ -9,13 +9,13 @@ public class User : Entity
 {
     public string FirstName { get; set; }
 
-    public string LastName { get; set; }
+    public string? LastName { get; set; }
 
     public string Login { get; set; }
 
     public string? Description { get; set; }
 
-    public string Email { get; set; }
+    public string? Email { get; set; }
 
     public bool IsEmailConfirmed { get; set; }
 
@@ -31,6 +31,7 @@ public class User : Entity
     public string? ImageUrl { get; set; }
 
     public string AvatarColor { get; set; } = "#000000";
+
     [NotMapped]
     public DateTime LastTimeOnline { get; set; }
     [NotMapped]
