@@ -37,7 +37,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                 .ResolveAsync(ResolveCreateGroup)
                 .AuthorizeWith(AuthPolicies.Authenticated);
 
-            Field<ChatType, Chat>()
+            Field<BooleanGraphType, bool>()
                 .Name("Delete")
                 .Argument<GuidGraphType>("Input", "Chat id for delete chat.")
                 .ResolveAsync(ResolveDelete)
@@ -136,7 +136,7 @@ namespace Geesemon.Web.GraphQL.Mutations
             return chat;
         }
 
-        private async Task<Chat?> ResolveDelete(IResolveFieldContext context)
+        private async Task<bool> ResolveDelete(IResolveFieldContext context)
         {
             var chatInput = context.GetArgument<Guid>("Input");
 
@@ -158,9 +158,8 @@ namespace Geesemon.Web.GraphQL.Mutations
             //NOTE: Because functionality in ChatActionSubscriptionService depends on chat being in database we need to run notify before deletion
             subscriptionService.Notify(chat, ChatActionKind.Delete);
 
-            var removedChat = await chatManager.RemoveAsync(chatInput);
-
-            return removedChat;
+            await chatManager.RemoveAsync(chatInput);
+            return true;
         }
     }
 }

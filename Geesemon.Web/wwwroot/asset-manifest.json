@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.20eefd2d.css",
-    "main.js": "/static/js/main.18e187b9.js",
+    "main.js": "/static/js/main.73a2fdbf.js",
     "static/media/settings.svg": "/static/media/settings.5ce75b923316447e65b4193b76a349b5.svg",
     "static/media/microphone.svg": "/static/media/microphone.0ee15e41889ee128084bfb787e311b3c.svg",
     "static/media/camera.svg": "/static/media/camera.624136d02f8065cd9bc5d2c2ff03635c.svg",
@@ -20,15 +20,15 @@
     "static/media/saved.svg": "/static/media/saved.4da2c00fa5678f2c1ea3e961599f421b.svg",
     "static/media/delete.svg": "/static/media/delete.f4c99edadde3d6f9420d41659801b8a6.svg",
     "static/media/send.svg": "/static/media/send.4570b64948ffb0e3cb9aa92bd1f56503.svg",
-    "static/media/person.svg": "/static/media/person.5c63615e1286c29d133b223217ff2475.svg",
+    "static/media/person.svg": "/static/media/person.116a435a5ea7339ec278daa66a61eee8.svg",
     "static/media/next.svg": "/static/media/next.e616739078a36aa04268d4f7c2d952bf.svg",
     "static/media/logout.svg": "/static/media/logout.a7631ed82996a1e1ee28481503244e15.svg",
     "static/media/threeDots.svg": "/static/media/threeDots.687e2c923110b3319185cb227236b412.svg",
     "main.20eefd2d.css.map": "/static/css/main.20eefd2d.css.map",
-    "main.18e187b9.js.map": "/static/js/main.18e187b9.js.map"
+    "main.73a2fdbf.js.map": "/static/js/main.73a2fdbf.js.map"
   },
   "entrypoints": [
     "static/css/main.20eefd2d.css",
-    "static/js/main.18e187b9.js"
+    "static/js/main.73a2fdbf.js"
   ]
 }

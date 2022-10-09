@@ -1,4 +1,5 @@
-﻿using Geesemon.Model.Enums;
+﻿using FluentValidation;
+using Geesemon.Model.Enums;
 using Geesemon.Web.GraphQL;
 using Geesemon.Web.GraphQL.Auth;
 using Geesemon.Web.Middlewares;
@@ -11,6 +12,7 @@ using GraphQL;
 using GraphQL.Server;
 using GraphQL.Server.Transports.Subscriptions.Abstractions;
 using GraphQL.SystemTextJson;
+using System.Reflection;
 using System.Security.Claims;
 
 namespace Geesemon.Web.Extensions
@@ -19,6 +21,7 @@ namespace Geesemon.Web.Extensions
     {
         public static IServiceCollection AddGraphQLApi(this IServiceCollection services)
         {
+            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             services.AddHttpContextAccessor();
             services.AddTransient<IOperationMessageListener, AuthenticationListener>();
             services.AddScoped<ApplicationSchema>();
