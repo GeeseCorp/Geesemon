@@ -32,9 +32,9 @@ export const ChatHeader: FC<Props> = ({ }) => {
     const renderActivity = () => {
         switch (chat?.type) {
             case ChatKind.Personal:
-                // return <div className={'subText'}>{isOnline ? 'Online' : lastTimeOnline && getLastTimeActivity(new Date(lastTimeOnline))}</div>;
+                return <div className={'subText'}>{isOnline ? 'Online' : lastTimeOnline && getLastTimeActivity(new Date(lastTimeOnline))}</div>;
             case ChatKind.Group:
-                return <div className={'subText'}>{chat.membersTotal} members, {chat.membersOnline} online</div>;
+                return <div className={'subText'}>{chat.membersTotal} members{chat.membersOnline > 1 ? `, ${chat.membersOnline} online` : ''}</div>;
             default:
                 return null;
         }

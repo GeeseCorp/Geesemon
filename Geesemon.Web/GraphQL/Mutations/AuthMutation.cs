@@ -5,6 +5,7 @@ using Geesemon.Web.Extensions;
 using Geesemon.Web.GraphQL.Auth;
 using Geesemon.Web.GraphQL.Types;
 using Geesemon.Web.Services;
+using Geesemon.Web.Services.ChatActivitySubscription;
 using GraphQL;
 using GraphQL.Types;
 using Microsoft.Net.Http.Headers;
@@ -17,7 +18,15 @@ namespace Geesemon.Web.GraphQL.Mutations
     {
         private readonly IHttpContextAccessor httpContextAccessor;
 
-        public AuthMutation(AuthService authService, UserManager userManager, ChatManager chatManager, UserChatManager userChatManager, SessionManager sessionManager, IHttpContextAccessor httpContextAccessor)
+        public AuthMutation(
+            AuthService authService,
+            UserManager userManager,
+            ChatManager chatManager, 
+            UserChatManager userChatManager,
+            SessionManager sessionManager, 
+            IHttpContextAccessor httpContextAccessor,
+            IServiceProvider serviceProvider
+            )
         {
             this.httpContextAccessor = httpContextAccessor;
 
@@ -128,9 +137,13 @@ namespace Geesemon.Web.GraphQL.Mutations
                 {
                     var isOnline = context.GetArgument<bool>("IsOnline");
                     var token = httpContextAccessor.HttpContext.Request.Headers[HeaderNames.Authorization];
-                    var session = await sessionManager.GetByToken(token);
+                    var session = await sessionManager.GetByTokenAsync(token);
                     session = await FillSession(session, isOnline);
                     await sessionManager.UpdateAsync(session);
+                    var userId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
+                    using var scope = serviceProvider.CreateScope();
+                    var chatActivitySubscriptionService = scope.ServiceProvider.GetRequiredService<IChatActivitySubscriptionService>();
+                    await chatActivitySubscriptionService.Notify(userId);
                     return true;
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
@@ -141,7 +154,11 @@ namespace Geesemon.Web.GraphQL.Mutations
                 .ResolveAsync(async context =>
                 {
                     var sessionId = context.GetArgument<Guid>("SessionId");
-                    return await sessionManager.RemoveAsync(sessionId);
+                    var session = await sessionManager.GetByIdAsync(sessionId);
+                    var userId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
+                    if (session.UserId != userId)
+                        throw new ExecutionError("You can not remove others sessions");
+                    return await sessionManager.RemoveAsync(session);
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
         }

@@ -56,7 +56,7 @@ namespace Geesemon.Web.GraphQL.Types
                {
                    using var scope = serviceProvider.CreateScope();
                    var sessionManager = scope.ServiceProvider.GetRequiredService<SessionManager>();
-                   var session = await sessionManager.GetLastActive(context.Source.Id);
+                   var session = await sessionManager.GetLastActiveAsync(context.Source.Id);
                    return session?.LastTimeOnline;
                });
             
@@ -66,7 +66,7 @@ namespace Geesemon.Web.GraphQL.Types
                {
                    using var scope = serviceProvider.CreateScope();
                    var sessionManager = scope.ServiceProvider.GetRequiredService<SessionManager>();
-                   var session = await sessionManager.GetLastActive(context.Source.Id);
+                   var session = await sessionManager.GetLastActiveAsync(context.Source.Id);
                    return session?.IsOnline;
                });
         }

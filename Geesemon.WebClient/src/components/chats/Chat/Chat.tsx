@@ -32,8 +32,13 @@ export const Chat: FC<Props> = ({ chat }) => {
     const lastMessage = chat.messages?.length ? chat.messages?.reduce((a, b) => a.createdAt > b.createdAt ? a : b, chat.messages[0]) : null;
 
     useEffect(() => {
-        
-    }, [])
+        const userChat = chatActivity.data?.chatActivity;
+        if (userChat) {
+            console.log(userChat);
+            dispatch(chatActions.updateUserInChat(userChat));
+            dispatch(chatActions.shallowUpdateChat(userChat.chat));
+        }
+    }, [chatActivity.data?.chatActivity])
 
     return (
         <ContextMenu
@@ -63,7 +68,7 @@ export const Chat: FC<Props> = ({ chat }) => {
                                     height={54}
                                 />
                             }
-                            {isOnline && <OnlineIndicator right={1} bottom={1}/>}
+                            {isOnline && <OnlineIndicator right={1} bottom={1} />}
                         </div>
                         <div className={s.chatInfo}>
                             <div className={s.chatTitle}>

@@ -27,7 +27,6 @@ export const AuthedApp: FC<Props> = ({ }) => {
     const chatActionSubscription = useSubscription<ChatActionsData, ChatActionsVars>(CHAT_ACTIONS_SUBSCRIPTIONS);
 
     const makeOfflineAsync = (e: BeforeUnloadEvent) => {
-        e.preventDefault();
         dispatch(authActions.toggleOnlineAsync(false));
     }
 

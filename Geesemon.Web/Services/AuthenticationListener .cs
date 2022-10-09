@@ -10,13 +10,11 @@ namespace Geesemon.Web.Services
 
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly AuthService authService;
-        private readonly IChatActivitySubscriptionService chatActivitySubscriptionService;
 
-        public AuthenticationListener(IHttpContextAccessor contextAccessor, AuthService authService, IChatActivitySubscriptionService chatActivitySubscriptionService)
+        public AuthenticationListener(IHttpContextAccessor contextAccessor, AuthService authService)
         {
             this.httpContextAccessor = contextAccessor;
             this.authService = authService;
-            this.chatActivitySubscriptionService = chatActivitySubscriptionService;
         }
 
         public Task BeforeHandleAsync(MessageHandlingContext context)
@@ -32,7 +30,6 @@ namespace Geesemon.Web.Services
                     if (principal != null)
                     {
                         var userId = principal.Claims.GetUserId();
-                        chatActivitySubscriptionService.Notify(userId);
                         httpContextAccessor.HttpContext.User = principal;
                         context.Properties[PRINCIPAL_KEY] = principal;
                     }

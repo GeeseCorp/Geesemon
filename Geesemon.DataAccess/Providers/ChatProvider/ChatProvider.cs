@@ -15,7 +15,7 @@ namespace Geesemon.DataAccess.Providers.ChatProvider
             this.sessionManager = sessionManager;
         }
 
-        public async Task<int> GetMembersTotal(Guid chatId)
+        public async Task<int> GetMembersTotalAsync(Guid chatId)
         {
             var chat = context.Chats.Find(chatId);
             return await context.Entry(chat)
@@ -24,7 +24,7 @@ namespace Geesemon.DataAccess.Providers.ChatProvider
                 .CountAsync();
         }
 
-        public async Task<int> GetMembersOnline(Guid chatId)
+        public async Task<int> GetMembersOnlineAsync(Guid chatId)
         {
             return await context.Chats
                 .Include(c => c.UserChats)

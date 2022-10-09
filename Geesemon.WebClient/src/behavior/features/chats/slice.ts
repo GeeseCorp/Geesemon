@@ -1,5 +1,5 @@
-import { Chat, Message } from "./types";
-import { createSlice, PayloadAction, } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { shallowUpdateChat, sortChat } from '../../../utils/chatUtils';
 import {
     CreateGroupChatInputType,
     CreatePersonalChatInputType,
@@ -7,9 +7,8 @@ import {
     SentMessageInputType,
     UpdateMessageInputType
 } from "./mutations";
-import { sortChat } from "../../../utils/chatUtils";
 import { MessageGetVars } from "./queries";
-import { User } from "../users/types";
+import { Chat, Message, UserChat } from './types';
 
 export type Mode = 'Text' | 'Audio' | 'Updating' | 'Reply';
 
@@ -100,10 +99,20 @@ const slice = createSlice({
         },
         messageDeleteAsync: (state, action: PayloadAction<DeleteMessageInputType>) => state,
 
-        updateUserInChat: (state, action: PayloadAction<{chatId: string, user: User}>) => {
-            const chat = state.chats.find(c => c.id == action.payload.chatId);
-            let user = chat?.users.find(u => u.id == action.payload.user.id);
-            user = {...user, ...action.payload.user};
+        updateUserInChat: (state, action: PayloadAction<UserChat>) => {
+            state.chats = state.chats.map(c => c.id == action.payload.chatId
+                ? {
+                    ...c, users: c.users.map(u => u.id === action.payload.user.id
+                        ? { ...u, ...action.payload.user }
+                        : u)
+                }
+                : c);
+        },
+
+        shallowUpdateChat: (state, action: PayloadAction<Chat>) => {
+            state.chats = state.chats.map(c => c.id == action.payload.id
+                ? shallowUpdateChat(c, action.payload)
+                : c);
         },
 
         toInitialState: (state, action: PayloadAction) => initialState,

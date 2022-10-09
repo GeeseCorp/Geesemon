@@ -55,9 +55,14 @@ namespace Geesemon.DataAccess.Providers
             T? entity = await GetByIdAsync(id);
             if (entity == null)
                 throw new NullReferenceException("This record with given id doesn't exist.");
+            entity = await RemoveAsync(entity);
+            return entity;
+        }
+
+        public async Task<T> RemoveAsync(T entity)
+        {
             context.Set<T>().Remove(entity);
             await context.SaveChangesAsync();
-
             return entity;
         }
     }

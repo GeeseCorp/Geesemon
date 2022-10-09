@@ -25,7 +25,7 @@ namespace Geesemon.DataAccess.Providers.UsersChatsProvider
             return userChat;
         }
 
-        public async Task<List<UserChat>> GetPersonalByUserIds(Guid userId1, Guid userId2)
+        public async Task<List<UserChat>> GetPersonalByUserIdsAsync(Guid userId1, Guid userId2)
         {    
             var chat = await context.Chats
                 .Include(c => c.UserChats)

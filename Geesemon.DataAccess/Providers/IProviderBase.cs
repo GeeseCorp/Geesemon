@@ -10,6 +10,7 @@ namespace Geesemon.DataAccess.Providers
         Task<List<T>> GetAsync(Expression<Func<T, bool>> condition, params Expression<Func<T, object>>[] includes);
         Task<T> CreateAsync(T entity);
         Task<T> UpdateAsync(T entity);
+        Task<T> RemoveAsync(T entity);
         Task<T> RemoveAsync(Guid id);
     }
 }

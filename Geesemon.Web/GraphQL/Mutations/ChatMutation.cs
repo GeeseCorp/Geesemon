@@ -64,7 +64,7 @@ namespace Geesemon.Web.GraphQL.Mutations
             if (oppositeUser == null)
                 throw new Exception("User not found");
 
-            var userChats = await userChatManager.GetPersonalByUserIds(oppositeUser.Id, currentUserId);
+            var userChats = await userChatManager.GetPersonalByUserIdsAsync(oppositeUser.Id, currentUserId);
 
             if (userChats.Count != 0)
                 throw new Exception("Personal chat already exist.");

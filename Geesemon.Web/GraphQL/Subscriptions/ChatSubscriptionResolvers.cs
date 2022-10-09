@@ -21,12 +21,12 @@ namespace Geesemon.Web.GraphQL.Subscriptions
             return await chatActionSubscriptionService.Subscribe(currentUserId);
         }
         
-        private Chat ResolveChatActivity(IResolveFieldContext context)
+        private UserChat ResolveChatActivity(IResolveFieldContext context)
         {
-            return context.Source as Chat;
+            return context.Source as UserChat;
         }
 
-        private async Task<IObservable<Chat>> SubscribeChatActivity(IResolveFieldContext context)
+        private async Task<IObservable<UserChat>> SubscribeChatActivity(IResolveFieldContext context)
         {
             var chatId = context.GetArgument<Guid>("ChatId");
             return await chatActivitySubscriptionService.Subscribe(chatId);

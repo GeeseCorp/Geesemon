@@ -35,7 +35,7 @@ namespace Geesemon.Web.GraphQL.Subscriptions
                 .SubscribeAsync(SubscribeChat)
                 .AuthorizeWith(AuthPolicies.Authenticated);
             
-            Field<ChatType, Chat>()
+            Field<UserChatType, UserChat>()
                 .Name("ChatActivity")
                 .Argument<GuidGraphType, Guid>("ChatId", "")
                 .Resolve(ResolveChatActivity)

@@ -37,7 +37,7 @@ namespace Geesemon.Web.GraphQL.Types
                 {
                     using var scope = serviceProvider.CreateScope();
                     var chatManager = scope.ServiceProvider.GetRequiredService<ChatManager>();
-                    return await chatManager.GetMembersTotal(context.Source.Id);
+                    return await chatManager.GetMembersTotalAsync(context.Source.Id);
                 });
             
             Field<NonNullGraphType<IntGraphType>, int>()
@@ -46,7 +46,7 @@ namespace Geesemon.Web.GraphQL.Types
                 {
                     using var scope = serviceProvider.CreateScope();
                     var chatManager = scope.ServiceProvider.GetRequiredService<ChatManager>();
-                    return await chatManager.GetMembersOnline(context.Source.Id);
+                    return await chatManager.GetMembersOnlineAsync(context.Source.Id);
                 });
 
             Field<ListGraphType<UserType>, IList<User>>()

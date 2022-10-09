@@ -23,12 +23,12 @@ public class SessionProvider : ProviderBase<Session>, ISessionProvider
         }
     }
     
-    public Task<Session?> GetByToken(string token)
+    public Task<Session?> GetByTokenAsync(string token)
     {
         return context.Sessions.SingleOrDefaultAsync(s => s.Token == token);
     }
     
-    public Task<Session?> GetLastActive(Guid userId)
+    public Task<Session?> GetLastActiveAsync(Guid userId)
     {
         return context.Sessions
             .OrderByDescending(s => s.LastTimeOnline)

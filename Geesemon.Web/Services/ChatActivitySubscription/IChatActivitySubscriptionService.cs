@@ -6,5 +6,5 @@ public interface IChatActivitySubscriptionService
 {
     Task Notify(Guid userId);
 
-    Task<IObservable<Chat>> Subscribe(Guid chatId);
+    Task<IObservable<UserChat>> Subscribe(Guid chatId);
 }
