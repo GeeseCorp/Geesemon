@@ -11,6 +11,18 @@ public class SessionProvider : ProviderBase<Session>, ISessionProvider
         this.context = context;
     }
 
+    public async Task MakeAllOfflineAsync()
+    {
+        var sessions = await context.Sessions
+            .Where(s => s.IsOnline == true)
+            .ToListAsync();
+        foreach(var session in sessions)
+        {
+            session.IsOnline = false;
+            await UpdateAsync(session);
+        }
+    }
+    
     public Task<Session?> GetByToken(string token)
     {
         return context.Sessions.SingleOrDefaultAsync(s => s.Token == token);

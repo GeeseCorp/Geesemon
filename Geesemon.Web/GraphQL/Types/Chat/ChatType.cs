@@ -30,6 +30,24 @@ namespace Geesemon.Web.GraphQL.Types
             Field<StringGraphType, string>()
                 .Name("ImageColor")
                 .Resolve(context => context.Source.ImageColor);
+            
+            Field<NonNullGraphType<IntGraphType>, int>()
+                .Name("MembersTotal")
+                .ResolveAsync(async context =>
+                {
+                    using var scope = serviceProvider.CreateScope();
+                    var chatManager = scope.ServiceProvider.GetRequiredService<ChatManager>();
+                    return await chatManager.GetMembersTotal(context.Source.Id);
+                });
+            
+            Field<NonNullGraphType<IntGraphType>, int>()
+                .Name("MembersOnline")
+                .ResolveAsync(async context =>
+                {
+                    using var scope = serviceProvider.CreateScope();
+                    var chatManager = scope.ServiceProvider.GetRequiredService<ChatManager>();
+                    return await chatManager.GetMembersOnline(context.Source.Id);
+                });
 
             Field<ListGraphType<UserType>, IList<User>>()
                 .Name("Users")

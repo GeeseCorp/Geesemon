@@ -19,6 +19,8 @@ $avatar-online-color: #0ac630 !default;
 $danger-color: red;
 $danger-filter: invert(31%) sepia(100%) saturate(7440%) hue-rotate(358deg) brightness(100%) contrast(112%);
 
+$message-out-status-color: rgba(255, 255, 255, 0.53);
+
 *:not(path, svg) {
     margin: 0;
     padding: 0;
@@ -82,7 +84,7 @@ body {
 }
 
 .light {
-    color: rgba(255, 255, 255, 0.53);
+    color: $message-out-status-color;
 }
 
 .secondary {
@@ -90,7 +92,12 @@ body {
 }
 
 .bold {
-    font-weight: 650;
+    font-weight: 600;
+}
+
+.subText {
+    font-size: .850rem;
+    color: $secondary-text-color;
 }
 
 .center {

@@ -3,6 +3,7 @@ import { User as UserType } from "../../../behavior/features/users/types";
 import { Avatar } from "../../common/Avatar/Avatar";
 import { AvatarWithoutImage } from "../../common/AvatarWithoutImage/AvatarWithoutImage";
 import s from './User.module.scss';
+import { getLastTimeActivity } from '../../../utils/dateUtils';
 
 type Props = {
     user: UserType
@@ -53,7 +54,7 @@ export const User: FC<Props> = ({ user, selectMultiple = false, selectedUserIds,
                 }
                 <div className={s.userInfo}>
                     <div className={'bold'}>{user.firstName} {user.lastName}</div>
-                    <div className={['secondary light'].join(' ')}>last seen</div>
+                    <div className={'subText'}>{user.isOnline ? 'Online' : getLastTimeActivity(new Date(user.lastTimeOnline))}</div>
                 </div>
             </div>
         </div>

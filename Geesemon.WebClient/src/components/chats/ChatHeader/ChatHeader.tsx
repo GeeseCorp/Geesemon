@@ -12,6 +12,7 @@ import threeDots from "../../../assets/svg/threeDots.svg";
 import { appActions } from '../../../behavior/features/app/slice';
 import { ChatKind } from '../../../behavior/features/chats/types';
 import { OnlineIndicator } from '../../common/OnlineIndicator/OnlineIndicator';
+import { getLastTimeActivity } from '../../../utils/dateUtils';
 
 type Props = {};
 export const ChatHeader: FC<Props> = ({ }) => {
@@ -26,7 +27,18 @@ export const ChatHeader: FC<Props> = ({ }) => {
 
     const oppositeUser = chat?.type === ChatKind.Personal ? chat.users.filter(u => u.id !== authedUser?.id)[0] : null;
     const isOnline = chat?.type === ChatKind.Personal && oppositeUser?.isOnline
-    const lastTimeOnline = chat?.type === ChatKind.Personal && oppositeUser?.lastTimeOnline
+    const lastTimeOnline = chat?.type === ChatKind.Personal && oppositeUser?.lastTimeOnline;
+
+    const renderActivity = () => {
+        switch (chat?.type) {
+            case ChatKind.Personal:
+                // return <div className={'subText'}>{isOnline ? 'Online' : lastTimeOnline && getLastTimeActivity(new Date(lastTimeOnline))}</div>;
+            case ChatKind.Group:
+                return <div className={'subText'}>{chat.membersTotal} members, {chat.membersOnline} online</div>;
+            default:
+                return null;
+        }
+    }
 
     return (
         <div className={[s.wrapper, 'header'].join(' ')}>
@@ -55,7 +67,7 @@ export const ChatHeader: FC<Props> = ({ }) => {
                     }
                     <div>
                         <div className={['bold', s.name].join(' ')}>{chat?.name}</div>
-                        <div className={'small secondary'}>{isOnline ? 'Online' : lastTimeOnline}</div>
+                        {renderActivity()}
                     </div>
                 </div>
             </div>

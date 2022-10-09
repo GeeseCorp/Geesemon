@@ -28,7 +28,9 @@ export type Chat = {
     type: ChatKind
     imageUrl?: string | null
     imageColor: string
-    creatorId: string,
+    membersTotal: number
+    membersOnline: number
+    creatorId: string
     messages: Message[]
     users: User[]
 } & Entity

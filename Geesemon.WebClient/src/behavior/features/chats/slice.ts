@@ -9,6 +9,7 @@ import {
 } from "./mutations";
 import { sortChat } from "../../../utils/chatUtils";
 import { MessageGetVars } from "./queries";
+import { User } from "../users/types";
 
 export type Mode = 'Text' | 'Audio' | 'Updating' | 'Reply';
 
@@ -98,6 +99,12 @@ const slice = createSlice({
             }
         },
         messageDeleteAsync: (state, action: PayloadAction<DeleteMessageInputType>) => state,
+
+        updateUserInChat: (state, action: PayloadAction<{chatId: string, user: User}>) => {
+            const chat = state.chats.find(c => c.id == action.payload.chatId);
+            let user = chat?.users.find(u => u.id == action.payload.user.id);
+            user = {...user, ...action.payload.user};
+        },
 
         toInitialState: (state, action: PayloadAction) => initialState,
     },

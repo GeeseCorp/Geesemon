@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Chat as ChatType, chatActions } from '../../../behavior/features/chats';
 import { getTimeWithoutSeconds } from "../../../utils/dateUtils";
@@ -22,14 +22,18 @@ export const Chat: FC<Props> = ({ chat }) => {
     const selectedChatId = params.chatId as string;
     const dispatch = useAppDispatch();
     const authedUser = useAppSelector(s => s.auth.authedUser);
-    // const chatActivity = useSubscription<ChatActivityData, ChatActivityVars>(CHAT_ACTIVITY_SUBSCRIPTIONS, {
-    //     variables: { chatId: chat.id }
-    // });
+    const chatActivity = useSubscription<ChatActivityData, ChatActivityVars>(CHAT_ACTIVITY_SUBSCRIPTIONS, {
+        variables: { chatId: chat.id }
+    });
 
     const oppositeUser = chat.type === ChatKind.Personal ? chat.users.filter(u => u.id !== authedUser?.id)[0] : null;
     const isOnline = chat.type === ChatKind.Personal && oppositeUser?.isOnline
     // const lastTimeOnline = chat.type === ChatKind.Personal && oppositeUser?.lastTimeOnline
     const lastMessage = chat.messages?.length ? chat.messages?.reduce((a, b) => a.createdAt > b.createdAt ? a : b, chat.messages[0]) : null;
+
+    useEffect(() => {
+        
+    }, [])
 
     return (
         <ContextMenu

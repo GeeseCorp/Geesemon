@@ -55,6 +55,8 @@ namespace Geesemon.Web.Extensions
 
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
+            services.AddHostedService<MakeOfflineService>();
+
             services.AddSingleton<ISettingsProvider, SettingsProvider>();
 
             services.AddSingleton<AuthService>();

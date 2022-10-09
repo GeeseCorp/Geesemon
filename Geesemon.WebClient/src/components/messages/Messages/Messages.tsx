@@ -77,9 +77,9 @@ export const Messages: FC = () => {
                         <span className={s.messageText}>{message.text}</span>
                         <span className={s.messageInfo}>
                             {message.createdAt !== message.updatedAt &&
-                                <span className={['small', s.small].join(' ')}>Edited</span>
+                                <span className={'small light'}>Edited</span>
                             }
-                            <span className={['small', s.small].join(' ')}>
+                            <span className={'small light'}>
                                 {getTimeWithoutSeconds(new Date(message.createdAt))}
                             </span>
                             {isMessageMy && <Checks double={!!message.readMessages?.length} />}

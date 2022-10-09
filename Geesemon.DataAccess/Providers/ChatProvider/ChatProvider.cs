@@ -1,4 +1,5 @@
-﻿using Geesemon.Model.Models;
+﻿using Geesemon.DataAccess.Managers;
+using Geesemon.Model.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -6,11 +7,36 @@ namespace Geesemon.DataAccess.Providers.ChatProvider
 {
     public class ChatProvider : ProviderBase<Chat>, IChatProvider
     {
-        public ChatProvider(AppDbContext appDbContext)
+        private readonly SessionManager sessionManager;
+
+        public ChatProvider(AppDbContext appDbContext, SessionManager sessionManager)
             : base(appDbContext)
         {
+            this.sessionManager = sessionManager;
         }
 
+        public async Task<int> GetMembersTotal(Guid chatId)
+        {
+            var chat = context.Chats.Find(chatId);
+            return await context.Entry(chat)
+                .Collection(c => c.UserChats)
+                .Query()
+                .CountAsync();
+        }
+
+        public async Task<int> GetMembersOnline(Guid chatId)
+        {
+            return await context.Chats
+                .Include(c => c.UserChats)
+                .ThenInclude(uc => uc.User)
+                .ThenInclude(u => u.Sessions)
+                .Where(c => c.Id == chatId)
+                .SelectMany(c => c.UserChats)
+                .Select(uc => uc.User)
+                .Select(u => u.Sessions.OrderByDescending(s => s.LastTimeOnline).FirstOrDefault())
+                .CountAsync(s => s.IsOnline == true);
+        }
+        
         public Task<List<Chat>> GetAllForUserAsync(Guid userId)
         {
             return context.Chats

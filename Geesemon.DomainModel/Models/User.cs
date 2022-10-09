@@ -41,4 +41,5 @@ public class User : Entity
     public List<Chat>? AuthoredChats { get; set; }
 
     public List<UserChat>? UserChats { get; set; }
+    public List<Session>? Sessions { get; set; }
 }
