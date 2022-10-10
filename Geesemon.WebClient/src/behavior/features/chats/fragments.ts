@@ -16,6 +16,7 @@ export const MESSAGE_FRAGMENT = gql`
         readBy {
             ...UserFragment
         }
+        readByCount
         createdAt
         updatedAt
     }

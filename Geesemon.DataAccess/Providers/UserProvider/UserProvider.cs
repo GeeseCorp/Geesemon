@@ -22,6 +22,13 @@ namespace Geesemon.DataAccess.Providers.UserProvider
                 .Take(take)
                 .ToListAsync();
         }
+        
+        public async Task<int> GetCountByMessageIdAsync(Guid messageId)
+        {
+            return await context.Users
+                .Include(u => u.ReadMessages)
+                .CountAsync(u => u.ReadMessages.Any(r => r.MessageId == messageId));
+        }
 
         public virtual Task<User?> GetByLoginAsync(string login, params Expression<Func<User, object>>[] includes)
         {

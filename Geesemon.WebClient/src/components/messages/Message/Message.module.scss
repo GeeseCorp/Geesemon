@@ -1,5 +1,32 @@
 @import '../../../App.scss';
 
+.readBy {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.last3ReadBy {
+    display: flex;
+    align-items: center;
+}
+
+.last3ReadBy>* {
+    margin-left: -8px;
+}
+
+.last3ReadBy>*:nth-child(1) {
+    z-index: 10;
+}
+
+.last3ReadBy>*:nth-child(2) {
+    z-index: 9;
+}
+
+.last3ReadBy>*:nth-child(3) {
+    z-index: 8;
+}
+
 .message {
     align-self: start;
     background-color: $surface-color;
@@ -33,6 +60,6 @@
     transform: translateY(4px);
 }
 
-.messageInfo > *:not(:last-child) {
+.messageInfo>*:not(:last-child) {
     margin-right: 5px;
 }

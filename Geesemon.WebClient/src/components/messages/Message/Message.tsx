@@ -4,11 +4,13 @@ import pencilOutlinedSvg from "../../../assets/svg/pencilOutlined.svg";
 import { chatActions } from "../../../behavior/features/chats";
 import { Message as MessageType, MessageKind } from "../../../behavior/features/chats/types";
 import { useAppDispatch, useAppSelector } from "../../../behavior/store";
+import { useOnScreen } from '../../../hooks/useOnScreen';
 import { getTimeWithoutSeconds } from "../../../utils/dateUtils";
+import { Avatar } from "../../common/Avatar/Avatar";
+import { AvatarWithoutImage } from "../../common/AvatarWithoutImage/AvatarWithoutImage";
 import { ContextMenu } from "../../common/ContextMenu/ContextMenu";
 import { Checks } from "../Checks/Checks";
 import s from './Message.module.scss';
-import { useOnScreen } from '../../../hooks/useOnScreen';
 
 type Props = {
     message: MessageType
@@ -87,8 +89,26 @@ export const Message: FC<Props> = ({ message, inputTextRef }) => {
                     type: 'default',
                 },
                 {
-                    // TODO: replace to ReadByCount variable from server and add popup for view ReadBy
-                    content: `${message.readBy.length} seen`,
+                    content: <div className={s.readBy}>
+                        <div>{message.readByCount} seen</div>
+                        <div className={s.last3ReadBy}>
+                            {
+                                message.readBy.slice(0, 3).map(user => user.imageUrl
+                                    ? <Avatar
+                                        width={22}
+                                        height={22}
+                                        imageUrl={user.imageUrl}
+                                    />
+                                    : <AvatarWithoutImage
+                                        width={22}
+                                        height={22}
+                                        fontSize={8}
+                                        backgroundColor={user.avatarColor}
+                                        name={`${user.firstName} ${user.lastName}`}
+                                    />)
+                            }
+                        </div>
+                    </div>,
                     icon: <Checks double={true} />,
                     onClick: () => dispatch(chatActions.setInViewMessageIdReadBy(message.id)),
                     type: 'default',

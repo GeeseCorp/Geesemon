@@ -53,6 +53,16 @@ namespace Geesemon.Web.GraphQL.Types
 
                     return await userManager.GetByMessageIdAsync(messageId, skip, take ?? 30);
                 });
+            
+            Field<NonNullGraphType<IntGraphType>, int>()
+                .Name("ReadByCount")
+                .ResolveAsync(async context =>
+                {
+                    using var scope = serviceProvider.CreateScope();
+                    var userManager = scope.ServiceProvider.GetRequiredService<UserManager>();
+                    var messageId = context.Source.Id;
+                    return await userManager.GetCountByMessageIdAsync(messageId);
+                });
         }
     }
 }

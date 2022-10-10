@@ -18,16 +18,18 @@ export const ViewMessageReadByModal: FC = () => {
     return (
         <Modal opened={!!inViewMessageIdReadBy}>
             <div className='modalHeader'>
-                <HeaderButton keyName={'ViewMessageReadByModal/Back'} onClick={() => dispatch(chatActions.setInViewMessageIdReadBy(null))}>
+                <HeaderButton
+                    keyName={'ViewMessageReadByModal/Back'}
+                    onClick={() => dispatch(chatActions.setInViewMessageIdReadBy(null))}
+                >
                     <img src={backSvg} width={25} className={'secondaryTextSvg'} />
                 </HeaderButton>
                 <div className={s.readByCount}>
                     <Checks double={true} />
-                    {/* // TODO: replace to ReadByCount variable from server */}
-                    <span>{inViewMessageReadBy?.readBy.length}</span>
+                    <span>{inViewMessageReadBy?.readByCount}</span>
                 </div>
             </div>
-            <div style={{ width: '300px' }} className={['modalContent'].join(' ')}>
+            <div className={['modalContent', s.content].join(' ')}>
                 {inViewMessageReadBy?.readBy.map(user => (
                     <User key={user.id} user={user} selectedUserIds={[]} setSelectedUserIds={selectedUserIds => { }} />
                 ))}
