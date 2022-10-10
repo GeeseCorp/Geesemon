@@ -43,6 +43,12 @@ namespace Geesemon.Web.GraphQL.Mutations
                 .ResolveAsync(ResolveDelete)
                 .AuthorizeWith(AuthPolicies.Authenticated);
 
+            Field<ChatType, Chat>()
+                .Name("Update")
+                .Argument<UpdateChatInputType>("Input", "Chat input for updating chat.")
+                .ResolveAsync(ResolveUpdate)
+                .AuthorizeWith(AuthPolicies.Authenticated);
+
             this.httpContextAccessor = httpContextAccessor;
             this.fileManagerService = fileManagerService;
             this.subscriptionService = chatSubscriptionService;
@@ -160,6 +166,32 @@ namespace Geesemon.Web.GraphQL.Mutations
 
             await chatManager.RemoveAsync(chatInput);
             return true;
+        }
+
+        private async Task<Chat?> ResolveUpdate(IResolveFieldContext context)
+        {
+            var chatUpdateInput = context.GetArgument<UpdateChatInput>("Input");
+
+            var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
+
+            var chat = await chatManager.GetByIdAsync(chatUpdateInput.Id);
+
+            Exception exception = new Exception("User can update only group chats he own.");
+
+            if (chat == null)
+                throw new Exception($"Chat with id {chatUpdateInput.Id} doesn't exist.");
+
+            if (!await chatManager.IsUserInChat(currentUserId, chat.Id))
+                throw exception;
+
+            if (chat.Type != ChatKind.Group && chat.CreatorId != currentUserId)
+                throw exception;
+
+            chat.Name = chatUpdateInput.Name;
+            await chatManager.UpdateAsync(chat);
+
+            subscriptionService.Notify(chat, ChatActionKind.Update);
+            return chat;
         }
     }
 }
