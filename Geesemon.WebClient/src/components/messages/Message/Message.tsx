@@ -26,17 +26,10 @@ export const Message: FC<Props> = ({ message, inputTextRef }) => {
     const isReadByMe = message.readBy.find(u => u.id === authedUser?.id);
 
     useEffect(() => {
-        console.log(!messageIdsMakeReadLoading.find(mId => mId === message.id));
-        console.log(isVisible);
-        console.log(!isReadByMe);
-        console.log(!isMessageMy);
-
         if (!messageIdsMakeReadLoading.find(mId => mId === message.id) && isVisible && !isReadByMe && !isMessageMy) {
             dispatch(chatActions.addMessageIdMakeReadLoading(message.id));
             dispatch(chatActions.messageMakeReadAsync({ messageId: message.id }));
-            console.log('MAKE VISIBLE: ', message.text);
         }
-
     }, [isVisible])
 
 
@@ -91,6 +84,13 @@ export const Message: FC<Props> = ({ message, inputTextRef }) => {
                     content: 'Update',
                     icon: <img src={pencilOutlinedSvg} width={15} className={'primaryTextSvg'} />,
                     onClick: () => setInUpdateMessage(message.id),
+                    type: 'default',
+                },
+                {
+                    // TODO: replace to ReadByCount variable from server and add popup for view ReadBy
+                    content: `${message.readBy.length} seen`,
+                    icon: <Checks double={true} />,
+                    onClick: () => dispatch(chatActions.setInViewMessageIdReadBy(message.id)),
                     type: 'default',
                 },
                 {

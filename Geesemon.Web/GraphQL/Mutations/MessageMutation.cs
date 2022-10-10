@@ -12,7 +12,7 @@ namespace Geesemon.Web.GraphQL.Mutations
     public class MessageMutation : ObjectGraphType<object>
     {
         public MessageMutation(
-            IMessageActionSubscriptionService subscriptionService,
+            IMessageActionSubscriptionService messageActionSubscriptionService,
             IHttpContextAccessor httpContextAccessor,
             MessageManager messageManager, 
             ChatManager chatManager,
@@ -41,7 +41,7 @@ namespace Geesemon.Web.GraphQL.Mutations
 
                         newMessage = await messageManager.CreateAsync(newMessage);
 
-                        return subscriptionService.Notify(newMessage, MessageActionKind.Create);
+                        return messageActionSubscriptionService.Notify(newMessage, MessageActionKind.Create);
                     })
                 .AuthorizeWith(AuthPolicies.Authenticated);
 
@@ -63,7 +63,7 @@ namespace Geesemon.Web.GraphQL.Mutations
 
                     await messageManager.RemoveAsync(message.Id);
 
-                    return subscriptionService.Notify(message, MessageActionKind.Delete);
+                    return messageActionSubscriptionService.Notify(message, MessageActionKind.Delete);
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
 
@@ -88,7 +88,7 @@ namespace Geesemon.Web.GraphQL.Mutations
 
                     await messageManager.UpdateAsync(message);
 
-                    return subscriptionService.Notify(message, MessageActionKind.Update);
+                    return messageActionSubscriptionService.Notify(message, MessageActionKind.Update);
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
             
@@ -117,8 +117,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                         MessageId = messageId,
                         ReadById = currentUserId,
                     });
-                    return message;
-                    //return subscriptionService.Notify(message, MessageActionKind.Update);
+                    return messageActionSubscriptionService.Notify(message, MessageActionKind.Update);
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
         }

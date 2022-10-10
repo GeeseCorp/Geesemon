@@ -20,6 +20,7 @@ type InitialState = {
     mode: Mode
     createChatLoading: boolean
     messageIdsMakeReadLoading: string[]
+    inViewMessageIdReadBy?: string | null
 }
 
 const initialState: InitialState = {
@@ -29,6 +30,7 @@ const initialState: InitialState = {
     mode: 'Text',
     createChatLoading: false,
     messageIdsMakeReadLoading: [],
+    inViewMessageIdReadBy: null,
 };
 
 const slice = createSlice({
@@ -128,6 +130,9 @@ const slice = createSlice({
         },
         messageMakeReadAsync: (state, action: PayloadAction<MessageMakeReadVars>) => state,
 
+        setInViewMessageIdReadBy: (state, action: PayloadAction<string | null | undefined>) => {
+            state.inViewMessageIdReadBy = action.payload;
+        },
 
         toInitialState: (state, action: PayloadAction) => initialState,
     },

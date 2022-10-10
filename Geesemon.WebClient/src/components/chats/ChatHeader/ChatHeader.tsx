@@ -6,7 +6,7 @@ import { Avatar } from "../../common/Avatar/Avatar";
 import { AvatarWithoutImage } from '../../common/AvatarWithoutImage/AvatarWithoutImage';
 import { useIsMobile } from "../../../hooks/useIsMobile";
 import { HeaderButton } from "../../common/HeaderButton/HeaderButton";
-import back from "../../../assets/svg/back.svg";
+import backSvg from "../../../assets/svg/back.svg";
 import search from "../../../assets/svg/search.svg";
 import threeDots from "../../../assets/svg/threeDots.svg";
 import { appActions } from '../../../behavior/features/app/slice';
@@ -45,7 +45,7 @@ export const ChatHeader: FC<Props> = ({ }) => {
             <div className={s.backAndChatInfo}>
                 {isMobile &&
                     <HeaderButton keyName={'back'} onClick={() => navigate(-1)}>
-                        <img src={back} width={25} className={'secondaryTextSvg'} />
+                        <img src={backSvg} width={25} className={'secondaryTextSvg'} />
                     </HeaderButton>
                 }
                 <div
