@@ -141,13 +141,16 @@ namespace Geesemon.Web.GraphQL.Mutations
                 {
                     var isOnline = context.GetArgument<bool>("IsOnline");
                     var token = httpContextAccessor.HttpContext.Request.Headers[HeaderNames.Authorization];
+                    var userId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
+
                     var session = await sessionManager.GetByTokenAsync(token);
                     session = await FillSession(session, isOnline);
                     await sessionManager.UpdateAsync(session);
-                    var userId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
+                    
                     using var scope = serviceProvider.CreateScope();
                     var chatActivitySubscriptionService = scope.ServiceProvider.GetRequiredService<IChatActivitySubscriptionService>();
                     await chatActivitySubscriptionService.Notify(userId);
+
                     return true;
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
@@ -193,6 +196,7 @@ namespace Geesemon.Web.GraphQL.Mutations
             }
             var userAgentString = httpContextAccessor.HttpContext.Request.Headers["User-Agent"].ToString();
             var userAgent = HttpUserAgentParser.Parse(userAgentString);
+
             session.LastTimeOnline = DateTime.UtcNow;
             session.IsOnline = isOnline;
             session.IpAddress = ipAddress;

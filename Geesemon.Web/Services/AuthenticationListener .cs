@@ -1,5 +1,4 @@
-﻿using Geesemon.Web.Services.ChatActivitySubscription;
-using GraphQL.Server.Transports.Subscriptions.Abstractions;
+﻿using GraphQL.Server.Transports.Subscriptions.Abstractions;
 using Newtonsoft.Json.Linq;
 
 namespace Geesemon.Web.Services
