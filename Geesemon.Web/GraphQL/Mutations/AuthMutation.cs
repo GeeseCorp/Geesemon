@@ -172,17 +172,24 @@ namespace Geesemon.Web.GraphQL.Mutations
         {
             var ipAddress = httpContextAccessor.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
             string? location;
-            try
-            {
-                using var client = new HttpClient();
-                client.DefaultRequestHeaders.Add("apikey", "kKeJir32sWslTj4Oav624x0APp9avBRO");
-                var result = await client.GetAsync($"https://api.apilayer.com/ip_to_location/{ipAddress}");
-                dynamic response = JsonConvert.DeserializeObject(await result.Content.ReadAsStringAsync());
-                location = $"{response.region_name}, {response.country_name}";
-            }
-            catch
+            if (ipAddress == "127.0.0.1" || ipAddress == "0.0.0.1")
             {
                 location = "-, -";
+            }
+            else
+            {
+                try
+                {
+                    using var client = new HttpClient();
+                    client.DefaultRequestHeaders.Add("apikey", "kKeJir32sWslTj4Oav624x0APp9avBRO");
+                    var result = await client.GetAsync($"https://api.apilayer.com/ip_to_location/{ipAddress}");
+                    dynamic response = JsonConvert.DeserializeObject(await result.Content.ReadAsStringAsync());
+                    location = $"{response.region_name}, {response.country_name}";
+                }
+                catch
+                {
+                    location = "-, -";
+                }
             }
             var userAgentString = httpContextAccessor.HttpContext.Request.Headers["User-Agent"].ToString();
             var userAgent = HttpUserAgentParser.Parse(userAgentString);

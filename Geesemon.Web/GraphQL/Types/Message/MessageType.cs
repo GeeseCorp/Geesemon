@@ -51,7 +51,7 @@ namespace Geesemon.Web.GraphQL.Types
                     var take = context.GetArgument<int?>("Take");
                     var messageId = context.Source.Id;
 
-                    return await userManager.GetByMessageIdAsync(messageId, skip, take ?? 30);
+                    return await userManager.GetReadByAsync(messageId, skip, take ?? 30);
                 });
             
             Field<NonNullGraphType<IntGraphType>, int>()
@@ -61,7 +61,7 @@ namespace Geesemon.Web.GraphQL.Types
                     using var scope = serviceProvider.CreateScope();
                     var userManager = scope.ServiceProvider.GetRequiredService<UserManager>();
                     var messageId = context.Source.Id;
-                    return await userManager.GetCountByMessageIdAsync(messageId);
+                    return await userManager.GetReadByCountByAsync(messageId);
                 });
         }
     }

@@ -12,7 +12,7 @@ namespace Geesemon.DataAccess.Providers.UserProvider
         {
         }
 
-        public async Task<IEnumerable<User>> GetByMessageIdAsync(Guid messageId, int skip, int take)
+        public async Task<IEnumerable<User>> GetReadByAsync(Guid messageId, int skip, int take)
         {
             return await context.Users
                 .Include(u => u.ReadMessages)
@@ -23,7 +23,7 @@ namespace Geesemon.DataAccess.Providers.UserProvider
                 .ToListAsync();
         }
         
-        public async Task<int> GetCountByMessageIdAsync(Guid messageId)
+        public async Task<int> GetReadByCountByAsync(Guid messageId)
         {
             return await context.Users
                 .Include(u => u.ReadMessages)

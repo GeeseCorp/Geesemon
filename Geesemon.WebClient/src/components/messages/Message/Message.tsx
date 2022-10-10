@@ -95,11 +95,13 @@ export const Message: FC<Props> = ({ message, inputTextRef }) => {
                             {
                                 message.readBy.slice(0, 3).map(user => user.imageUrl
                                     ? <Avatar
+                                        key={user.id}
                                         width={22}
                                         height={22}
                                         imageUrl={user.imageUrl}
                                     />
                                     : <AvatarWithoutImage
+                                        key={user.id}
                                         width={22}
                                         height={22}
                                         fontSize={8}

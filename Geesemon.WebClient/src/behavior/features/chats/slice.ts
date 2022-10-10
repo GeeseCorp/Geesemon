@@ -1,5 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { message } from "antd";
+import { string } from "yup";
 import { shallowUpdateChat, sortChat } from '../../../utils/chatUtils';
+import { User } from "../users/types";
 import {
     CreateGroupChatInputType,
     CreatePersonalChatInputType,
@@ -132,6 +135,20 @@ const slice = createSlice({
 
         setInViewMessageIdReadBy: (state, action: PayloadAction<string | null | undefined>) => {
             state.inViewMessageIdReadBy = action.payload;
+        },
+
+        addReadBy: (state, action: PayloadAction<{ messageId: string, readBy: User[] }>) => {
+            state.chats = state.chats.map(c => c.messages.some(m => m.id === action.payload.messageId)
+                ? {
+                    ...c,
+                    messages: c.messages.map(m => {
+                        if (m.id === action.payload.messageId)
+                            return { ...m, readBy: [...m.readBy, ...action.payload.readBy] };
+                        else
+                            return m;
+                    })
+                }
+                : c);
         },
 
         toInitialState: (state, action: PayloadAction) => initialState,
