@@ -11,8 +11,8 @@ import { nameof } from '../../../utils/typeUtils';
 
 type FormValues = {
     firstName: string
-    lastName: string
-    email: string
+    lastName?: string
+    email?: string
     login: string
     password: string
 }
@@ -21,17 +21,20 @@ const schema: Yup.SchemaOf<FormValues> = Yup.object({
     firstName: Yup.string()
         .max(100, 'Must be 100 characters or less')
         .required('Required'),
+
     lastName: Yup.string()
-        .max(100, 'Must be 100 characters or less')
-        .required('Required'),
+        .max(100, 'Must be 100 characters or less'),
+
     email: Yup.string()
         .email('Bad email')
-        .max(100, 'Must be 100 characters or less')
-        .required('Required'),
+        .max(100, 'Must be 100 characters or less'),
+
     login: Yup.string()
         .max(100, 'Must be 100 characters or less')
         .required('Required'),
+
     password: Yup.string()
+        .min(3, 'Must be 3 characters or more')
         .max(100, 'Must be 100 characters or less')
         .required('Required'),
 })
@@ -42,8 +45,8 @@ export const Register = () => {
     const formik = useFormik<FormValues>({
         initialValues: {
             firstName: '',
-            lastName: '',
-            email: '',
+            lastName: undefined,
+            email: undefined,
             login: '',
             password: '',
         },
@@ -51,8 +54,8 @@ export const Register = () => {
         onSubmit: ({ firstName, lastName, email, login, password }) => {
             dispatch(authActions.registerAsync({
                 firstName,
-                lastName,
-                email,
+                lastName: lastName || undefined,
+                email: email || undefined,
                 login,
                 password,
             }));

@@ -1,4 +1,5 @@
-﻿using Geesemon.DataAccess.Managers;
+﻿using FluentValidation;
+using Geesemon.DataAccess.Managers;
 using Geesemon.Model.Enums;
 using Geesemon.Model.Models;
 using Geesemon.Web.Extensions;
@@ -25,38 +26,40 @@ namespace Geesemon.Web.GraphQL.Mutations
             UserChatManager userChatManager,
             SessionManager sessionManager, 
             IHttpContextAccessor httpContextAccessor,
-            IServiceProvider serviceProvider
+            IServiceProvider serviceProvider,
+            IValidator<AuthLoginInput> authLoginInputValidator,
+            IValidator<AuthRegisterInput> authRegisterInputValidator
             )
         {
             this.httpContextAccessor = httpContextAccessor;
 
             Field<NonNullGraphType<AuthResponseType>, AuthResponse>()
                 .Name("Register")
-                .Argument<NonNullGraphType<RegisterInputType>, RegisterInput>("input", "Argument to register new User")
+                .Argument<NonNullGraphType<AuthRegisterInputType>, AuthRegisterInput>("input", "Argument to register new User")
                 .ResolveAsync(async context =>
                 {
-                    var loginInput = context.GetArgument<RegisterInput>("input");
+                    var authRegisterInput = context.GetArgument<AuthRegisterInput>("input");
+                    authRegisterInputValidator.ValidateAndThrow(authRegisterInput);
 
-                    User user = await userManager.GetByLoginAsync(loginInput.Login);
+                    var user = await userManager.GetByLoginAsync(authRegisterInput.Login);
+                    if (user != null)
+                        throw new Exception($"User with login '{authRegisterInput.Login}' already exist.");
+
+                    user = await userManager.GetByEmailAsync(authRegisterInput.Email);
 
                     if (user != null)
-                        throw new Exception($"User with login '{loginInput.Login}' already exist.");
-
-                    user = await userManager.GetByEmailAsync(loginInput.Email);
-
-                    if (user != null)
-                        throw new Exception($"User with email '{loginInput.Email}' already exist.");
+                        throw new Exception($"User with email '{authRegisterInput.Email}' already exist.");
 
                     var userId = Guid.NewGuid();
-                    var saltedPassword = loginInput.Password + userId;
+                    var saltedPassword = authRegisterInput.Password + userId;
                     var newUser = await userManager.CreateAsync(new User
                     {
                         Id = userId,
-                        Login = loginInput.Login,
+                        Login = authRegisterInput.Login,
                         Password = saltedPassword.CreateMD5(),
-                        FirstName = loginInput.FirstName,
-                        LastName = loginInput.LastName,
-                        Email = loginInput.Email,
+                        FirstName = authRegisterInput.FirstName,
+                        LastName = authRegisterInput.LastName,
+                        Email = authRegisterInput.Email,
                         Role = UserRole.User,
                     });
 
@@ -76,7 +79,7 @@ namespace Geesemon.Web.GraphQL.Mutations
 
                     var session = new Session
                     {
-                        Token = authService.GenerateAccessToken(newUser.Id, newUser.Email, newUser.Role),
+                        Token = authService.GenerateAccessToken(newUser.Id, newUser.Login, newUser.Role),
                         UserId = newUser.Id,
                     };
                     session = await FillSession(session, true);
@@ -91,16 +94,17 @@ namespace Geesemon.Web.GraphQL.Mutations
 
             Field<NonNullGraphType<AuthResponseType>, AuthResponse>()
                 .Name("Login")
-                .Argument<NonNullGraphType<LoginInputType>, LoginInput>("input", "Argument to login User")
+                .Argument<NonNullGraphType<AuthLoginInputType>, AuthLoginInput>("input", "Argument to login User")
                 .ResolveAsync(async context =>
                 {
-                    var loginInput = context.GetArgument<LoginInput>("input");
-                    var user = await userManager.GetByLoginAsync(loginInput.Login);
+                    var authLoginInput = context.GetArgument<AuthLoginInput>("input");
+                    authLoginInputValidator.ValidateAndThrow(authLoginInput);
 
+                    var user = await userManager.GetByLoginAsync(authLoginInput.Login);
                     if (user == null)
                         throw new Exception("Login or password not valid.");
 
-                    var saltedPassword = loginInput.Password + user.Id;
+                    var saltedPassword = authLoginInput.Password + user.Id;
                     if (user.Password != saltedPassword.CreateMD5())
                         throw new Exception("Login or password not valid.");
 
@@ -170,14 +174,19 @@ namespace Geesemon.Web.GraphQL.Mutations
         private async Task<Session> FillSession(Session session, bool isOnline)
         {
             var ipAddress = httpContextAccessor.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-
-            using var client = new HttpClient();
-            client.DefaultRequestHeaders.Add("apikey", "kKeJir32sWslTj4Oav624x0APp9avBRO");
-
-            var result = await client.GetAsync($"https://api.apilayer.com/ip_to_location/{ipAddress}");
-            dynamic response = JsonConvert.DeserializeObject(await result.Content.ReadAsStringAsync());
-            var location = $"{response.region_name}, {response.country_name}";
-
+            string? location;
+            try
+            {
+                using var client = new HttpClient();
+                client.DefaultRequestHeaders.Add("apikey", "kKeJir32sWslTj4Oav624x0APp9avBRO");
+                var result = await client.GetAsync($"https://api.apilayer.com/ip_to_location/{ipAddress}");
+                dynamic response = JsonConvert.DeserializeObject(await result.Content.ReadAsStringAsync());
+                location = $"{response.region_name}, {response.country_name}";
+            }
+            catch
+            {
+                location = "-, -";
+            }
             var userAgentString = httpContextAccessor.HttpContext.Request.Headers["User-Agent"].ToString();
             var userAgent = HttpUserAgentParser.Parse(userAgentString);
 

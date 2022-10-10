@@ -38,15 +38,12 @@ export const CHAT_CREATE_PERSONAL_MUTATION = gql`
 `
 
 
-export type ChatDeleteData = { chat: { delete: Chat } }
+export type ChatDeleteData = { chat: { delete: boolean } }
 export type ChatDeleteVars = { input: string }
 export const CHAT_DELETE_MUTATION = gql`
-    ${CHAT_FRAGMENT}
     mutation ChatDelete($input: Guid!) {
         chat {
-            delete(input: $input) {
-                ...ChatFragment
-            }
+            delete(input: $input)
         }
       }
 `
