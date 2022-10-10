@@ -33,6 +33,8 @@ namespace Geesemon.Web.GraphQL.Queries
                             var oppositeUser = await userManager.GetByIdAsync(chat.UserChats.FirstOrDefault(uc => uc.UserId != currentUserId).UserId);
 
                             chat.Name = oppositeUser.FirstName + " " + oppositeUser.LastName;
+                            chat.ImageColor = oppositeUser.AvatarColor;
+                            chat.ImageUrl = oppositeUser.ImageUrl;
                         }
 
                         if (chat.Type == ChatKind.Saved)

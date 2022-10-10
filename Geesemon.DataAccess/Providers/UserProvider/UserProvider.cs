@@ -12,6 +12,24 @@ namespace Geesemon.DataAccess.Providers.UserProvider
         {
         }
 
+        public async Task<IEnumerable<User>> GetReadByAsync(Guid messageId, int skip, int take)
+        {
+            return await context.Users
+                .Include(u => u.ReadMessages)
+                .Where(u => u.ReadMessages.Any(r => r.MessageId == messageId))
+                .OrderByDescending(u => u.ReadMessages.FirstOrDefault(rm => rm.MessageId == messageId).CreatedAt)
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+        }
+        
+        public async Task<int> GetReadByCountByAsync(Guid messageId)
+        {
+            return await context.Users
+                .Include(u => u.ReadMessages)
+                .CountAsync(u => u.ReadMessages.Any(r => r.MessageId == messageId));
+        }
+
         public virtual Task<User?> GetByLoginAsync(string login, params Expression<Func<User, object>>[] includes)
         {
             return includes.Aggregate(context.Users.AsQueryable(),

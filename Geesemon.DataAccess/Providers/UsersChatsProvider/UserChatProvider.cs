@@ -1,7 +1,6 @@
 ﻿using Geesemon.Model.Enums;
 using Geesemon.Model.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 
 namespace Geesemon.DataAccess.Providers.UsersChatsProvider
 {

@@ -20,5 +20,11 @@ namespace Geesemon.DataAccess.Providers.MessageProvider
                 .OrderBy(m => m.CreatedAt)
                 .ToListAsync();
         }
+
+        // TODO: Implement
+        public async Task<bool> IsUserHaveAccess(Guid messageId, Guid userId)
+        {
+            return true;
+        }
     }
 }

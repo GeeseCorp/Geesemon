@@ -1,5 +1,5 @@
-import React, {FC, ReactNode, useEffect, useRef} from 'react';
-import {createPortal} from "react-dom";
+import React, { FC, ReactNode, useEffect, useRef } from 'react';
+import { createPortal } from "react-dom";
 import s from './Modal.module.scss';
 
 type Props = {
@@ -10,7 +10,7 @@ type Props = {
 const modalElement = document.getElementById('modal') as HTMLDivElement;
 const rootElement = document.getElementById('root') as HTMLDivElement;
 
-export const Modal: FC<Props> = ({children, opened = false}) => {
+export const Modal: FC<Props> = ({ children, opened = false }) => {
     const modalRef = useRef(document.createElement('div'))
 
     useEffect(() => {

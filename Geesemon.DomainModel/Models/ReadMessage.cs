@@ -5,6 +5,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Geesemon.Model.Models;
 public class ReadMessage
 {
+    public DateTime CreatedAt { get; set; }
+
     [Key, Column(Order = 0)]
     public Guid MessageId { get; set; }
     public Message? Message { get; set; }

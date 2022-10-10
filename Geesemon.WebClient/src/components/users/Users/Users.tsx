@@ -45,7 +45,7 @@ export const Users: FC<Props> = ({ onSelectedUserIdChange, selectMultiple = fals
             q,
         }))
         return () => {
-            dispatch(usersActions.toInitialState());
+            dispatch(usersActions.resetUsers());
         }
     }, [skip, take, q])
 

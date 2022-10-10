@@ -32,6 +32,8 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
     useEffect(() => {
         if (selectedTab === Tab.Members && (chat.type === ChatKind.Personal || chat.type === ChatKind.Saved))
             setSelectedTab(Tab.Files)
+        else if (selectedTab !== Tab.Members && !(chat.type === ChatKind.Personal || chat.type === ChatKind.Saved))
+            setSelectedTab(Tab.Members)
     }, [chat])
 
     const renderTab = () => {

@@ -1,9 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { message } from "antd";
+import { string } from "yup";
 import { shallowUpdateChat, sortChat } from '../../../utils/chatUtils';
+import { User } from "../users/types";
 import {
     CreateGroupChatInputType,
     CreatePersonalChatInputType,
     DeleteMessageInputType,
+    MessageMakeReadVars,
     SentMessageInputType,
     UpdateMessageInputType
 } from "./mutations";
@@ -18,6 +22,8 @@ type InitialState = {
     inUpdateMessageId?: string | null
     mode: Mode
     createChatLoading: boolean
+    messageIdsMakeReadLoading: string[]
+    inViewMessageIdReadBy?: string | null
 }
 
 const initialState: InitialState = {
@@ -26,6 +32,8 @@ const initialState: InitialState = {
     inUpdateMessageId: null,
     mode: 'Text',
     createChatLoading: false,
+    messageIdsMakeReadLoading: [],
+    inViewMessageIdReadBy: null,
 };
 
 const slice = createSlice({
@@ -112,6 +120,34 @@ const slice = createSlice({
         shallowUpdateChat: (state, action: PayloadAction<Chat>) => {
             state.chats = state.chats.map(c => c.id == action.payload.id
                 ? shallowUpdateChat(c, action.payload)
+                : c);
+        },
+
+
+        addMessageIdMakeReadLoading: (state, action: PayloadAction<string>) => {
+            if (!state.messageIdsMakeReadLoading.find(m => m === action.payload))
+                state.messageIdsMakeReadLoading.push(action.payload)
+        },
+        removeMessageIdMakeReadLoading: (state, action: PayloadAction<string>) => {
+            state.messageIdsMakeReadLoading = state.messageIdsMakeReadLoading.filter(m => m !== action.payload)
+        },
+        messageMakeReadAsync: (state, action: PayloadAction<MessageMakeReadVars>) => state,
+
+        setInViewMessageIdReadBy: (state, action: PayloadAction<string | null | undefined>) => {
+            state.inViewMessageIdReadBy = action.payload;
+        },
+
+        addReadBy: (state, action: PayloadAction<{ messageId: string, readBy: User[] }>) => {
+            state.chats = state.chats.map(c => c.messages.some(m => m.id === action.payload.messageId)
+                ? {
+                    ...c,
+                    messages: c.messages.map(m => {
+                        if (m.id === action.payload.messageId)
+                            return { ...m, readBy: [...m.readBy, ...action.payload.readBy] };
+                        else
+                            return m;
+                    })
+                }
                 : c);
         },
 

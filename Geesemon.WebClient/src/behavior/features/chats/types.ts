@@ -7,7 +7,8 @@ export type Message = {
     fromId?: string | null
     from?: User | null
     chatId: string
-    readMessages: ReadMessage[]
+    readBy: User[]
+    readByCount: number
 } & Entity
 
 export enum MessageKind {

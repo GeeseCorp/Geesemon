@@ -6,8 +6,11 @@ namespace Geesemon.Model.Models;
 public class Message : Entity
 {
     public string? Text { get; set; }
-
     public MessageKind Type { get; set; }
+    public bool IsEdited { get; set; } = false;
+
+    [NotMapped]
+    public int ReadByCount { get; set; }
 
     public Guid? FromId { get; set; }
     public User? From { get; set; }
@@ -15,7 +18,5 @@ public class Message : Entity
     public Guid ChatId { get; set; }
     public Chat? Chat { get; set; }
 
-    public bool IsEdited { get; set; } = false;
-
-    public List<ReadMessage>? ReadMessages { get; set; }
+    public List<ReadMessage>? ReadBy { get; set; }
 }
