@@ -29,6 +29,20 @@ namespace Geesemon.Web.GraphQL.Queries
                     return await userManager.GetByIdAsync(context.GetArgument<Guid>("UserId"));
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
+            
+            Field<NonNullGraphType<ListGraphType<UserType>>, IEnumerable<User>>()
+                .Name("GetReadBy")
+                .Argument<NonNullGraphType<GuidGraphType>, Guid>("MessageId", "")
+                .Argument<NonNullGraphType<IntGraphType>, int>("Skip", "")
+                .Argument<IntGraphType, int?>("Take", "")
+                .ResolveAsync(async context =>
+                {
+                    var skip = context.GetArgument<int>("Skip");
+                    var take = context.GetArgument<int?>("Take");
+                    var messageId = context.GetArgument<Guid>("MessageId");
+                    return await userManager.GetReadByAsync(messageId, skip, take ?? 30);
+                })
+                .AuthorizeWith(AuthPolicies.Authenticated);
         }
     }
 }

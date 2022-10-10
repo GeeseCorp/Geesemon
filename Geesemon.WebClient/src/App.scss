@@ -21,6 +21,8 @@ $danger-filter: invert(31%) sepia(100%) saturate(7440%) hue-rotate(358deg) brigh
 
 $message-out-status-color: rgba(255, 255, 255, 0.53);
 
+$border-color: #0f0f0f;
+
 *:not(path, svg) {
     margin: 0;
     padding: 0;
@@ -50,6 +52,37 @@ svg {
 
 body {
     position: relative;
+}
+
+#root {
+    z-index: 1000;
+    position: relative;
+    height: 100vh;
+}
+
+#modal {
+    position: absolute;
+    width: 100%;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modalHeader {
+    padding: 10px;
+    border-bottom: 1px solid $border-color;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.modalContent {
+    padding: 10px;
 }
 
 .wrapperApp {

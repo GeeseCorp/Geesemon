@@ -1,4 +1,4 @@
-.checks{
+.checks {
     display: inline-block;
     position: relative;
     width: 15px;
@@ -6,7 +6,7 @@
     vertical-align: bottom;
 }
 
-.check{
+.check {
     width: 11px;
     height: 10px;
     position: absolute;
@@ -14,10 +14,10 @@
     transform: translateY(-50%);
 }
 
-.checkLeft{
+.checkLeft {
     left: 0;
 }
 
-.checkRight{
+.checkRight {
     right: 0;
 }

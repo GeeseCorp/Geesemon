@@ -3,14 +3,14 @@
 .wrapperButton {
     cursor: pointer;
     padding: 5px;
-    min-width: 40px;
-    min-height: 40px;
+    width: 40px;
+    height: 40px;
     display: flex;
     justify-content: center;
     align-items: center;
     transition: .3s background-color ease-in-out;
 }
 
-.wrapperButton:hover{
+.wrapperButton:hover {
     background-color: $secondary-button-hover-color;
 }

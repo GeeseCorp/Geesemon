@@ -43,4 +43,5 @@ public class User : Entity
 
     public List<UserChat>? UserChats { get; set; }
     public List<Session>? Sessions { get; set; }
+    public List<ReadMessage>? ReadMessages { get; set; }
 }

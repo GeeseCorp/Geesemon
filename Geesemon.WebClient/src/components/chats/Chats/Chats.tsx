@@ -28,8 +28,6 @@ export const Chats: FC<Props> = ({ }) => {
     const logoutLoading = useAppSelector(s => s.auth.logoutLoading)
     const authedUser = useAppSelector(s => s.auth.authedUser)
     const [isMenuVisible, setIsMenuVisible] = useState(false);
-    const leftSidebarState = useAppSelector(s => s.app.leftSidebarState)
-
     const chats = useAppSelector(s => s.chats.chats);
     const [searchValue, setSearchValue] = useState('');
     const dispatch = useAppDispatch();

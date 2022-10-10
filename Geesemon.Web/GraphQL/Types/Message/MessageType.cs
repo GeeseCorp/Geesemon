@@ -1,6 +1,7 @@
 ﻿using Geesemon.DataAccess.Managers;
 using Geesemon.Model.Enums;
 using Geesemon.Model.Models;
+using GraphQL;
 using GraphQL.Types;
 
 namespace Geesemon.Web.GraphQL.Types
@@ -37,6 +38,31 @@ namespace Geesemon.Web.GraphQL.Types
             Field<BooleanGraphType, bool>()
                 .Name("IsEdited")
                 .Resolve(ctx => ctx.Source.IsEdited);
+
+            Field<NonNullGraphType<ListGraphType<UserType>>, IEnumerable<User>>()
+                .Name("ReadBy")
+                .Argument<NonNullGraphType<IntGraphType>, int>("Skip", "")
+                .Argument<IntGraphType, int?>("Take", "")
+                .ResolveAsync(async context =>
+                {
+                    using var scope = serviceProvider.CreateScope();
+                    var userManager = scope.ServiceProvider.GetRequiredService<UserManager>();
+                    var skip = context.GetArgument<int>("Skip");
+                    var take = context.GetArgument<int?>("Take");
+                    var messageId = context.Source.Id;
+
+                    return await userManager.GetReadByAsync(messageId, skip, take ?? 30);
+                });
+            
+            Field<NonNullGraphType<IntGraphType>, int>()
+                .Name("ReadByCount")
+                .ResolveAsync(async context =>
+                {
+                    using var scope = serviceProvider.CreateScope();
+                    var userManager = scope.ServiceProvider.GetRequiredService<UserManager>();
+                    var messageId = context.Source.Id;
+                    return await userManager.GetReadByCountByAsync(messageId);
+                });
         }
     }
 }

@@ -1,4 +1,4 @@
-import React, { FC, KeyboardEvent, useEffect, useState } from 'react';
+import React, { FC, KeyboardEvent, MutableRefObject, useEffect, useState } from 'react';
 import s from './SendMessageForm.module.scss';
 import smile from "../../../assets/svg/smile.svg";
 import send from "../../../assets/svg/send.svg";
@@ -17,7 +17,7 @@ const INPUT_TEXT_DEFAULT_HEIGHT = '25px';
 
 type Props = {
     scrollToBottom: () => void
-    inputTextRef: React.MutableRefObject<HTMLTextAreaElement | null>
+    inputTextRef: MutableRefObject<HTMLTextAreaElement | null>
 }
 
 export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => {

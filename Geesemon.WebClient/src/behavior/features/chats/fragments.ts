@@ -13,6 +13,10 @@ export const MESSAGE_FRAGMENT = gql`
         }
         chatId
         isEdited
+        readBy {
+            ...UserFragment
+        }
+        readByCount
         createdAt
         updatedAt
     }
