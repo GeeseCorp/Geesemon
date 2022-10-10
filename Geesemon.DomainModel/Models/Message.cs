@@ -1,6 +1,5 @@
 ﻿using Geesemon.Model.Common;
 using Geesemon.Model.Enums;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Geesemon.Model.Models;
 public class Message : Entity
@@ -17,5 +16,5 @@ public class Message : Entity
 
     public bool IsEdited { get; set; } = false;
 
-    public List<ReadMessage>? ReadMessages { get; set; }
+    public List<ReadMessage>? ReadBy { get; set; }
 }

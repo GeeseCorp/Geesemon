@@ -98,3 +98,18 @@ export const MESSAGE_DELETE_MUTATION = gql`
     }
 
 `
+
+
+export type MessageMakeReadData = { message: { makeRead: Message } }
+export type MessageMakeReadVars = { messageId: string }
+export const MESSAGE_MAKE_READ_MUTATION = gql`
+    ${MESSAGE_FRAGMENT}
+    mutation MessageMakeRead($messageId: Guid!) {
+        message {
+          makeRead(messageId: $messageId){
+            ...MessageFragment
+          }
+        }
+      }
+
+`

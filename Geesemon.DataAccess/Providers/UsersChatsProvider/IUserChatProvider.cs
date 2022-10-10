@@ -1,5 +1,4 @@
 ﻿using Geesemon.Model.Models;
-using System.Linq.Expressions;
 
 namespace Geesemon.DataAccess.Providers.UsersChatsProvider
 {

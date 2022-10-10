@@ -34,7 +34,6 @@ export const Chat: FC<Props> = ({ chat }) => {
     useEffect(() => {
         const userChat = chatActivity.data?.chatActivity;
         if (userChat) {
-            console.log(userChat);
             dispatch(chatActions.updateUserInChat(userChat));
             dispatch(chatActions.shallowUpdateChat(userChat.chat));
         }

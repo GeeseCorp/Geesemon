@@ -1,7 +1,7 @@
 ﻿using Geesemon.Model.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Geesemon.DataAccess.Providers.AccessTokenProvider;
+namespace Geesemon.DataAccess.Providers.SessionProvider;
 public class SessionProvider : ProviderBase<Session>, ISessionProvider
 {
     private readonly AppDbContext context;

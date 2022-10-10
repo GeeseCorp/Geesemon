@@ -4,6 +4,7 @@ import {
     CreateGroupChatInputType,
     CreatePersonalChatInputType,
     DeleteMessageInputType,
+    MessageMakeReadVars,
     SentMessageInputType,
     UpdateMessageInputType
 } from "./mutations";
@@ -18,6 +19,7 @@ type InitialState = {
     inUpdateMessageId?: string | null
     mode: Mode
     createChatLoading: boolean
+    messageIdsMakeReadLoading: string[]
 }
 
 const initialState: InitialState = {
@@ -26,6 +28,7 @@ const initialState: InitialState = {
     inUpdateMessageId: null,
     mode: 'Text',
     createChatLoading: false,
+    messageIdsMakeReadLoading: [],
 };
 
 const slice = createSlice({
@@ -114,6 +117,17 @@ const slice = createSlice({
                 ? shallowUpdateChat(c, action.payload)
                 : c);
         },
+
+
+        addMessageIdMakeReadLoading: (state, action: PayloadAction<string>) => {
+            if (!state.messageIdsMakeReadLoading.find(m => m === action.payload))
+                state.messageIdsMakeReadLoading.push(action.payload)
+        },
+        removeMessageIdMakeReadLoading: (state, action: PayloadAction<string>) => {
+            state.messageIdsMakeReadLoading = state.messageIdsMakeReadLoading.filter(m => m !== action.payload)
+        },
+        messageMakeReadAsync: (state, action: PayloadAction<MessageMakeReadVars>) => state,
+
 
         toInitialState: (state, action: PayloadAction) => initialState,
     },

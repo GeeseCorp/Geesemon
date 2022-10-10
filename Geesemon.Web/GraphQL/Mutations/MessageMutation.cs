@@ -11,8 +11,13 @@ namespace Geesemon.Web.GraphQL.Mutations
 {
     public class MessageMutation : ObjectGraphType<object>
     {
-        public MessageMutation(IMessageActionSubscriptionService subscriptionService,
-            IHttpContextAccessor httpContextAccessor, MessageManager messageManager, ChatManager chatManager)
+        public MessageMutation(
+            IMessageActionSubscriptionService subscriptionService,
+            IHttpContextAccessor httpContextAccessor,
+            MessageManager messageManager, 
+            ChatManager chatManager,
+            ReadMessagesManager readMessagesManager
+            )
         {
             Field<MessageType>()
                 .Name("Send")
@@ -84,6 +89,36 @@ namespace Geesemon.Web.GraphQL.Mutations
                     await messageManager.UpdateAsync(message);
 
                     return subscriptionService.Notify(message, MessageActionKind.Update);
+                })
+                .AuthorizeWith(AuthPolicies.Authenticated);
+            
+            Field<NonNullGraphType<MessageType>, Message>()
+                .Name("MakeRead")
+                .Argument<NonNullGraphType<GuidGraphType>, Guid>("MessageId", "")
+                .ResolveAsync(async context =>
+                {
+                    var messageId = context.GetArgument<Guid>("MessageId");
+                    var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
+
+                    var message = await messageManager.GetByIdAsync(messageId);
+                    if (message == null)
+                        throw new ExecutionError("Message not found.");
+                    
+                    if (message.FromId == currentUserId)
+                        throw new ExecutionError("You can not read your message");
+
+                    var isUserHaveAccess = await messageManager.IsUserHaveAccess(messageId, currentUserId);
+                    if(!isUserHaveAccess)
+                        throw new ExecutionError("You do not have access to this message");
+
+                    await readMessagesManager.CreateAsync(new ReadMessage
+                    {
+                        CreatedAt = DateTime.UtcNow,
+                        MessageId = messageId,
+                        ReadById = currentUserId,
+                    });
+                    return message;
+                    //return subscriptionService.Notify(message, MessageActionKind.Update);
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
         }

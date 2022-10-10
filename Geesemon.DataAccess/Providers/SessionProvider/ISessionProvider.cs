@@ -1,6 +1,6 @@
 ﻿using Geesemon.Model.Models;
 
-namespace Geesemon.DataAccess.Providers.AccessTokenProvider;
+namespace Geesemon.DataAccess.Providers.SessionProvider;
 public interface ISessionProvider : IProviderBase<Session>
 {
     Task MakeAllOfflineAsync();

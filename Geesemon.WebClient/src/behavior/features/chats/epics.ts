@@ -30,7 +30,10 @@ import {
     ChatDeleteVars,
     CHAT_CREATE_PERSONAL_MUTATION,
     ChatCreatePersonalData,
-    ChatCreatePersonalVars
+    ChatCreatePersonalVars,
+    MessageMakeReadData,
+    MessageMakeReadVars,
+    MESSAGE_MAKE_READ_MUTATION
 } from "./mutations";
 import { Chat } from "./types";
 import { appActions, LeftSidebarState } from "../app/slice";
@@ -170,6 +173,20 @@ export const messageDeleteAsyncEpic: Epic<ReturnType<typeof chatActions.messageD
         )
     );
 
+export const messageMakeReadAsyncEpic: Epic<ReturnType<typeof chatActions.messageMakeReadAsync>, any, RootState> = (action$, state$) =>
+    action$.pipe(
+        ofType(chatActions.messageMakeReadAsync.type),
+        mergeMap(action =>
+            from(client.mutate<MessageMakeReadData, MessageMakeReadVars>({
+                mutation: MESSAGE_MAKE_READ_MUTATION,
+                variables: { messageId: action.payload.messageId }
+            })).pipe(
+                mergeMap(response => []),
+                catchError(error => of(notificationsActions.addError(error.message))),
+            )
+        )
+    );
+
 export const chatEpics = combineEpics(
     chatsGetAsyncEpic,
     // @ts-ignore
@@ -180,4 +197,5 @@ export const chatEpics = combineEpics(
     messageUpdateAsyncEpic,
     messageGetAsyncEpic,
     messageDeleteAsyncEpic,
+    messageMakeReadAsyncEpic,
 )
