@@ -137,13 +137,16 @@ namespace Geesemon.Web.GraphQL.Mutations
                 {
                     var isOnline = context.GetArgument<bool>("IsOnline");
                     var token = httpContextAccessor.HttpContext.Request.Headers[HeaderNames.Authorization];
+                    var userId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
+
                     var session = await sessionManager.GetByTokenAsync(token);
                     session = await FillSession(session, isOnline);
                     await sessionManager.UpdateAsync(session);
-                    var userId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
+                    
                     using var scope = serviceProvider.CreateScope();
                     var chatActivitySubscriptionService = scope.ServiceProvider.GetRequiredService<IChatActivitySubscriptionService>();
                     await chatActivitySubscriptionService.Notify(userId);
+
                     return true;
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
@@ -167,13 +170,17 @@ namespace Geesemon.Web.GraphQL.Mutations
         private async Task<Session> FillSession(Session session, bool isOnline)
         {
             var ipAddress = httpContextAccessor.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+
             using var client = new HttpClient();
             client.DefaultRequestHeaders.Add("apikey", "kKeJir32sWslTj4Oav624x0APp9avBRO");
+
             var result = await client.GetAsync($"https://api.apilayer.com/ip_to_location/{ipAddress}");
             dynamic response = JsonConvert.DeserializeObject(await result.Content.ReadAsStringAsync());
             var location = $"{response.region_name}, {response.country_name}";
+
             var userAgentString = httpContextAccessor.HttpContext.Request.Headers["User-Agent"].ToString();
             var userAgent = HttpUserAgentParser.Parse(userAgentString);
+
             session.LastTimeOnline = DateTime.UtcNow;
             session.IsOnline = isOnline;
             session.IpAddress = ipAddress;
