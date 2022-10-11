@@ -1,13 +1,13 @@
-import { gql } from "@apollo/client";
-import { USER_FRAGMENT } from "../users/fragments";
-import { AuthResponseType } from "./types";
+import { gql } from '@apollo/client';
+import { USER_FRAGMENT } from '../users/fragments';
+import { AuthResponseType } from './types';
 
-export type AuthLoginData = { auth: { login: AuthResponseType } }
-export type AuthLoginVars = { input: LoginInputType }
+export type AuthLoginData = { auth: { login: AuthResponseType } };
+export type AuthLoginVars = { input: LoginInputType };
 export type LoginInputType = {
-    login: string
-    password: string
-}
+    username: string;
+    password: string;
+};
 export const AUTH_LOGIN_MUTATION = gql`
     ${USER_FRAGMENT}
     mutation AuthLogin($input: AuthLoginInputType!) {
@@ -22,15 +22,15 @@ export const AUTH_LOGIN_MUTATION = gql`
     }
 `;
 
-export type AuthRegisterData = { auth: { register: AuthResponseType } }
-export type AuthRegisterVars = { input: RegisterInputType }
+export type AuthRegisterData = { auth: { register: AuthResponseType } };
+export type AuthRegisterVars = { input: RegisterInputType };
 export type RegisterInputType = {
-    firstName: string
-    lastName?: string | null
-    login: string
-    email?: string | null
-    password: string
-}
+    firstName: string;
+    lastName?: string | null;
+    username: string;
+    email?: string | null;
+    password: string;
+};
 export const AUTH_REGISTER_MUTATION = gql`
     ${USER_FRAGMENT}
     mutation AuthRegister($input: AuthRegisterInputType!) {
@@ -45,9 +45,8 @@ export const AUTH_REGISTER_MUTATION = gql`
     }
 `;
 
-
-export type AuthLogoutData = { auth: { logout: Boolean } }
-export type AuthLogoutVars = {}
+export type AuthLogoutData = { auth: { logout: boolean } };
+export type AuthLogoutVars = {};
 export const AUTH_LOGOUT_MUTATION = gql`
     mutation AuthLogout {
         auth {
@@ -56,9 +55,8 @@ export const AUTH_LOGOUT_MUTATION = gql`
     }
 `;
 
-
-export type AuthToggleOnlineData = { auth: { toggleOnline: Boolean } }
-export type AuthToggleOnlineVars = { isOnline: boolean }
+export type AuthToggleOnlineData = { auth: { toggleOnline: boolean } };
+export type AuthToggleOnlineVars = { isOnline: boolean };
 export const AUTH_TOGGLE_ONLINE_MUTATION = gql`
     mutation AuthToggleOnline($isOnline: Boolean!) {
         auth {

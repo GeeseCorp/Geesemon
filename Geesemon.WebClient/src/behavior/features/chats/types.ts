@@ -1,15 +1,15 @@
-import { Entity } from "../../common";
-import { User } from "../users/types";
+import { Entity } from '../../common';
+import { User } from '../users/types';
 
 export type Message = {
-    text?: string | null
-    type: MessageKind
-    fromId?: string | null
-    from?: User | null
-    chatId: string
-    readBy: User[]
-    readByCount: number
-} & Entity
+    text?: string | null;
+    type: MessageKind;
+    fromId?: string | null;
+    from?: User | null;
+    chatId: string;
+    readBy: User[];
+    readByCount: number;
+} & Entity;
 
 export enum MessageKind {
     Regular = 'REGULAR',
@@ -17,31 +17,31 @@ export enum MessageKind {
 }
 
 export type ReadMessage = {
-    messageId: string
-    message: Message
-    readById: string
-    readBy: User
-}
-
+    messageId: string;
+    message: Message;
+    readById: string;
+    readBy: User;
+};
 
 export type Chat = {
-    name?: string | null
-    type: ChatKind
-    imageUrl?: string | null
-    imageColor: string
-    membersTotal: number
-    membersOnline: number
-    creatorId: string
-    messages: Message[]
-    users: User[]
-} & Entity
+    name?: string | null;
+    username?: string | null;
+    type: ChatKind;
+    imageUrl?: string | null;
+    imageColor: string;
+    membersTotal: number;
+    membersOnline: number;
+    creatorId: string;
+    messages: Message[];
+    users: User[];
+} & Entity;
 
 export type UserChat = {
-    chatId: string
-    chat: Chat
-    userId: string
-    user: User
-}
+    chatId: string;
+    chat: Chat;
+    userId: string;
+    user: User;
+};
 
 export enum ChatKind {
     Personal = 'PERSONAL',
@@ -50,23 +50,22 @@ export enum ChatKind {
 }
 
 export enum MessageActionKind {
-    Create = "CREATE",
-    Update = "UPDATE",
-    Delete = "DELETE",
+    Create = 'CREATE',
+    Update = 'UPDATE',
+    Delete = 'DELETE',
 }
 export type MessageActions = {
-    type: MessageActionKind,
-    message: Message,
-}
-
+    type: MessageActionKind;
+    message: Message;
+};
 
 export enum ChatActionKind {
-    Create = "CREATE",
-    Update = "UPDATE",
-    Delete = "DELETE",
-    Clear = " CLEAR",
+    Create = 'CREATE',
+    Update = 'UPDATE',
+    Delete = 'DELETE',
+    Clear = ' CLEAR',
 }
 export type ChatActions = {
-    type: ChatActionKind,
-    chat: Chat,
-}
+    type: ChatActionKind;
+    chat: Chat;
+};

@@ -1,30 +1,30 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { message } from "antd";
-import { string } from "yup";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { message } from 'antd';
+import { string } from 'yup';
 import { shallowUpdateChat, sortChat } from '../../../utils/chatUtils';
-import { User } from "../users/types";
+import { User } from '../users/types';
 import {
     CreateGroupChatInputType,
     CreatePersonalChatInputType,
     DeleteMessageInputType,
     MessageMakeReadVars,
     SentMessageInputType,
-    UpdateMessageInputType
-} from "./mutations";
-import { MessageGetVars } from "./queries";
+    UpdateMessageInputType,
+} from './mutations';
+import { MessageGetVars } from './queries';
 import { Chat, Message, UserChat } from './types';
 
 export type Mode = 'Text' | 'Audio' | 'Updating' | 'Reply';
 
 type InitialState = {
-    chats: Chat[]
-    messageGetLoading: boolean
-    inUpdateMessageId?: string | null
-    mode: Mode
-    createChatLoading: boolean
-    messageIdsMakeReadLoading: string[]
-    inViewMessageIdReadBy?: string | null
-}
+    chats: Chat[];
+    messageGetLoading: boolean;
+    inUpdateMessageId?: string | null;
+    mode: Mode;
+    createChatLoading: boolean;
+    messageIdsMakeReadLoading: string[];
+    inViewMessageIdReadBy?: string | null;
+};
 
 const initialState: InitialState = {
     chats: [],
@@ -37,7 +37,7 @@ const initialState: InitialState = {
 };
 
 const slice = createSlice({
-    name: "chats",
+    name: 'chats',
     initialState,
     reducers: {
         setMode: (state, action: PayloadAction<Mode>) => {
@@ -47,9 +47,9 @@ const slice = createSlice({
             state.inUpdateMessageId = action.payload;
         },
         addChats: (state, action: PayloadAction<Chat[]>) => {
-            state.chats = sortChat([...state.chats, ...action.payload])
+            state.chats = sortChat([...state.chats, ...action.payload]);
         },
-        chatsGetAsync: (state) => state,
+        chatsGetAsync: state => state,
 
         setCreateGroupLoading: (state, action: PayloadAction<boolean>) => {
             state.createChatLoading = action.payload;
@@ -61,8 +61,8 @@ const slice = createSlice({
             state.chats = state.chats.map(chat =>
                 chat.id === action.payload.id
                     ? action.payload
-                    : chat
-            )
+                    : chat,
+            );
         },
 
         deleteChat: (state, action: PayloadAction<string>) => {
@@ -74,62 +74,61 @@ const slice = createSlice({
             state.messageGetLoading = action.payload;
         },
         messageGetAsync: (state, action: PayloadAction<MessageGetVars>) => state,
-        addMessages: (state, action: PayloadAction<{ chatId: string, messages: Message[] }>) => {
+        addMessages: (state, action: PayloadAction<{ chatId: string; messages: Message[] }>) => {
             const newChats = state.chats.map(chat => {
                 if (chat.id === action.payload.chatId) {
                     chat.messages = [...action.payload.messages, ...chat.messages];
-                    chat.messages = chat.messages.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+                    chat.messages = chat.messages.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
                 }
                 return chat;
-            })
-            state.chats = sortChat(newChats)
+            });
+            state.chats = sortChat(newChats);
         },
 
         deleteMessage: (state, action: PayloadAction<Message>) => {
             const newChats = state.chats.map(chat => {
-                chat.messages = chat.messages.filter(m => m.id !== action.payload.id)
+                chat.messages = chat.messages.filter(m => m.id !== action.payload.id);
                 return chat;
-            })
-            state.chats = sortChat(newChats)
+            });
+            state.chats = sortChat(newChats);
         },
 
         messageSendAsync: (state, action: PayloadAction<SentMessageInputType>) => state,
         messageUpdateAsync: (state, action: PayloadAction<UpdateMessageInputType>) => state,
         updateMessage: (state, action: PayloadAction<Message>) => {
-            const chat = state.chats.find(c => c.messages.some(m => m.id === action.payload.id))
+            const chat = state.chats.find(c => c.messages.some(m => m.id === action.payload.id));
             if (chat) {
                 chat.messages = chat.messages.map(message =>
                     message.id === action.payload.id
                         ? action.payload
-                        : message
-                )
+                        : message,
+                );
             }
         },
         messageDeleteAsync: (state, action: PayloadAction<DeleteMessageInputType>) => state,
 
         updateUserInChat: (state, action: PayloadAction<UserChat>) => {
-            state.chats = state.chats.map(c => c.id == action.payload.chatId
+            state.chats = state.chats.map(c => c.id === action.payload.chatId
                 ? {
                     ...c, users: c.users.map(u => u.id === action.payload.user.id
                         ? { ...u, ...action.payload.user }
-                        : u)
+                        : u),
                 }
                 : c);
         },
 
         shallowUpdateChat: (state, action: PayloadAction<Chat>) => {
-            state.chats = state.chats.map(c => c.id == action.payload.id
+            state.chats = state.chats.map(c => c.id === action.payload.id
                 ? shallowUpdateChat(c, action.payload)
                 : c);
         },
 
-
         addMessageIdMakeReadLoading: (state, action: PayloadAction<string>) => {
             if (!state.messageIdsMakeReadLoading.find(m => m === action.payload))
-                state.messageIdsMakeReadLoading.push(action.payload)
+                state.messageIdsMakeReadLoading.push(action.payload);
         },
         removeMessageIdMakeReadLoading: (state, action: PayloadAction<string>) => {
-            state.messageIdsMakeReadLoading = state.messageIdsMakeReadLoading.filter(m => m !== action.payload)
+            state.messageIdsMakeReadLoading = state.messageIdsMakeReadLoading.filter(m => m !== action.payload);
         },
         messageMakeReadAsync: (state, action: PayloadAction<MessageMakeReadVars>) => state,
 
@@ -137,7 +136,7 @@ const slice = createSlice({
             state.inViewMessageIdReadBy = action.payload;
         },
 
-        addReadBy: (state, action: PayloadAction<{ messageId: string, readBy: User[] }>) => {
+        addReadBy: (state, action: PayloadAction<{ messageId: string; readBy: User[] }>) => {
             state.chats = state.chats.map(c => c.messages.some(m => m.id === action.payload.messageId)
                 ? {
                     ...c,
@@ -146,7 +145,7 @@ const slice = createSlice({
                             return { ...m, readBy: [...m.readBy, ...action.payload.readBy] };
                         else
                             return m;
-                    })
+                    }),
                 }
                 : c);
         },
@@ -155,5 +154,5 @@ const slice = createSlice({
     },
 });
 
-export const chatActions = slice.actions
-export const chatReducer = slice.reducer
+export const chatActions = slice.actions;
+export const chatReducer = slice.reducer;

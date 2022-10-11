@@ -1,5 +1,5 @@
-import {gql} from "@apollo/client";
-import {USER_FRAGMENT} from "../users/fragments";
+import { gql } from '@apollo/client';
+import { USER_FRAGMENT } from '../users/fragments';
 
 export const MESSAGE_FRAGMENT = gql`
     ${USER_FRAGMENT}
@@ -20,7 +20,7 @@ export const MESSAGE_FRAGMENT = gql`
         createdAt
         updatedAt
     }
-`
+`;
 
 export const CHAT_FRAGMENT = gql`
     ${USER_FRAGMENT}
@@ -28,6 +28,7 @@ export const CHAT_FRAGMENT = gql`
     fragment ChatFragment on ChatType {
         id
         name
+        username
         type
         imageUrl
         imageColor
@@ -43,8 +44,7 @@ export const CHAT_FRAGMENT = gql`
         createdAt
         updatedAt
     }
-`
-
+`;
 
 export const USER_CHAT_FRAGMENT = gql`
     ${USER_FRAGMENT}
@@ -59,4 +59,4 @@ export const USER_CHAT_FRAGMENT = gql`
             ...ChatFragment
         }
     }
-`
+`;

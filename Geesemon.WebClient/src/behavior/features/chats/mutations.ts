@@ -1,14 +1,15 @@
-import { gql } from "@apollo/client";
-import { CHAT_FRAGMENT, MESSAGE_FRAGMENT } from "./fragments";
-import { Chat, Message } from "./types";
+import { gql } from '@apollo/client';
+import { CHAT_FRAGMENT, MESSAGE_FRAGMENT } from './fragments';
+import { Chat, Message } from './types';
 
-export type ChatCreateGroupData = { chat: { createGroup: Chat } }
-export type ChatCreateGroupVars = { input: CreateGroupChatInputType }
+export type ChatCreateGroupData = { chat: { createGroup: Chat } };
+export type ChatCreateGroupVars = { input: CreateGroupChatInputType };
 export type CreateGroupChatInputType = {
-    name: string
-    image?: File | null,
-    usersId: string[],
-}
+    name: string;
+    username: string;
+    image?: File | null;
+    usersId: string[];
+};
 export const CHAT_CREATE_GROUP_MUTATION = gql`
     ${CHAT_FRAGMENT}
     mutation ChatCreateGroup($input: CreateGroupChatInputType!){
@@ -18,14 +19,13 @@ export const CHAT_CREATE_GROUP_MUTATION = gql`
             }
         }
     }
-`
+`;
 
-
-export type ChatCreatePersonalData = { chat: { createPersonal: Chat } }
-export type ChatCreatePersonalVars = { input: CreatePersonalChatInputType }
+export type ChatCreatePersonalData = { chat: { createPersonal: Chat } };
+export type ChatCreatePersonalVars = { input: CreatePersonalChatInputType };
 export type CreatePersonalChatInputType = {
-    userId: string
-}
+    userId: string;
+};
 export const CHAT_CREATE_PERSONAL_MUTATION = gql`
     ${CHAT_FRAGMENT}
     mutation ChatCreatePersonal($input: CreatePersonalChatInputType!) {
@@ -35,25 +35,24 @@ export const CHAT_CREATE_PERSONAL_MUTATION = gql`
             }
         }
     }
-`
+`;
 
-
-export type ChatDeleteData = { chat: { delete: boolean } }
-export type ChatDeleteVars = { input: string }
+export type ChatDeleteData = { chat: { delete: boolean } };
+export type ChatDeleteVars = { input: string };
 export const CHAT_DELETE_MUTATION = gql`
     mutation ChatDelete($input: Guid!) {
         chat {
             delete(input: $input)
         }
       }
-`
+`;
 
-export type MessageSendData = { message: { send: Message } }
-export type MessageSendVars = { input: SentMessageInputType }
+export type MessageSendData = { message: { send: Message } };
+export type MessageSendVars = { input: SentMessageInputType };
 export type SentMessageInputType = {
-    text: string
-    chatId: string
-}
+    text: string;
+    chatId: string;
+};
 export const MESSAGE_SEND_MUTATION = gql`
     ${MESSAGE_FRAGMENT}
     mutation MessageSent($input: SentMessageInputType!){
@@ -63,14 +62,14 @@ export const MESSAGE_SEND_MUTATION = gql`
             }
         }
     }
-`
+`;
 
-export type MessageUpdateData = { message: { update: Message } }
-export type MessageUpdateVars = { input: UpdateMessageInputType }
+export type MessageUpdateData = { message: { update: Message } };
+export type MessageUpdateVars = { input: UpdateMessageInputType };
 export type UpdateMessageInputType = {
-    messageId: string
-    text: string
-}
+    messageId: string;
+    text: string;
+};
 export const MESSAGE_UPDATE_MUTATION = gql`
     ${MESSAGE_FRAGMENT}
     mutation MessageUpdate($input: UpdateMessageInputType!) {
@@ -80,13 +79,13 @@ export const MESSAGE_UPDATE_MUTATION = gql`
             }
         }
     }
-`
+`;
 
-export type MessageDeleteData = { message: { delete: Message } }
-export type MessageDeleteVars = { input: DeleteMessageInputType }
+export type MessageDeleteData = { message: { delete: Message } };
+export type MessageDeleteVars = { input: DeleteMessageInputType };
 export type DeleteMessageInputType = {
-    messageId: string
-}
+    messageId: string;
+};
 export const MESSAGE_DELETE_MUTATION = gql`
     ${MESSAGE_FRAGMENT}
     mutation MessageDelete($input: DeleteMessageInputType!){
@@ -97,11 +96,10 @@ export const MESSAGE_DELETE_MUTATION = gql`
         }
     }
 
-`
+`;
 
-
-export type MessageMakeReadData = { message: { makeRead: Message } }
-export type MessageMakeReadVars = { messageId: string }
+export type MessageMakeReadData = { message: { makeRead: Message } };
+export type MessageMakeReadVars = { messageId: string };
 export const MESSAGE_MAKE_READ_MUTATION = gql`
     ${MESSAGE_FRAGMENT}
     mutation MessageMakeRead($messageId: Guid!) {
@@ -112,4 +110,4 @@ export const MESSAGE_MAKE_READ_MUTATION = gql`
         }
       }
 
-`
+`;
