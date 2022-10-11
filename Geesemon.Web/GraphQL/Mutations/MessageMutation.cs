@@ -6,6 +6,7 @@ using Geesemon.Web.GraphQL.Types;
 using Geesemon.Web.Services.MessageSubscription;
 using GraphQL;
 using GraphQL.Types;
+using System;
 
 namespace Geesemon.Web.GraphQL.Mutations
 {
@@ -107,9 +108,8 @@ namespace Geesemon.Web.GraphQL.Mutations
                     if (message.FromId == currentUserId)
                         throw new ExecutionError("You can not read your message");
 
-                    var isUserHaveAccess = await messageManager.IsUserHaveAccess(messageId, currentUserId);
-                    if(!isUserHaveAccess)
-                        throw new ExecutionError("You do not have access to this message");
+                    if(!await chatManager.IsUserInChat(currentUserId, message.ChatId))
+                        throw new ExecutionError("You can not read messages which is not in your chats");
 
                     await readMessagesManager.CreateAsync(new ReadMessage
                     {

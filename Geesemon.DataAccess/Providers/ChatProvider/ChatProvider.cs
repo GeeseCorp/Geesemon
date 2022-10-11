@@ -2,6 +2,7 @@
 using Geesemon.Model.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using System.Runtime.InteropServices;
 
 namespace Geesemon.DataAccess.Providers.ChatProvider
 {
@@ -37,17 +38,17 @@ namespace Geesemon.DataAccess.Providers.ChatProvider
                 .CountAsync(s => s.IsOnline == true);
         }
         
-        public Task<List<Chat>> GetAllForUserAsync(Guid userId)
+        public async Task<IEnumerable<Chat>> GetAllForUserAsync(Guid userId)
         {
-            return context.Chats
+            return await context.Chats
                 .Include(c => c.UserChats)
                 .Where(c => c.UserChats.Any(uc => uc.UserId == userId))
                 .ToListAsync();
         }
 
-        public Task<List<Chat>> GetPaginatedForUserAsync(Guid userId, int skipMessageCount, int takeMessageCount = 30)
+        public async Task<IEnumerable<Chat>> GetPaginatedForUserAsync(Guid userId, int skipMessageCount, int takeMessageCount = 30)
         {
-            return context.Chats
+            return await context.Chats
                 .Include(c => c.UserChats)
                 .Include(c => c.Messages)
                 .Where(c => c.UserChats.Any(uc => uc.UserId == userId))
