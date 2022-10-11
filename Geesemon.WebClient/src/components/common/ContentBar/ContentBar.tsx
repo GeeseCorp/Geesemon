@@ -5,15 +5,14 @@ import { Messages } from "../../messages/Messages/Messages";
 import { ViewMessageReadByModal } from '../../messages/ViewMessageReadByModal/ViewMessageReadByModal';
 import s from './ContentBar.module.css';
 
-type Props = {};
-export const ContentBar: FC<Props> = ({ }) => {
+export const ContentBar: FC = () => {
     const params = useParams();
-    const chatId = params.chatId;
+    const chatUsername = params.chatUsername;
 
     return (
         <div className={s.wrapper}>
             <ViewMessageReadByModal />
-            {chatId
+            {chatUsername
                 ? <>
                     <ChatHeader />
                     <Messages />

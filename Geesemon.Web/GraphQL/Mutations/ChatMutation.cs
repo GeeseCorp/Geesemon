@@ -1,4 +1,5 @@
-﻿using Geesemon.DataAccess.Managers;
+﻿using FluentValidation;
+using Geesemon.DataAccess.Managers;
 using Geesemon.Model.Enums;
 using Geesemon.Model.Models;
 using Geesemon.Web.Extensions;
@@ -19,13 +20,17 @@ namespace Geesemon.Web.GraphQL.Mutations
         private readonly IChatActionSubscriptionService subscriptionService;
         private readonly IMessageActionSubscriptionService messageSubscriptionService;
         private readonly ChatManager chatManager;
+        private readonly IValidator<CreateGroupChatInput> createGroupChatInputValidator;
+        private readonly IValidator<UpdateChatInput> updateChatInputValidator;
 
         public ChatMutation(
             IHttpContextAccessor httpContextAccessor,
             FileManagerService fileManagerService,
             IChatActionSubscriptionService chatSubscriptionService,
             IMessageActionSubscriptionService messageSubscriptionService,
-            ChatManager chatManager
+            ChatManager chatManager,
+            IValidator<CreateGroupChatInput> createGroupChatInputValidator,
+            IValidator<UpdateChatInput> updateChatInputValidator
             )
         {
             Field<ChatType, Chat>()
@@ -57,6 +62,8 @@ namespace Geesemon.Web.GraphQL.Mutations
             this.subscriptionService = chatSubscriptionService;
             this.messageSubscriptionService = messageSubscriptionService;
             this.chatManager = chatManager;
+            this.createGroupChatInputValidator = createGroupChatInputValidator;
+            this.updateChatInputValidator = updateChatInputValidator;
         }
 
         private async Task<Chat?> ResolveCreatePersonal(IResolveFieldContext context)
@@ -102,17 +109,11 @@ namespace Geesemon.Web.GraphQL.Mutations
             var chatManager = context.RequestServices.GetRequiredService<ChatManager>();
             var userChatManager = context.RequestServices.GetRequiredService<UserChatManager>();
             var userManager = context.RequestServices.GetRequiredService<UserManager>();
-            var chatInput = context.GetArgument<CreateGroupChatInput>("Input");
             var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
+            var chatInput = context.GetArgument<CreateGroupChatInput>("Input");
+            await createGroupChatInputValidator.ValidateAndThrowAsync(chatInput);
 
-            foreach (var userId in chatInput.UsersId)
-            {
-                var user = await userManager.GetByIdAsync(userId);
-                if (user == null)
-                    throw new Exception($"User with id {userId} not found");
-            }
             string imageUrl = null;
-
             if (chatInput.Image != null)
                 imageUrl = await fileManagerService.UploadFileAsync(FileManagerService.GroupImagesFolder, chatInput.Image);
 
@@ -121,14 +122,15 @@ namespace Geesemon.Web.GraphQL.Mutations
                 Type = ChatKind.Group,
                 CreatorId = currentUserId,
                 Name = chatInput.Name,
+                Username = chatInput.Username,
                 ImageUrl = imageUrl,
             };
             chat = await chatManager.CreateAsync(chat);
 
-
-            var userChat = new List<UserChat>(){
-                        new UserChat { UserId = currentUserId, ChatId = chat.Id }
-                    };
+            var userChat = new List<UserChat>
+            {
+                new UserChat { UserId = currentUserId, ChatId = chat.Id }
+            };
             foreach (var userId in chatInput.UsersId)
                 userChat.Add(new UserChat { UserId = userId, ChatId = chat.Id });
             await userChatManager.CreateManyAsync(userChat);
@@ -136,7 +138,6 @@ namespace Geesemon.Web.GraphQL.Mutations
             subscriptionService.Notify(chat, ChatActionKind.Create);
             //NOTE: This is test for system messages. This line should be removed after finishing testing.
             await messageSubscriptionService.SentSystemMessageAsync("Hello! This is system message test!!!", chat.Id);
-
             return chat;
         }
 
@@ -169,7 +170,7 @@ namespace Geesemon.Web.GraphQL.Mutations
         private async Task<Chat?> ResolveUpdate(IResolveFieldContext context)
         {
             var chatUpdateInput = context.GetArgument<UpdateChatInput>("Input");
-
+            await updateChatInputValidator.ValidateAndThrowAsync(chatUpdateInput);
             var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
 
             var chat = await chatManager.GetByIdAsync(chatUpdateInput.Id);

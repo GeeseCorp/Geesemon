@@ -1,21 +1,19 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { FC } from 'react';
-import { useParams } from "react-router-dom";
-import { useAppSelector } from "../../../behavior/store";
+import { useParams } from 'react-router-dom';
+import { useAppSelector } from '../../../behavior/store';
 import s from './RightSidebar.module.scss';
 
 import { ChatProfile } from '../../chats/ChatProfile/ChatProfile';
 import { RightSidebarState } from '../../../behavior/features/app/slice';
 import { ChatsUpdateGroup } from '../../chats/ChatsUpdateGroup/ChatsUpdateGroup';
 
-type Props = {};
-export const RightSidebar: FC<Props> = ({ }) => {
-    const isRightSidebarVisible = useAppSelector(s => s.app.isRightSidebarVisible)
-    const rightSidebarState = useAppSelector(s => s.app.rightSidebarState)
+export const RightSidebar: FC = () => {
+    const isRightSidebarVisible = useAppSelector(s => s.app.isRightSidebarVisible);
+    const rightSidebarState = useAppSelector(s => s.app.rightSidebarState);
     const params = useParams();
-    const chatId = params.chatId as string;
-    const selectedChat = useAppSelector(s => s.chats.chats.find(c => c.id === chatId));
-
+    const chatUsername = params.chatUsername as string;
+    const selectedChat = useAppSelector(s => s.chats.chats.find(c => c.username === chatUsername));
 
     if (!selectedChat)
         return null;
@@ -27,16 +25,16 @@ export const RightSidebar: FC<Props> = ({ }) => {
             case RightSidebarState.UpdateGroup:
                 return <ChatsUpdateGroup chat={selectedChat} />;
         }
-    }
+    };
 
     return (
         <AnimatePresence>
             {isRightSidebarVisible &&
                 <motion.div
-                    className={s.wrapper}
-                    initial={{ width: '0' }}
-                    exit={{ width: '0' }}
-                    animate={{ width: '400px' }}
+                  className={s.wrapper}
+                  initial={{ width: '0' }}
+                  exit={{ width: '0' }}
+                  animate={{ width: '400px' }}
                 >
                     <div className={s.inner}>
                         {renderContent()}

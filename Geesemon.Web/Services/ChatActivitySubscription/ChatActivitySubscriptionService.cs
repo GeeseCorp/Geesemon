@@ -8,7 +8,6 @@ namespace Geesemon.Web.Services.ChatActivitySubscription;
 public class ChatActivitySubscriptionService : IChatActivitySubscriptionService
 {
     private readonly ISubject<UserChat> userChatActivityStream = new Subject<UserChat>();
-
     private readonly IServiceProvider serviceProvider;
 
     public ChatActivitySubscriptionService(IServiceProvider serviceProvider)

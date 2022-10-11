@@ -1,17 +1,17 @@
-import { chatActions } from "./slice";
-import { RootState } from "../../store";
-import { combineEpics, Epic, ofType } from "redux-observable";
-import { catchError, endWith, from, mergeMap, of, startWith } from "rxjs";
-import { client } from "../../client";
+import { chatActions } from './slice';
+import { RootState } from '../../store';
+import { combineEpics, Epic, ofType } from 'redux-observable';
+import { catchError, endWith, from, mergeMap, of, startWith } from 'rxjs';
+import { client } from '../../client';
 import {
     CHATS_GET_QUERY,
     ChatsGetData,
     ChatsGetVars,
     MESSAGE_GET_QUERY,
     MessageGetData,
-    MessageGetVars
-} from "./queries";
-import { notificationsActions } from "../notifications/slice";
+    MessageGetVars,
+} from './queries';
+import { notificationsActions } from '../notifications/slice';
 import {
     CHAT_CREATE_GROUP_MUTATION,
     ChatCreateGroupData,
@@ -33,10 +33,10 @@ import {
     ChatCreatePersonalVars,
     MessageMakeReadData,
     MessageMakeReadVars,
-    MESSAGE_MAKE_READ_MUTATION
-} from "./mutations";
-import { Chat } from "./types";
-import { appActions, LeftSidebarState } from "../app/slice";
+    MESSAGE_MAKE_READ_MUTATION,
+} from './mutations';
+import { Chat } from './types';
+import { appActions, LeftSidebarState } from '../app/slice';
 import { navigateActions } from '../navigate/slice';
 
 export const chatsGetAsyncEpic: Epic<ReturnType<typeof chatActions.chatsGetAsync>, any, RootState> = (action$, state$) =>
@@ -45,14 +45,14 @@ export const chatsGetAsyncEpic: Epic<ReturnType<typeof chatActions.chatsGetAsync
         mergeMap(action =>
             from(client.query<ChatsGetData, ChatsGetVars>({
                 query: CHATS_GET_QUERY,
-                variables: {}
+                variables: {},
             })).pipe(
                 mergeMap(response => [
                     chatActions.addChats(response.data.chat.get),
                 ]),
                 catchError(error => of(notificationsActions.addError(error.message))),
-            )
-        )
+            ),
+        ),
     );
 
 export const createGroupChatAsyncEpic: Epic<ReturnType<typeof chatActions.createGroupChatAsync>, any, RootState> = (action$, state$) =>
@@ -61,20 +61,19 @@ export const createGroupChatAsyncEpic: Epic<ReturnType<typeof chatActions.create
         mergeMap(action =>
             from(client.mutate<ChatCreateGroupData, ChatCreateGroupVars>({
                 mutation: CHAT_CREATE_GROUP_MUTATION,
-                variables: { input: action.payload }
+                variables: { input: action.payload },
             })).pipe(
                 mergeMap(response => [
                     // chatActions.addChats([response.data?.chat.createGroup as Chat]),
                     appActions.setLeftSidebarState(LeftSidebarState.Chats),
-                    navigateActions.navigate(`./${response.data?.chat.createGroup.id}`),
+                    navigateActions.navigate(`./${response.data?.chat.createGroup.username}`),
                 ]),
                 catchError(error => of(notificationsActions.addError(error.message))),
                 startWith(chatActions.setCreateGroupLoading(true)),
                 endWith(chatActions.setCreateGroupLoading(false)),
-            )
-        )
+            ),
+        ),
     );
-
 
 export const createPersonalChatAsyncEpic: Epic<ReturnType<typeof chatActions.createPersonalChatAsync>, any, RootState> = (action$, state$) =>
     action$.pipe(
@@ -82,18 +81,18 @@ export const createPersonalChatAsyncEpic: Epic<ReturnType<typeof chatActions.cre
         mergeMap(action =>
             from(client.mutate<ChatCreatePersonalData, ChatCreatePersonalVars>({
                 mutation: CHAT_CREATE_PERSONAL_MUTATION,
-                variables: { input: action.payload }
+                variables: { input: action.payload },
             })).pipe(
                 mergeMap(response => [
                     // chatActions.addChats([response.data?.chat.createGroup as Chat]),
                     appActions.setLeftSidebarState(LeftSidebarState.Chats),
-                    navigateActions.navigate(`./${response.data?.chat.createPersonal.id}`),
+                    navigateActions.navigate(`./${response.data?.chat.createPersonal.username}`),
                 ]),
                 catchError(error => of(notificationsActions.addError(error.message))),
                 startWith(chatActions.setCreateGroupLoading(true)),
                 endWith(chatActions.setCreateGroupLoading(false)),
-            )
-        )
+            ),
+        ),
     );
 
 export const chatDeleteAsyncEpic: Epic<ReturnType<typeof chatActions.chatDeleteAsync>, any, RootState> = (action$, state$) =>
@@ -102,12 +101,12 @@ export const chatDeleteAsyncEpic: Epic<ReturnType<typeof chatActions.chatDeleteA
         mergeMap(action =>
             from(client.mutate<ChatDeleteData, ChatDeleteVars>({
                 mutation: CHAT_DELETE_MUTATION,
-                variables: { input: action.payload }
+                variables: { input: action.payload },
             })).pipe(
                 mergeMap(response => []),
                 catchError(error => of(notificationsActions.addError(error.message))),
-            )
-        )
+            ),
+        ),
     );
 
 export const messageSendAsyncEpic: Epic<ReturnType<typeof chatActions.messageSendAsync>, any, RootState> = (action$, state$) =>
@@ -116,12 +115,12 @@ export const messageSendAsyncEpic: Epic<ReturnType<typeof chatActions.messageSen
         mergeMap(action =>
             from(client.mutate<MessageSendData, MessageSendVars>({
                 mutation: MESSAGE_SEND_MUTATION,
-                variables: { input: action.payload }
+                variables: { input: action.payload },
             })).pipe(
                 mergeMap(response => []),
                 catchError(error => of(notificationsActions.addError(error.message))),
-            )
-        )
+            ),
+        ),
     );
 
 export const messageUpdateAsyncEpic: Epic<ReturnType<typeof chatActions.messageUpdateAsync>, any, RootState> = (action$, state$) =>
@@ -130,12 +129,12 @@ export const messageUpdateAsyncEpic: Epic<ReturnType<typeof chatActions.messageU
         mergeMap(action =>
             from(client.mutate<MessageUpdateData, MessageUpdateVars>({
                 mutation: MESSAGE_UPDATE_MUTATION,
-                variables: { input: action.payload }
+                variables: { input: action.payload },
             })).pipe(
                 mergeMap(response => []),
                 catchError(error => of(notificationsActions.addError(error.message))),
-            )
-        )
+            ),
+        ),
     );
 
 export const messageGetAsyncEpic: Epic<ReturnType<typeof chatActions.messageGetAsync>, any, RootState> = (action$, state$) =>
@@ -150,13 +149,13 @@ export const messageGetAsyncEpic: Epic<ReturnType<typeof chatActions.messageGetA
                     chatActions.addMessages({
                         chatId: action.payload.chatId,
                         messages: response.data.message.get,
-                    })
+                    }),
                 ]),
                 catchError(error => of(notificationsActions.addError(error.message))),
                 startWith(chatActions.setMessageGetLoading(true)),
                 endWith(chatActions.setMessageGetLoading(false)),
             ),
-        )
+        ),
     );
 
 export const messageDeleteAsyncEpic: Epic<ReturnType<typeof chatActions.messageDeleteAsync>, any, RootState> = (action$, state$) =>
@@ -165,12 +164,12 @@ export const messageDeleteAsyncEpic: Epic<ReturnType<typeof chatActions.messageD
         mergeMap(action =>
             from(client.mutate<MessageDeleteData, MessageDeleteVars>({
                 mutation: MESSAGE_DELETE_MUTATION,
-                variables: { input: action.payload }
+                variables: { input: action.payload },
             })).pipe(
                 mergeMap(response => []),
                 catchError(error => of(notificationsActions.addError(error.message))),
-            )
-        )
+            ),
+        ),
     );
 
 export const messageMakeReadAsyncEpic: Epic<ReturnType<typeof chatActions.messageMakeReadAsync>, any, RootState> = (action$, state$) =>
@@ -179,12 +178,12 @@ export const messageMakeReadAsyncEpic: Epic<ReturnType<typeof chatActions.messag
         mergeMap(action =>
             from(client.mutate<MessageMakeReadData, MessageMakeReadVars>({
                 mutation: MESSAGE_MAKE_READ_MUTATION,
-                variables: { messageId: action.payload.messageId }
+                variables: { messageId: action.payload.messageId },
             })).pipe(
                 mergeMap(response => []),
                 catchError(error => of(notificationsActions.addError(error.message))),
-            )
-        )
+            ),
+        ),
     );
 
 export const chatEpics = combineEpics(
@@ -198,4 +197,4 @@ export const chatEpics = combineEpics(
     messageGetAsyncEpic,
     messageDeleteAsyncEpic,
     messageMakeReadAsyncEpic,
-)
+);

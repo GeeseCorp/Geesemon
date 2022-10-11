@@ -25,7 +25,7 @@ export const AuthedApp: FC = () => {
   const isMobile = useIsMobile();
   const dispatch = useAppDispatch();
   const isRightSidebarVisible = useAppSelector(
-    (s) => s.app.isRightSidebarVisible
+    s => s.app.isRightSidebarVisible,
   );
   const messageActionSubscription = useSubscription<
     MessageActionsData,
@@ -93,7 +93,7 @@ export const AuthedApp: FC = () => {
         <Routes>
           <Route path={'/'} element={<LeftSidebar />} />
           <Route
-            path={'/:chatId'}
+            path={'/:chatUsername'}
             element={isRightSidebarVisible ? <RightSidebar /> : <ContentBar />}
           />
           <Route path={'/auth/*'} element={<Navigate to={'/'} />} />
@@ -102,16 +102,16 @@ export const AuthedApp: FC = () => {
         <>
           <Routes>
             <Route path={'/'} element={<LeftSidebar />} />
-            <Route path={'/:chatId'} element={<LeftSidebar />} />
+            <Route path={'/:chatUsername'} element={<LeftSidebar />} />
             <Route path={'/auth'} element={<Navigate to={'/'} />} />
             <Route path={'/auth/*'} element={<Navigate to={'/'} />} />
           </Routes>
           <Routes>
             <Route path={'/'} element={<ContentBar />} />
-            <Route path={'/:chatId'} element={<ContentBar />} />
+            <Route path={'/:chatUsername'} element={<ContentBar />} />
           </Routes>
           <Routes>
-            <Route path={'/:chatId'} element={<RightSidebar />} />
+            <Route path={'/:chatUsername'} element={<RightSidebar />} />
             <Route path={'*'} element={<RightSidebar />} />
           </Routes>
         </>

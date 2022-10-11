@@ -1,4 +1,6 @@
-﻿using GraphQL.Types;
+﻿using FluentValidation;
+using Geesemon.DataAccess.Managers;
+using GraphQL.Types;
 using GraphQL.Upload.AspNetCore;
 
 namespace Geesemon.Web.GraphQL.Types;
@@ -8,21 +10,63 @@ public class CreateGroupChatInputType : InputObjectGraphType<CreateGroupChatInpu
     public CreateGroupChatInputType()
     {
         Field<NonNullGraphType<ListGraphType<GuidGraphType>>, List<Guid>>()
-            .Name("UsersId");
+            .Name("UsersId")
+            .Resolve(context => context.Source.UsersId);
 
         Field<NonNullGraphType<StringGraphType>, string>()
-            .Name("Name");
+            .Name("Name")
+            .Resolve(context => context.Source.Name);
+        
+        Field<NonNullGraphType<StringGraphType>, string>()
+            .Name("Username")
+            .Resolve(context => context.Source.Username);
 
         Field<UploadGraphType, IFormFile>()
-            .Name("Image");
+            .Name("Image")
+            .Resolve(context => context.Source.Image);
     }
 }
 
 public class CreateGroupChatInput
 {
     public List<Guid> UsersId { get; set; }
-
     public string Name { get; set; }
-
+    public string Username { get; set; }
     public IFormFile Image { get; set; }
+}
+
+public class CreateGroupChatInputValidation : AbstractValidator<CreateGroupChatInput>
+{
+    public CreateGroupChatInputValidation(ChatManager chatManager, UserManager userManager)
+    {
+        RuleFor(r => r.UsersId)
+            .NotNull()
+            .MustAsync(async (usersId, cancellation) =>
+            {
+                foreach(var userId in usersId)
+                {
+                    var user = await userManager.GetByIdAsync(userId);
+                    if (user == null)
+                        return false;
+                }
+                return true;
+            }).WithMessage("One of user ids does not exists"); ;
+
+        RuleFor(r => r.Name)
+            .NotEmpty()
+            .NotNull()
+            .MaximumLength(100);
+        
+        RuleFor(r => r.Username)
+            .NotEmpty()
+            .NotNull()
+            .MaximumLength(100)
+            .MustAsync(async (username, cancellation) =>
+            {
+                var chat = await chatManager.GetByUsername(username);
+                return chat == null;
+            }).WithMessage("Username already taken");
+
+        RuleFor(r => r.Image);
+    }
 }

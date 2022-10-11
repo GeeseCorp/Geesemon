@@ -1,28 +1,26 @@
-import React, { FC } from 'react';
-import s from './ChatHeader.module.scss';
+import { FC } from 'react';
 import { useNavigate, useParams } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../../behavior/store";
-import { Avatar } from "../../common/Avatar/Avatar";
-import { AvatarWithoutImage } from '../../common/AvatarWithoutImage/AvatarWithoutImage';
-import { useIsMobile } from "../../../hooks/useIsMobile";
-import { HeaderButton } from "../../common/HeaderButton/HeaderButton";
 import backSvg from "../../../assets/svg/back.svg";
 import search from "../../../assets/svg/search.svg";
 import threeDots from "../../../assets/svg/threeDots.svg";
 import { appActions } from '../../../behavior/features/app/slice';
 import { ChatKind } from '../../../behavior/features/chats/types';
-import { OnlineIndicator } from '../../common/OnlineIndicator/OnlineIndicator';
+import { useAppDispatch, useAppSelector } from "../../../behavior/store";
+import { useIsMobile } from "../../../hooks/useIsMobile";
 import { getLastTimeActivity } from '../../../utils/dateUtils';
+import { Avatar } from "../../common/Avatar/Avatar";
+import { AvatarWithoutImage } from '../../common/AvatarWithoutImage/AvatarWithoutImage';
+import { HeaderButton } from "../../common/HeaderButton/HeaderButton";
+import s from './ChatHeader.module.scss';
 
-type Props = {};
-export const ChatHeader: FC<Props> = ({ }) => {
+export const ChatHeader: FC = () => {
     const isMobile = useIsMobile()
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const params = useParams();
-    const chatId = params.chatId;
+    const chatUsername = params.chatUsername;
     const isRightSidebarVisible = useAppSelector(s => s.app.isRightSidebarVisible);
-    const chat = useAppSelector(s => s.chats.chats.find(c => c.id === chatId));
+    const chat = useAppSelector(s => s.chats.chats.find(c => c.username === chatUsername));
     const authedUser = useAppSelector(s => s.auth.authedUser);
 
     const oppositeUser = chat?.type === ChatKind.Personal ? chat.users.filter(u => u.id !== authedUser?.id)[0] : null;

@@ -16,6 +16,11 @@ namespace Geesemon.DataAccess.Providers.ChatProvider
             this.sessionManager = sessionManager;
         }
 
+        public async Task<Chat?> GetByUsername(string chatUsername)
+        {
+            return await context.Chats.FirstOrDefaultAsync(c => c.Username == chatUsername);
+        }
+        
         public async Task<int> GetMembersTotalAsync(Guid chatId)
         {
             var chat = context.Chats.Find(chatId);
