@@ -23,7 +23,7 @@ public class AuthService
 
     public const string Bearer = "Bearer";
 
-    public string GenerateAccessToken(Guid userId, string userLogin, UserRole userRole)
+    public string GenerateAccessToken(Guid userId, string userUsername, UserRole userRole)
     {
         SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(settingsProvider.GetAuthIssuerSigningKey()));
         SigningCredentials signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -31,7 +31,7 @@ public class AuthService
         List<Claim> claims = new List<Claim>
         {
             new Claim(AuthClaimsIdentity.DefaultIdClaimType, userId.ToString()),
-            new Claim(AuthClaimsIdentity.DefaultLoginClaimType, userLogin),
+            new Claim(AuthClaimsIdentity.DefaultUsernameClaimType, userUsername),
             new Claim(ClaimsIdentity.DefaultRoleClaimType, userRole.ToString()),
         };
         JwtSecurityToken token = new JwtSecurityToken(

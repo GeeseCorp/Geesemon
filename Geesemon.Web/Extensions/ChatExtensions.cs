@@ -13,6 +13,7 @@ public static class ChatExtensions
             case ChatKind.Personal:
                 var oppositeUser = await userManager.GetByIdAsync(chat.UserChats.FirstOrDefault(uc => uc.UserId != userId).UserId);
                 chat.Name = oppositeUser.FirstName + " " + oppositeUser.LastName;
+                chat.Username = oppositeUser.Username;
                 chat.ImageColor = oppositeUser.AvatarColor;
                 chat.ImageUrl = oppositeUser.ImageUrl;
                 break;

@@ -3,7 +3,7 @@ import { Entity } from "../../common";
 export type User = {
   firstName: string;
   lastName: string;
-  login: string;
+  username: string;
   email: string;
   phoneNumber: string;
   description: string;
@@ -16,6 +16,6 @@ export type User = {
 } & Entity;
 
 export enum Role {
-  Admin = "ADMIN",
-  User = "USER",
+  Admin = 'ADMIN',
+  User = 'USER',
 }

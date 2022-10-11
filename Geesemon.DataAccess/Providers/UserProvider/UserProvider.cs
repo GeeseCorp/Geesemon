@@ -30,11 +30,11 @@ namespace Geesemon.DataAccess.Providers.UserProvider
                 .CountAsync(u => u.ReadMessages.Any(r => r.MessageId == messageId));
         }
 
-        public virtual Task<User?> GetByLoginAsync(string login, params Expression<Func<User, object>>[] includes)
+        public virtual Task<User?> GetByUsernameAsync(string username, params Expression<Func<User, object>>[] includes)
         {
             return includes.Aggregate(context.Users.AsQueryable(),
                 (current, include) => current.Include(include))
-                    .FirstOrDefaultAsync(e => e.Login == login);
+                    .FirstOrDefaultAsync(e => e.Username == username);
         }
 
         public virtual Task<User?> GetByEmailAsync(string email, params Expression<Func<User, object>>[] includes)
@@ -54,7 +54,7 @@ namespace Geesemon.DataAccess.Providers.UserProvider
         public Task<List<User>> GetAsync(int take, int skip, string q)
         {
             return context.Users
-                .Where(u => u.Login.Contains(q) || u.Email.Contains(q))
+                .Where(u => u.Username.Contains(q) || u.Email.Contains(q))
                 .OrderBy(u => u.FirstName)
                 .ThenBy(u => u.LastName)
                 .Skip(skip)

@@ -11,15 +11,19 @@ namespace Geesemon.Web.GraphQL.Types
         private readonly IServiceProvider serviceProvider;
         public ChatType(IServiceProvider serviceProvider)
         {
-            Field<StringGraphType, string>()
+            Field<StringGraphType, string?>()
                  .Name("Name")
                  .Resolve(context => context.Source.Name);
+            
+            Field<StringGraphType, string?>()
+                 .Name("Username")
+                 .Resolve(context => context.Source.Username);
 
             Field<NonNullGraphType<ChatKindType>, ChatKind>()
                 .Name("Type")
                 .Resolve(context => context.Source.Type);
 
-            Field<StringGraphType, string>()
+            Field<StringGraphType, string?>()
                 .Name("ImageUrl")
                 .Resolve(context => context.Source.ImageUrl);
 

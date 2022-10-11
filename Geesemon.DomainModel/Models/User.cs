@@ -11,7 +11,7 @@ public class User : Entity
 
     public string? LastName { get; set; }
 
-    public string Login { get; set; }
+    public string Username { get; set; }
 
     public string? Description { get; set; }
 

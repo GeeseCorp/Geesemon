@@ -41,9 +41,9 @@ namespace Geesemon.Web.GraphQL.Mutations
                     var authRegisterInput = context.GetArgument<AuthRegisterInput>("input");
                     authRegisterInputValidator.ValidateAndThrow(authRegisterInput);
 
-                    var user = await userManager.GetByLoginAsync(authRegisterInput.Login);
+                    var user = await userManager.GetByUsernameAsync(authRegisterInput.Username);
                     if (user != null)
-                        throw new Exception($"User with login '{authRegisterInput.Login}' already exist.");
+                        throw new Exception($"User with login '{authRegisterInput.Username}' already exist.");
 
                     user = await userManager.GetByEmailAsync(authRegisterInput.Email);
 
@@ -55,7 +55,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                     var newUser = await userManager.CreateAsync(new User
                     {
                         Id = userId,
-                        Login = authRegisterInput.Login,
+                        Username = authRegisterInput.Username,
                         Password = saltedPassword.CreateMD5(),
                         FirstName = authRegisterInput.FirstName,
                         LastName = authRegisterInput.LastName,
@@ -79,7 +79,7 @@ namespace Geesemon.Web.GraphQL.Mutations
 
                     var session = new Session
                     {
-                        Token = authService.GenerateAccessToken(newUser.Id, newUser.Login, newUser.Role),
+                        Token = authService.GenerateAccessToken(newUser.Id, newUser.Username, newUser.Role),
                         UserId = newUser.Id,
                     };
                     session = await FillSession(session, true);
@@ -100,7 +100,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                     var authLoginInput = context.GetArgument<AuthLoginInput>("input");
                     authLoginInputValidator.ValidateAndThrow(authLoginInput);
 
-                    var user = await userManager.GetByLoginAsync(authLoginInput.Login);
+                    var user = await userManager.GetByUsernameAsync(authLoginInput.Username);
                     if (user == null)
                         throw new Exception("Login or password not valid.");
 
@@ -110,7 +110,7 @@ namespace Geesemon.Web.GraphQL.Mutations
 
                     var session = new Session
                     {
-                        Token = authService.GenerateAccessToken(user.Id, user.Login, user.Role),
+                        Token = authService.GenerateAccessToken(user.Id, user.Username, user.Role),
                         UserId = user.Id,
                     };
                     session = await FillSession(session, true);
