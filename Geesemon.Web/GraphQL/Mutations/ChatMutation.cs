@@ -136,17 +136,17 @@ namespace Geesemon.Web.GraphQL.Mutations
             await userChatManager.CreateManyAsync(userChat);
 
             subscriptionService.Notify(chat, ChatActionKind.Create);
-            //NOTE: This is test for system messages. This line should be removed after finishing testing.
-            await messageSubscriptionService.SentSystemMessageAsync("Hello! This is system message test!!!", chat.Id);
+
+            var user = await userManager.GetByIdAsync(currentUserId);
+
+            await messageSubscriptionService.SentSystemMessageAsync($"@{user.Username} created the group \"{chat.Name}\"", chat.Id);
             return chat;
         }
 
         private async Task<bool> ResolveDelete(IResolveFieldContext context)
         {
             var chatInput = context.GetArgument<Guid>("Input");
-
             var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
-
             var chat = await chatManager.GetByIdAsync(chatInput);
 
             Exception exception = new Exception("User can only delete personal chats or chats he own.");
@@ -176,9 +176,6 @@ namespace Geesemon.Web.GraphQL.Mutations
             var chat = await chatManager.GetByIdAsync(chatUpdateInput.Id);
 
             Exception exception = new Exception("User can update only group chats he own.");
-
-            if (chat == null)
-                throw new Exception($"Chat with id {chatUpdateInput.Id} doesn't exist.");
 
             if (!await chatManager.IsUserInChat(currentUserId, chat.Id))
                 throw exception;
