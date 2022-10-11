@@ -48,7 +48,7 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
                     />
                 ));
             default:
-                null;
+                <></>;
         }
     };
 

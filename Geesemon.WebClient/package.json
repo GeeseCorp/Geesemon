@@ -6,7 +6,6 @@
         "@ant-design/icons": "^4.7.0",
         "@apollo/client": "^3.6.4",
         "@reduxjs/toolkit": "^1.8.1",
-        "@types/yup": "^0.32.0",
         "antd": "^4.20.5",
         "apollo-upload-client": "^17.0.0",
         "css-modules": "^0.3.0",

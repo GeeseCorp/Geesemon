@@ -1,16 +1,16 @@
-import { FC, useCallback, useEffect, useRef, useState } from "react";
+import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { usersActions } from '../../../behavior/features/users/slice';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
-import { User } from "../User/User";
+import { User } from '../User/User';
 import s from './Users.module.scss';
 import { SmallLoading } from '../../common/SmallLoading/SmallLoading';
 
 type Props = {
-    onSelectedUserIdChange?: (selectedUserIds: string[]) => void
-    selectMultiple?: boolean
-    selectedUserIds: string[]
-    setSelectedUserIds: (selectedUserIds: string[]) => void
-}
+    onSelectedUserIdChange?: (selectedUserIds: string[]) => void;
+    selectMultiple?: boolean;
+    selectedUserIds: string[];
+    setSelectedUserIds: (selectedUserIds: string[]) => void;
+};
 
 export const Users: FC<Props> = ({ onSelectedUserIdChange, selectMultiple = false, selectedUserIds, setSelectedUserIds }) => {
     const users = useAppSelector(s => s.users.users);
@@ -21,7 +21,7 @@ export const Users: FC<Props> = ({ onSelectedUserIdChange, selectMultiple = fals
     const q = useAppSelector(s => s.users.q);
     const dispatch = useAppDispatch();
     const observer = useRef<IntersectionObserver | null>(null);
-    const [isFirstTimeRendered, setIsFirstTimeRendered] = useState(false)
+    const [isFirstTimeRendered, setIsFirstTimeRendered] = useState(false);
 
     const lastUserElementRef = useCallback((node: HTMLDivElement) => {
         if (usersGetLoading)
@@ -33,21 +33,21 @@ export const Users: FC<Props> = ({ onSelectedUserIdChange, selectMultiple = fals
                 console.log(skip + take);
                 dispatch(usersActions.setSkip(skip + take));
             }
-        })
+        });
         if (node)
             observer.current.observe(node);
-    }, [usersGetLoading])
+    }, [usersGetLoading]);
 
     useEffect(() => {
         dispatch(usersActions.usersGetAsync({
             take,
             skip,
             q,
-        }))
+        }));
         return () => {
             dispatch(usersActions.resetUsers());
-        }
-    }, [skip, take, q])
+        };
+    }, [skip, take, q]);
 
     useEffect(() => {
         if (isFirstTimeRendered) {
@@ -55,30 +55,34 @@ export const Users: FC<Props> = ({ onSelectedUserIdChange, selectMultiple = fals
             return;
         }
 
-    }, [q])
+    }, [q]);
 
     return (
         <div className={s.users}>
             {users.map((user, index) =>
                 users.length == index + 1
-                    ? <div key={user.id} ref={lastUserElementRef}>
+                    ? (
+<div key={user.id} ref={lastUserElementRef}>
                         <User
-                            user={user}
-                            selectMultiple={selectMultiple}
-                            selectedUserIds={selectedUserIds}
-                            setSelectedUserIds={setSelectedUserIds}
-                            onSelectedUserIdChange={onSelectedUserIdChange}
+                          user={user}
+                          selectMultiple={selectMultiple}
+                          selectedUserIds={selectedUserIds}
+                          setSelectedUserIds={setSelectedUserIds}
+                          onSelectedUserIdChange={onSelectedUserIdChange}
                         />
                     </div>
-                    : <div key={user.id} >
+)
+                    : (
+<div key={user.id}>
                         <User
-                            user={user}
-                            selectMultiple={selectMultiple}
-                            selectedUserIds={selectedUserIds}
-                            setSelectedUserIds={setSelectedUserIds}
-                            onSelectedUserIdChange={onSelectedUserIdChange}
+                          user={user}
+                          selectMultiple={selectMultiple}
+                          selectedUserIds={selectedUserIds}
+                          setSelectedUserIds={setSelectedUserIds}
+                          onSelectedUserIdChange={onSelectedUserIdChange}
                         />
                     </div>
+),
             )}
             {usersGetLoading &&
                 <div className={s.loading}>
@@ -86,5 +90,5 @@ export const Users: FC<Props> = ({ onSelectedUserIdChange, selectMultiple = fals
                 </div>
             }
         </div>
-    )
-}
+    );
+};
