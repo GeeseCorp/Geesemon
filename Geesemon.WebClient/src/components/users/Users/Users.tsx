@@ -4,15 +4,16 @@ import { useAppDispatch, useAppSelector } from '../../../behavior/store';
 import { User } from '../User/User';
 import s from './Users.module.scss';
 import { SmallLoading } from '../../common/SmallLoading/SmallLoading';
+import {User as UserType } from '../../../behavior/features/users/types';
 
 type Props = {
-    onSelectedUserIdChange?: (selectedUserIds: string[]) => void;
+    onSelectedUsersChange?: (selectedUsers: UserType[]) => void;
     selectMultiple?: boolean;
-    selectedUserIds: string[];
-    setSelectedUserIds: (selectedUserIds: string[]) => void;
+    selectedUsers: UserType[];
+    setSelectedUsers: (selectedUsers: UserType[]) => void;
 };
 
-export const Users: FC<Props> = ({ onSelectedUserIdChange, selectMultiple = false, selectedUserIds, setSelectedUserIds }) => {
+export const Users: FC<Props> = ({ onSelectedUsersChange, selectMultiple = false, selectedUsers, setSelectedUsers }) => {
     const users = useAppSelector(s => s.users.users);
     const usersGetLoading = useAppSelector(s => s.users.usersGetLoading);
     const take = useAppSelector(s => s.users.take);
@@ -60,29 +61,29 @@ export const Users: FC<Props> = ({ onSelectedUserIdChange, selectMultiple = fals
     return (
         <div className={s.users}>
             {users.map((user, index) =>
-                users.length == index + 1
+                users.length === index + 1
                     ? (
-<div key={user.id} ref={lastUserElementRef}>
-                        <User
-                          user={user}
-                          selectMultiple={selectMultiple}
-                          selectedUserIds={selectedUserIds}
-                          setSelectedUserIds={setSelectedUserIds}
-                          onSelectedUserIdChange={onSelectedUserIdChange}
-                        />
-                    </div>
-)
+                        <div key={user.id} ref={lastUserElementRef}>
+                            <User
+                              user={user}
+                              selectMultiple={selectMultiple}
+                              selectedUsers={selectedUsers}
+                              setSelectedUsers={setSelectedUsers}
+                              onSelectedUsersChange={onSelectedUsersChange}
+                            />
+                        </div>
+                    )
                     : (
-<div key={user.id}>
-                        <User
-                          user={user}
-                          selectMultiple={selectMultiple}
-                          selectedUserIds={selectedUserIds}
-                          setSelectedUserIds={setSelectedUserIds}
-                          onSelectedUserIdChange={onSelectedUserIdChange}
-                        />
-                    </div>
-),
+                        <div key={user.id}>
+                            <User
+                              user={user}
+                              selectMultiple={selectMultiple}
+                              selectedUsers={selectedUsers}
+                              setSelectedUsers={setSelectedUsers}
+                              onSelectedUsersChange={onSelectedUsersChange}
+                            />
+                        </div>
+                    ),
             )}
             {usersGetLoading &&
                 <div className={s.loading}>

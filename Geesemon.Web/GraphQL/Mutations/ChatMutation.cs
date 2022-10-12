@@ -17,18 +17,24 @@ namespace Geesemon.Web.GraphQL.Mutations
     {
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly FileManagerService fileManagerService;
-        private readonly IChatActionSubscriptionService subscriptionService;
+        private readonly IChatActionSubscriptionService chatActionSubscriptionService;
         private readonly IMessageActionSubscriptionService messageSubscriptionService;
         private readonly ChatManager chatManager;
+        private readonly UserChatManager userChatManager;
+        private readonly UserManager userManager;
+        private readonly IServiceProvider serviceProvider;
         private readonly IValidator<CreateGroupChatInput> createGroupChatInputValidator;
         private readonly IValidator<UpdateChatInput> updateChatInputValidator;
 
         public ChatMutation(
             IHttpContextAccessor httpContextAccessor,
             FileManagerService fileManagerService,
-            IChatActionSubscriptionService chatSubscriptionService,
+            IChatActionSubscriptionService chatActionSubscriptionService,
             IMessageActionSubscriptionService messageSubscriptionService,
             ChatManager chatManager,
+            UserChatManager userChatManager,
+            UserManager userManager,
+            IServiceProvider serviceProvider,
             IValidator<CreateGroupChatInput> createGroupChatInputValidator,
             IValidator<UpdateChatInput> updateChatInputValidator
             )
@@ -59,29 +65,26 @@ namespace Geesemon.Web.GraphQL.Mutations
 
             this.httpContextAccessor = httpContextAccessor;
             this.fileManagerService = fileManagerService;
-            this.subscriptionService = chatSubscriptionService;
+            this.chatActionSubscriptionService = chatActionSubscriptionService;
             this.messageSubscriptionService = messageSubscriptionService;
             this.chatManager = chatManager;
+            this.userChatManager = userChatManager;
+            this.userManager = userManager;
+            this.serviceProvider = serviceProvider;
             this.createGroupChatInputValidator = createGroupChatInputValidator;
             this.updateChatInputValidator = updateChatInputValidator;
         }
 
         private async Task<Chat?> ResolveCreatePersonal(IResolveFieldContext context)
         {
-            var chatManager = context.RequestServices.GetRequiredService<ChatManager>();
-            var userChatManager = context.RequestServices.GetRequiredService<UserChatManager>();
-            var userManager = context.RequestServices.GetRequiredService<UserManager>();
             var chatInp = context.GetArgument<CreatePersonalChatInput>("Input");
             var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
 
-            var oppositeUser = await userManager.GetByIdAsync(chatInp.UserId);
-            if (oppositeUser == null)
-                throw new Exception("User not found");
+            var checkChat = await chatManager.GetByUsername(chatInp.Username, currentUserId);
+            if (checkChat != null)
+                throw new Exception("Personal chat already exists");
 
-            var userChats = await userChatManager.GetPersonalByUserIdsAsync(oppositeUser.Id, currentUserId);
-
-            if (userChats.Count != 0)
-                throw new Exception("Personal chat already exist.");
+            var oppositeUser = await userManager.GetByUsernameAsync(chatInp.Username);
 
             var chat = new Chat
             {
@@ -95,13 +98,11 @@ namespace Geesemon.Web.GraphQL.Mutations
                 new UserChat { UserId = currentUserId, ChatId = chat.Id },
             };
             if (oppositeUser.Id != currentUserId)
-                userChat.Add(new UserChat { UserId = chatInp.UserId, ChatId = chat.Id });
+                userChat.Add(new UserChat { UserId = oppositeUser.Id, ChatId = chat.Id });
             await userChatManager.CreateManyAsync(userChat);
 
-            //chat.Name = oppositeUser.FirstName + " " + oppositeUser.LastName;
-            //chat.ImageUrl = oppositeUser.ImageUrl;
-            chat = await chat.MapForUserAsync(currentUserId, userManager);
-            return subscriptionService.Notify(chat, ChatActionKind.Create); ;
+            chat = await chat.MapForUserAsync(currentUserId, serviceProvider);
+            return chatActionSubscriptionService.Notify(chat, ChatActionKind.Create); ;
         }
 
         private async Task<Chat?> ResolveCreateGroup(IResolveFieldContext context)
@@ -135,7 +136,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                 userChat.Add(new UserChat { UserId = userId, ChatId = chat.Id });
             await userChatManager.CreateManyAsync(userChat);
 
-            subscriptionService.Notify(chat, ChatActionKind.Create);
+            chatActionSubscriptionService.Notify(chat, ChatActionKind.Create);
 
             var user = await userManager.GetByIdAsync(currentUserId);
 
@@ -161,7 +162,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                 throw exception;
 
             //NOTE: Because functionality in ChatActionSubscriptionService depends on chat being in database we need to run notify before deletion
-            subscriptionService.Notify(chat, ChatActionKind.Delete);
+            chatActionSubscriptionService.Notify(chat, ChatActionKind.Delete);
 
             await chatManager.RemoveAsync(chatInput);
             return true;
@@ -186,7 +187,7 @@ namespace Geesemon.Web.GraphQL.Mutations
             chat.Name = chatUpdateInput.Name;
             await chatManager.UpdateAsync(chat);
 
-            subscriptionService.Notify(chat, ChatActionKind.Update);
+            chatActionSubscriptionService.Notify(chat, ChatActionKind.Update);
             return chat;
         }
     }

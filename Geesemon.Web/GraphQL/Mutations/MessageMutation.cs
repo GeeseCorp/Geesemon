@@ -22,20 +22,24 @@ namespace Geesemon.Web.GraphQL.Mutations
         {
             Field<MessageType>()
                 .Name("Send")
-                .Argument<NonNullGraphType<SentMessageInputType>>("Input")
+                .Argument<NonNullGraphType<SentMessageInputType>, SentMessageInput>("Input", "")
                 .ResolveAsync(async context =>
                     {
-                        var receivedMessage = context.GetArgument<SentMessageInput>("Input");
+                        var sentMessageInput = context.GetArgument<SentMessageInput>("Input");
                         var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
 
-                        var isUserInChat = await chatManager.IsUserInChat(currentUserId, receivedMessage.ChatId);
+                        var chat = await chatManager.GetByUsername(sentMessageInput.ChatUsername, currentUserId);
+                        if(chat == null)
+                            throw new ExecutionError("Chat not found");
+
+                        var isUserInChat = await chatManager.IsUserInChat(currentUserId, chat.Id);
                         if (!isUserInChat)
-                            throw new Exception("User can sent messages only to chats that he participate.");
+                            throw new ExecutionError("User can sent messages only to chats that he participate.");
 
                         Message newMessage = new Message()
                         {
-                            ChatId = receivedMessage.ChatId,
-                            Text = receivedMessage.Text,
+                            ChatId = chat.Id,
+                            Text = sentMessageInput.Text,
                             FromId = currentUserId,
                             Type = MessageKind.Regular
                         };
@@ -48,7 +52,7 @@ namespace Geesemon.Web.GraphQL.Mutations
 
             Field<MessageType>()
                 .Name("Delete")
-                .Argument<NonNullGraphType<DeleteMessageInputType>>("Input")
+                .Argument<NonNullGraphType<DeleteMessageInputType>, DeleteMessageInput>("Input", "")
                 .ResolveAsync(async context =>
                 {
                     var input = context.GetArgument<DeleteMessageInput>("Input");
@@ -70,7 +74,7 @@ namespace Geesemon.Web.GraphQL.Mutations
 
             Field<MessageType>()
                 .Name("Update")
-                .Argument<NonNullGraphType<UpdateMessageInputType>>("Input")
+                .Argument<NonNullGraphType<UpdateMessageInputType>, UpdateMessageInput>("Input", "")
                 .ResolveAsync(async context =>
                 {
                     var input = context.GetArgument<UpdateMessageInput>("Input");

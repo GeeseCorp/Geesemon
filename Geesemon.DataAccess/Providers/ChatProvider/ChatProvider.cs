@@ -1,24 +1,27 @@
-﻿using Geesemon.DataAccess.Managers;
+﻿using Geesemon.Model.Enums;
 using Geesemon.Model.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
-using System.Runtime.InteropServices;
 
 namespace Geesemon.DataAccess.Providers.ChatProvider
 {
     public class ChatProvider : ProviderBase<Chat>, IChatProvider
     {
-        private readonly SessionManager sessionManager;
 
-        public ChatProvider(AppDbContext appDbContext, SessionManager sessionManager)
+        public ChatProvider(AppDbContext appDbContext)
             : base(appDbContext)
         {
-            this.sessionManager = sessionManager;
         }
 
-        public async Task<Chat?> GetByUsername(string chatUsername)
+        public async Task<Chat?> GetByUsername(string chatUsername, Guid currentUserId)
         {
-            return await context.Chats.FirstOrDefaultAsync(c => c.Username == chatUsername);
+            return await context.Chats
+                .Include(c => c.UserChats)
+                .ThenInclude(uc => uc.User)
+                .FirstOrDefaultAsync(c => c.Type == ChatKind.Personal
+                    ? c.UserChats.Any(uc => uc.User.Username == chatUsername && uc.UserId != currentUserId)
+                    : c.Type == ChatKind.Saved
+                        ? c.UserChats.Any(uc => uc.User.Username == chatUsername && uc.UserId == currentUserId)
+                        : c.Username == chatUsername && c.UserChats.Any(uc => uc.UserId == currentUserId));
         }
         
         public async Task<int> GetMembersTotalAsync(Guid chatId)
@@ -57,7 +60,9 @@ namespace Geesemon.DataAccess.Providers.ChatProvider
                 .Include(c => c.UserChats)
                 .Include(c => c.Messages)
                 .Where(c => c.UserChats.Any(uc => uc.UserId == userId))
-                .OrderByDescending(c => c.Messages.OrderByDescending(m => m.CreatedAt).FirstOrDefault() != null ? c.Messages.OrderByDescending(m => m.CreatedAt).First().CreatedAt : c.CreatedAt)
+                .OrderByDescending(c => c.Messages.OrderByDescending(m => m.CreatedAt).FirstOrDefault() != null 
+                    ? c.Messages.OrderByDescending(m => m.CreatedAt).First().CreatedAt 
+                    : c.CreatedAt)
                 .Skip(skipMessageCount)
                 .Take(takeMessageCount)
                 .ToListAsync();

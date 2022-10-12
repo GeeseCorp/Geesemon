@@ -13,7 +13,9 @@ export const Messages: FC = () => {
     const chatUsername = params.chatUsername as string;
     const messageGetLoading = useAppSelector(s => s.chats.messageGetLoading);
     const chats = useAppSelector(s => s.chats.chats);
-    const selectedChat = chats.find(c => c.username === chatUsername);
+    const chat = chats.find(c => c.username === chatUsername);
+    const chatByUsername = useAppSelector(s => s.chats.chatByUsername);
+    const selectedChat = chat || chatByUsername;
     const messages = selectedChat?.messages || [];
     const dispatch = useAppDispatch();
     const [isAutoScroll, setIsAutoScroll] = useState(false);

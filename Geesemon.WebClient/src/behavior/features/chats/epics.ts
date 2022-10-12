@@ -1,43 +1,31 @@
-import { chatActions } from './slice';
-import { RootState } from '../../store';
 import { combineEpics, Epic, ofType } from 'redux-observable';
-import { catchError, endWith, from, mergeMap, of, startWith } from 'rxjs';
+import { catchError, endWith, from, iif, map, mergeMap, of, startWith } from 'rxjs';
+import { isGuidEmpty } from '../../../utils/stringUtils';
 import { client } from '../../client';
-import {
-    CHATS_GET_QUERY,
-    ChatsGetData,
-    ChatsGetVars,
-    MESSAGE_GET_QUERY,
-    MessageGetData,
-    MessageGetVars,
-} from './queries';
-import { notificationsActions } from '../notifications/slice';
-import {
-    CHAT_CREATE_GROUP_MUTATION,
-    ChatCreateGroupData,
-    ChatCreateGroupVars,
-    MESSAGE_DELETE_MUTATION,
-    MESSAGE_SEND_MUTATION,
-    MESSAGE_UPDATE_MUTATION,
-    MessageDeleteData,
-    MessageDeleteVars,
-    MessageSendData,
-    MessageSendVars,
-    MessageUpdateData,
-    MessageUpdateVars,
-    CHAT_DELETE_MUTATION,
-    ChatDeleteData,
-    ChatDeleteVars,
-    CHAT_CREATE_PERSONAL_MUTATION,
-    ChatCreatePersonalData,
-    ChatCreatePersonalVars,
-    MessageMakeReadData,
-    MessageMakeReadVars,
-    MESSAGE_MAKE_READ_MUTATION,
-} from './mutations';
-import { Chat } from './types';
+import { RootState } from '../../store';
 import { appActions, LeftSidebarState } from '../app/slice';
 import { navigateActions } from '../navigate/slice';
+import { notificationsActions } from '../notifications/slice';
+import {
+    ChatCreateGroupData,
+    ChatCreateGroupVars, ChatCreatePersonalData,
+    ChatCreatePersonalVars, ChatDeleteData,
+    ChatDeleteVars, CHAT_CREATE_GROUP_MUTATION, CHAT_CREATE_PERSONAL_MUTATION, CHAT_DELETE_MUTATION, MessageDeleteData,
+    MessageDeleteVars, MessageMakeReadData,
+    MessageMakeReadVars, MessageSendData,
+    MessageSendVars,
+    MessageUpdateData,
+    MessageUpdateVars, MESSAGE_DELETE_MUTATION, MESSAGE_MAKE_READ_MUTATION, MESSAGE_SEND_MUTATION,
+    MESSAGE_UPDATE_MUTATION,
+} from './mutations';
+import {
+    ChatsGetByUsernameData,
+    ChatsGetByUsernameVars,
+    ChatsGetData,
+    ChatsGetVars, CHATS_GET_BY_USERNAME_QUERY, CHATS_GET_QUERY, MessageGetData,
+    MessageGetVars, MESSAGE_GET_QUERY,
+} from './queries';
+import { chatActions } from './slice';
 
 export const chatsGetAsyncEpic: Epic<ReturnType<typeof chatActions.chatsGetAsync>, any, RootState> = (action$, state$) =>
     action$.pipe(
@@ -51,6 +39,26 @@ export const chatsGetAsyncEpic: Epic<ReturnType<typeof chatActions.chatsGetAsync
                     chatActions.addChats(response.data.chat.get),
                 ]),
                 catchError(error => of(notificationsActions.addError(error.message))),
+                startWith(chatActions.setChatsGetLoading(true)),
+                endWith(chatActions.setChatsGetLoading(false)),
+            ),
+        ),
+    );
+
+export const chatGetByUsernameAsyncEpic: Epic<ReturnType<typeof chatActions.chatGetByUsernameAsync>, any, RootState> = (action$, state$) =>
+    action$.pipe(
+        ofType(chatActions.chatGetByUsernameAsync.type),
+        mergeMap(action =>
+            from(client.query<ChatsGetByUsernameData, ChatsGetByUsernameVars>({
+                query: CHATS_GET_BY_USERNAME_QUERY,
+                variables: { username: action.payload },
+            })).pipe(
+                mergeMap(response => [
+                    chatActions.setChatByUsername(response.data.chat.getByUsername),
+                ]),
+                catchError(error => of(notificationsActions.addError(error.message))),
+                startWith(chatActions.setChatGetByUsernameLoading(true)),
+                endWith(chatActions.setChatGetByUsernameLoading(false)),
             ),
         ),
     );
@@ -113,13 +121,30 @@ export const messageSendAsyncEpic: Epic<ReturnType<typeof chatActions.messageSen
     action$.pipe(
         ofType(chatActions.messageSendAsync.type),
         mergeMap(action =>
-            from(client.mutate<MessageSendData, MessageSendVars>({
-                mutation: MESSAGE_SEND_MUTATION,
-                variables: { input: action.payload },
-            })).pipe(
-                mergeMap(response => []),
-                catchError(error => of(notificationsActions.addError(error.message))),
+            iif(() => isGuidEmpty(action.payload.chatId),
+                from(client.mutate<ChatCreatePersonalData, ChatCreatePersonalVars>({
+                    mutation: CHAT_CREATE_PERSONAL_MUTATION,
+                    variables: { input: { username: action.payload.sentMessageInputType.chatUsername } },
+                })).pipe(
+                    mergeMap(response => 
+                        from(client.mutate<MessageSendData, MessageSendVars>({
+                            mutation: MESSAGE_SEND_MUTATION,
+                            variables: { input: action.payload.sentMessageInputType },
+                        })).pipe(
+                            mergeMap(response => []),
+                            catchError(error => of(notificationsActions.addError(error.message))),
+                        ),
+                    ),
+                ),
+                from(client.mutate<MessageSendData, MessageSendVars>({
+                    mutation: MESSAGE_SEND_MUTATION,
+                    variables: { input: action.payload.sentMessageInputType },
+                })).pipe(
+                    mergeMap(response => []),
+                    catchError(error => of(notificationsActions.addError(error.message))),
+                ),
             ),
+            
         ),
     );
 
@@ -189,6 +214,7 @@ export const messageMakeReadAsyncEpic: Epic<ReturnType<typeof chatActions.messag
 export const chatEpics = combineEpics(
     chatsGetAsyncEpic,
     // @ts-ignore
+    chatGetByUsernameAsyncEpic,
     createGroupChatAsyncEpic,
     createPersonalChatAsyncEpic,
     chatDeleteAsyncEpic,

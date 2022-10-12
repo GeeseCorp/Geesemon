@@ -4,7 +4,7 @@ import * as Yup from 'yup';
 import { authActions } from '../../../behavior/features/auth/slice';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
 import { nameof } from '../../../utils/typeUtils';
-import { BigStrongButton } from '../../common/BigPrimaryButton/BigPrimaryButton';
+import { BigPrimaryButton } from '../../common/BigPrimaryButton/BigPrimaryButton';
 import { Input } from '../../common/formControls/Input/Input';
 import s from './Login.module.scss';
 
@@ -63,13 +63,13 @@ export const Login = () => {
                   touched={formik.touched.password}
                   errors={formik.errors.password}
                 />
-                <BigStrongButton
+                <BigPrimaryButton
                   disabled={!(formik.isValid && formik.dirty)}
                   loading={loginLoading}
                   type="submit"
                 >
                     Login
-                </BigStrongButton>
+                </BigPrimaryButton>
                 <Link to="/auth/register">Register</Link>
             </form>
         </div>

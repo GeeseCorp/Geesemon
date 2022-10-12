@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState } from 'react';
 
 export const useOnScreen = (ref: React.MutableRefObject<HTMLDivElement | null>) => {
     const [isIntersecting, setIntersecting] = useState(false);
@@ -7,19 +7,19 @@ export const useOnScreen = (ref: React.MutableRefObject<HTMLDivElement | null>) 
 
     useEffect(() => {
         if (isMounted)
-            observer.disconnect()
+            observer.disconnect();
 
         if (ref.current)
-            observer.observe(ref.current)
+            observer.observe(ref.current);
 
         if (!isMounted)
             setIsMounted(true);
 
         return () => {
             if (ref.current)
-                observer.disconnect()
-        }
-    }, [ref.current])
+                observer.disconnect();
+        };
+    }, [ref.current]);
 
-    return isIntersecting
-}
+    return isIntersecting;
+};

@@ -2,6 +2,7 @@
 using Geesemon.DataAccess.Managers;
 using Geesemon.Model.Models;
 using GraphQL.Types;
+using Microsoft.AspNetCore.Http;
 
 namespace Geesemon.Web.GraphQL.Types;
 
@@ -32,7 +33,7 @@ public class UpdateChatInput
 
 public class UpdateChatInputValidation : AbstractValidator<UpdateChatInput>
 {
-    public UpdateChatInputValidation(ChatManager chatManager)
+    public UpdateChatInputValidation(ChatManager chatManager, IHttpContextAccessor httpContextAccessor)
     {
         RuleFor(r => r.Id)
             .NotNull()
@@ -53,7 +54,8 @@ public class UpdateChatInputValidation : AbstractValidator<UpdateChatInput>
             .MaximumLength(100)
             .MustAsync(async (chat, username, cancellation) =>
             {
-                var checkChat = await chatManager.GetByUsername(username);
+                var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
+                var checkChat = await chatManager.GetByUsername(username, currentUserId);
                 return checkChat == null || checkChat.Id == chat.Id;
             }).WithMessage("Username already taken");
     }

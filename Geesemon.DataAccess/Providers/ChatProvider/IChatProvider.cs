@@ -4,7 +4,7 @@ namespace Geesemon.DataAccess.Providers.ChatProvider
 {
     public interface IChatProvider : IProviderBase<Chat>
     {
-        Task<Chat?> GetByUsername(string chatUsername);
+        Task<Chat?> GetByUsername(string chatUsername, Guid currentUserId);
         Task<int> GetMembersOnlineAsync(Guid chatId);
         Task<int> GetMembersTotalAsync(Guid chatId);
         Task<IEnumerable<Chat>> GetAllForUserAsync(Guid userId);

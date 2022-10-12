@@ -6,13 +6,12 @@ using Geesemon.Web.GraphQL.Auth;
 using Geesemon.Web.GraphQL.Types;
 using GraphQL;
 using GraphQL.Types;
-using System.Threading.Tasks;
 
 namespace Geesemon.Web.GraphQL.Queries
 {
     public class ChatQuery : ObjectGraphType
     {
-        public ChatQuery(IHttpContextAccessor httpContextAccessor)
+        public ChatQuery(IHttpContextAccessor httpContextAccessor, ChatManager chatManager, IServiceProvider serviceProvider, UserManager userManager)
         {
             Field<NonNullGraphType<ListGraphType<ChatType>>, IEnumerable<Chat>>()
                 .Name("Get")
@@ -23,30 +22,32 @@ namespace Geesemon.Web.GraphQL.Queries
                     var skip = context.GetArgument<int>("Skip");
                     var take = context.GetArgument<int?>("Take");
 
-                    var chatManager = context.RequestServices.GetRequiredService<ChatManager>();
-                    var userManager = context.RequestServices.GetRequiredService<UserManager>();
                     var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
                     var chats = await chatManager.GetPaginatedForUserAsync(currentUserId, skip, take ?? 30);
-                    chats = await chats.MapForUserAsync(currentUserId, userManager);
-
-                    //foreach (var chat in chats)
-                    //{
-                    //    if (chat.Type == ChatKind.Personal)
-                    //    {
-                    //        var oppositeUser = await userManager.GetByIdAsync(chat.UserChats.FirstOrDefault(uc => uc.UserId != currentUserId).UserId);
-
-                    //        chat.Name = oppositeUser.FirstName + " " + oppositeUser.LastName;
-                    //        chat.ImageColor = oppositeUser.AvatarColor;
-                    //        chat.ImageUrl = oppositeUser.ImageUrl;
-                    //    }
-
-                    //    if (chat.Type == ChatKind.Saved)
-                    //    {
-                    //        chat.Name = "Saved Messages";
-                    //    }
-                    //}
-
+                    chats = await chats.MapForUserAsync(currentUserId, serviceProvider);
                     return chats;
+                })
+                .AuthorizeWith(AuthPolicies.Authenticated);
+            
+            Field<ChatType, Chat?>()
+                .Name("GetByUsername")
+                .Argument<NonNullGraphType<StringGraphType>, string>("Username", "")
+                .ResolveAsync(async context =>
+                {
+                    var username = context.GetArgument<string>("Username");
+                    var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
+                    var currentUsername = httpContextAccessor.HttpContext.User.Claims.GetUsername();
+                    var chat = await chatManager.GetByUsername(username, currentUserId);
+                    if(chat == null)
+                    {
+                        var user = await userManager.GetByUsernameAsync(username);
+                        if (user == null)
+                            return null;
+
+                        var kind = user.Username == currentUsername ? ChatKind.Saved : ChatKind.Personal;
+                        return new Chat().MapWithUser(user, kind);
+                    }
+                    return await chat.MapForUserAsync(currentUserId, serviceProvider);
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
         }

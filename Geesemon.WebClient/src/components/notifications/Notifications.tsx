@@ -1,8 +1,8 @@
-import React, {useEffect} from 'react';
-import {useDispatch, useSelector} from "react-redux";
-import {message} from "antd";
-import {RootState} from "../../behavior/store";
-import {notificationsActions} from "../../behavior/features/notifications/slice";
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { message } from 'antd';
+import { RootState } from '../../behavior/store';
+import { notificationsActions } from '../../behavior/features/notifications/slice';
 
 export const Notifications = () => {
     const notifications = useSelector((s: RootState) => s.notifications.notifications);
@@ -13,22 +13,22 @@ export const Notifications = () => {
             notifications.map(n => {
                 switch (n.type) {
                     case 'Success':
-                        message.success(n.text)
+                        message.success(n.text);
                         break;
                     case 'Error':
-                        message.error(n.text)
+                        message.error(n.text);
                         break;
                     case 'Info':
-                        message.info(n.text)
+                        message.info(n.text);
                         break;
                     case 'Warning':
-                        message.warning(n.text)
+                        message.warning(n.text);
                         break;
                 }
             });
             dispatch(notificationsActions.removeNotification());
         }
-    }, [notifications])
+    }, [notifications]);
 
     return null;
 };
