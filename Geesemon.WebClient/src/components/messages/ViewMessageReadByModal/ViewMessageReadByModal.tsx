@@ -1,14 +1,13 @@
-import { FC, useEffect, useRef } from "react";
-import backSvg from "../../../assets/svg/back.svg";
-import { chatActions } from "../../../behavior/features/chats";
-import { useAppDispatch, useAppSelector } from "../../../behavior/store";
-import { HeaderButton } from "../../common/HeaderButton/HeaderButton";
-import { Modal } from "../../common/Modal/Modal";
-import { User } from "../../users/User/User";
-import { Checks } from "../Checks/Checks";
-import s from './ViewMessageReadByModal.module.scss';
-import { useOnScreen } from '../../../hooks/useOnScreen';
+import { FC } from 'react';
+import backSvg from '../../../assets/svg/back.svg';
+import { chatActions } from '../../../behavior/features/chats';
 import { usersActions } from '../../../behavior/features/users/slice';
+import { useAppDispatch, useAppSelector } from '../../../behavior/store';
+import { HeaderButton } from '../../common/HeaderButton/HeaderButton';
+import { Modal } from '../../common/Modal/Modal';
+import { User } from '../../users/User/User';
+import { Checks } from '../Checks/Checks';
+import s from './ViewMessageReadByModal.module.scss';
 
 export const ViewMessageReadByModal: FC = () => {
     const inViewMessageIdReadBy = useAppSelector(s => s.chats.inViewMessageIdReadBy);
@@ -29,34 +28,34 @@ export const ViewMessageReadByModal: FC = () => {
             dispatch(usersActions.readByGetAsync({
                 messageId: inViewMessageIdReadBy,
                 take: readByTake,
-                skip: inViewMessageReadBy?.readBy.length
-            }))
+                skip: inViewMessageReadBy?.readBy.length,
+            }));
         }
     };
 
     return (
         <Modal opened={!!inViewMessageIdReadBy}>
-            <div className='modalHeader'>
+            <div className="modalHeader">
                 <HeaderButton
-                    keyName={'ViewMessageReadByModal/Back'}
-                    onClick={() => dispatch(chatActions.setInViewMessageIdReadBy(null))}
+                  keyName={'ViewMessageReadByModal/Back'}
+                  onClick={() => dispatch(chatActions.setInViewMessageIdReadBy(null))}
                 >
                     <img src={backSvg} width={25} className={'secondaryTextSvg'} />
                 </HeaderButton>
                 <div className={s.readByCount}>
-                    <Checks double={true} />
+                    <Checks double />
                     <span>{inViewMessageReadBy?.readByCount}</span>
                 </div>
             </div>
             <div className={['modalContent', s.content].join(' ')} onScroll={onScrollHandler}>
                 {inViewMessageReadBy?.readBy.map((user, i) => (
                     <div
-                        key={user.id}
+                      key={user.id}
                     >
                         <User user={user} selectedUserIds={[]} setSelectedUserIds={selectedUserIds => { }} />
                     </div>
                 ))}
             </div>
         </Modal>
-    )
-}
+    );
+};

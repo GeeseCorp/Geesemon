@@ -9,6 +9,11 @@ public static class ClaimExtensions
     {
         return new Guid(claims.First(c => c.Type == AuthClaimsIdentity.DefaultIdClaimType).Value);
     }
+    
+    public static string GetUsername(this IEnumerable<Claim> claims)
+    {
+        return claims.First(c => c.Type == AuthClaimsIdentity.DefaultUsernameClaimType).Value;
+    }
 
     public static UserRole GetRole(this IEnumerable<Claim> claims)
     {

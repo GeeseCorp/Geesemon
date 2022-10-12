@@ -60,29 +60,29 @@ export const Users: FC<Props> = ({ onSelectedUserIdChange, selectMultiple = fals
     return (
         <div className={s.users}>
             {users.map((user, index) =>
-                users.length == index + 1
+                users.length === index + 1
                     ? (
-<div key={user.id} ref={lastUserElementRef}>
-                        <User
-                          user={user}
-                          selectMultiple={selectMultiple}
-                          selectedUserIds={selectedUserIds}
-                          setSelectedUserIds={setSelectedUserIds}
-                          onSelectedUserIdChange={onSelectedUserIdChange}
-                        />
-                    </div>
-)
+                        <div key={user.id} ref={lastUserElementRef}>
+                            <User
+                              user={user}
+                              selectMultiple={selectMultiple}
+                              selectedUserIds={selectedUserIds}
+                              setSelectedUserIds={setSelectedUserIds}
+                              onSelectedUserIdChange={onSelectedUserIdChange}
+                            />
+                        </div>
+                    )
                     : (
-<div key={user.id}>
-                        <User
-                          user={user}
-                          selectMultiple={selectMultiple}
-                          selectedUserIds={selectedUserIds}
-                          setSelectedUserIds={setSelectedUserIds}
-                          onSelectedUserIdChange={onSelectedUserIdChange}
-                        />
-                    </div>
-),
+                        <div key={user.id}>
+                            <User
+                              user={user}
+                              selectMultiple={selectMultiple}
+                              selectedUserIds={selectedUserIds}
+                              setSelectedUserIds={setSelectedUserIds}
+                              onSelectedUserIdChange={onSelectedUserIdChange}
+                            />
+                        </div>
+                    ),
             )}
             {usersGetLoading &&
                 <div className={s.loading}>

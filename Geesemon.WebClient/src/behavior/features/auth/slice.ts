@@ -1,16 +1,16 @@
-import { AuthResponseType } from "./types";
-import { createSlice, PayloadAction, } from "@reduxjs/toolkit";
-import { LoginInputType, RegisterInputType } from "./mutations";
-import { removeAuthToken, setAuthToken } from "../../../utils/localStorageUtils";
-import { User } from "../users/types";
+import { AuthResponseType } from './types';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { LoginInputType, RegisterInputType } from './mutations';
+import { removeAuthToken, setAuthToken } from '../../../utils/localStorageUtils';
+import { User } from '../users/types';
 
 type InitialState = {
-    authedUser?: User | null
-    isAuthorized: boolean
-    meLoading: boolean
-    loginLoading: boolean
-    registerLoading: boolean
-    logoutLoading: boolean
+    authedUser?: User | null;
+    isAuthorized: boolean;
+    meLoading: boolean;
+    loginLoading: boolean;
+    registerLoading: boolean;
+    logoutLoading: boolean;
 };
 
 const initialState: InitialState = {
@@ -23,7 +23,7 @@ const initialState: InitialState = {
 };
 
 const slice = createSlice({
-    name: "auth",
+    name: 'auth',
     initialState,
     reducers: {
         meAsync: (state: InitialState, action: PayloadAction) => state,
