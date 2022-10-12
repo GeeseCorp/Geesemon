@@ -1,5 +1,6 @@
 import { combineEpics, Epic, ofType } from 'redux-observable';
-import { catchError, endWith, from, mergeMap, of, startWith } from 'rxjs';
+import { catchError, endWith, from, iif, map, mergeMap, of, startWith } from 'rxjs';
+import { isGuidEmpty } from '../../../utils/stringUtils';
 import { client } from '../../client';
 import { RootState } from '../../store';
 import { appActions, LeftSidebarState } from '../app/slice';
@@ -120,13 +121,30 @@ export const messageSendAsyncEpic: Epic<ReturnType<typeof chatActions.messageSen
     action$.pipe(
         ofType(chatActions.messageSendAsync.type),
         mergeMap(action =>
-            from(client.mutate<MessageSendData, MessageSendVars>({
-                mutation: MESSAGE_SEND_MUTATION,
-                variables: { input: action.payload },
-            })).pipe(
-                mergeMap(response => []),
-                catchError(error => of(notificationsActions.addError(error.message))),
+            iif(() => isGuidEmpty(action.payload.chatId),
+                from(client.mutate<ChatCreatePersonalData, ChatCreatePersonalVars>({
+                    mutation: CHAT_CREATE_PERSONAL_MUTATION,
+                    variables: { input: { username: action.payload.sentMessageInputType.chatUsername } },
+                })).pipe(
+                    mergeMap(response => 
+                        from(client.mutate<MessageSendData, MessageSendVars>({
+                            mutation: MESSAGE_SEND_MUTATION,
+                            variables: { input: action.payload.sentMessageInputType },
+                        })).pipe(
+                            mergeMap(response => []),
+                            catchError(error => of(notificationsActions.addError(error.message))),
+                        ),
+                    ),
+                ),
+                from(client.mutate<MessageSendData, MessageSendVars>({
+                    mutation: MESSAGE_SEND_MUTATION,
+                    variables: { input: action.payload.sentMessageInputType },
+                })).pipe(
+                    mergeMap(response => []),
+                    catchError(error => of(notificationsActions.addError(error.message))),
+                ),
             ),
+            
         ),
     );
 

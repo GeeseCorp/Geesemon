@@ -9,23 +9,28 @@ import { HeaderButton } from '../../common/HeaderButton/HeaderButton';
 import { Users } from '../../users/Users/Users';
 import s from './ChatsCreatePersonalChat.module.scss';
 import { notificationsActions } from '../../../behavior/features/notifications/slice';
+import { useNavigate } from 'react-router-dom';
+import { User } from '../../../behavior/features/users/types';
 
 type Props = {};
 export const ChatsCreatePersonalChat: FC<Props> = () => {
     const dispatch = useAppDispatch();
     const q = useAppSelector(s => s.users.q);
     const users = useAppSelector(s => s.users.users);
-    const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
+    const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
+    const navigate = useNavigate();
 
-    const onSelectedUserIdChange = (selectedUserIds: string[]) => {
-        const user = users.find(u => u.id === selectedUserIds[0]);
+    const onSelectedUsersChange = (selectedUsers: User[]) => {
+        const user = users.find(u => u.id === selectedUsers[0].id);
         if(!user){
             dispatch(notificationsActions.addError('User not found ofr create personal chat'));
             return;
         }
-        dispatch(chatActions.createPersonalChatAsync({
-            username: user.username,
-        }));
+        // dispatch(chatActions.createPersonalChatAsync({
+        //     username: user.username,
+        // }));
+        navigate(`/${user.username}`);
+        dispatch(appActions.setLeftSidebarState(LeftSidebarState.Chats));
     };
 
     const onQChange = (value: string) => {
@@ -52,9 +57,9 @@ export const ChatsCreatePersonalChat: FC<Props> = () => {
                 />
             </div>
             <Users
-              selectedUserIds={selectedUserIds}
-              setSelectedUserIds={setSelectedUserIds}
-              onSelectedUserIdChange={onSelectedUserIdChange}
+              selectedUsers={selectedUsers}
+              setSelectedUsers={setSelectedUsers}
+              onSelectedUsersChange={onSelectedUsersChange}
             />
         </div>
     );

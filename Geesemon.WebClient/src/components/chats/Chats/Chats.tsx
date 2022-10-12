@@ -28,6 +28,7 @@ export const Chats: FC<Props> = ({ }) => {
     const logoutLoading = useAppSelector(s => s.auth.logoutLoading);
     const authedUser = useAppSelector(s => s.auth.authedUser);
     const [isMenuVisible, setIsMenuVisible] = useState(false);
+    const chatsGetLoading = useAppSelector(s => s.chats.chatsGetLoading);
     const chats = useAppSelector(s => s.chats.chats);
     const [searchValue, setSearchValue] = useState('');
     const dispatch = useAppDispatch();
@@ -115,6 +116,11 @@ export const Chats: FC<Props> = ({ }) => {
                 : (
                     <div className={s.chats}>
                         {chats.map(chat => <Chat key={chat.id} chat={chat} />)}
+                        {chatsGetLoading && 
+                            <div className={s.loading}>
+                                <SmallLoading />
+                            </div>
+                        }
                         <LeftSidebarSmallPrimaryButton>
                             <div
                               className={s.smallPrimaryButton}

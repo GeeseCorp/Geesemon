@@ -52,7 +52,7 @@ export const ViewMessageReadByModal: FC = () => {
                     <div
                       key={user.id}
                     >
-                        <User user={user} selectedUserIds={[]} setSelectedUserIds={selectedUserIds => { }} />
+                        <User user={user} selectedUsers={[]} setSelectedUsers={selectedUsers => { }} />
                     </div>
                 ))}
             </div>

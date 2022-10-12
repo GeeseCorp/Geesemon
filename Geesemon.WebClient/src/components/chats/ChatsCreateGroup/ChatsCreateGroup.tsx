@@ -16,6 +16,7 @@ import { usersActions } from '../../../behavior/features/users/slice';
 import { nameof } from '../../../utils/typeUtils';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
+import { User } from '../../../behavior/features/users/types';
 
 type FormValues = {
     name: string;
@@ -35,12 +36,12 @@ const schema: Yup.SchemaOf<FormValues> = Yup.object({
 export const ChatsCreateGroup: FC = () => {
     const createGroupLoading = useAppSelector(s => s.chats.createChatLoading);
     const inputFileRef = useRef<HTMLInputElement | null>(null);
-    const [userIds, setUserIds] = useState<string[]>([]);
+    const [users, setUsers] = useState<User[]>([]);
     const [image, setImage] = useState<File | null>(null);
     const [state, setState] = useState<'Members' | 'ImageAndName'>('Members');
     const dispatch = useAppDispatch();
     const q = useAppSelector(s => s.users.q);
-    const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
+    const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
     const formik = useFormik<FormValues>({
         initialValues: {
             name: '',
@@ -53,7 +54,7 @@ export const ChatsCreateGroup: FC = () => {
             dispatch(chatActions.createGroupChatAsync({
                 name,
                 username,
-                usersId: userIds,
+                usersId: users.map(u => u.id),
                 image,
             }));
         },
@@ -92,9 +93,9 @@ export const ChatsCreateGroup: FC = () => {
                         </div>
                         <Users
                           selectMultiple
-                          onSelectedUserIdChange={setUserIds}
-                          selectedUserIds={selectedUserIds}
-                          setSelectedUserIds={setSelectedUserIds}
+                          onSelectedUsersChange={setUsers}
+                          selectedUsers={selectedUsers}
+                          setSelectedUsers={setSelectedUsers}
                         />
                         <LeftSidebarSmallPrimaryButton>
                             <SmallPrimaryButton onClick={() => setState('ImageAndName')}>

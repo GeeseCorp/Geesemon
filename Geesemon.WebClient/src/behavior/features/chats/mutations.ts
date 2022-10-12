@@ -50,8 +50,8 @@ export const CHAT_DELETE_MUTATION = gql`
 export type MessageSendData = { message: { send: Message } };
 export type MessageSendVars = { input: SentMessageInputType };
 export type SentMessageInputType = {
+    chatUsername: string;
     text: string;
-    chatId: string;
 };
 export const MESSAGE_SEND_MUTATION = gql`
     ${MESSAGE_FRAGMENT}

@@ -77,11 +77,12 @@ const slice = createSlice({
         createGroupChatAsync: (state, action: PayloadAction<CreateGroupChatInputType>) => state,
 
         updateChat: (state, action: PayloadAction<Chat>) => {
-            state.chats = state.chats.map(chat =>
+            const newChats = state.chats.map(chat =>
                 chat.id === action.payload.id
                     ? action.payload
                     : chat,
             );
+            state.chats = sortChat(newChats);
         },
 
         deleteChat: (state, action: PayloadAction<string>) => {
@@ -112,7 +113,7 @@ const slice = createSlice({
             state.chats = sortChat(newChats);
         },
 
-        messageSendAsync: (state, action: PayloadAction<SentMessageInputType>) => state,
+        messageSendAsync: (state, action: PayloadAction<{sentMessageInputType: SentMessageInputType; chatId: string}>) => state,
         messageUpdateAsync: (state, action: PayloadAction<UpdateMessageInputType>) => state,
         updateMessage: (state, action: PayloadAction<Message>) => {
             const chat = state.chats.find(c => c.messages.some(m => m.id === action.payload.id));

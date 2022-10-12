@@ -60,7 +60,9 @@ namespace Geesemon.DataAccess.Providers.ChatProvider
                 .Include(c => c.UserChats)
                 .Include(c => c.Messages)
                 .Where(c => c.UserChats.Any(uc => uc.UserId == userId))
-                .OrderByDescending(c => c.Messages.OrderByDescending(m => m.CreatedAt).FirstOrDefault() != null ? c.Messages.OrderByDescending(m => m.CreatedAt).First().CreatedAt : c.CreatedAt)
+                .OrderByDescending(c => c.Messages.OrderByDescending(m => m.CreatedAt).FirstOrDefault() != null 
+                    ? c.Messages.OrderByDescending(m => m.CreatedAt).First().CreatedAt 
+                    : c.CreatedAt)
                 .Skip(skipMessageCount)
                 .Take(takeMessageCount)
                 .ToListAsync();

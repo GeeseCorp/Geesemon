@@ -12,6 +12,8 @@ import { Switch } from '../../common/formControls/Switch/Switch';
 import { HeaderButton } from '../../common/HeaderButton/HeaderButton';
 import { User } from '../../users/User/User';
 import s from './ChatProfile.module.scss';
+import { useNavigate } from 'react-router-dom';
+import { User as UserType } from '../../../behavior/features/users/types';
 
 export enum Tab {
     Members = 'Members',
@@ -26,8 +28,9 @@ type Props = {
 export const ChatProfile: FC<Props> = ({ chat }) => {
     const [isEnabledNotifications, setIsEnabledNotifications] = useState<boolean>(false);
     const [selectedTab, setSelectedTab] = useState(Tab.Members);
-    const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
+    const [selectedUsers, setSelectedUsers] = useState<UserType[]>([]);
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (selectedTab === Tab.Members && (chat.type === ChatKind.Personal || chat.type === ChatKind.Saved))
@@ -36,6 +39,11 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
             setSelectedTab(Tab.Members);
     }, [chat]);
 
+    const setSelectedUsersHandler = (users: UserType[]) => {
+        setSelectedUsers(users);
+        navigate(`/${users[0].username}`);
+    };
+
     const renderTab = () => {
         switch (selectedTab) {
             case Tab.Members:
@@ -43,8 +51,8 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
                     <User
                       key={user.id}
                       user={user}
-                      selectedUserIds={selectedUserIds}
-                      setSelectedUserIds={setSelectedUserIds}
+                      selectedUsers={selectedUsers}
+                      setSelectedUsers={setSelectedUsersHandler}
                     />
                 ));
             default:
@@ -77,22 +85,22 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
                 <div className={s.imageAndName}>
                     {chat?.imageUrl
                         ? (
-<div className={s.wrapperAvatar}>
+                            <div className={s.wrapperAvatar}>
                             <img src={chat.imageUrl} className={s.avatar} />
                             <div className={s.name}>{chat.name}</div>
-                        </div>
-)
+                            </div>
+                        )
                         : (
-<>
-                            <AvatarWithoutImage
-                              name={chat?.name || ''}
-                              backgroundColor={chat?.imageColor}
-                              width={100}
-                              height={100}
-                            />
-                            <div className={s.avatarWithoutImageName}>{chat.name}</div>
-                        </>
-)
+                            <>
+                                <AvatarWithoutImage
+                                  name={chat?.name || ''}
+                                  backgroundColor={chat?.imageColor}
+                                  width={100}
+                                  height={100}
+                                />
+                                <div className={s.avatarWithoutImageName}>{chat.name}</div>
+                            </>
+                        )
                     }
                 </div>
                 <div className={s.chatInfoButtons}>

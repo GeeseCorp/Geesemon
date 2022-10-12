@@ -8,36 +8,36 @@ import { getLastTimeActivity } from '../../../utils/dateUtils';
 type Props = {
     user: UserType;
     selectMultiple?: boolean;
-    selectedUserIds: string[];
-    setSelectedUserIds: (selectedUserIds: string[]) => void;
-    onSelectedUserIdChange?: (selectedUserIds: string[]) => void;
+    selectedUsers: UserType[];
+    setSelectedUsers: (selectedUsers: UserType[]) => void;
+    onSelectedUsersChange?: (selectedUsers: UserType[]) => void;
 };
 
-export const User: FC<Props> = ({ user, selectMultiple = false, selectedUserIds, setSelectedUserIds, onSelectedUserIdChange }) => {
-    const onChangeHanlder = (userId: string) => {
-        let newSelectedUserIds: string[];
+export const User: FC<Props> = ({ user, selectMultiple = false, selectedUsers, setSelectedUsers, onSelectedUsersChange }) => {
+    const onChangeHanlder = (user: UserType) => {
+        let newSelectedUsers: UserType[];
         if (selectMultiple) {
-            if (selectedUserIds.some(id => id === userId))
-                newSelectedUserIds = selectedUserIds.filter(id => id !== userId);
+            if (selectedUsers.some(u => u.id === user.id))
+                newSelectedUsers = selectedUsers.filter(u => u.id !== user.id);
             else
-                newSelectedUserIds = [...selectedUserIds, userId];
+                newSelectedUsers = [...selectedUsers, user];
         }
         else {
-            newSelectedUserIds = [userId];
+            newSelectedUsers = [user];
         }
-        setSelectedUserIds(newSelectedUserIds);
-        onSelectedUserIdChange && onSelectedUserIdChange(newSelectedUserIds);
+        setSelectedUsers(newSelectedUsers);
+        onSelectedUsersChange && onSelectedUsersChange(newSelectedUsers);
 
     };
 
     return (
-        <div key={user.id} className={s.user} onClick={() => onChangeHanlder(user.id)}>
+        <div key={user.id} className={s.user} onClick={() => onChangeHanlder(user)}>
             {selectMultiple &&
                 <div className={s.checkbox}>
                     <input
                       id={user.id}
                       type={'checkbox'}
-                      checked={!!selectedUserIds.some(id => id === user.id)}
+                      checked={!!selectedUsers.some(u => u.id === user.id)}
                       onChange={() => null}
                     />
                 </div>
