@@ -64,7 +64,7 @@ export const Register = () => {
 
     return (
         <div className={s.wrapper}>
-            <h1 className={s.title}>Register in Geesmon</h1>
+            <h1 className={s.title}>Register in Geesemon</h1>
             <form onSubmit={formik.handleSubmit}>
                 <Input
                   placeholder="FirstName"

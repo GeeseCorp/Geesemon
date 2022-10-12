@@ -42,7 +42,7 @@ export const Login = () => {
 
     return (
         <div className={s.wrapper}>
-            <h1 className={s.title}>Login in Geesmon</h1>
+            <h1 className={s.title}>Login in Geesemon</h1>
             <form onSubmit={formik.handleSubmit}>
                 <Input
                   placeholder="Username"
