@@ -37,7 +37,7 @@ public class CreateGroupChatInput
 
 public class CreateGroupChatInputValidation : AbstractValidator<CreateGroupChatInput>
 {
-    public CreateGroupChatInputValidation(ChatManager chatManager, UserManager userManager)
+    public CreateGroupChatInputValidation(ChatManager chatManager, UserManager userManager, IHttpContextAccessor httpContextAccessor)
     {
         RuleFor(r => r.UsersId)
             .NotNull()
@@ -63,7 +63,8 @@ public class CreateGroupChatInputValidation : AbstractValidator<CreateGroupChatI
             .MaximumLength(100)
             .MustAsync(async (username, cancellation) =>
             {
-                var chat = await chatManager.GetByUsername(username);
+                var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
+                var chat = await chatManager.GetByUsername(username, currentUserId);
                 return chat == null;
             }).WithMessage("Username already taken");
 

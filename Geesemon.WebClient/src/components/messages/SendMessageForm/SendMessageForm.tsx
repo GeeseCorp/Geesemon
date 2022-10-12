@@ -28,7 +28,9 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
     const params = useParams();
     const chatUsername = params.chatUsername as string;
     const chats = useAppSelector(s => s.chats.chats);
-    const selectedChat = chats.find(c => c.username === chatUsername);
+    const chatByUsername = useAppSelector(s => s.chats.chatByUsername);
+    const chat = chats.find(c => c.username === chatUsername);
+    const selectedChat = chat || chatByUsername;
     const messages = selectedChat?.messages || [];
     const inUpdateMessage = messages.find(m => m.id === inUpdateMessageId);
 
@@ -64,8 +66,11 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
 
         if(selectedChat){
             dispatch(chatActions.messageSendAsync({
-                chatId: selectedChat?.id,
-                text: messageText,
+                chatId: selectedChat.id,
+                sentMessageInputType: {
+                    chatUsername: selectedChat.username,
+                    text: messageText,
+                },
             }));
             setMessageText('');
             if (inputTextRef.current)

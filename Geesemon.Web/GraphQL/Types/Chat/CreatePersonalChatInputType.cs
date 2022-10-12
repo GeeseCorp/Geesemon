@@ -6,13 +6,13 @@ public class CreatePersonalChatInputType : InputObjectGraphType<CreatePersonalCh
 {
     public CreatePersonalChatInputType()
     {
-
-        Field<NonNullGraphType<GuidGraphType>, Guid>()
-            .Name("UserId");
+        Field<NonNullGraphType<StringGraphType>, string>()
+            .Name("Username")
+            .Resolve(context => context.Source.Username);
     }
 }
 
 public class CreatePersonalChatInput
 {
-    public Guid UserId { get; set; }
+    public string Username { get; set; }
 }

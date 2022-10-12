@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Chat as ChatType, chatActions } from '../../../behavior/features/chats';
 import { getTimeWithoutSeconds } from '../../../utils/dateUtils';
 import { Avatar } from '../../common/Avatar/Avatar';
@@ -12,6 +12,7 @@ import { useSubscription } from '@apollo/client';
 import { ChatActivityData, ChatActivityVars, CHAT_ACTIVITY_SUBSCRIPTIONS } from '../../../behavior/features/chats/subscriptions';
 import { ChatKind } from '../../../behavior/features/chats/types';
 import { OnlineIndicator } from '../../common/OnlineIndicator/OnlineIndicator';
+import { getAuthToken } from '../../../utils/localStorageUtils';
 
 type Props = {
     chat: ChatType;
@@ -19,12 +20,13 @@ type Props = {
 
 export const Chat: FC<Props> = ({ chat }) => {
     const params = useParams();
-    const selectedChatUsername = params.chatUsername as string;
+    const chatUsername = params.chatUsername as string;
     const dispatch = useAppDispatch();
     const authedUser = useAppSelector(s => s.auth.authedUser);
     const chatActivity = useSubscription<ChatActivityData, ChatActivityVars>(CHAT_ACTIVITY_SUBSCRIPTIONS, {
-        variables: { chatId: chat.id },
+        variables: { chatId: chat.id, token: getAuthToken() || '' },
     });
+    const navigate = useNavigate();
 
     const oppositeUser = chat.type === ChatKind.Personal ? chat.users.filter(u => u.id !== authedUser?.id)[0] : null;
     const isOnline = chat.type === ChatKind.Personal && oppositeUser?.isOnline;
@@ -46,12 +48,16 @@ export const Chat: FC<Props> = ({ chat }) => {
                 {
                     content: 'Delete chat',
                     icon: <img src={deleteSvg} width={20} className={'dangerSvg'} />,
-                    onClick: () => dispatch(chatActions.chatDeleteAsync(chat.id)),
+                    onClick: () => {
+                        dispatch(chatActions.chatDeleteAsync(chat.id));
+                        if(chatUsername === chat.username)
+                            navigate('/');
+                    },
                     type: 'danger',
                 },
             ]}
         >
-            <div className={[s.chat, chat.username === selectedChatUsername ? s.chatSelected : null].join(' ')}>
+            <div className={[s.chat, chat.username === chatUsername ? s.chatSelected : null].join(' ')}>
                 <Link
                   to={`/${chat.username}`}
                   className={s.chatLink}
@@ -61,13 +67,13 @@ export const Chat: FC<Props> = ({ chat }) => {
                             {chat.imageUrl
                                 ? <Avatar imageUrl={chat.imageUrl} width={54} height={54} />
                                 : (
-<AvatarWithoutImage
-  name={chat.name || ''}
-  backgroundColor={chat.imageColor}
-  width={54}
-  height={54}
-/>
-)
+                                    <AvatarWithoutImage
+                                      name={chat.name || ''}
+                                      backgroundColor={chat.imageColor}
+                                      width={54}
+                                      height={54}
+                                    />
+                                )
                             }
                             {isOnline && <OnlineIndicator right={1} bottom={1} />}
                         </div>

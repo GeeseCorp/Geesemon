@@ -2,7 +2,7 @@ import { FormEvent, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { authActions } from '../../../behavior/features/auth/slice';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
-import { BigStrongButton } from '../../common/BigPrimaryButton/BigPrimaryButton';
+import { BigPrimaryButton } from '../../common/BigPrimaryButton/BigPrimaryButton';
 import { Input } from '../../common/formControls/Input/Input';
 import s from './Register.module.scss';
 import * as Yup from 'yup';
@@ -112,13 +112,13 @@ export const Register = () => {
                   touched={formik.touched.password}
                   errors={formik.errors.password}
                 />
-                <BigStrongButton
+                <BigPrimaryButton
                   disabled={!(formik.isValid && formik.dirty)}
                   loading={registerLoading}
                   type="submit"
                 >
                     Register
-                </BigStrongButton>
+                </BigPrimaryButton>
                 <Link to="/auth/login">Login</Link>
             </form>
         </div>
