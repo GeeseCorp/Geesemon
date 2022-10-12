@@ -5,24 +5,27 @@ import { authActions } from './behavior/features/auth/slice';
 import { chatActions } from './behavior/features/chats';
 import {
     ChatActionsData, ChatActionsVars, CHAT_ACTIONS_SUBSCRIPTIONS, MessageActionsData,
-    MessageActionsVars, MESSAGE_ACTIONS_SUBSCRIPTIONS
+    MessageActionsVars, MESSAGE_ACTIONS_SUBSCRIPTIONS,
 } from './behavior/features/chats/subscriptions';
 import {
     ChatActionKind,
-    MessageActionKind
+    MessageActionKind,
 } from './behavior/features/chats/types';
 import { useAppDispatch, useAppSelector } from './behavior/store';
 import { ContentBar } from './components/common/ContentBar/ContentBar';
 import { LeftSidebar } from './components/common/LeftSidebar/LeftSidebar';
 import { RightSidebar } from './components/common/RightSidebar/RightSidebar';
 import { useIsMobile } from './hooks/useIsMobile';
+import { getAuthToken } from './utils/localStorageUtils';
 
 export const AuthedApp: FC = () => {
     const isMobile = useIsMobile();
     const dispatch = useAppDispatch();
     const isRightSidebarVisible = useAppSelector(s => s.app.isRightSidebarVisible);
     const messageActionSubscription = useSubscription<MessageActionsData, MessageActionsVars>(MESSAGE_ACTIONS_SUBSCRIPTIONS);
-    const chatActionSubscription = useSubscription<ChatActionsData, ChatActionsVars>(CHAT_ACTIONS_SUBSCRIPTIONS);
+    const chatActionSubscription = useSubscription<ChatActionsData, ChatActionsVars>(CHAT_ACTIONS_SUBSCRIPTIONS, {
+        variables: { token: getAuthToken() || '' },
+    });
 
     const makeOfflineAsync = () => {
         dispatch(authActions.toggleOnlineAsync(false));
@@ -81,8 +84,8 @@ export const AuthedApp: FC = () => {
             <Routes>
             <Route path={'/'} element={<LeftSidebar />} />
             <Route
-                path={'/:chatUsername'}
-                element={isRightSidebarVisible ? <RightSidebar /> : <ContentBar />}
+              path={'/:chatUsername'}
+              element={isRightSidebarVisible ? <RightSidebar /> : <ContentBar />}
             />
             <Route path={'/auth/*'} element={<Navigate to={'/'} />} />
             </Routes>

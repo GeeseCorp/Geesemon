@@ -12,6 +12,7 @@ import { useSubscription } from '@apollo/client';
 import { ChatActivityData, ChatActivityVars, CHAT_ACTIVITY_SUBSCRIPTIONS } from '../../../behavior/features/chats/subscriptions';
 import { ChatKind } from '../../../behavior/features/chats/types';
 import { OnlineIndicator } from '../../common/OnlineIndicator/OnlineIndicator';
+import { getAuthToken } from '../../../utils/localStorageUtils';
 
 type Props = {
     chat: ChatType;
@@ -23,7 +24,7 @@ export const Chat: FC<Props> = ({ chat }) => {
     const dispatch = useAppDispatch();
     const authedUser = useAppSelector(s => s.auth.authedUser);
     const chatActivity = useSubscription<ChatActivityData, ChatActivityVars>(CHAT_ACTIVITY_SUBSCRIPTIONS, {
-        variables: { chatId: chat.id },
+        variables: { chatId: chat.id, token: getAuthToken() || '' },
     });
     const navigate = useNavigate();
 
