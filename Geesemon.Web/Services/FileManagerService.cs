@@ -28,8 +28,8 @@ public class FileManagerService
     public async Task<string> UploadFileAsync(string folderPath, IFormFile file)
     {
         var fileNameWithoutExtention = Path.GetFileNameWithoutExtension(file.FileName);
-        var publicId = String.IsNullOrEmpty(folderPath) ? fileNameWithoutExtention : $"{folderPath}/{fileNameWithoutExtention}";
-        var filePath = String.IsNullOrEmpty(folderPath) ? file.FileName : $"{folderPath}/{file.FileName}";
+        var publicId = string.IsNullOrEmpty(folderPath) ? fileNameWithoutExtention : $"{folderPath}/{fileNameWithoutExtention}";
+        var filePath = string.IsNullOrEmpty(folderPath) ? file.FileName : $"{folderPath}/{file.FileName}";
 
         Stream stream = file.OpenReadStream();
 

@@ -1,8 +1,7 @@
 ﻿using FluentValidation;
 using Geesemon.DataAccess.Managers;
-using Geesemon.Model.Models;
 using GraphQL.Types;
-using Microsoft.AspNetCore.Http;
+using GraphQL.Upload.AspNetCore;
 
 namespace Geesemon.Web.GraphQL.Types;
 
@@ -21,6 +20,10 @@ public class UpdateChatInputType : InputObjectGraphType<UpdateChatInput>
         Field<NonNullGraphType<StringGraphType>, string>()
             .Name("Username")
             .Resolve(context => context.Source.Username);
+
+        Field<UploadGraphType, IFormFile>()
+            .Name("Image")
+            .Resolve(context => context.Source.Image);
     }
 }
 
@@ -29,6 +32,8 @@ public class UpdateChatInput
     public Guid Id { get; set; }
     public string Name { get; set; }
     public string Username { get; set; }
+
+    public IFormFile Image { get; set; }
 }
 
 public class UpdateChatInputValidation : AbstractValidator<UpdateChatInput>

@@ -1,5 +1,5 @@
-import { ChangeEventHandler, FC, FocusEventHandler, useState } from "react";
-import s from "./Input.module.scss";
+import { ChangeEventHandler, FC, FocusEventHandler, useState } from 'react';
+import s from './Input.module.scss';
 
 type Props = {
   placeholder?: string;
@@ -7,7 +7,7 @@ type Props = {
   value?: string;
   onChange: ChangeEventHandler;
   onFocus?: () => void;
-  type?: "text" | "password";
+  type?: 'text' | 'password';
   onBlur?: FocusEventHandler;
   touched?: boolean;
   errors?: string;
@@ -18,7 +18,7 @@ export const Input: FC<Props> = ({
   value,
   onChange,
   onFocus,
-  type = "text",
+  type = 'text',
   onBlur,
   touched,
   errors,
@@ -38,7 +38,7 @@ export const Input: FC<Props> = ({
   return (
     <div className={s.wrapperInput}>
       <div
-        className={[s.innerInput, inputSearchFocused && s.focused].join(" ")}
+        className={[s.innerInput, inputSearchFocused && s.focused].join(' ')}
       >
         <input
           id={name}
@@ -53,7 +53,7 @@ export const Input: FC<Props> = ({
         />
       </div>
       {touched && errors && (
-        <div className={["small", s.errors].join(" ")}>{errors}</div>
+        <div className={['small', s.errors].join(' ')}>{errors}</div>
       )}
     </div>
   );

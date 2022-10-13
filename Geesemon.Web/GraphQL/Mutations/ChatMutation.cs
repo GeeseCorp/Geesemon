@@ -184,7 +184,11 @@ namespace Geesemon.Web.GraphQL.Mutations
             if (chat.Type != ChatKind.Group && chat.CreatorId != currentUserId)
                 throw exception;
 
+            if (chatUpdateInput.Image != null)
+                chat.ImageUrl = await fileManagerService.UploadFileAsync(FileManagerService.GroupImagesFolder, chatUpdateInput.Image);
+
             chat.Name = chatUpdateInput.Name;
+            chat.Username = chatUpdateInput.Username;
             await chatManager.UpdateAsync(chat);
 
             chatActionSubscriptionService.Notify(chat, ChatActionKind.Update);

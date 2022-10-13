@@ -2,12 +2,12 @@ import React, { ChangeEvent, FC, useRef, useState } from 'react';
 import { Input } from '../../common/formControls/Input/Input';
 import s from './ChatsCreateGroup.module.css';
 import camera from '../../../assets/svg/camera.svg';
-import next from '../../../assets/svg/next.svg';
+import nextSVG from '../../../assets/svg/next.svg';
 import { chatActions } from '../../../behavior/features/chats';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
 import { SmallPrimaryButton } from '../../common/SmallPrimaryButton/SmallPrimaryButton';
 import { HeaderButton } from '../../common/HeaderButton/HeaderButton';
-import back from '../../../assets/svg/back.svg';
+import backSVG from '../../../assets/svg/back.svg';
 import { appActions, LeftSidebarState } from '../../../behavior/features/app/slice';
 import { LeftSidebarSmallPrimaryButton } from '../../common/LeftSidebarSmallPrimaryButton/LeftSidebarSmallPrimaryButton';
 import { Users } from '../../users/Users/Users';
@@ -49,8 +49,6 @@ export const ChatsCreateGroup: FC = () => {
         },
         validationSchema: schema,
         onSubmit: ({ name, username }) => {
-            console.log('submit');
-
             dispatch(chatActions.createGroupChatAsync({
                 name,
                 username,
@@ -82,7 +80,7 @@ export const ChatsCreateGroup: FC = () => {
                               keyName={'back'}
                               onClick={() => dispatch(appActions.setLeftSidebarState(LeftSidebarState.Chats))}
                             >
-                                <img src={back} width={25} className={'secondaryTextSvg'} />
+                                <img src={backSVG} width={25} className={'secondaryTextSvg'} />
                             </HeaderButton>
                             <Search
                               value={q}
@@ -99,7 +97,7 @@ export const ChatsCreateGroup: FC = () => {
                         />
                         <LeftSidebarSmallPrimaryButton>
                             <SmallPrimaryButton onClick={() => setState('ImageAndName')}>
-                                <img src={next} width={25} className={'primaryTextSvg'} />
+                                <img src={nextSVG} width={25} className={'primaryTextSvg'} />
                             </SmallPrimaryButton>
                         </LeftSidebarSmallPrimaryButton>
                     </>
@@ -111,7 +109,7 @@ export const ChatsCreateGroup: FC = () => {
                               keyName={'back'}
                               onClick={() => setState('Members')}
                             >
-                                <img src={back} width={25} className={'secondaryTextSvg'} />
+                                <img src={backSVG} width={25} className={'secondaryTextSvg'} />
                             </HeaderButton>
                             <div className={'headerTitle'}>New Group</div>
                         </div>
@@ -155,7 +153,7 @@ export const ChatsCreateGroup: FC = () => {
                                   loading={createGroupLoading}
                                   disabled={!(formik.isValid && formik.dirty)}
                                 >
-                                    <img src={next} width={25} className={'primaryTextSvg'} />
+                                    <img src={nextSVG} width={25} className={'primaryTextSvg'} />
                                 </SmallPrimaryButton>
                             </LeftSidebarSmallPrimaryButton>
                         </form>
