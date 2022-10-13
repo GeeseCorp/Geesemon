@@ -63,7 +63,8 @@ const slice = createSlice({
             state.inUpdateMessageId = action.payload;
         },
         addChats: (state, action: PayloadAction<Chat[]>) => {
-            state.chats = sortChat([...state.chats, ...action.payload]);
+            if(action.payload.length)
+                state.chats = sortChat([...state.chats, ...action.payload]);
         },
         chatsGetAsync: state => state,
         setChatsGetLoading: (state, action: PayloadAction<boolean>) => {

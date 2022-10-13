@@ -17,12 +17,20 @@
     background: #181818;
 }
 
-.messagesInner {
+.messagesBlock {
     margin: 0 auto;
     max-width: 600px;
+    margin-top: 10px;
+    display: flex;
+    align-items: flex-end;
+    gap: 5px;
+}
+
+.wrapperMessage {
+    width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 3px;
 }
 
 .messageFromImages {
