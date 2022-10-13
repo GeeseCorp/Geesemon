@@ -69,7 +69,7 @@ export const AuthedApp: FC = () => {
                     dispatch(chatActions.addChats([data.chatActions.chat]));
                     break;
                 case ChatActionKind.Update:
-                    dispatch(chatActions.updateChat(data.chatActions.chat));
+                    dispatch(chatActions.shallowUpdateChat(data.chatActions.chat));
                     break;
                 case ChatActionKind.Delete:
                     dispatch(chatActions.deleteChat(data.chatActions.chat.id));

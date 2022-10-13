@@ -62,17 +62,7 @@ namespace Geesemon.Web.GraphQL.Types
             
             Field<NonNullGraphType<IntGraphType>, int>()
                 .Name("NotReadMessagesCount")
-                .ResolveAsync(async context =>
-                {
-                    var chatId = context.Source.Id;
-                    if (chatId == Guid.Empty)
-                        return 0;
-
-                    using var scope = serviceProvider.CreateScope();
-                    var messageManager = scope.ServiceProvider.GetRequiredService<MessageManager>();
-                    var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
-                    return await messageManager.GetNotReadMessagesCount(chatId, currentUserId);
-                });
+                .Resolve(context => context.Source.NotReadMessagesCount);
 
             Field<ListGraphType<UserType>, IList<User>>()
                 .Name("Users")

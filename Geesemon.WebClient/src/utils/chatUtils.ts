@@ -16,6 +16,7 @@ export const shallowUpdateChat = (oldChat: Chat, newChat: Chat): Chat => {
     oldChat.imageColor = newChat.imageColor;
     oldChat.membersTotal = newChat.membersTotal;
     oldChat.membersOnline = newChat.membersOnline;
+    oldChat.notReadMessagesCount = newChat.notReadMessagesCount;
     oldChat.creatorId = newChat.creatorId;
     oldChat.createdAt = newChat.createdAt;
     oldChat.updatedAt = newChat.updatedAt;

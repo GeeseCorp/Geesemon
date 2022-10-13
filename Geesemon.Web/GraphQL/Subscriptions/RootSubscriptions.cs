@@ -1,4 +1,6 @@
-﻿using Geesemon.Model.Models;
+﻿using Geesemon.DataAccess.Managers;
+using Geesemon.Model.Enums;
+using Geesemon.Model.Models;
 using Geesemon.Web.Extensions;
 using Geesemon.Web.GraphQL.Auth;
 using Geesemon.Web.GraphQL.Types;
@@ -8,7 +10,6 @@ using Geesemon.Web.Services.ChatActivitySubscription;
 using Geesemon.Web.Services.MessageSubscription;
 using GraphQL;
 using GraphQL.Types;
-using GraphQLParser;
 
 namespace Geesemon.Web.GraphQL.Subscriptions
 {
@@ -20,11 +21,12 @@ namespace Geesemon.Web.GraphQL.Subscriptions
             IChatActivitySubscriptionService chatActivitySubscriptionService,
             IHttpContextAccessor httpContextAccessor,
             IServiceProvider serviceProvider,
-            AuthService authService
+            AuthService authService,
+            MessageManager messageManager
             )
         {
             // Messages
-            Field<MessageActionType, MessageAction>()
+            Field<NonNullGraphType<MessageActionType>, MessageAction>()
                 .Name("MessageActions")
                 .SubscribeAsync(async context =>
                 {
@@ -39,7 +41,7 @@ namespace Geesemon.Web.GraphQL.Subscriptions
                 .AuthorizeWith(AuthPolicies.Authenticated);
 
             // Chats
-            Field<ChatActionType, ChatAction>()
+            Field<NonNullGraphType<ChatActionType>, ChatAction>()
                 .Name("ChatActions")
                 .Argument<NonNullGraphType<StringGraphType>, string>("Token", "")
                 .SubscribeAsync(async context =>
@@ -59,7 +61,7 @@ namespace Geesemon.Web.GraphQL.Subscriptions
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
             
-            Field<UserChatType, UserChat>()
+            Field<NonNullGraphType<UserChatType>, UserChat>()
                 .Name("ChatActivity")
                 .Argument<GuidGraphType, Guid>("ChatId", "")
                 .Argument<NonNullGraphType<StringGraphType>, string>("Token", "")
