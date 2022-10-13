@@ -59,7 +59,7 @@ export const Messages: FC = () => {
     }, [messageBlocks]);
 
     useEffect(() => {
-        bottomOfMessagesRef.current?.scrollIntoView({behavior: 'auto'});
+        bottomOfMessagesRef.current?.scrollIntoView();
     }, [chatUsername]);
 
     const onScrollHandler = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {

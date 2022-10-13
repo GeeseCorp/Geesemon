@@ -42,6 +42,7 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
     const setSelectedUsersHandler = (users: UserType[]) => {
         setSelectedUsers(users);
         navigate(`/${users[0].username}`);
+        dispatch(appActions.setIsRightSidebarVisible(false));
     };
 
     const renderTab = () => {
