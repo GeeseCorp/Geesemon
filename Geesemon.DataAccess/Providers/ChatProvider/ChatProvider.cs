@@ -18,9 +18,9 @@ namespace Geesemon.DataAccess.Providers.ChatProvider
                 .Include(c => c.UserChats)
                 .ThenInclude(uc => uc.User)
                 .FirstOrDefaultAsync(c => c.Type == ChatKind.Personal
-                    ? c.UserChats.Any(uc => uc.User.Username == chatUsername && uc.UserId != currentUserId)
+                    ? c.UserChats.All(uc => uc.User.Username == chatUsername || uc.UserId == currentUserId)
                     : c.Type == ChatKind.Saved
-                        ? c.UserChats.Any(uc => uc.User.Username == chatUsername && uc.UserId == currentUserId)
+                        ? c.UserChats.All(uc => uc.User.Username == chatUsername && uc.UserId == currentUserId)
                         : c.Username == chatUsername && c.UserChats.Any(uc => uc.UserId == currentUserId));
         }
         

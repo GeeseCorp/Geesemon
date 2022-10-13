@@ -1,4 +1,5 @@
 import { FC, MutableRefObject, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import deleteSvg from '../../../assets/svg/delete.svg';
 import pencilOutlinedSvg from '../../../assets/svg/pencilOutlined.svg';
 import { chatActions } from '../../../behavior/features/chats';
@@ -14,10 +15,11 @@ import s from './Message.module.scss';
 
 type Props = {
     message: MessageType;
-    inputTextRef: MutableRefObject<HTMLTextAreaElement | null>;
+    onSetInUpdateMessage?: () => void;
+    isFromVisible?: boolean;
 };
 
-export const Message: FC<Props> = ({ message, inputTextRef }) => {
+export const Message: FC<Props> = ({ message, onSetInUpdateMessage, isFromVisible = false }) => {
     const messageIdsMakeReadLoading = useAppSelector(s => s.chats.messageIdsMakeReadLoading);
     const authedUser = useAppSelector(s => s.auth.authedUser);
     const dispatch = useAppDispatch();
@@ -57,6 +59,15 @@ export const Message: FC<Props> = ({ message, inputTextRef }) => {
                         }}
                       className={[s.message, isMessageMy ? s.messageMy : null].join(' ')}
                     >
+                        {isFromVisible && (
+                            <Link 
+                              to={`/${message.from?.username}`}
+                              className={[s.from, 'bold'].join(' ')} 
+                              style={{ color: message.from?.avatarColor }}
+                            >
+                                {message.from?.firstName} {message.from?.firstName}
+                            </Link>
+                        )}
                         <span className={s.messageText}>{message.text}</span>
                         <span className={s.messageInfo}>
                             {message.createdAt !== message.updatedAt &&
@@ -72,10 +83,10 @@ export const Message: FC<Props> = ({ message, inputTextRef }) => {
         }
     };
 
-    const setInUpdateMessage = (messageId: string) => {
+    const setInUpdateMessageHanlder = (messageId: string) => {
         dispatch(chatActions.setInUpdateMessageId(messageId));
         dispatch(chatActions.setMode('Updating'));
-        inputTextRef.current?.focus();
+        onSetInUpdateMessage && onSetInUpdateMessage();
     };
 
     return (
@@ -84,7 +95,7 @@ export const Message: FC<Props> = ({ message, inputTextRef }) => {
                 {
                     content: 'Update',
                     icon: <img src={pencilOutlinedSvg} width={15} className={'primaryTextSvg'} />,
-                    onClick: () => setInUpdateMessage(message.id),
+                    onClick: () => setInUpdateMessageHanlder(message.id),
                     type: 'default',
                 },
                 {
@@ -94,23 +105,24 @@ export const Message: FC<Props> = ({ message, inputTextRef }) => {
                             {
                                 message.readBy.slice(0, 3).map(user => user.imageUrl
                                     ? (
-<Avatar
-  key={user.id}
-  width={22}
-  height={22}
-  imageUrl={user.imageUrl}
-/>
-)
+                                        <Avatar
+                                          key={user.id}
+                                          width={22}
+                                          height={22}
+                                          imageUrl={user.imageUrl}
+                                        />
+                                        )
                                     : (
-<AvatarWithoutImage
-  key={user.id}
-  width={22}
-  height={22}
-  fontSize={8}
-  backgroundColor={user.avatarColor}
-  name={`${user.firstName} ${user.lastName}`}
-/>
-))
+                                        <AvatarWithoutImage
+                                          key={user.id}
+                                          width={22}
+                                          height={22}
+                                          fontSize={8}
+                                          backgroundColor={user.avatarColor}
+                                          name={`${user.firstName} ${user.lastName}`}
+                                        />
+                                    ),
+                                )
                             }
                         </div>
                     </div>,

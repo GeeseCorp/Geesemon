@@ -12,6 +12,8 @@ import { SmallPrimaryButton } from '../../common/SmallPrimaryButton/SmallPrimary
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
 import { chatActions } from '../../../behavior/features/chats';
 import { useParams } from 'react-router-dom';
+import { isGuidEmpty } from '../../../utils/stringUtils';
+import { ChatKind } from '../../../behavior/features/chats/types';
 
 const INPUT_TEXT_DEFAULT_HEIGHT = '25px';
 
@@ -65,6 +67,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
             return;
 
         if(selectedChat){
+            console.log(isGuidEmpty(selectedChat.id) && (selectedChat.type === ChatKind.Personal || selectedChat.type === ChatKind.Saved));
             dispatch(chatActions.messageSendAsync({
                 chatId: selectedChat.id,
                 sentMessageInputType: {
@@ -165,35 +168,35 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                         <AnimatePresence>
                             {inUpdateMessageId
                                 ? (
-<motion.img
-  key={'update'}
-  initial={{ scale: 0, opacity: 0 }}
-  animate={{ scale: 1, opacity: 1 }}
-  src={check}
-  width={25}
-  className={'primaryTextSvg'}
-/>
-)
+                                    <motion.img
+                                      key={'update'}
+                                      initial={{ scale: 0, opacity: 0 }}
+                                      animate={{ scale: 1, opacity: 1 }}
+                                      src={check}
+                                      width={25}
+                                      className={'primaryTextSvg'}
+                                    />
+                                )
                                 : messageText
                                     ? (
-<motion.img
-  key={'send'}
-  initial={{ scale: 0, opacity: 0 }}
-  animate={{ scale: 1, opacity: 1 }}
-  src={send}
-  className={'primaryTextSvg'}
-/>
-)
+                                        <motion.img
+                                          key={'send'}
+                                          initial={{ scale: 0, opacity: 0 }}
+                                          animate={{ scale: 1, opacity: 1 }}
+                                          src={send}
+                                          className={'primaryTextSvg'}
+                                        />
+                                    )
                                     : (
-<motion.img
-  key={'microphone'}
-  initial={{ scale: 0, opacity: 0 }}
-  animate={{ scale: 1, opacity: 1 }}
-  src={microphone}
-  width={25}
-  className={'primaryTextSvg'}
-/>
-)
+                                        <motion.img
+                                          key={'microphone'}
+                                          initial={{ scale: 0, opacity: 0 }}
+                                          animate={{ scale: 1, opacity: 1 }}
+                                          src={microphone}
+                                          width={25}
+                                          className={'primaryTextSvg'}
+                                        />
+                                    )
                             }
                         </AnimatePresence>
                     </SmallPrimaryButton>

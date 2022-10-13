@@ -1,12 +1,13 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { chatActions } from '../../../behavior/features/chats';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
-import { getDate, getDayAndMonth } from '../../../utils/dateUtils';
 import { Message } from '../Message/Message';
 import { SendMessageForm } from '../SendMessageForm/SendMessageForm';
 import s from './Messages.module.scss';
-import sMessage from '../Message/Message.module.scss';
+import { ChatKind, Message as MessageType } from '../../../behavior/features/chats/types';
+import { AvatarWithoutImage } from '../../common/AvatarWithoutImage/AvatarWithoutImage';
+import { Avatar } from '../../common/Avatar/Avatar';
 
 export const Messages: FC = () => {
     const params = useParams();
@@ -21,13 +22,41 @@ export const Messages: FC = () => {
     const [isAutoScroll, setIsAutoScroll] = useState(false);
     const bottomOfMessagesRef = useRef<HTMLDivElement>(null);
     const inputTextRef = useRef<HTMLTextAreaElement | null>(null);
+    const [messageBlocks, setMessageBlocks] = useState<MessageType[][]>([]);
+    const authedUser = useAppSelector(s => s.auth.authedUser);
+
+    useEffect(() => {
+        if(messages.length) {
+            const blocks: MessageType[][] = [];
+            let block: MessageType[] = [];
+            messages.forEach((message, i) => {
+                if(i === messages.length - 1) {
+                    if(i !== 0 && message.fromId !== messages[i - 1].fromId){
+                        blocks.push(block);
+                        block = [];
+                    }
+                    block.push(message);
+                    blocks.push(block);
+                }
+                else if(i === 0 || message.fromId === messages[i - 1].fromId) {
+                    block.push(message);
+                }
+                else {
+                    blocks.push(block);
+                    block = [];
+                    block.push(message);
+                }
+            });
+            setMessageBlocks(blocks);
+        }
+    }, [messages]);
 
     useEffect(() => {
         if (isAutoScroll) {
             console.log(isAutoScroll, 'scrollToBottom');
             scrollToBottom();
         }
-    }, [messages]);
+    }, [messageBlocks]);
 
     useEffect(() => {
         bottomOfMessagesRef.current?.scrollIntoView();
@@ -53,35 +82,50 @@ export const Messages: FC = () => {
         bottomOfMessagesRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
 
+    const onSetInUpdateMessage = () => {
+        inputTextRef.current?.focus();
+    };
+
     return (
         <div className={s.wrapper}>
             <div className={s.messages} onScroll={onScrollHandler}>
-                <div className={s.messagesInner}>
-                    {messages.flatMap((message, i) => {
-                        const returnJsx: React.ReactNode[] = [];
-                        if (i === 0)
-                            returnJsx.push(
-                                <div
-                                  key={messages[i].createdAt}
-                                  className={[sMessage.message, sMessage.messageSystem].join(' ')}
-                                >
-                                    {getDayAndMonth(new Date(messages[i].createdAt))}
-                                </div>,
-                            );
-                        if (i + 1 < messages.length && getDate(new Date(message.createdAt)) !== getDate(new Date(messages[i + 1].createdAt))) {
-                            returnJsx.push(
-                                <div
-                                  key={messages[i + 1].createdAt}
-                                  className={[sMessage.message, sMessage.messageSystem].join(' ')}
-                                >
-                                    {getDayAndMonth(new Date(messages[i + 1].createdAt))}
-                                </div>,
-                            );
-                        }
-                        returnJsx.push(<Message message={message} inputTextRef={inputTextRef} key={message.id} />);
-                        return returnJsx;
-                    })}
-                </div>
+                {messageBlocks.map((block, i) => {
+                    const blockFirstElement = block[0];
+                    return (
+                        <div key={i} className={s.messagesBlock}>
+                            {blockFirstElement.fromId && blockFirstElement.fromId !== authedUser?.id && selectedChat?.type === ChatKind.Group && (
+                                <Link to={`/${blockFirstElement.from?.username}`}>
+                                  {blockFirstElement?.from?.imageUrl
+                                    ? (
+                                        <Avatar
+                                          width={42}
+                                          height={42}
+                                          imageUrl={blockFirstElement?.from?.imageUrl}
+                                        />
+                                    )
+                                    : (
+                                        <AvatarWithoutImage
+                                          name={blockFirstElement?.from?.firstName + ' ' + blockFirstElement.from?.lastName}
+                                          backgroundColor={blockFirstElement.from?.avatarColor}
+                                          width={42}
+                                          height={42}
+                                        />
+                                    )}
+                              </Link>
+                            )}
+                            <div className={s.wrapperMessage}>
+                                {block.map((message, j) => (
+                                    <Message 
+                                      key={message.id}
+                                      isFromVisible={!j && selectedChat?.type === ChatKind.Group && message.fromId !== authedUser?.id}
+                                      message={message} 
+                                      onSetInUpdateMessage={onSetInUpdateMessage}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    );
+                })}
                 <div ref={bottomOfMessagesRef} />
             </div>
             <SendMessageForm scrollToBottom={scrollToBottom} inputTextRef={inputTextRef} />
