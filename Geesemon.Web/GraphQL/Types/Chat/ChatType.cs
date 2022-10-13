@@ -64,7 +64,7 @@ namespace Geesemon.Web.GraphQL.Types
                 .Name("NotReadMessagesCount")
                 .Resolve(context => context.Source.NotReadMessagesCount);
 
-            Field<ListGraphType<UserType>, IList<User>>()
+            Field<NonNullGraphType<ListGraphType<UserType>>, IList<User>>()
                 .Name("Users")
                 .ResolveAsync(async context =>
                 {
@@ -77,7 +77,7 @@ namespace Geesemon.Web.GraphQL.Types
                     return await userManager.GetAsync(chatId);
                 });
 
-            Field<ListGraphType<MessageType>, IList<Message>>()
+            Field<NonNullGraphType<ListGraphType<MessageType>>, IList<Message>>()
                 .Name("Messages")
                 .Argument<NonNullGraphType<IntGraphType>, int>("Skip", "")
                 .Argument<IntGraphType, int?>("Take", "")

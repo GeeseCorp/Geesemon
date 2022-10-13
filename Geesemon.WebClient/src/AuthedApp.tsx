@@ -35,7 +35,7 @@ export const AuthedApp: FC = () => {
         dispatch(authActions.toggleOnlineAsync(true));
         window.addEventListener('beforeunload', makeOfflineAsync);
         return () => {
-        window.removeEventListener('beforeunload', makeOfflineAsync);
+            window.removeEventListener('beforeunload', makeOfflineAsync);
         };
     }, []);
 
