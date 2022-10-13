@@ -35,7 +35,7 @@ export const AuthedApp: FC = () => {
         dispatch(authActions.toggleOnlineAsync(true));
         window.addEventListener('beforeunload', makeOfflineAsync);
         return () => {
-        window.removeEventListener('beforeunload', makeOfflineAsync);
+            window.removeEventListener('beforeunload', makeOfflineAsync);
         };
     }, []);
 
@@ -69,7 +69,7 @@ export const AuthedApp: FC = () => {
                     dispatch(chatActions.addChats([data.chatActions.chat]));
                     break;
                 case ChatActionKind.Update:
-                    dispatch(chatActions.updateChat(data.chatActions.chat));
+                    dispatch(chatActions.shallowUpdateChat(data.chatActions.chat));
                     break;
                 case ChatActionKind.Delete:
                     dispatch(chatActions.deleteChat(data.chatActions.chat.id));

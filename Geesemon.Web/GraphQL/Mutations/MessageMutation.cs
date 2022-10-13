@@ -3,6 +3,7 @@ using Geesemon.Model.Enums;
 using Geesemon.Model.Models;
 using Geesemon.Web.GraphQL.Auth;
 using Geesemon.Web.GraphQL.Types;
+using Geesemon.Web.Services.ChatActionsSubscription;
 using Geesemon.Web.Services.MessageSubscription;
 using GraphQL;
 using GraphQL.Types;
@@ -14,6 +15,7 @@ namespace Geesemon.Web.GraphQL.Mutations
     {
         public MessageMutation(
             IMessageActionSubscriptionService messageActionSubscriptionService,
+            IChatActionSubscriptionService chatActionSubscriptionService,
             IHttpContextAccessor httpContextAccessor,
             MessageManager messageManager, 
             ChatManager chatManager,
@@ -32,8 +34,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                         if(chat == null)
                             throw new ExecutionError("Chat not found");
 
-                        var isUserInChat = await chatManager.IsUserInChat(currentUserId, chat.Id);
-                        if (!isUserInChat)
+                        if (!chat.UserChats.Any(uc => uc.UserId == currentUserId))
                             throw new ExecutionError("User can sent messages only to chats that he participate.");
 
                         Message newMessage = new Message()
@@ -43,10 +44,10 @@ namespace Geesemon.Web.GraphQL.Mutations
                             FromId = currentUserId,
                             Type = MessageKind.Regular
                         };
-
                         newMessage = await messageManager.CreateAsync(newMessage);
-
-                        return messageActionSubscriptionService.Notify(newMessage, MessageActionKind.Create);
+                        newMessage = messageActionSubscriptionService.Notify(newMessage, MessageActionKind.Create);
+                        chatActionSubscriptionService.Notify(chat, ChatActionKind.Update);
+                        return newMessage;
                     })
                 .AuthorizeWith(AuthPolicies.Authenticated);
 
@@ -121,7 +122,10 @@ namespace Geesemon.Web.GraphQL.Mutations
                         MessageId = messageId,
                         ReadById = currentUserId,
                     });
-                    return messageActionSubscriptionService.Notify(message, MessageActionKind.Update);
+                    messageActionSubscriptionService.Notify(message, MessageActionKind.Update);
+                    var chat = await chatManager.GetByIdAsync(message.ChatId);
+                    chatActionSubscriptionService.Notify(chat, ChatActionKind.Update);
+                    return message;
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
         }

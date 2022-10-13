@@ -18,6 +18,8 @@ public class Chat : Entity
     public int MembersTotal { get; set; }
     [NotMapped]
     public int MembersOnline { get; set; }
+    [NotMapped]
+    public int NotReadMessagesCount { get; set; }
 
     public Guid? CreatorId { get; set; }
     public User? Creator { get; set; }

@@ -31,6 +31,7 @@ export type Chat = {
     imageColor: string;
     membersTotal: number;
     membersOnline: number;
+    notReadMessagesCount: number;
     creatorId: string;
     messages: Message[];
     users: User[];

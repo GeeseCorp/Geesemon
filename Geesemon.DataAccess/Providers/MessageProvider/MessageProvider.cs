@@ -10,6 +10,13 @@ namespace Geesemon.DataAccess.Providers.MessageProvider
         {
         }
 
+        public async Task<int> GetNotReadMessagesCount(Guid chatId, Guid currentUserId)
+        {
+            return await context.Messages
+                .Include(m => m.ReadBy)
+                .CountAsync(m => m.ChatId == chatId && m.FromId != currentUserId && !m.ReadBy.Any(rb => rb.ReadById == currentUserId));
+        }
+        
         public async Task<List<Message>> GetByChatIdAsync(Guid chatId, int skipMessageCount, int getMessageCount = 30)
         {
             return await context.Messages
