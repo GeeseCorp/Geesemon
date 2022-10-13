@@ -22,8 +22,6 @@ namespace Geesemon.Web.GraphQL.Mutations
         public AuthMutation(
             AuthService authService,
             UserManager userManager,
-            ChatManager chatManager, 
-            UserChatManager userChatManager,
             SessionManager sessionManager, 
             IHttpContextAccessor httpContextAccessor,
             IServiceProvider serviceProvider,
@@ -62,20 +60,6 @@ namespace Geesemon.Web.GraphQL.Mutations
                         Email = authRegisterInput.Email,
                         Role = UserRole.User,
                     });
-
-                    var savedChat = new Chat
-                    {
-                        CreatorId = newUser.Id,
-                        Type = ChatKind.Saved,
-                        Id = newUser.Id,
-                    };
-                    savedChat = await chatManager.CreateAsync(savedChat);
-
-                    var userChat = new List<UserChat>
-                    {
-                        new UserChat { UserId = newUser.Id, ChatId = savedChat.Id },
-                    };
-                    await userChatManager.CreateManyAsync(userChat);
 
                     var session = new Session
                     {

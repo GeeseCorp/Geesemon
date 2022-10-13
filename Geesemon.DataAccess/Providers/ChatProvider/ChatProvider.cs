@@ -70,9 +70,10 @@ namespace Geesemon.DataAccess.Providers.ChatProvider
 
         public async Task<bool> IsUserInChat(Guid userId, Guid chatId)
         {
-            var chat = await context.Chats.Include(c => c.UserChats)
+            var chat = await context.Chats
+                .Include(c => c.UserChats)
                 .FirstOrDefaultAsync(c => c.Id == chatId && c.UserChats.Any(uc => uc.UserId == userId));
-
+            var a = chat?.Id;
             return chat != null;
         }
     }

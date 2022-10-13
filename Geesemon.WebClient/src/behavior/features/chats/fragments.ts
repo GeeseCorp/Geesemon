@@ -34,6 +34,7 @@ export const CHAT_FRAGMENT = gql`
         imageColor
         membersTotal
         membersOnline
+        notReadMessagesCount
         creatorId
         users {
             ...UserFragment

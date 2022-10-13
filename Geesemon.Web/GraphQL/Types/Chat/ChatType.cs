@@ -8,8 +8,7 @@ namespace Geesemon.Web.GraphQL.Types
 {
     public class ChatType : EntityType<Chat>
     {
-        private readonly IServiceProvider serviceProvider;
-        public ChatType(IServiceProvider serviceProvider)
+        public ChatType(IServiceProvider serviceProvider, IHttpContextAccessor httpContextAccessor)
         {
             Field<StringGraphType, string?>()
                  .Name("Name")
@@ -60,42 +59,50 @@ namespace Geesemon.Web.GraphQL.Types
                     var chatManager = scope.ServiceProvider.GetRequiredService<ChatManager>();
                     return await chatManager.GetMembersOnlineAsync(chatId);
                 });
+            
+            Field<NonNullGraphType<IntGraphType>, int>()
+                .Name("NotReadMessagesCount")
+                .ResolveAsync(async context =>
+                {
+                    var chatId = context.Source.Id;
+                    if (chatId == Guid.Empty)
+                        return 0;
+
+                    using var scope = serviceProvider.CreateScope();
+                    var messageManager = scope.ServiceProvider.GetRequiredService<MessageManager>();
+                    var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
+                    return await messageManager.GetNotReadMessagesCount(chatId, currentUserId);
+                });
 
             Field<ListGraphType<UserType>, IList<User>>()
                 .Name("Users")
-                .ResolveAsync(ResolveUsers);
+                .ResolveAsync(async context =>
+                {
+                    var chatId = context.Source.Id;
+                    if (chatId == Guid.Empty)
+                        return new List<User>();
+
+                    using var scope = serviceProvider.CreateScope();
+                    var userManager = scope.ServiceProvider.GetRequiredService<UserManager>();
+                    return await userManager.GetAsync(chatId);
+                });
 
             Field<ListGraphType<MessageType>, IList<Message>>()
                 .Name("Messages")
                 .Argument<NonNullGraphType<IntGraphType>, int>("Skip", "")
                 .Argument<IntGraphType, int?>("Take", "")
-                .ResolveAsync(ResolveMessages);
+                .ResolveAsync(async context =>
+                {
+                    var chatId = context.Source.Id;
+                    if (chatId == Guid.Empty)
+                        return new List<Message>();
 
-            this.serviceProvider = serviceProvider;
-        }
-
-        private async Task<IList<User>> ResolveUsers(IResolveFieldContext<Chat> context)
-        {
-            var chatId = context.Source.Id;
-            if (chatId == Guid.Empty)
-                return new List<User>();
-
-            using var scope = serviceProvider.CreateScope();
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager>();
-            return await userManager.GetAsync(chatId);
-        }
-
-        private async Task<IList<Message>> ResolveMessages(IResolveFieldContext<Chat> context)
-        {
-            var chatId = context.Source.Id;
-            if (chatId == Guid.Empty)
-                return new List<Message>();
-
-            var skip = context.GetArgument<int>("Skip");
-            var take = context.GetArgument<int?>("Take");
-            using var scope = serviceProvider.CreateScope();
-            var messageManager = scope.ServiceProvider.GetRequiredService<MessageManager>();
-            return await messageManager.GetByChatIdAsync(chatId, skip, take ?? 30);
+                    var skip = context.GetArgument<int>("Skip");
+                    var take = context.GetArgument<int?>("Take");
+                    using var scope = serviceProvider.CreateScope();
+                    var messageManager = scope.ServiceProvider.GetRequiredService<MessageManager>();
+                    return await messageManager.GetByChatIdAsync(chatId, skip, take ?? 30);
+                });
         }
     }
 }

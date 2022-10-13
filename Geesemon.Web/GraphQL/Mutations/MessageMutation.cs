@@ -32,8 +32,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                         if(chat == null)
                             throw new ExecutionError("Chat not found");
 
-                        var isUserInChat = await chatManager.IsUserInChat(currentUserId, chat.Id);
-                        if (!isUserInChat)
+                        if (!chat.UserChats.Any(uc => uc.UserId == currentUserId))
                             throw new ExecutionError("User can sent messages only to chats that he participate.");
 
                         Message newMessage = new Message()
@@ -43,7 +42,6 @@ namespace Geesemon.Web.GraphQL.Mutations
                             FromId = currentUserId,
                             Type = MessageKind.Regular
                         };
-
                         newMessage = await messageManager.CreateAsync(newMessage);
 
                         return messageActionSubscriptionService.Notify(newMessage, MessageActionKind.Create);

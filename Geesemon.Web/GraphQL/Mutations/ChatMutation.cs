@@ -13,7 +13,7 @@ using GraphQL.Types;
 
 namespace Geesemon.Web.GraphQL.Mutations
 {
-    public class ChatMutation : ObjectGraphType<object>
+    public class ChatMutation : ObjectGraphType
     {
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly FileManagerService fileManagerService;

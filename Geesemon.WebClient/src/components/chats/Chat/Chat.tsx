@@ -82,9 +82,19 @@ export const Chat: FC<Props> = ({ chat }) => {
                                 <div className={['bold', s.name].join(' ')}>{chat.name}</div>
                                 <div className={'small light'}>{lastMessage && getTimeWithoutSeconds(new Date(lastMessage.createdAt))}</div>
                             </div>
-                            <div
-                              className={['secondary light', s.chatLastMessage].join(' ')}
-                            >{lastMessage?.text}</div>
+                            <div className={s.chatSubtitle}>
+                                <div className={s.chatLastMessage}>
+                                    {chat.type === ChatKind.Group
+                                        && lastMessage?.fromId
+                                        && lastMessage?.fromId !== authedUser?.id 
+                                        && <span>{lastMessage?.from?.firstName}: </span>
+                                    }
+                                    <span className="secondary">{lastMessage?.text}</span>
+                                </div>
+                                {!!chat.notReadMessagesCount && 
+                                    <div className={s.notReadMessagesCount}>{chat.notReadMessagesCount}</div>
+                                }
+                            </div>
                         </div>
 
                     </div>

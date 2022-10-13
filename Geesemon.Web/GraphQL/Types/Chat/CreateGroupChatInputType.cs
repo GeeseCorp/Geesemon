@@ -63,6 +63,10 @@ public class CreateGroupChatInputValidation : AbstractValidator<CreateGroupChatI
             .MaximumLength(100)
             .MustAsync(async (username, cancellation) =>
             {
+                var currentUsername = httpContextAccessor.HttpContext.User.Claims.GetUsername();
+                if (currentUsername == username)
+                    return false;
+
                 var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
                 var chat = await chatManager.GetByUsername(username, currentUserId);
                 return chat == null;

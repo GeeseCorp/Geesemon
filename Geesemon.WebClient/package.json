@@ -19,6 +19,7 @@
         "react-responsive": "^9.0.0-beta.10",
         "react-router-dom": "^6.3.0",
         "react-scripts": "5.0.1",
+        "react-string-replace": "^1.1.0",
         "redux": "^4.2.0",
         "redux-observable": "^2.0.0",
         "rxjs": "^7.5.6",
