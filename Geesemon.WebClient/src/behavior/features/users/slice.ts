@@ -1,18 +1,18 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { UserGetInputType, UsersGetReadByVars } from "./queries";
-import { User } from "./types";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { UserGetInputType, UsersGetReadByVars } from './queries';
+import { User } from './types';
 
 type InitialState = {
-    users: User[]
-    usersGetLoading: boolean
-    hasNext: boolean
-    take: number
-    skip: number
-    q: string
+    users: User[];
+    usersGetLoading: boolean;
+    hasNext: boolean;
+    take: number;
+    skip: number;
+    q: string;
 
-    readByGetLoading: boolean
-    readByHasNext: boolean
-    readByTake: number
+    readByGetLoading: boolean;
+    readByHasNext: boolean;
+    readByTake: number;
 };
 
 const initialState: InitialState = {
@@ -29,7 +29,7 @@ const initialState: InitialState = {
 };
 
 const slice = createSlice({
-    name: "users",
+    name: 'users',
     initialState,
     reducers: {
         addUsers: (state, action: PayloadAction<User[]>) => {

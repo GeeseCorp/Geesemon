@@ -8,10 +8,8 @@ import pencilOutlinedSvg from '../../../assets/svg/pencilOutlined.svg';
 import sendSvg from '../../../assets/svg/send.svg';
 import smileSvg from '../../../assets/svg/smile.svg';
 import { chatActions } from '../../../behavior/features/chats';
-import { ChatKind } from '../../../behavior/features/chats/types';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
 import { useSelectedChat } from '../../../hooks/useSelectedChat';
-import { isGuidEmpty } from '../../../utils/stringUtils';
 import { SmallPrimaryButton } from '../../common/SmallPrimaryButton/SmallPrimaryButton';
 import s from './SendMessageForm.module.scss';
 
@@ -37,11 +35,6 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
         }
     }, [inUpdateMessageId]);
 
-    const onInputText = () => {
-        const newMessageText = inputTextRef.current?.value || '';
-        setNewMessageText(newMessageText);
-    };
-
     const setNewMessageText = (newMessageText: string): void => {
         if (inputTextRef.current) {
             inputTextRef.current.value = newMessageText;
@@ -62,15 +55,14 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
             return;
 
         if(selectedChat){
-            console.log(isGuidEmpty(selectedChat.id) && (selectedChat.type === ChatKind.Personal || selectedChat.type === ChatKind.Saved));
+            setMessageText('');
             dispatch(chatActions.messageSendAsync({
                 chatId: selectedChat.id,
-                sentMessageInputType: {
+                sentMessageInput: {
                     chatUsername: selectedChat.username,
                     text: messageText,
                 },
             }));
-            setMessageText('');
             if (inputTextRef.current)
                 inputTextRef.current.style.height = INPUT_TEXT_DEFAULT_HEIGHT;
             scrollToBottom();
@@ -149,7 +141,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                           value={messageText}
                           placeholder={'Message'}
                           ref={inputTextRef}
-                          onInput={onInputText}
+                          onChange={e => setNewMessageText(e.target.value)}
                           className={s.inputText}
                           onKeyUp={onKeyUpInputText}
                           onKeyDown={onKeyDownInputText}

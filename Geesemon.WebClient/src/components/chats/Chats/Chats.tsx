@@ -1,17 +1,18 @@
 import { AnimatePresence } from 'framer-motion';
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import backSvg from '../../../assets/svg/back.svg';
 import crossFilledSvg from '../../../assets/svg/crossFilled.svg';
 import logoutSvg from '../../../assets/svg/logout.svg';
 import menuSvg from '../../../assets/svg/menu.svg';
 import pencilFilledSvg from '../../../assets/svg/pencilFilled.svg';
+import personSvg from '../../../assets/svg/person.svg';
 import savedSvg from '../../../assets/svg/saved.svg';
 import settingsSvg from '../../../assets/svg/settings.svg';
-import personSvg from '../../../assets/svg/person.svg';
 import { appActions, LeftSidebarState } from '../../../behavior/features/app/slice';
 import { authActions } from '../../../behavior/features/auth/slice';
 import { chatActions } from '../../../behavior/features/chats';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
+import { useOnScreen } from '../../../hooks/useOnScreen';
 import { Search } from '../../common/formControls/Search/Search';
 import { HeaderButton } from '../../common/HeaderButton/HeaderButton';
 import { LeftSidebarSmallPrimaryButton } from '../../common/LeftSidebarSmallPrimaryButton/LeftSidebarSmallPrimaryButton';
@@ -21,23 +22,26 @@ import { SmallPrimaryButton } from '../../common/SmallPrimaryButton/SmallPrimary
 import { Chat } from '../Chat/Chat';
 import s from './Chats.module.scss';
 
-type Props = {};
-
-export const Chats: FC<Props> = ({ }) => {
-    const [isEnabledSearchMode, setIsEnabledSearchMode] = useState(false);
+export const Chats: FC = () => {
+    const dispatch = useAppDispatch();
     const logoutLoading = useAppSelector(s => s.auth.logoutLoading);
     const authedUser = useAppSelector(s => s.auth.authedUser);
-    const [isMenuVisible, setIsMenuVisible] = useState(false);
     const chatsGetLoading = useAppSelector(s => s.chats.chatsGetLoading);
+    const chatsGetHasNext = useAppSelector(s => s.chats.chatsGetHasNext);
     const chats = useAppSelector(s => s.chats.chats);
+    const [isMenuVisible, setIsMenuVisible] = useState(false);
+    const [isEnabledSearchMode, setIsEnabledSearchMode] = useState(false);
     const [searchValue, setSearchValue] = useState('');
-    const dispatch = useAppDispatch();
     const [isCreateChatMenuVisible, setIsCreateChatMenuVisible] = useState(false);
+    const [take] = useState(30);
+    const lastChatRef = useRef<HTMLDivElement | null>(null);
+    const isLastChatOnScreen = useOnScreen(lastChatRef);
 
     useEffect(() => {
-        if (!chats.length)
-            dispatch(chatActions.chatsGetAsync());
-    }, []);
+        if(!chatsGetLoading && chatsGetHasNext && (!chats.length || isLastChatOnScreen)){
+            dispatch(chatActions.chatsGetAsync({ skip: chats.length, take }));
+        }
+    }, [isLastChatOnScreen]);
 
     const menuItems: MenuItem[] = [
         {
@@ -115,7 +119,17 @@ export const Chats: FC<Props> = ({ }) => {
                 ? <div>search</div>
                 : (
                     <div className={s.chats}>
-                        {chats.map(chat => <Chat key={chat.id} chat={chat} />)}
+                        {chats.map((chat, i) => (
+                            <div 
+                              key={chat.id}
+                              ref={el => {
+                                if(i === chats.length - 1)
+                                    lastChatRef.current = el;
+                              }}
+                            >
+                                <Chat chat={chat} />
+                            </div>
+                        ))}
                         {chatsGetLoading && 
                             <div className={s.loading}>
                                 <SmallLoading />

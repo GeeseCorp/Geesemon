@@ -103,36 +103,37 @@ export const Message: FC<Props> = ({ message, onSetInUpdateMessage, isFromVisibl
                 type: 'default',
             });
      
-        items.push({
-            content: <div className={s.readBy}>
-            <div>{message.readByCount} seen</div>
-            <div className={s.last3ReadBy}>
-                {message.readBy.slice(0, 3).map(user => user.imageUrl
-                    ? (
-                        <Avatar
-                          key={user.id}
-                          width={22}
-                          height={22}
-                          imageUrl={user.imageUrl}
-                        />
-                        )
-                    : (
-                        <AvatarWithoutImage
-                          key={user.id}
-                          width={22}
-                          height={22}
-                          fontSize={8}
-                          backgroundColor={user.avatarColor}
-                          name={`${user.firstName} ${user.lastName}`}
-                        />
-                    ),
-                )}
-                </div>
-            </div>,
-            icon: <Checks double />,
-            onClick: () => dispatch(chatActions.setInViewMessageIdReadBy(message.id)),
-            type: 'default',
-        });
+        if(selectedChat?.type !== ChatKind.Saved)
+            items.push({
+                content: <div className={s.readBy}>
+                <div>{message.readByCount} seen</div>
+                <div className={s.last3ReadBy}>
+                    {message.readBy.slice(0, 3).map(user => user.imageUrl
+                        ? (
+                            <Avatar
+                              key={user.id}
+                              width={22}
+                              height={22}
+                              imageUrl={user.imageUrl}
+                            />
+                            )
+                        : (
+                            <AvatarWithoutImage
+                              key={user.id}
+                              width={22}
+                              height={22}
+                              fontSize={8}
+                              backgroundColor={user.avatarColor}
+                              name={`${user.firstName} ${user.lastName}`}
+                            />
+                        ),
+                    )}
+                    </div>
+                </div>,
+                icon: <Checks double />,
+                onClick: () => dispatch(chatActions.setInViewMessageIdReadBy(message.id)),
+                type: 'default',
+            });
     
         if(message.fromId === authedUser?.id || selectedChat?.type === ChatKind.Personal)
             items.push({

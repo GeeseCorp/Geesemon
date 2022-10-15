@@ -9,6 +9,7 @@ import { AvatarWithoutImage } from '../../common/AvatarWithoutImage/AvatarWithou
 import { Message } from '../Message/Message';
 import { SendMessageForm } from '../SendMessageForm/SendMessageForm';
 import s from './Messages.module.scss';
+import { isGuidEmpty } from '../../../utils/stringUtils';
 
 export const Messages: FC = () => {
     const selectedChatUsername = useSelectedChatUsername();
@@ -23,8 +24,6 @@ export const Messages: FC = () => {
 
     useEffect(() => {
         if(selectedChat?.messages) {
-            console.log('recalculate ', selectedChat?.messages.length);
-
             const blocks: MessageType[][] = [];
             let block: MessageType[] = [];
             selectedChat?.messages.forEach((message, i) => {
@@ -68,7 +67,7 @@ export const Messages: FC = () => {
         else
             isAutoScroll && setIsAutoScroll(false);
 
-        if (element.scrollTop < 100 && !messageGetLoading && selectedChat) {
+        if (element.scrollTop < 100 && !messageGetLoading && selectedChat && !isGuidEmpty(selectedChat?.id)) {
             dispatch(chatActions.messageGetAsync({
                 chatId: selectedChat?.id,
                 skip: selectedChat?.messages.length,
