@@ -1,4 +1,4 @@
-import { FC, MutableRefObject, useEffect, useRef } from 'react';
+import { FC, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import deleteSvg from '../../../assets/svg/delete.svg';
 import pencilOutlinedSvg from '../../../assets/svg/pencilOutlined.svg';
@@ -65,7 +65,7 @@ export const Message: FC<Props> = ({ message, onSetInUpdateMessage, isFromVisibl
                               className={[s.from, 'bold'].join(' ')} 
                               style={{ color: message.from?.avatarColor }}
                             >
-                                {message.from?.firstName} {message.from?.lastName}
+                                {message.from?.firstName} {message.from?.firstName}
                             </Link>
                         )}
                         <span className={s.messageText}>{message.text}</span>
@@ -94,7 +94,7 @@ export const Message: FC<Props> = ({ message, onSetInUpdateMessage, isFromVisibl
           items={[
                 {
                     content: 'Update',
-                    icon: <img src={pencilOutlinedSvg} width={15} className={'primaryTextSvg'} />,
+                    icon: <img src={pencilOutlinedSvg} width={15} className={'primaryTextSvg'} alt={'pencilOutlinedSvg'} />,
                     onClick: () => setInUpdateMessageHanlder(message.id),
                     type: 'default',
                 },
@@ -132,7 +132,7 @@ export const Message: FC<Props> = ({ message, onSetInUpdateMessage, isFromVisibl
                 },
                 {
                     content: 'Delete',
-                    icon: <img src={deleteSvg} width={20} className={'dangerSvg'} />,
+                    icon: <img src={deleteSvg} width={20} className={'dangerSvg'} alt={'deleteSvg'} />,
                     onClick: () => dispatch(chatActions.messageDeleteAsync({ messageId: message.id })),
                     type: 'danger',
                 },

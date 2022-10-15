@@ -1,14 +1,14 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { chatActions } from '../../../behavior/features/chats';
+import { ChatKind, Message as MessageType } from '../../../behavior/features/chats/types';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
+import { useSelectedChat, useSelectedChatUsername } from '../../../hooks/useSelectedChat';
+import { Avatar } from '../../common/Avatar/Avatar';
+import { AvatarWithoutImage } from '../../common/AvatarWithoutImage/AvatarWithoutImage';
 import { Message } from '../Message/Message';
 import { SendMessageForm } from '../SendMessageForm/SendMessageForm';
 import s from './Messages.module.scss';
-import { ChatKind, Message as MessageType } from '../../../behavior/features/chats/types';
-import { AvatarWithoutImage } from '../../common/AvatarWithoutImage/AvatarWithoutImage';
-import { Avatar } from '../../common/Avatar/Avatar';
-import { useSelectedChat, useSelectedChatUsername } from '../../../hooks/useSelectedChat';
 
 export const Messages: FC = () => {
     const selectedChatUsername = useSelectedChatUsername();

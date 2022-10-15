@@ -47,7 +47,7 @@ export const Chat: FC<Props> = ({ chat }) => {
           items={[
                 {
                     content: 'Delete chat',
-                    icon: <img src={deleteSvg} width={20} className={'dangerSvg'} />,
+                    icon: <img src={deleteSvg} width={20} className={'dangerSvg'} alt={'deleteSvg'} />,
                     onClick: () => {
                         dispatch(chatActions.chatDeleteAsync(chat.id));
                         if(selectedChatUsername === chat.username)

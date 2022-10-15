@@ -44,12 +44,10 @@ export const AuthedApp: FC = () => {
         if (data) {
             switch (data?.messageActions.type) {
                 case MessageActionKind.Create:
-                    dispatch(
-                        chatActions.addMessages({
+                    dispatch(chatActions.addMessages({
                         chatId: data.messageActions.message.chatId,
                         messages: [data.messageActions.message],
-                        }),
-                    );
+                    }));
                     break;
                 case MessageActionKind.Update:
                     dispatch(chatActions.updateMessage(data.messageActions.message));

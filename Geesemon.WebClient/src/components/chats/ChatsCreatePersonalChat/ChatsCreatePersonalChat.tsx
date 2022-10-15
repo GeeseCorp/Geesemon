@@ -1,16 +1,15 @@
 import { FC, useState } from 'react';
-import back from '../../../assets/svg/back.svg';
+import { useNavigate } from 'react-router-dom';
+import backSvg from '../../../assets/svg/back.svg';
 import { appActions, LeftSidebarState } from '../../../behavior/features/app/slice';
-import { chatActions } from '../../../behavior/features/chats/slice';
+import { notificationsActions } from '../../../behavior/features/notifications/slice';
 import { usersActions } from '../../../behavior/features/users/slice';
+import { User } from '../../../behavior/features/users/types';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
 import { Search } from '../../common/formControls/Search/Search';
 import { HeaderButton } from '../../common/HeaderButton/HeaderButton';
 import { Users } from '../../users/Users/Users';
 import s from './ChatsCreatePersonalChat.module.scss';
-import { notificationsActions } from '../../../behavior/features/notifications/slice';
-import { useNavigate } from 'react-router-dom';
-import { User } from '../../../behavior/features/users/types';
 
 type Props = {};
 export const ChatsCreatePersonalChat: FC<Props> = () => {
@@ -47,7 +46,7 @@ export const ChatsCreatePersonalChat: FC<Props> = () => {
                   keyName={'back'}
                   onClick={() => dispatch(appActions.setLeftSidebarState(LeftSidebarState.Chats))}
                 >
-                    <img src={back} width={25} className={'secondaryTextSvg'} />
+                    <img src={backSvg} width={25} className={'secondaryTextSvg'} alt={'backSvg'} />
                 </HeaderButton>
                 <Search
                   value={q}
