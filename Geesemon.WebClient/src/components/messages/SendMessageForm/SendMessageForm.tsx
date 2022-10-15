@@ -94,6 +94,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
             case 'Updating':
                 setNewMessageText('');
                 dispatch(chatActions.setInUpdateMessageId(null));
+                dispatch(chatActions.setMode('Text'));
                 break;
         }
 

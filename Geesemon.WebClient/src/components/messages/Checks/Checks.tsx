@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import s from './Checks.module.css';
+import s from './Checks.module.scss';
 import checkSvg from '../../../assets/svg/check.svg';
 
 type Props = {
