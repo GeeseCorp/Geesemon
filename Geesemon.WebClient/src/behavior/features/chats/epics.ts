@@ -33,11 +33,15 @@ export const chatsGetAsyncEpic: Epic<ReturnType<typeof chatActions.chatsGetAsync
         mergeMap(action =>
             from(client.query<ChatsGetData, ChatsGetVars>({
                 query: CHATS_GET_QUERY,
-                variables: {},
+                variables: action.payload,
             })).pipe(
-                mergeMap(response => [
-                    chatActions.addChats(response.data.chat.get),
-                ]),
+                mergeMap(response => response.data.chat.get.length < action.payload.take
+                    ? [
+                        chatActions.setChatsGetHasNext(false),
+                        chatActions.addChats(response.data.chat.get),
+                      ]
+                    : [chatActions.addChats(response.data.chat.get)],
+                ),
                 catchError(error => of(notificationsActions.addError(error.message))),
                 startWith(chatActions.setChatsGetLoading(true)),
                 endWith(chatActions.setChatsGetLoading(false)),
@@ -124,12 +128,12 @@ export const messageSendAsyncEpic: Epic<ReturnType<typeof chatActions.messageSen
             iif(() => isGuidEmpty(action.payload.chatId),
                 from(client.mutate<ChatCreatePersonalData, ChatCreatePersonalVars>({
                     mutation: CHAT_CREATE_PERSONAL_MUTATION,
-                    variables: { input: { username: action.payload.sentMessageInputType.chatUsername } },
+                    variables: { input: { username: action.payload.sentMessageInput.chatUsername } },
                 })).pipe(
                     mergeMap(response => 
                         from(client.mutate<MessageSendData, MessageSendVars>({
                             mutation: MESSAGE_SEND_MUTATION,
-                            variables: { input: action.payload.sentMessageInputType },
+                            variables: { input: action.payload.sentMessageInput },
                         })).pipe(
                             mergeMap(response => []),
                             catchError(error => of(notificationsActions.addError(error.message))),
@@ -138,7 +142,7 @@ export const messageSendAsyncEpic: Epic<ReturnType<typeof chatActions.messageSen
                 ),
                 from(client.mutate<MessageSendData, MessageSendVars>({
                     mutation: MESSAGE_SEND_MUTATION,
-                    variables: { input: action.payload.sentMessageInputType },
+                    variables: { input: action.payload.sentMessageInput },
                 })).pipe(
                     mergeMap(response => []),
                     catchError(error => of(notificationsActions.addError(error.message))),
@@ -170,12 +174,19 @@ export const messageGetAsyncEpic: Epic<ReturnType<typeof chatActions.messageGetA
                 query: MESSAGE_GET_QUERY,
                 variables: action.payload,
             })).pipe(
-                mergeMap(response => [
-                    chatActions.addMessages({
+                mergeMap(response => response.data.message.get.length < action.payload.take
+                    ? [
+                        chatActions.setMessagesGetHasNext(false),
+                        chatActions.addInEndMessages({
+                            chatId: action.payload.chatId,
+                            messages: response.data.message.get,
+                        }),
+                      ]
+                    : [chatActions.addInEndMessages({
                         chatId: action.payload.chatId,
                         messages: response.data.message.get,
-                    }),
-                ]),
+                    })],
+                ),
                 catchError(error => of(notificationsActions.addError(error.message))),
                 startWith(chatActions.setMessageGetLoading(true)),
                 endWith(chatActions.setMessageGetLoading(false)),

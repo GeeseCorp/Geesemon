@@ -3,12 +3,12 @@ import { CHAT_FRAGMENT, MESSAGE_FRAGMENT } from './fragments';
 import { Chat, Message } from './types';
 
 export type ChatsGetData = { chat: { get: Chat[] } };
-export type ChatsGetVars = {};
+export type ChatsGetVars = { skip: number; take: number };
 export const CHATS_GET_QUERY = gql`
     ${CHAT_FRAGMENT}
-    query ChatGet {
+    query ChatGet($skip: Int!, $take: Int) {
         chat {
-            get {
+            get(skip: $skip, take: $take) {
                 ...ChatFragment
             }
         }
@@ -29,7 +29,7 @@ export const CHATS_GET_BY_USERNAME_QUERY = gql`
 `;
 
 export type MessageGetData = { message: { get: Message[] } };
-export type MessageGetVars = { chatId: string; skip: number; take?: number | null };
+export type MessageGetVars = { chatId: string; skip: number; take: number };
 export const MESSAGE_GET_QUERY = gql`
     ${MESSAGE_FRAGMENT}
     query MessageGet($chatId: Guid!, $skip: Int!, $take: Int) {

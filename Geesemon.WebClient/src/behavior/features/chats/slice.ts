@@ -11,7 +11,7 @@ import {
     SentMessageInputType,
     UpdateMessageInputType,
 } from './mutations';
-import { MessageGetVars } from './queries';
+import { ChatsGetVars, MessageGetVars } from './queries';
 import { Chat, Message, UserChat } from './types';
 
 export type Mode = 'Text' | 'Audio' | 'Updating' | 'Reply';
@@ -19,8 +19,10 @@ export type Mode = 'Text' | 'Audio' | 'Updating' | 'Reply';
 type InitialState = {
     chats: Chat[];
     chatsGetLoading: boolean;
+    chatsGetHasNext: boolean;
 
     messageGetLoading: boolean;
+    messagesGetHasNext: boolean;
 
     inUpdateMessageId?: string | null;
     mode: Mode;
@@ -37,8 +39,10 @@ type InitialState = {
 const initialState: InitialState = {
     chats: [],
     chatsGetLoading: false,
+    chatsGetHasNext: true,
 
     messageGetLoading: false,
+    messagesGetHasNext: true,
 
     inUpdateMessageId: null,
     mode: 'Text',
@@ -62,13 +66,17 @@ const slice = createSlice({
         setInUpdateMessageId: (state, action: PayloadAction<string | null | undefined>) => {
             state.inUpdateMessageId = action.payload;
         },
+
         addChats: (state, action: PayloadAction<Chat[]>) => {
             if(action.payload.length)
                 state.chats = sortChat([...state.chats, ...action.payload]);
         },
-        chatsGetAsync: state => state,
+        chatsGetAsync: (state, action: PayloadAction<ChatsGetVars>) => state,
         setChatsGetLoading: (state, action: PayloadAction<boolean>) => {
             state.chatsGetLoading = action.payload;
+        },
+        setChatsGetHasNext: (state, action: PayloadAction<boolean>) => {
+            state.chatsGetHasNext = action.payload;
         },
 
         setCreateGroupLoading: (state, action: PayloadAction<boolean>) => {
@@ -94,12 +102,25 @@ const slice = createSlice({
         setMessageGetLoading: (state, action: PayloadAction<boolean>) => {
             state.messageGetLoading = action.payload;
         },
+        setMessagesGetHasNext: (state, action: PayloadAction<boolean>) => {
+            state.messageGetLoading = action.payload;
+        },
         messageGetAsync: (state, action: PayloadAction<MessageGetVars>) => state,
-        addMessages: (state, action: PayloadAction<{ chatId: string; messages: Message[] }>) => {
+        addInStartMessages: (state, action: PayloadAction<{ chatId: string; messages: Message[] }>) => {
             const newChats = state.chats.map(chat => {
                 if (chat.id === action.payload.chatId) {
                     chat.messages = [...action.payload.messages, ...chat.messages];
-                    chat.messages = chat.messages.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+                    // chat.messages = chat.messages.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+                }
+                return chat;
+            });
+            state.chats = sortChat(newChats);
+        },
+        addInEndMessages: (state, action: PayloadAction<{ chatId: string; messages: Message[] }>) => {
+            const newChats = state.chats.map(chat => {
+                if (chat.id === action.payload.chatId) {
+                    chat.messages = [...chat.messages, ...action.payload.messages];
+                    // chat.messages = chat.messages.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
                 }
                 return chat;
             });
@@ -114,7 +135,7 @@ const slice = createSlice({
             state.chats = sortChat(newChats);
         },
 
-        messageSendAsync: (state, action: PayloadAction<{sentMessageInputType: SentMessageInputType; chatId: string}>) => state,
+        messageSendAsync: (state, action: PayloadAction<{chatId: string; sentMessageInput: SentMessageInputType}>) => state,
         messageUpdateAsync: (state, action: PayloadAction<UpdateMessageInputType>) => state,
         updateMessage: (state, action: PayloadAction<Message>) => {
             const chat = state.chats.find(c => c.messages.some(m => m.id === action.payload.id));

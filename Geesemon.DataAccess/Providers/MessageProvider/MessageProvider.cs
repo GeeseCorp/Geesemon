@@ -24,7 +24,7 @@ namespace Geesemon.DataAccess.Providers.MessageProvider
                 .OrderByDescending(m => m.CreatedAt)
                 .Skip(skipMessageCount)
                 .Take(getMessageCount)
-                .OrderBy(m => m.CreatedAt)
+                //.OrderBy(m => m.CreatedAt)
                 .ToListAsync();
         }
     }

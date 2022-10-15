@@ -6,20 +6,23 @@ export const useOnScreen = (ref: React.MutableRefObject<HTMLDivElement | null>) 
     const [isMounted, setIsMounted] = useState(false);
 
     useEffect(() => {
-        if (isMounted)
+        if (isMounted){
             observer.disconnect();
+            if (ref.current)
+                observer.observe(ref.current);
+        }
 
-        if (ref.current)
-            observer.observe(ref.current);
-
-        if (!isMounted)
+        if (!isMounted){
+            if (ref.current)
+                observer.observe(ref.current);
             setIsMounted(true);
+        }
 
         return () => {
             if (ref.current)
                 observer.disconnect();
         };
-    }, [ref.current]);
+    }, [isMounted, observer, ref]);
 
     return isIntersecting;
 };
