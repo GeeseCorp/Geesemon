@@ -1,19 +1,19 @@
-import React, { FC, KeyboardEvent, MutableRefObject, useEffect, useState } from 'react';
-import s from './SendMessageForm.module.scss';
-import smile from '../../../assets/svg/smile.svg';
-import send from '../../../assets/svg/send.svg';
+import { AnimatePresence, motion } from 'framer-motion';
+import { FC, KeyboardEvent, MutableRefObject, useEffect, useState } from 'react';
 import check from '../../../assets/svg/check.svg';
 import clip from '../../../assets/svg/clip.svg';
-import pencilOutlined from '../../../assets/svg/pencilOutlined.svg';
-import microphone from '../../../assets/svg/microphone.svg';
 import crossFilled from '../../../assets/svg/crossFilled.svg';
-import { AnimatePresence, motion } from 'framer-motion';
-import { SmallPrimaryButton } from '../../common/SmallPrimaryButton/SmallPrimaryButton';
-import { useAppDispatch, useAppSelector } from '../../../behavior/store';
+import microphone from '../../../assets/svg/microphone.svg';
+import pencilOutlined from '../../../assets/svg/pencilOutlined.svg';
+import send from '../../../assets/svg/send.svg';
+import smile from '../../../assets/svg/smile.svg';
 import { chatActions } from '../../../behavior/features/chats';
-import { useParams } from 'react-router-dom';
-import { isGuidEmpty } from '../../../utils/stringUtils';
 import { ChatKind } from '../../../behavior/features/chats/types';
+import { useAppDispatch, useAppSelector } from '../../../behavior/store';
+import { useSelectedChat } from '../../../hooks/useSelectedChat';
+import { isGuidEmpty } from '../../../utils/stringUtils';
+import { SmallPrimaryButton } from '../../common/SmallPrimaryButton/SmallPrimaryButton';
+import s from './SendMessageForm.module.scss';
 
 const INPUT_TEXT_DEFAULT_HEIGHT = '25px';
 
@@ -27,12 +27,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
     const inUpdateMessageId = useAppSelector(s => s.chats.inUpdateMessageId);
     const [messageText, setMessageText] = useState('');
     const dispatch = useAppDispatch();
-    const params = useParams();
-    const chatUsername = params.chatUsername as string;
-    const chats = useAppSelector(s => s.chats.chats);
-    const chatByUsername = useAppSelector(s => s.chats.chatByUsername);
-    const chat = chats.find(c => c.username === chatUsername);
-    const selectedChat = chat || chatByUsername;
+    const selectedChat = useSelectedChat();
     const messages = selectedChat?.messages || [];
     const inUpdateMessage = messages.find(m => m.id === inUpdateMessageId);
 

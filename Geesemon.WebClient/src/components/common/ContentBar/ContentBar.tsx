@@ -6,26 +6,26 @@ import { ViewMessageReadByModal } from '../../messages/ViewMessageReadByModal/Vi
 import s from './ContentBar.module.scss';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
 import { chatActions } from '../../../behavior/features/chats';
+import { useSelectedChatUsername } from '../../../hooks/useSelectedChat';
 
 export const ContentBar: FC = () => {
-    const params = useParams();
-    const chatUsername = params.chatUsername;
+    const selectedChatUsername = useSelectedChatUsername();
     const dispatch = useAppDispatch();
     const chats = useAppSelector(c => c.chats.chats);
-    const chat = chats.find(c => c.username === chatUsername);
+    const chat = chats.find(c => c.username === selectedChatUsername);
     const chatsGetLoading = useAppSelector(c => c.chats.chatsGetLoading);
     const chatByUsername = useAppSelector(c => c.chats.chatByUsername);
     const chatGetByUsernameLoading = useAppSelector(c => c.chats.chatGetByUsernameLoading);
 
     useEffect(() => {
-        if(chatUsername && !chat && !chatsGetLoading && !chatGetByUsernameLoading){
+        if(selectedChatUsername && !chat && !chatsGetLoading && !chatGetByUsernameLoading){
             console.log('req');
-            dispatch(chatActions.chatGetByUsernameAsync(chatUsername));
+            dispatch(chatActions.chatGetByUsernameAsync(selectedChatUsername));
         }
-    }, [chatUsername]);
+    }, [selectedChatUsername]);
    
     useEffect(() => {
-        if(chats.find(c => c.username === chatUsername) && chatByUsername){
+        if(chats.find(c => c.username === selectedChatUsername) && chatByUsername){
             dispatch(chatActions.updateChat(chatByUsername));
             dispatch(chatActions.setChatByUsername(null));
         }
@@ -34,7 +34,7 @@ export const ContentBar: FC = () => {
     return (
         <div className={s.wrapper}>
             <ViewMessageReadByModal />
-            {chatUsername
+            {selectedChatUsername
                 ? (
                     <>
                         <ChatHeader />

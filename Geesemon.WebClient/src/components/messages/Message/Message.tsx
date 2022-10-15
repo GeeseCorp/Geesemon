@@ -65,7 +65,7 @@ export const Message: FC<Props> = ({ message, onSetInUpdateMessage, isFromVisibl
                               className={[s.from, 'bold'].join(' ')} 
                               style={{ color: message.from?.avatarColor }}
                             >
-                                {message.from?.firstName} {message.from?.firstName}
+                                {message.from?.firstName} {message.from?.lastName}
                             </Link>
                         )}
                         <span className={s.messageText}>{message.text}</span>

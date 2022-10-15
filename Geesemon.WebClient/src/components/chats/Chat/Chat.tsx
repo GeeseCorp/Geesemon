@@ -13,14 +13,14 @@ import { ChatActivityData, ChatActivityVars, CHAT_ACTIVITY_SUBSCRIPTIONS } from 
 import { ChatKind } from '../../../behavior/features/chats/types';
 import { OnlineIndicator } from '../../common/OnlineIndicator/OnlineIndicator';
 import { getAuthToken } from '../../../utils/localStorageUtils';
+import { useSelectedChatUsername } from '../../../hooks/useSelectedChat';
 
 type Props = {
     chat: ChatType;
 };
 
 export const Chat: FC<Props> = ({ chat }) => {
-    const params = useParams();
-    const chatUsername = params.chatUsername as string;
+    const selectedChatUsername = useSelectedChatUsername();
     const dispatch = useAppDispatch();
     const authedUser = useAppSelector(s => s.auth.authedUser);
     const chatActivity = useSubscription<ChatActivityData, ChatActivityVars>(CHAT_ACTIVITY_SUBSCRIPTIONS, {
@@ -50,14 +50,14 @@ export const Chat: FC<Props> = ({ chat }) => {
                     icon: <img src={deleteSvg} width={20} className={'dangerSvg'} />,
                     onClick: () => {
                         dispatch(chatActions.chatDeleteAsync(chat.id));
-                        if(chatUsername === chat.username)
+                        if(selectedChatUsername === chat.username)
                             navigate('/');
                     },
                     type: 'danger',
                 },
             ]}
         >
-            <div className={[s.chat, chat.username === chatUsername ? s.chatSelected : null].join(' ')}>
+            <div className={[s.chat, chat.username === selectedChatUsername ? s.chatSelected : null].join(' ')}>
                 <Link
                   to={`/${chat.username}`}
                   className={s.chatLink}

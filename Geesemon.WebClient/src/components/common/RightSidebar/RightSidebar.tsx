@@ -1,8 +1,8 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { FC } from 'react';
-import { useParams } from 'react-router-dom';
 import { RightSidebarState } from '../../../behavior/features/app/slice';
 import { useAppSelector } from '../../../behavior/store';
+import { useSelectedChat } from '../../../hooks/useSelectedChat';
 import { ChatProfile } from '../../chats/ChatProfile/ChatProfile';
 import { ChatsUpdateGroup } from '../../chats/ChatsUpdateGroup/ChatsUpdateGroup';
 import s from './RightSidebar.module.scss';
@@ -10,11 +10,7 @@ import s from './RightSidebar.module.scss';
 export const RightSidebar: FC = () => {
     const isRightSidebarVisible = useAppSelector(s => s.app.isRightSidebarVisible);
     const rightSidebarState = useAppSelector(s => s.app.rightSidebarState);
-    const params = useParams();
-    const chatUsername = params.chatUsername as string;
-    const chat = useAppSelector(s => s.chats.chats.find(c => c.username === chatUsername));
-    const chatByUsername = useAppSelector(s => s.chats.chatByUsername);
-    const selectedChat = chat || chatByUsername;
+    const selectedChat = useSelectedChat();
 
     if (!selectedChat)
         return null;

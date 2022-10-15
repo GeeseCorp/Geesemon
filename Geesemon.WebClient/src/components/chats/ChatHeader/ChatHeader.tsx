@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import backSvg from '../../../assets/svg/back.svg';
 import search from '../../../assets/svg/search.svg';
 import threeDots from '../../../assets/svg/threeDots.svg';
@@ -7,6 +7,7 @@ import { appActions } from '../../../behavior/features/app/slice';
 import { ChatKind } from '../../../behavior/features/chats/types';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
 import { useIsMobile } from '../../../hooks/useIsMobile';
+import { useSelectedChat } from '../../../hooks/useSelectedChat';
 import { getLastTimeActivity } from '../../../utils/dateUtils';
 import { Avatar } from '../../common/Avatar/Avatar';
 import { AvatarWithoutImage } from '../../common/AvatarWithoutImage/AvatarWithoutImage';
@@ -17,12 +18,8 @@ export const ChatHeader: FC = () => {
     const isMobile = useIsMobile();
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
-    const params = useParams();
-    const chatUsername = params.chatUsername;
     const isRightSidebarVisible = useAppSelector(s => s.app.isRightSidebarVisible);
-    const chat = useAppSelector(s => s.chats.chats.find(c => c.username === chatUsername));
-    const chatByUsername = useAppSelector(s => s.chats.chatByUsername);
-    const selectedChat = chat || chatByUsername;
+    const selectedChat = useSelectedChat();
     const authedUser = useAppSelector(s => s.auth.authedUser);
 
     const oppositeUser = selectedChat?.type === ChatKind.Personal ? selectedChat.users.filter(u => u.id !== authedUser?.id)[0] : null;
