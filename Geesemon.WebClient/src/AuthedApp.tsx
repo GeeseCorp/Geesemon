@@ -44,7 +44,7 @@ export const AuthedApp: FC = () => {
         if (data) {
             switch (data?.messageActions.type) {
                 case MessageActionKind.Create:
-                    dispatch(chatActions.addMessages({
+                    dispatch(chatActions.addInStartMessages({
                         chatId: data.messageActions.message.chatId,
                         messages: [data.messageActions.message],
                     }));

@@ -4,43 +4,39 @@
     height: calc(100% - 56px);
     display: flex;
     flex-direction: column;
+    justify-content: end;
 }
 
-.messages {
+.wrapperMessagesBlocks {
     scrollbar-color: #444444 #181818;
     overflow-y: auto;
     flex: 1;
     padding: 0 3px;
+
 }
 
-.messages::-webkit-scrollbar {
+.wrapperMessagesBlocks::-webkit-scrollbar {
     background: #181818;
 }
 
-.messagesBlock {
+.messagesBlocks {
+    overflow-y: scroll;
     margin: 0 auto;
     max-width: 600px;
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+.messagesBlock {
     margin-top: 10px;
     display: flex;
     align-items: flex-end;
     gap: 5px;
 }
 
-.wrapperMessage {
+.innerMessagesBlock {
     width: 100%;
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     gap: 3px;
 }
-
-.messageFromImages {
-    width: 40px;
-    height: 25px;
-    position: relative;
-}
-
-.innerMessageFromImages {
-    position: absolute;
-    bottom: 0;
-}
-

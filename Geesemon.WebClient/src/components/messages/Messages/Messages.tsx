@@ -1,19 +1,21 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import { Link } from 'react-router-dom';
 import { chatActions } from '../../../behavior/features/chats';
 import { ChatKind, Message as MessageType } from '../../../behavior/features/chats/types';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
 import { useSelectedChat, useSelectedChatUsername } from '../../../hooks/useSelectedChat';
+import { isGuidEmpty } from '../../../utils/stringUtils';
 import { Avatar } from '../../common/Avatar/Avatar';
 import { AvatarWithoutImage } from '../../common/AvatarWithoutImage/AvatarWithoutImage';
 import { Message } from '../Message/Message';
 import { SendMessageForm } from '../SendMessageForm/SendMessageForm';
 import s from './Messages.module.scss';
-import { isGuidEmpty } from '../../../utils/stringUtils';
 
 export const Messages: FC = () => {
     const selectedChatUsername = useSelectedChatUsername();
     const messageGetLoading = useAppSelector(s => s.chats.messageGetLoading);
+    const messagesGetHasNext = useAppSelector(s => s.chats.messagesGetHasNext);
     const selectedChat = useSelectedChat();
     const dispatch = useAppDispatch();
     const [isAutoScroll, setIsAutoScroll] = useState(false);
@@ -21,6 +23,8 @@ export const Messages: FC = () => {
     const inputTextRef = useRef<HTMLTextAreaElement | null>(null);
     const [messageBlocks, setMessageBlocks] = useState<MessageType[][]>([]);
     const authedUser = useAppSelector(s => s.auth.authedUser);
+    const messageBlocksRef = useRef<HTMLDivElement | null>(null);
+    const [isFirstTimeMessagesRendered, setIsFirstTimeMessagesRendered] = useState(false);
 
     useEffect(() => {
         if(selectedChat?.messages) {
@@ -53,6 +57,13 @@ export const Messages: FC = () => {
             console.log(isAutoScroll, 'scrollToBottom');
             scrollToBottom();
         }
+
+        if(messageBlocks.length) {
+            if(!isFirstTimeMessagesRendered) {
+                setIsFirstTimeMessagesRendered(true);
+                bottomOfMessagesRef.current?.scrollIntoView();
+            }
+        }
     }, [messageBlocks]);
 
     useEffect(() => {
@@ -66,11 +77,12 @@ export const Messages: FC = () => {
             !isAutoScroll && setIsAutoScroll(true);
         else
             isAutoScroll && setIsAutoScroll(false);
-
-        if (element.scrollTop < 100 && !messageGetLoading && selectedChat && !isGuidEmpty(selectedChat?.id)) {
+        
+        if (element.scrollTop < 250 && !messageGetLoading && selectedChat && !isGuidEmpty(selectedChat?.id)) {
             dispatch(chatActions.messageGetAsync({
                 chatId: selectedChat?.id,
                 skip: selectedChat?.messages.length,
+                take: 30,
             }));
         }
     };
@@ -85,14 +97,28 @@ export const Messages: FC = () => {
 
     return (
         <div className={s.wrapper}>
-            <div className={s.messages} onScroll={onScrollHandler}>
-                {messageBlocks.map((block, i) => {
+            {messageBlocks.length > 0 && 
+                <div id="wrapperMessagesBlocks" className={s.wrapperMessagesBlocks} onScroll={onScrollHandler} ref={messageBlocksRef}>
+                <InfiniteScroll
+                  dataLength={messageBlocks.length}
+                  next={() => null}
+                  hasMore={messagesGetHasNext}
+                  loader={<></>}
+                  inverse
+                  className={s.messagesBlocks}
+                  scrollableTarget="wrapperMessagesBlocks"
+                  initialScrollY={messageBlocksRef.current?.scrollHeight}
+                >
+                    {/* {Array.from({ length: 100 }).map((_, i) => (
+                            <div key={i}>{i}</div>
+                        ))} */}
+                {messageBlocks.map(block => {
                     const blockFirstElement = block[0];
                     return (
-                        <div key={i} className={s.messagesBlock}>
+                        <div key={blockFirstElement.id} className={s.messagesBlock}>
                             {blockFirstElement.fromId && blockFirstElement.fromId !== authedUser?.id && selectedChat?.type === ChatKind.Group && (
                                 <Link to={`/${blockFirstElement.from?.username}`}>
-                                  {blockFirstElement?.from?.imageUrl
+                                    {blockFirstElement?.from?.imageUrl
                                     ? (
                                         <Avatar
                                           width={42}
@@ -108,9 +134,9 @@ export const Messages: FC = () => {
                                           height={42}
                                         />
                                     )}
-                              </Link>
+                            </Link>
                             )}
-                            <div className={s.wrapperMessage}>
+                            <div className={s.innerMessagesBlock}>
                                 {block.map((message, j) => (
                                     <Message 
                                       key={message.id}
@@ -123,8 +149,10 @@ export const Messages: FC = () => {
                         </div>
                     );
                 })}
+                </InfiniteScroll>
                 <div ref={bottomOfMessagesRef} />
             </div>
+            }
             <SendMessageForm scrollToBottom={scrollToBottom} inputTextRef={inputTextRef} />
         </div>
     );

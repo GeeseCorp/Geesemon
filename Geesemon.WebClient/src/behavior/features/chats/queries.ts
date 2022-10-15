@@ -29,7 +29,7 @@ export const CHATS_GET_BY_USERNAME_QUERY = gql`
 `;
 
 export type MessageGetData = { message: { get: Message[] } };
-export type MessageGetVars = { chatId: string; skip: number; take?: number | null };
+export type MessageGetVars = { chatId: string; skip: number; take: number };
 export const MESSAGE_GET_QUERY = gql`
     ${MESSAGE_FRAGMENT}
     query MessageGet($chatId: Guid!, $skip: Int!, $take: Int) {

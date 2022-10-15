@@ -174,12 +174,19 @@ export const messageGetAsyncEpic: Epic<ReturnType<typeof chatActions.messageGetA
                 query: MESSAGE_GET_QUERY,
                 variables: action.payload,
             })).pipe(
-                mergeMap(response => [
-                    chatActions.addMessages({
+                mergeMap(response => response.data.message.get.length < action.payload.take
+                    ? [
+                        chatActions.setMessagesGetHasNext(false),
+                        chatActions.addInEndMessages({
+                            chatId: action.payload.chatId,
+                            messages: response.data.message.get,
+                        }),
+                      ]
+                    : [chatActions.addInEndMessages({
                         chatId: action.payload.chatId,
                         messages: response.data.message.get,
-                    }),
-                ]),
+                    })],
+                ),
                 catchError(error => of(notificationsActions.addError(error.message))),
                 startWith(chatActions.setMessageGetLoading(true)),
                 endWith(chatActions.setMessageGetLoading(false)),

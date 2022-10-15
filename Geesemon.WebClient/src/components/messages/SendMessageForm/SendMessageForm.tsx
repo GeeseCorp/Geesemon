@@ -63,8 +63,10 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                     text: messageText,
                 },
             }));
+            
             if (inputTextRef.current)
                 inputTextRef.current.style.height = INPUT_TEXT_DEFAULT_HEIGHT;
+
             scrollToBottom();
         }
     };
