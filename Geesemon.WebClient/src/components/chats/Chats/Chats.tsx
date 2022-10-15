@@ -1,12 +1,12 @@
 import { AnimatePresence } from 'framer-motion';
 import { FC, useEffect, useState } from 'react';
-import back from '../../../assets/svg/back.svg';
-import crossFilled from '../../../assets/svg/crossFilled.svg';
-import logout from '../../../assets/svg/logout.svg';
-import menu from '../../../assets/svg/menu.svg';
-import pencilFilled from '../../../assets/svg/pencilFilled.svg';
-import saved from '../../../assets/svg/saved.svg';
-import settings from '../../../assets/svg/settings.svg';
+import backSvg from '../../../assets/svg/back.svg';
+import crossFilledSvg from '../../../assets/svg/crossFilled.svg';
+import logoutSvg from '../../../assets/svg/logout.svg';
+import menuSvg from '../../../assets/svg/menu.svg';
+import pencilFilledSvg from '../../../assets/svg/pencilFilled.svg';
+import savedSvg from '../../../assets/svg/saved.svg';
+import settingsSvg from '../../../assets/svg/settings.svg';
 import personSvg from '../../../assets/svg/person.svg';
 import { appActions, LeftSidebarState } from '../../../behavior/features/app/slice';
 import { authActions } from '../../../behavior/features/auth/slice';
@@ -41,18 +41,18 @@ export const Chats: FC<Props> = ({ }) => {
 
     const menuItems: MenuItem[] = [
         {
-            icon: <img src={saved} className={[s.menuItem, 'secondaryTextSvg'].join(' ')} />,
+            icon: <img src={savedSvg} className={[s.menuItem, 'secondaryTextSvg'].join(' ')} alt={'savedSvg'} />,
             content: 'Saved',
             type: 'default',
             link: `/${authedUser?.username}`,
         },
         {
-            icon: <img src={settings} className={[s.menuItem, 'secondaryTextSvg'].join(' ')} />,
+            icon: <img src={settingsSvg} className={[s.menuItem, 'secondaryTextSvg'].join(' ')} alt={'settingsSvg'} />,
             content: 'Settings',
             type: 'default',
         },
         {
-            icon: logoutLoading ? <SmallLoading /> : <img src={logout} className={[s.menuItem, 'secondaryTextSvg'].join(' ')} />,
+            icon: logoutLoading ? <SmallLoading /> : <img src={logoutSvg} className={[s.menuItem, 'secondaryTextSvg'].join(' ')} alt={'logoutSvg'} />,
             content: 'Logout',
             onClick: () => dispatch(authActions.logoutAsync()),
             type: 'default',
@@ -61,13 +61,13 @@ export const Chats: FC<Props> = ({ }) => {
 
     const createChatMenuItems: MenuItem[] = [
         {
-            icon: <img src={personSvg} className={[s.menuItem, 'secondaryTextSvg'].join(' ')} />,
+            icon: <img src={personSvg} className={[s.menuItem, 'secondaryTextSvg'].join(' ')} alt={'personSvg'} />,
             content: 'New group',
             type: 'default',
             onClick: () => dispatch(appActions.setLeftSidebarState(LeftSidebarState.CreateGroupChat)),
         },
         {
-            icon: <img src={personSvg} className={[s.menuItem, 'secondaryTextSvg'].join(' ')} />,
+            icon: <img src={personSvg} className={[s.menuItem, 'secondaryTextSvg'].join(' ')} alt={'personSvg'} />,
             content: 'New personal chat',
             type: 'default',
             onClick: () => dispatch(appActions.setLeftSidebarState(LeftSidebarState.CreatePersonalChat)),
@@ -85,13 +85,13 @@ export const Chats: FC<Props> = ({ }) => {
                                   keyName={'back'}
                                   onClick={() => setIsEnabledSearchMode(false)}
                                 >
-                                    <img src={back} width={25} className={'secondaryTextSvg'} />
+                                    <img src={backSvg} width={25} className={'secondaryTextSvg'} alt={'backSvg'} />
                                 </HeaderButton>
                             )
                             : (
                                 <>
                                 <HeaderButton keyName={'menu'} onClick={() => setIsMenuVisible(true)}>
-                                    <img src={menu} width={20} className={'secondaryTextSvg'} />
+                                    <img src={menuSvg} width={20} className={'secondaryTextSvg'} alt={'menuSvg'} />
                                 </HeaderButton>
                                 {isMenuVisible &&
                                     <Menu
@@ -132,8 +132,8 @@ export const Chats: FC<Props> = ({ }) => {
                             >
                                 <SmallPrimaryButton>
                                     {isCreateChatMenuVisible
-                                        ? <img src={crossFilled} width={15} className={'primaryTextSvg'} />
-                                        : <img src={pencilFilled} width={25} className={'primaryTextSvg'} />}
+                                        ? <img src={crossFilledSvg} width={15} className={'primaryTextSvg'} alt={'crossFilledSvg'} />
+                                        : <img src={pencilFilledSvg} width={25} className={'primaryTextSvg'} alt={'pencilFilledSvg'} />}
                                 </SmallPrimaryButton>
                                 {isCreateChatMenuVisible &&
                                     <Menu

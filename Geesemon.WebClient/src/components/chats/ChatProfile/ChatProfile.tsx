@@ -1,6 +1,6 @@
 import { FC, useEffect, useState } from 'react';
-import atSign from '../../../assets/svg/atSign.svg';
-import crossFilled from '../../../assets/svg/crossFilled.svg';
+import atSignSvg from '../../../assets/svg/atSign.svg';
+import crossFilledSvg from '../../../assets/svg/crossFilled.svg';
 import notificationOutlinedSvg from '../../../assets/svg/notificationOutlined.svg';
 import pencilOutlinedSvg from '../../../assets/svg/pencilOutlined.svg';
 import { appActions, RightSidebarState } from '../../../behavior/features/app/slice';
@@ -69,7 +69,7 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
                       keyName={'RightSidebar/Close'}
                       onClick={() => dispatch(appActions.setIsRightSidebarVisible(false))}
                     >
-                        <img src={crossFilled} width={15} className={'secondaryTextSvg'} />
+                        <img src={crossFilledSvg} width={15} className={'secondaryTextSvg'} alt={'crossFilledSvg'} />
                     </HeaderButton>
                     <div className={'headerTitle'}>Profile</div>
                 </div>
@@ -78,7 +78,7 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
                       keyName={'RightSidebar/UpdateGroup'}
                       onClick={() => dispatch(appActions.setRightSidebarState(RightSidebarState.UpdateGroup))}
                     >
-                        <img src={pencilOutlinedSvg} width={20} className={'secondaryTextSvg'} />
+                        <img src={pencilOutlinedSvg} width={20} className={'secondaryTextSvg'} alt={'pencilOutlinedSvg'} />
                     </HeaderButton>
                 }
             </div>
@@ -87,8 +87,8 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
                     {chat?.imageUrl
                         ? (
                             <div className={s.wrapperAvatar}>
-                            <img src={chat.imageUrl} className={s.avatar} />
-                            <div className={s.name}>{chat.name}</div>
+                                <img src={chat.imageUrl} className={s.avatar} alt={'imageUrl'} />
+                                <div className={s.name}>{chat.name}</div>
                             </div>
                         )
                         : (
@@ -106,14 +106,14 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
                 </div>
                 <div className={s.chatInfoButtons}>
                     <div className={s.chatInfoButton}>
-                        <img src={atSign} width={25} className={'secondaryTextSvg'} />
+                        <img src={atSignSvg} width={25} className={'secondaryTextSvg'} alt={'atSignSvg'} />
                         <div>
                             <div className={s.chatInfoButtonText}>{chat.username}</div>
                             <div className={s.chatInfoButtonLabel}>username</div>
                         </div>
                     </div>
                     <div className={s.chatInfoButton}>
-                        <img src={notificationOutlinedSvg} width={25} className={'secondaryTextSvg'} />
+                        <img src={notificationOutlinedSvg} width={25} className={'secondaryTextSvg'} alt={'notificationOutlinedSvg'} />
                         <div className={s.notifications}>
                             <div className={s.chatInfoButtonText}>Notifications</div>
                             <Switch

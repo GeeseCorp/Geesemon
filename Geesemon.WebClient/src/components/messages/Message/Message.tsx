@@ -1,17 +1,19 @@
-import { FC, MutableRefObject, useEffect, useRef } from 'react';
+import { FC, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import deleteSvg from '../../../assets/svg/delete.svg';
 import pencilOutlinedSvg from '../../../assets/svg/pencilOutlined.svg';
 import { chatActions } from '../../../behavior/features/chats';
-import { Message as MessageType, MessageKind } from '../../../behavior/features/chats/types';
+import { ChatKind, Message as MessageType, MessageKind } from '../../../behavior/features/chats/types';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
 import { useOnScreen } from '../../../hooks/useOnScreen';
 import { getTimeWithoutSeconds } from '../../../utils/dateUtils';
 import { Avatar } from '../../common/Avatar/Avatar';
 import { AvatarWithoutImage } from '../../common/AvatarWithoutImage/AvatarWithoutImage';
 import { ContextMenu } from '../../common/ContextMenu/ContextMenu';
+import { MenuItem } from '../../common/Menu/Menu';
 import { Checks } from '../Checks/Checks';
 import s from './Message.module.scss';
+import { useSelectedChat } from '../../../hooks/useSelectedChat';
 
 type Props = {
     message: MessageType;
@@ -25,6 +27,7 @@ export const Message: FC<Props> = ({ message, onSetInUpdateMessage, isFromVisibl
     const dispatch = useAppDispatch();
     const ref = useRef<HTMLDivElement | null>(null);
     const isVisible = useOnScreen(ref);
+    const selectedChat = useSelectedChat();
 
     const isMessageMy = message.fromId === authedUser?.id;
     const isReadByMe = message.readBy.find(u => u.id === authedUser?.id);
@@ -89,55 +92,61 @@ export const Message: FC<Props> = ({ message, onSetInUpdateMessage, isFromVisibl
         onSetInUpdateMessage && onSetInUpdateMessage();
     };
 
+    const getContextMenuItems = (): MenuItem[] => {
+        const items: MenuItem[] = [];
+
+        if(message.fromId === authedUser?.id)
+            items.push({
+                content: 'Update',
+                icon: <img src={pencilOutlinedSvg} width={15} className={'primaryTextSvg'} alt={'pencilOutlinedSvg'} />,
+                onClick: () => setInUpdateMessageHanlder(message.id),
+                type: 'default',
+            });
+     
+        items.push({
+            content: <div className={s.readBy}>
+            <div>{message.readByCount} seen</div>
+            <div className={s.last3ReadBy}>
+                {message.readBy.slice(0, 3).map(user => user.imageUrl
+                    ? (
+                        <Avatar
+                          key={user.id}
+                          width={22}
+                          height={22}
+                          imageUrl={user.imageUrl}
+                        />
+                        )
+                    : (
+                        <AvatarWithoutImage
+                          key={user.id}
+                          width={22}
+                          height={22}
+                          fontSize={8}
+                          backgroundColor={user.avatarColor}
+                          name={`${user.firstName} ${user.lastName}`}
+                        />
+                    ),
+                )}
+                </div>
+            </div>,
+            icon: <Checks double />,
+            onClick: () => dispatch(chatActions.setInViewMessageIdReadBy(message.id)),
+            type: 'default',
+        });
+    
+        if(message.fromId === authedUser?.id || selectedChat?.type === ChatKind.Personal)
+            items.push({
+                content: 'Delete',
+                icon: <img src={deleteSvg} width={20} className={'dangerSvg'} alt={'deleteSvg'} />,
+                onClick: () => dispatch(chatActions.messageDeleteAsync({ messageId: message.id })),
+                type: 'danger',
+            });
+
+        return items;
+    };
+
     return (
-        <ContextMenu
-          items={[
-                {
-                    content: 'Update',
-                    icon: <img src={pencilOutlinedSvg} width={15} className={'primaryTextSvg'} />,
-                    onClick: () => setInUpdateMessageHanlder(message.id),
-                    type: 'default',
-                },
-                {
-                    content: <div className={s.readBy}>
-                        <div>{message.readByCount} seen</div>
-                        <div className={s.last3ReadBy}>
-                            {
-                                message.readBy.slice(0, 3).map(user => user.imageUrl
-                                    ? (
-                                        <Avatar
-                                          key={user.id}
-                                          width={22}
-                                          height={22}
-                                          imageUrl={user.imageUrl}
-                                        />
-                                        )
-                                    : (
-                                        <AvatarWithoutImage
-                                          key={user.id}
-                                          width={22}
-                                          height={22}
-                                          fontSize={8}
-                                          backgroundColor={user.avatarColor}
-                                          name={`${user.firstName} ${user.lastName}`}
-                                        />
-                                    ),
-                                )
-                            }
-                        </div>
-                    </div>,
-                    icon: <Checks double />,
-                    onClick: () => dispatch(chatActions.setInViewMessageIdReadBy(message.id)),
-                    type: 'default',
-                },
-                {
-                    content: 'Delete',
-                    icon: <img src={deleteSvg} width={20} className={'dangerSvg'} />,
-                    onClick: () => dispatch(chatActions.messageDeleteAsync({ messageId: message.id })),
-                    type: 'danger',
-                },
-            ]}
-        >
+        <ContextMenu items={getContextMenuItems()}>
             {messageContent()}
         </ContextMenu>
     );

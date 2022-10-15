@@ -44,12 +44,10 @@ export const AuthedApp: FC = () => {
         if (data) {
             switch (data?.messageActions.type) {
                 case MessageActionKind.Create:
-                    dispatch(
-                        chatActions.addMessages({
+                    dispatch(chatActions.addMessages({
                         chatId: data.messageActions.message.chatId,
                         messages: [data.messageActions.message],
-                        }),
-                    );
+                    }));
                     break;
                 case MessageActionKind.Update:
                     dispatch(chatActions.updateMessage(data.messageActions.message));
@@ -80,31 +78,33 @@ export const AuthedApp: FC = () => {
 
     return (
         <div className={'authedRoutes'}>
-        {isMobile ? (
-            <Routes>
-            <Route path={'/'} element={<LeftSidebar />} />
-            <Route
-              path={'/:chatUsername'}
-              element={isRightSidebarVisible ? <RightSidebar /> : <ContentBar />}
-            />
-            <Route path={'/auth/*'} element={<Navigate to={'/'} />} />
-            </Routes>
-        ) : (
-            <>
+        {isMobile 
+        ? (
             <Routes>
                 <Route path={'/'} element={<LeftSidebar />} />
-                <Route path={'/:chatUsername'} element={<LeftSidebar />} />
-                <Route path={'/auth'} element={<Navigate to={'/'} />} />
+                <Route
+                  path={'/:chatUsername'}
+                  element={isRightSidebarVisible ? <RightSidebar /> : <ContentBar />}
+                />
                 <Route path={'/auth/*'} element={<Navigate to={'/'} />} />
             </Routes>
-            <Routes>
-                <Route path={'/'} element={<ContentBar />} />
-                <Route path={'/:chatUsername'} element={<ContentBar />} />
-            </Routes>
-            <Routes>
-                <Route path={'/:chatUsername'} element={<RightSidebar />} />
-                <Route path={'*'} element={<RightSidebar />} />
-            </Routes>
+        ) 
+        : (
+            <>
+                <Routes>
+                    <Route path={'/'} element={<LeftSidebar />} />
+                    <Route path={'/:chatUsername'} element={<LeftSidebar />} />
+                    <Route path={'/auth'} element={<Navigate to={'/'} />} />
+                    <Route path={'/auth/*'} element={<Navigate to={'/'} />} />
+                </Routes>
+                <Routes>
+                    <Route path={'/'} element={<ContentBar />} />
+                    <Route path={'/:chatUsername'} element={<ContentBar />} />
+                </Routes>
+                <Routes>
+                    <Route path={'/:chatUsername'} element={<RightSidebar />} />
+                    <Route path={'*'} element={<RightSidebar />} />
+                </Routes>
             </>
         )}
         </div>

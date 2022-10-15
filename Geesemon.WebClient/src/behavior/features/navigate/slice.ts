@@ -1,13 +1,13 @@
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {To} from "react-router-dom";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { To } from 'react-router-dom';
 
 type InitialState = {
-    to: To | number | null,
-}
+    to: To | number | null;
+};
 
 const initialState: InitialState = {
     to: null,
-}
+};
 
 export const navigateSlice = createSlice({
     name: 'navigate',
@@ -16,11 +16,14 @@ export const navigateSlice = createSlice({
         navigate: (state, action: PayloadAction<To | number>) => {
             state.to = action.payload;
         },
+        navigateToChat: (state, action: PayloadAction<{username: string}>) => {
+            state.to = action.payload.username;
+        },
         removeNavigate: (state, action: PayloadAction) => {
-            state.to = null
+            state.to = null;
         },
     },
-})
+});
 
-export const navigateActions = navigateSlice.actions
-export const navigateReducer = navigateSlice.reducer
+export const navigateActions = navigateSlice.actions;
+export const navigateReducer = navigateSlice.reducer;

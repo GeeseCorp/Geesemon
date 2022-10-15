@@ -22,7 +22,7 @@ namespace Geesemon.Web.GraphQL.Mutations
             ReadMessagesManager readMessagesManager
             )
         {
-            Field<MessageType>()
+            Field<MessageType, Message>()
                 .Name("Send")
                 .Argument<NonNullGraphType<SentMessageInputType>, SentMessageInput>("Input", "")
                 .ResolveAsync(async context =>
@@ -51,21 +51,23 @@ namespace Geesemon.Web.GraphQL.Mutations
                     })
                 .AuthorizeWith(AuthPolicies.Authenticated);
 
-            Field<MessageType>()
+            Field<MessageType, Message>()
                 .Name("Delete")
                 .Argument<NonNullGraphType<DeleteMessageInputType>, DeleteMessageInput>("Input", "")
                 .ResolveAsync(async context =>
                 {
                     var input = context.GetArgument<DeleteMessageInput>("Input");
-                    var currentUserId = httpContextAccessor?.HttpContext?.User.Claims.GetUserId();
+                    var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
 
                     var message = await messageManager.GetByIdAsync(input.MessageId);
 
                     if (message == null)
                         throw new Exception("Message not found.");
 
+                    var chat = await chatManager.GetByIdAsync(message.ChatId);
                     if (message.FromId != currentUserId)
-                        throw new Exception("User can't delete other user's messages.");
+                        if (!await chatManager.IsUserInChat(currentUserId, message.ChatId) || chat.Type != ChatKind.Personal)
+                            throw new Exception("User can't delete other user's messages.");
 
                     await messageManager.RemoveAsync(message.Id);
 
@@ -73,7 +75,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
 
-            Field<MessageType>()
+            Field<MessageType, Message>()
                 .Name("Update")
                 .Argument<NonNullGraphType<UpdateMessageInputType>, UpdateMessageInput>("Input", "")
                 .ResolveAsync(async context =>

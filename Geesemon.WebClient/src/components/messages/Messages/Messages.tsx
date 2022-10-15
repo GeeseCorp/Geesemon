@@ -1,23 +1,19 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { chatActions } from '../../../behavior/features/chats';
+import { ChatKind, Message as MessageType } from '../../../behavior/features/chats/types';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
+import { useSelectedChat, useSelectedChatUsername } from '../../../hooks/useSelectedChat';
+import { Avatar } from '../../common/Avatar/Avatar';
+import { AvatarWithoutImage } from '../../common/AvatarWithoutImage/AvatarWithoutImage';
 import { Message } from '../Message/Message';
 import { SendMessageForm } from '../SendMessageForm/SendMessageForm';
 import s from './Messages.module.scss';
-import { ChatKind, Message as MessageType } from '../../../behavior/features/chats/types';
-import { AvatarWithoutImage } from '../../common/AvatarWithoutImage/AvatarWithoutImage';
-import { Avatar } from '../../common/Avatar/Avatar';
 
 export const Messages: FC = () => {
-    const params = useParams();
-    const chatUsername = params.chatUsername as string;
+    const selectedChatUsername = useSelectedChatUsername();
     const messageGetLoading = useAppSelector(s => s.chats.messageGetLoading);
-    const chats = useAppSelector(s => s.chats.chats);
-    const chat = chats.find(c => c.username === chatUsername);
-    const chatByUsername = useAppSelector(s => s.chats.chatByUsername);
-    const selectedChat = chat || chatByUsername;
-    const messages = selectedChat?.messages || [];
+    const selectedChat = useSelectedChat();
     const dispatch = useAppDispatch();
     const [isAutoScroll, setIsAutoScroll] = useState(false);
     const bottomOfMessagesRef = useRef<HTMLDivElement>(null);
@@ -26,19 +22,21 @@ export const Messages: FC = () => {
     const authedUser = useAppSelector(s => s.auth.authedUser);
 
     useEffect(() => {
-        if(messages.length) {
+        if(selectedChat?.messages) {
+            console.log('recalculate ', selectedChat?.messages.length);
+
             const blocks: MessageType[][] = [];
             let block: MessageType[] = [];
-            messages.forEach((message, i) => {
-                if(i === messages.length - 1) {
-                    if(i !== 0 && message.fromId !== messages[i - 1].fromId){
+            selectedChat?.messages.forEach((message, i) => {
+                if(i === selectedChat?.messages.length - 1) {
+                    if(i !== 0 && message.fromId !== selectedChat?.messages[i - 1].fromId){
                         blocks.push(block);
                         block = [];
                     }
                     block.push(message);
                     blocks.push(block);
                 }
-                else if(i === 0 || message.fromId === messages[i - 1].fromId) {
+                else if(i === 0 || message.fromId === selectedChat?.messages[i - 1].fromId) {
                     block.push(message);
                 }
                 else {
@@ -49,7 +47,7 @@ export const Messages: FC = () => {
             });
             setMessageBlocks(blocks);
         }
-    }, [messages]);
+    }, [selectedChat?.messages]);
 
     useEffect(() => {
         if (isAutoScroll) {
@@ -60,7 +58,7 @@ export const Messages: FC = () => {
 
     useEffect(() => {
         bottomOfMessagesRef.current?.scrollIntoView();
-    }, [chatUsername]);
+    }, [selectedChatUsername]);
 
     const onScrollHandler = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
         const element = e.currentTarget;
@@ -73,7 +71,7 @@ export const Messages: FC = () => {
         if (element.scrollTop < 100 && !messageGetLoading && selectedChat) {
             dispatch(chatActions.messageGetAsync({
                 chatId: selectedChat?.id,
-                skip: messages.length,
+                skip: selectedChat?.messages.length,
             }));
         }
     };

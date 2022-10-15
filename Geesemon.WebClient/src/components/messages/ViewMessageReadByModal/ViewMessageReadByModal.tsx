@@ -8,6 +8,8 @@ import { Modal } from '../../common/Modal/Modal';
 import { User } from '../../users/User/User';
 import { Checks } from '../Checks/Checks';
 import s from './ViewMessageReadByModal.module.scss';
+import { navigateActions } from '../../../behavior/features/navigate/slice';
+import { User as UserType } from '../../../behavior/features/users/types';
 
 export const ViewMessageReadByModal: FC = () => {
     const inViewMessageIdReadBy = useAppSelector(s => s.chats.inViewMessageIdReadBy);
@@ -18,7 +20,7 @@ export const ViewMessageReadByModal: FC = () => {
     const dispatch = useAppDispatch();
 
     const chat = chats.find(c => c.messages.some(m => m.id === inViewMessageIdReadBy));
-    const inViewMessageReadBy = chat?.messages?.find(m => m.id == inViewMessageIdReadBy);
+    const inViewMessageReadBy = chat?.messages?.find(m => m.id === inViewMessageIdReadBy);
 
     const onScrollHandler = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
         const element = e.currentTarget;
@@ -33,6 +35,11 @@ export const ViewMessageReadByModal: FC = () => {
         }
     };
 
+    const setSelectedUsersHanlder = (selectedUsers: UserType[]) => {
+        dispatch(navigateActions.navigateToChat({ username: selectedUsers[0].username }));
+        dispatch(chatActions.setInViewMessageIdReadBy(null));
+    };
+
     return (
         <Modal opened={!!inViewMessageIdReadBy}>
             <div className="modalHeader">
@@ -40,7 +47,7 @@ export const ViewMessageReadByModal: FC = () => {
                   keyName={'ViewMessageReadByModal/Back'}
                   onClick={() => dispatch(chatActions.setInViewMessageIdReadBy(null))}
                 >
-                    <img src={backSvg} width={25} className={'secondaryTextSvg'} />
+                    <img src={backSvg} width={25} className={'secondaryTextSvg'} alt={'backSvg'} />
                 </HeaderButton>
                 <div className={s.readByCount}>
                     <Checks double />
@@ -48,11 +55,13 @@ export const ViewMessageReadByModal: FC = () => {
                 </div>
             </div>
             <div className={['modalContent', s.content].join(' ')} onScroll={onScrollHandler}>
-                {inViewMessageReadBy?.readBy.map((user, i) => (
-                    <div
-                      key={user.id}
-                    >
-                        <User user={user} selectedUsers={[]} setSelectedUsers={selectedUsers => { }} />
+                {inViewMessageReadBy?.readBy.map(user => (
+                    <div key={user.id}>
+                        <User 
+                          user={user} 
+                          selectedUsers={[]} 
+                          setSelectedUsers={setSelectedUsersHanlder}
+                        />
                     </div>
                 ))}
             </div>

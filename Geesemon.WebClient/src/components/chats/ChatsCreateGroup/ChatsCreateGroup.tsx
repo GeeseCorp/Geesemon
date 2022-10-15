@@ -1,22 +1,22 @@
-import React, { ChangeEvent, FC, useRef, useState } from 'react';
-import { Input } from '../../common/formControls/Input/Input';
-import s from './ChatsCreateGroup.module.css';
-import camera from '../../../assets/svg/camera.svg';
-import next from '../../../assets/svg/next.svg';
-import { chatActions } from '../../../behavior/features/chats';
-import { useAppDispatch, useAppSelector } from '../../../behavior/store';
-import { SmallPrimaryButton } from '../../common/SmallPrimaryButton/SmallPrimaryButton';
-import { HeaderButton } from '../../common/HeaderButton/HeaderButton';
-import back from '../../../assets/svg/back.svg';
-import { appActions, LeftSidebarState } from '../../../behavior/features/app/slice';
-import { LeftSidebarSmallPrimaryButton } from '../../common/LeftSidebarSmallPrimaryButton/LeftSidebarSmallPrimaryButton';
-import { Users } from '../../users/Users/Users';
-import { Search } from '../../common/formControls/Search/Search';
-import { usersActions } from '../../../behavior/features/users/slice';
-import { nameof } from '../../../utils/typeUtils';
-import * as Yup from 'yup';
 import { useFormik } from 'formik';
+import { ChangeEvent, FC, useRef, useState } from 'react';
+import * as Yup from 'yup';
+import backSvg from '../../../assets/svg/back.svg';
+import cameraSvg from '../../../assets/svg/camera.svg';
+import nextSvg from '../../../assets/svg/next.svg';
+import { appActions, LeftSidebarState } from '../../../behavior/features/app/slice';
+import { chatActions } from '../../../behavior/features/chats';
+import { usersActions } from '../../../behavior/features/users/slice';
 import { User } from '../../../behavior/features/users/types';
+import { useAppDispatch, useAppSelector } from '../../../behavior/store';
+import { nameof } from '../../../utils/typeUtils';
+import { Input } from '../../common/formControls/Input/Input';
+import { Search } from '../../common/formControls/Search/Search';
+import { HeaderButton } from '../../common/HeaderButton/HeaderButton';
+import { LeftSidebarSmallPrimaryButton } from '../../common/LeftSidebarSmallPrimaryButton/LeftSidebarSmallPrimaryButton';
+import { SmallPrimaryButton } from '../../common/SmallPrimaryButton/SmallPrimaryButton';
+import { Users } from '../../users/Users/Users';
+import s from './ChatsCreateGroup.module.css';
 
 type FormValues = {
     name: string;
@@ -82,7 +82,7 @@ export const ChatsCreateGroup: FC = () => {
                               keyName={'back'}
                               onClick={() => dispatch(appActions.setLeftSidebarState(LeftSidebarState.Chats))}
                             >
-                                <img src={back} width={25} className={'secondaryTextSvg'} />
+                                <img src={backSvg} width={25} className={'secondaryTextSvg'} alt={'backSvg'} />
                             </HeaderButton>
                             <Search
                               value={q}
@@ -99,7 +99,7 @@ export const ChatsCreateGroup: FC = () => {
                         />
                         <LeftSidebarSmallPrimaryButton>
                             <SmallPrimaryButton onClick={() => setState('ImageAndName')}>
-                                <img src={next} width={25} className={'primaryTextSvg'} />
+                                <img src={nextSvg} width={25} className={'primaryTextSvg'} alt={'nextSvg'} />
                             </SmallPrimaryButton>
                         </LeftSidebarSmallPrimaryButton>
                     </>
@@ -111,7 +111,7 @@ export const ChatsCreateGroup: FC = () => {
                               keyName={'back'}
                               onClick={() => setState('Members')}
                             >
-                                <img src={back} width={25} className={'secondaryTextSvg'} />
+                                <img src={backSvg} width={25} className={'secondaryTextSvg'} alt={'backSvg'} />
                             </HeaderButton>
                             <div className={'headerTitle'}>New Group</div>
                         </div>
@@ -125,10 +125,11 @@ export const ChatsCreateGroup: FC = () => {
                                   accept="image/png, image/gif, image/jpeg"
                                 />
                                 <img
-                                  src={image ? URL.createObjectURL(image) : camera}
+                                  src={image ? URL.createObjectURL(image) : cameraSvg}
                                   width={image ? 100 : 60}
                                   height={image ? 100 : 60}
                                   className={image ? s.image : 'primaryTextSvg'}
+                                  alt={'cameraSvg'} 
                                 />
                             </div>
                             <Input
@@ -155,7 +156,7 @@ export const ChatsCreateGroup: FC = () => {
                                   loading={createGroupLoading}
                                   disabled={!(formik.isValid && formik.dirty)}
                                 >
-                                    <img src={next} width={25} className={'primaryTextSvg'} />
+                                    <img src={nextSvg} width={25} className={'primaryTextSvg'} alt={'nextSvg'} />
                                 </SmallPrimaryButton>
                             </LeftSidebarSmallPrimaryButton>
                         </form>

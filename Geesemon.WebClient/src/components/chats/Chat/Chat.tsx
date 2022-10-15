@@ -1,26 +1,29 @@
-import React, { FC, useEffect } from 'react';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { useSubscription } from '@apollo/client';
+import { FC, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import deleteSvg from '../../../assets/svg/delete.svg';
+import pinSvg from '../../../assets/svg/pin.svg';
+import notificationOutlinedSvg from '../../../assets/svg/notificationOutlined.svg';
 import { Chat as ChatType, chatActions } from '../../../behavior/features/chats';
+import { ChatActivityData, ChatActivityVars, CHAT_ACTIVITY_SUBSCRIPTIONS } from '../../../behavior/features/chats/subscriptions';
+import { ChatKind } from '../../../behavior/features/chats/types';
+import { useAppDispatch, useAppSelector } from '../../../behavior/store';
+import { useSelectedChatUsername } from '../../../hooks/useSelectedChat';
 import { getTimeWithoutSeconds } from '../../../utils/dateUtils';
+import { getAuthToken } from '../../../utils/localStorageUtils';
 import { Avatar } from '../../common/Avatar/Avatar';
 import { AvatarWithoutImage } from '../../common/AvatarWithoutImage/AvatarWithoutImage';
 import { ContextMenu } from '../../common/ContextMenu/ContextMenu';
-import s from './Chat.module.scss';
-import { useAppDispatch, useAppSelector } from '../../../behavior/store';
-import deleteSvg from '../../../assets/svg/delete.svg';
-import { useSubscription } from '@apollo/client';
-import { ChatActivityData, ChatActivityVars, CHAT_ACTIVITY_SUBSCRIPTIONS } from '../../../behavior/features/chats/subscriptions';
-import { ChatKind } from '../../../behavior/features/chats/types';
+import { MenuItem } from '../../common/Menu/Menu';
 import { OnlineIndicator } from '../../common/OnlineIndicator/OnlineIndicator';
-import { getAuthToken } from '../../../utils/localStorageUtils';
+import s from './Chat.module.scss';
 
 type Props = {
     chat: ChatType;
 };
 
 export const Chat: FC<Props> = ({ chat }) => {
-    const params = useParams();
-    const chatUsername = params.chatUsername as string;
+    const selectedChatUsername = useSelectedChatUsername();
     const dispatch = useAppDispatch();
     const authedUser = useAppSelector(s => s.auth.authedUser);
     const chatActivity = useSubscription<ChatActivityData, ChatActivityVars>(CHAT_ACTIVITY_SUBSCRIPTIONS, {
@@ -41,23 +44,43 @@ export const Chat: FC<Props> = ({ chat }) => {
         }
     }, [chatActivity.data?.chatActivity]);
 
+    const getContextMenuItems = (): MenuItem[] => {
+        const items: MenuItem[] = [];
+
+        items.push({
+            content: 'Pin',
+            icon: <img src={pinSvg} width={20} className={'primaryTextSvg'} alt={'pinSvg'} />,
+            onClick: () => {},
+            type: 'default',
+        });
+
+        items.push({
+            content: 'Unmute',
+            icon: <img src={notificationOutlinedSvg} width={20} className={'primaryTextSvg'} alt={'notificationOutlinedSvg'} />,
+            onClick: () => {},
+            type: 'default',
+        });
+
+        if(chat.creatorId === authedUser?.id || chat.type === ChatKind.Personal)
+            items.push({
+                content: 'Delete chat',
+                icon: <img src={deleteSvg} width={20} className={'dangerSvg'} alt={'deleteSvg'} />,
+                onClick: () => {
+                    dispatch(chatActions.chatDeleteAsync(chat.id));
+                    if(selectedChatUsername === chat.username)
+                        navigate('/');
+                },
+                type: 'danger',
+            });
+        return items;
+    }; 
+
     return (
         <ContextMenu
           key={chat.id}
-          items={[
-                {
-                    content: 'Delete chat',
-                    icon: <img src={deleteSvg} width={20} className={'dangerSvg'} />,
-                    onClick: () => {
-                        dispatch(chatActions.chatDeleteAsync(chat.id));
-                        if(chatUsername === chat.username)
-                            navigate('/');
-                    },
-                    type: 'danger',
-                },
-            ]}
+          items={getContextMenuItems()}
         >
-            <div className={[s.chat, chat.username === chatUsername ? s.chatSelected : null].join(' ')}>
+            <div className={[s.chat, chat.username === selectedChatUsername ? s.chatSelected : null].join(' ')}>
                 <Link
                   to={`/${chat.username}`}
                   className={s.chatLink}

@@ -1,19 +1,19 @@
-import React, { FC, KeyboardEvent, MutableRefObject, useEffect, useState } from 'react';
-import s from './SendMessageForm.module.scss';
-import smile from '../../../assets/svg/smile.svg';
-import send from '../../../assets/svg/send.svg';
-import check from '../../../assets/svg/check.svg';
-import clip from '../../../assets/svg/clip.svg';
-import pencilOutlined from '../../../assets/svg/pencilOutlined.svg';
-import microphone from '../../../assets/svg/microphone.svg';
-import crossFilled from '../../../assets/svg/crossFilled.svg';
 import { AnimatePresence, motion } from 'framer-motion';
-import { SmallPrimaryButton } from '../../common/SmallPrimaryButton/SmallPrimaryButton';
-import { useAppDispatch, useAppSelector } from '../../../behavior/store';
+import { FC, KeyboardEvent, MutableRefObject, useEffect, useState } from 'react';
+import checkSvg from '../../../assets/svg/check.svg';
+import clipSvg from '../../../assets/svg/clip.svg';
+import crossFilledSvg from '../../../assets/svg/crossFilled.svg';
+import microphoneSvg from '../../../assets/svg/microphone.svg';
+import pencilOutlinedSvg from '../../../assets/svg/pencilOutlined.svg';
+import sendSvg from '../../../assets/svg/send.svg';
+import smileSvg from '../../../assets/svg/smile.svg';
 import { chatActions } from '../../../behavior/features/chats';
-import { useParams } from 'react-router-dom';
-import { isGuidEmpty } from '../../../utils/stringUtils';
 import { ChatKind } from '../../../behavior/features/chats/types';
+import { useAppDispatch, useAppSelector } from '../../../behavior/store';
+import { useSelectedChat } from '../../../hooks/useSelectedChat';
+import { isGuidEmpty } from '../../../utils/stringUtils';
+import { SmallPrimaryButton } from '../../common/SmallPrimaryButton/SmallPrimaryButton';
+import s from './SendMessageForm.module.scss';
 
 const INPUT_TEXT_DEFAULT_HEIGHT = '25px';
 
@@ -27,12 +27,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
     const inUpdateMessageId = useAppSelector(s => s.chats.inUpdateMessageId);
     const [messageText, setMessageText] = useState('');
     const dispatch = useAppDispatch();
-    const params = useParams();
-    const chatUsername = params.chatUsername as string;
-    const chats = useAppSelector(s => s.chats.chats);
-    const chatByUsername = useAppSelector(s => s.chats.chatByUsername);
-    const chat = chats.find(c => c.username === chatUsername);
-    const selectedChat = chat || chatByUsername;
+    const selectedChat = useSelectedChat();
     const messages = selectedChat?.messages || [];
     const inUpdateMessage = messages.find(m => m.id === inUpdateMessageId);
 
@@ -84,7 +79,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
 
     const onKeyUpInputText = (e: KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.code === 'Enter' && !e.shiftKey) {
-            strongButtonClickHandler();
+            primaryButtonClickHandler();
         }
     };
 
@@ -99,6 +94,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
             case 'Updating':
                 setNewMessageText('');
                 dispatch(chatActions.setInUpdateMessageId(null));
+                dispatch(chatActions.setMode('Text'));
                 break;
         }
 
@@ -114,7 +110,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
         }
     };
 
-    const strongButtonClickHandler = () => {
+    const primaryButtonClickHandler = () => {
         switch (mode) {
             case 'Text':
                 sendMessageHandler();
@@ -133,7 +129,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                         <div className={s.extraBlockWrapper}>
                             <div className={s.extraBlockInner}>
                                 <div className={s.icon}>
-                                    <img src={pencilOutlined} width={20} className={'primarySvg'} />
+                                    <img src={pencilOutlinedSvg} width={20} className={'primarySvg'} alt={'pencilOutlinedSvg'} />
                                 </div>
                                 <div className={s.actionAndText}>
                                     <div className={s.action}>Updating</div>
@@ -141,13 +137,13 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                                 </div>
                             </div>
                             <div onClick={closeExtraBlockHandler} className={s.close}>
-                                <img src={crossFilled} width={15} className={'secondaryTextSvg'} />
+                                <img src={crossFilledSvg} width={15} className={'secondaryTextSvg'} alt={'crossFilledSvg'} />
                             </div>
                         </div>
                     }
                     <div className={s.innerInputText}>
                         <div className={s.inputTextButton}>
-                            <img src={smile} width={20} className={'secondaryTextSvg'} />
+                            <img src={smileSvg} width={20} className={'secondaryTextSvg'} alt={'smileSvg'} />
                         </div>
                         <textarea
                           value={messageText}
@@ -159,12 +155,12 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                           onKeyDown={onKeyDownInputText}
                         />
                         <div className={s.inputTextButton}>
-                            <img src={clip} width={20} className={'secondaryTextSvg'} />
+                            <img src={clipSvg} width={20} className={'secondaryTextSvg'} alt={'clipSvg'} />
                         </div>
                     </div>
                 </div>
                 <div className={s.buttonSend}>
-                    <SmallPrimaryButton onClick={strongButtonClickHandler}>
+                    <SmallPrimaryButton onClick={primaryButtonClickHandler}>
                         <AnimatePresence>
                             {inUpdateMessageId
                                 ? (
@@ -172,7 +168,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                                       key={'update'}
                                       initial={{ scale: 0, opacity: 0 }}
                                       animate={{ scale: 1, opacity: 1 }}
-                                      src={check}
+                                      src={checkSvg}
                                       width={25}
                                       className={'primaryTextSvg'}
                                     />
@@ -183,7 +179,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                                           key={'send'}
                                           initial={{ scale: 0, opacity: 0 }}
                                           animate={{ scale: 1, opacity: 1 }}
-                                          src={send}
+                                          src={sendSvg}
                                           className={'primaryTextSvg'}
                                         />
                                     )
@@ -192,7 +188,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                                           key={'microphone'}
                                           initial={{ scale: 0, opacity: 0 }}
                                           animate={{ scale: 1, opacity: 1 }}
-                                          src={microphone}
+                                          src={microphoneSvg}
                                           width={25}
                                           className={'primaryTextSvg'}
                                         />
