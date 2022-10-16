@@ -273,9 +273,8 @@ namespace Geesemon.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Geesemon.Model.Models.Message", "ReplyMessage")
-                        .WithMany()
-                        .HasForeignKey("ReplyMessageId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .WithMany("RepliedMessages")
+                        .HasForeignKey("ReplyMessageId");
 
                     b.Navigation("Chat");
 
@@ -343,6 +342,8 @@ namespace Geesemon.DataAccess.Migrations
             modelBuilder.Entity("Geesemon.Model.Models.Message", b =>
                 {
                     b.Navigation("ReadBy");
+
+                    b.Navigation("RepliedMessages");
                 });
 
             modelBuilder.Entity("Geesemon.Model.Models.User", b =>

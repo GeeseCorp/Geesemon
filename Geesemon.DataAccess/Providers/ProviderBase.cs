@@ -59,7 +59,7 @@ namespace Geesemon.DataAccess.Providers
             return entity;
         }
 
-        public async Task<T> RemoveAsync(T entity)
+        public virtual async Task<T> RemoveAsync(T entity)
         {
             context.Set<T>().Remove(entity);
             await context.SaveChangesAsync();

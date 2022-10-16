@@ -140,6 +140,9 @@ const slice = createSlice({
         deleteMessage: (state, action: PayloadAction<Message>) => {
             const newChats = state.chats.map(chat => {
                 chat.messages = chat.messages.filter(m => m.id !== action.payload.id);
+                chat.messages = chat.messages.map(m => m.replyMessageId === action.payload.id
+                    ? { ...m, replyMessageId: null, replyMessage: null }
+                    : m);
                 return chat;
             });
             state.chats = sortChat(newChats);

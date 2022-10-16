@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Geesemon.DataAccess.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20221016064559_AddedReplyMessageIdFormMessages")]
+    [Migration("20221016091845_AddedReplyMessageIdFormMessages")]
     partial class AddedReplyMessageIdFormMessages
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -275,7 +275,7 @@ namespace Geesemon.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Geesemon.Model.Models.Message", "ReplyMessage")
-                        .WithMany()
+                        .WithMany("RepliedMessages")
                         .HasForeignKey("ReplyMessageId");
 
                     b.Navigation("Chat");
@@ -344,6 +344,8 @@ namespace Geesemon.DataAccess.Migrations
             modelBuilder.Entity("Geesemon.Model.Models.Message", b =>
                 {
                     b.Navigation("ReadBy");
+
+                    b.Navigation("RepliedMessages");
                 });
 
             modelBuilder.Entity("Geesemon.Model.Models.User", b =>

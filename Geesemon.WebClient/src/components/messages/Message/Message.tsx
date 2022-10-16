@@ -74,14 +74,22 @@ export const Message: FC<Props> = ({ message, inputTextFocus, isFromVisible = fa
                             </Link>
                         )}
                         {message.replyMessage && (
-                            <div className={s.replyMessage}>
-                                <div className={'small bold primary'}>{message.replyMessage?.from?.fullName}</div>
+                            <div
+                              style={{ borderColor: selectedChat?.type === ChatKind.Group ? message.replyMessage.from?.avatarColor : '' }} 
+                              className={s.replyMessage}
+                            >
+                                <div 
+                                  style={{ color: selectedChat?.type === ChatKind.Group ? message.replyMessage.from?.avatarColor : '' }} 
+                                  className={'small bold primary'}
+                                >
+                                    {message.replyMessage?.from?.fullName}
+                                </div>
                                 <div className={['small primary', s.replyMessageText].join(' ')}>{message.replyMessage?.text}</div>
                             </div>
                         )}
                         <span className={s.messageText}>{message.text}</span>
                         <span className={s.messageInfo}>
-                            {message.createdAt !== message.updatedAt &&
+                            {message.isEdited &&
                                 <span className={'small light'}>edited</span>
                             }
                             <span className={'small light'}>

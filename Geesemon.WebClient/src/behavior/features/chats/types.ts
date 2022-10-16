@@ -4,6 +4,7 @@ import { User } from '../users/types';
 export type Message = {
     text?: string | null;
     type: MessageKind;
+    isEdited: boolean;
     fromId?: string | null;
     from?: User | null;
     chatId: string;

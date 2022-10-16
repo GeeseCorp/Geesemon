@@ -1,4 +1,5 @@
-﻿using Geesemon.Model.Models;
+﻿using Geesemon.Model.Common;
+using Geesemon.Model.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Geesemon.DataAccess.Providers.MessageProvider
@@ -26,6 +27,22 @@ namespace Geesemon.DataAccess.Providers.MessageProvider
                 .Take(getMessageCount)
                 //.OrderBy(m => m.CreatedAt)
                 .ToListAsync();
+        }
+
+        public async override Task<Message> RemoveAsync(Guid id)
+        {
+            var repliedMessages = await GetAsync(m => m.ReplyMessageId == id);
+            foreach (var repliedMessage in repliedMessages)
+                repliedMessage.ReplyMessageId = null;
+            return await base.RemoveAsync(id);
+        }
+
+        public async override Task<Message> RemoveAsync(Message entity)
+        {
+            var repliedMessages = await GetAsync(m => m.ReplyMessageId == entity.Id);
+            foreach (var repliedMessage in repliedMessages)
+                repliedMessage.ReplyMessageId = null;
+            return await base.RemoveAsync(entity);
         }
     }
 }

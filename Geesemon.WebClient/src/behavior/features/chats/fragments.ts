@@ -7,6 +7,7 @@ export const MESSAGE_WITHOUT_REPLY_MESSAGE_FRAGMENT = gql`
         id
         text
         type
+        isEdited
         fromId
         from {
             ...UserFragment

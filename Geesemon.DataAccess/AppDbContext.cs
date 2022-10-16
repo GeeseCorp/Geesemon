@@ -85,10 +85,11 @@ namespace Geesemon.DataAccess
                 .WithMany(u => u.Messages)
                 .OnDelete(DeleteBehavior.SetNull);
 
-            //modelBuilder.Entity<Message>()
-            //    .HasMany(m => m.RepliedMessages)
-            //    .WithOne(rm => rm.ReplyMessage)
-            //    .OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<Message>()
+                .HasMany(m => m.RepliedMessages)
+                .WithOne(m => m.ReplyMessage)
+                .HasForeignKey(x => x.ReplyMessageId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
 
             modelBuilder.Entity<Chat>()
                 .HasOne(c => c.Creator)
