@@ -1,6 +1,7 @@
 ﻿using Geesemon.Model.Common;
 using Geesemon.Model.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.SqlTypes;
 
 namespace Geesemon.Model.Models;
 public class Message : Entity
@@ -17,6 +18,10 @@ public class Message : Entity
 
     public Guid ChatId { get; set; }
     public Chat? Chat { get; set; }
+    
+    public Guid? ReplyMessageId { get; set; }
+    public Message? ReplyMessage { get; set; }
+    public IEnumerable<Message>? RepliedMessages { get; set; }
 
     public List<ReadMessage>? ReadBy { get; set; }
 }

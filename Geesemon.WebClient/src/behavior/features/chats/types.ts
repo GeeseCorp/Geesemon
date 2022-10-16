@@ -7,6 +7,8 @@ export type Message = {
     fromId?: string | null;
     from?: User | null;
     chatId: string;
+    replyMessageId?: string | null;
+    replyMessage?: Message | null;
     readBy: User[];
     readByCount: number;
 } & Entity;

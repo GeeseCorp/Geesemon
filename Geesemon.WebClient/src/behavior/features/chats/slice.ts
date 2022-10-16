@@ -14,7 +14,12 @@ import {
 import { ChatsGetVars, MessageGetVars } from './queries';
 import { Chat, Message, UserChat } from './types';
 
-export type Mode = 'Text' | 'Audio' | 'Updating' | 'Reply';
+export enum Mode {
+    Text = 0,
+    Audio = 1,
+    Updating = 2,
+    Reply = 3,
+}
 
 type InitialState = {
     chats: Chat[];
@@ -24,6 +29,7 @@ type InitialState = {
     messageGetLoading: boolean;
     messagesGetHasNext: boolean;
 
+    replyMessageId?: string | null;
     inUpdateMessageId?: string | null;
     mode: Mode;
 
@@ -44,8 +50,9 @@ const initialState: InitialState = {
     messageGetLoading: false,
     messagesGetHasNext: true,
 
+    replyMessageId: null,
     inUpdateMessageId: null,
-    mode: 'Text',
+    mode: Mode.Text,
 
     createChatLoading: false,
 
@@ -65,6 +72,9 @@ const slice = createSlice({
         },
         setInUpdateMessageId: (state, action: PayloadAction<string | null | undefined>) => {
             state.inUpdateMessageId = action.payload;
+        },
+        setReplyMessageId: (state, action: PayloadAction<string | null | undefined>) => {
+            state.replyMessageId = action.payload;
         },
 
         addChats: (state, action: PayloadAction<Chat[]>) => {

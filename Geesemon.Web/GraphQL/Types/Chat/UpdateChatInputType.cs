@@ -39,8 +39,8 @@ public class UpdateChatInputValidation : AbstractValidator<UpdateChatInput>
             .NotNull()
             .MustAsync(async (id, cancellation) =>
             {
-                var Chat = await chatManager.GetByIdAsync(id);
-                return Chat != null;
+                var chat = await chatManager.GetByIdAsync(id);
+                return chat != null;
             }).WithMessage("Chat with current id does not exists"); ;
 
         RuleFor(r => r.Name)

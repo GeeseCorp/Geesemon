@@ -2,6 +2,7 @@ import { FC, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import deleteSvg from '../../../assets/svg/delete.svg';
 import pencilOutlinedSvg from '../../../assets/svg/pencilOutlined.svg';
+import replySvg from '../../../assets/svg/reply.svg';
 import { chatActions } from '../../../behavior/features/chats';
 import { ChatKind, Message as MessageType, MessageKind } from '../../../behavior/features/chats/types';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
@@ -14,14 +15,15 @@ import { MenuItem } from '../../common/Menu/Menu';
 import { Checks } from '../Checks/Checks';
 import s from './Message.module.scss';
 import { useSelectedChat } from '../../../hooks/useSelectedChat';
+import { Mode } from '../../../behavior/features/chats/slice';
 
 type Props = {
     message: MessageType;
-    onSetInUpdateMessage?: () => void;
+    inputTextFocus?: () => void;
     isFromVisible?: boolean;
 };
 
-export const Message: FC<Props> = ({ message, onSetInUpdateMessage, isFromVisible = false }) => {
+export const Message: FC<Props> = ({ message, inputTextFocus, isFromVisible = false }) => {
     const messageIdsMakeReadLoading = useAppSelector(s => s.chats.messageIdsMakeReadLoading);
     const authedUser = useAppSelector(s => s.auth.authedUser);
     const dispatch = useAppDispatch();
@@ -71,10 +73,16 @@ export const Message: FC<Props> = ({ message, onSetInUpdateMessage, isFromVisibl
                                 {message.from?.firstName} {message.from?.firstName}
                             </Link>
                         )}
+                        {message.replyMessage && (
+                            <div className={s.replyMessage}>
+                                <div className={'small bold primary'}>{message.replyMessage?.from?.fullName}</div>
+                                <div className={['small primary', s.replyMessageText].join(' ')}>{message.replyMessage?.text}</div>
+                            </div>
+                        )}
                         <span className={s.messageText}>{message.text}</span>
                         <span className={s.messageInfo}>
                             {message.createdAt !== message.updatedAt &&
-                                <span className={'small light'}>Edited</span>
+                                <span className={'small light'}>edited</span>
                             }
                             <span className={'small light'}>
                                 {getTimeWithoutSeconds(new Date(message.createdAt))}
@@ -88,12 +96,23 @@ export const Message: FC<Props> = ({ message, onSetInUpdateMessage, isFromVisibl
 
     const setInUpdateMessageHanlder = (messageId: string) => {
         dispatch(chatActions.setInUpdateMessageId(messageId));
-        dispatch(chatActions.setMode('Updating'));
-        onSetInUpdateMessage && onSetInUpdateMessage();
+        dispatch(chatActions.setMode(Mode.Updating));
+        inputTextFocus && inputTextFocus();
+    };
+
+    const setReplyMessageHanlder = (messageId: string) => {
+        dispatch(chatActions.setReplyMessageId(messageId));
+        dispatch(chatActions.setMode(Mode.Reply));
+        inputTextFocus && inputTextFocus();
     };
 
     const getContextMenuItems = (): MenuItem[] => {
-        const items: MenuItem[] = [];
+        const items: MenuItem[] = [{
+            content: 'Reply',
+            icon: <img src={replySvg} width={17} className={'primaryTextSvg'} alt={'replySvg'} />,
+            onClick: () => setReplyMessageHanlder(message.id),
+            type: 'default',
+        }];
 
         if(message.fromId === authedUser?.id)
             items.push({

@@ -1,9 +1,9 @@
 import { gql } from '@apollo/client';
 import { USER_FRAGMENT } from '../users/fragments';
 
-export const MESSAGE_FRAGMENT = gql`
+export const MESSAGE_WITHOUT_REPLY_MESSAGE_FRAGMENT = gql`
     ${USER_FRAGMENT}
-    fragment MessageFragment on MessageType {
+    fragment MessageWithoutReplyMessageFragment on MessageType {
         id
         text
         type
@@ -19,6 +19,18 @@ export const MESSAGE_FRAGMENT = gql`
         readByCount
         createdAt
         updatedAt
+    }
+`;
+
+export const MESSAGE_FRAGMENT = gql`
+    ${USER_FRAGMENT}
+    ${MESSAGE_WITHOUT_REPLY_MESSAGE_FRAGMENT}
+    fragment MessageFragment on MessageType {
+        ...MessageWithoutReplyMessageFragment
+        replyMessageId
+        replyMessage {
+            ...MessageWithoutReplyMessageFragment
+        }
     }
 `;
 

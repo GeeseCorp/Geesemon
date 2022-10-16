@@ -52,6 +52,7 @@ export type MessageSendVars = { input: SentMessageInputType };
 export type SentMessageInputType = {
     chatUsername: string;
     text: string;
+    replyMessageId?: string | null;
 };
 export const MESSAGE_SEND_MUTATION = gql`
     ${MESSAGE_FRAGMENT}
