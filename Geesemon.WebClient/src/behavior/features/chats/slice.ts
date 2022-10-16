@@ -156,7 +156,9 @@ const slice = createSlice({
                 chat.messages = chat.messages.map(message =>
                     message.id === action.payload.id
                         ? action.payload
-                        : message,
+                        : message.replyMessageId === action.payload.id
+                            ? { ...message, replyMessageId: action.payload.id, replyMessage: action.payload }
+                            : message,
                 );
             }
         },
