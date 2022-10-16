@@ -125,8 +125,8 @@ export const messageSendAsyncEpic: Epic<ReturnType<typeof chatActions.messageSen
     action$.pipe(
         ofType(chatActions.messageSendAsync.type),
         mergeMap(action =>
-            iif(() => isGuidEmpty(action.payload.chatId),
-                from(client.mutate<ChatCreatePersonalData, ChatCreatePersonalVars>({
+            isGuidEmpty(action.payload.chatId)
+                ? from(client.mutate<ChatCreatePersonalData, ChatCreatePersonalVars>({
                     mutation: CHAT_CREATE_PERSONAL_MUTATION,
                     variables: { input: { username: action.payload.sentMessageInput.chatUsername } },
                 })).pipe(
@@ -139,16 +139,14 @@ export const messageSendAsyncEpic: Epic<ReturnType<typeof chatActions.messageSen
                             catchError(error => of(notificationsActions.addError(error.message))),
                         ),
                     ),
-                ),
-                from(client.mutate<MessageSendData, MessageSendVars>({
+                )
+                : from(client.mutate<MessageSendData, MessageSendVars>({
                     mutation: MESSAGE_SEND_MUTATION,
                     variables: { input: action.payload.sentMessageInput },
                 })).pipe(
                     mergeMap(response => []),
                     catchError(error => of(notificationsActions.addError(error.message))),
                 ),
-            ),
-            
         ),
     );
 
