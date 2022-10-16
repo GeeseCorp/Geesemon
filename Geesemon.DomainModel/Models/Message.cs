@@ -17,6 +17,10 @@ public class Message : Entity
 
     public Guid ChatId { get; set; }
     public Chat? Chat { get; set; }
+    
+    public Guid? ReplyMessageId { get; set; }
+    public Message? ReplyMessage { get; set; }
+    public IEnumerable<Message>? RepliedMessages { get; set; }
 
     public List<ReadMessage>? ReadBy { get; set; }
 }

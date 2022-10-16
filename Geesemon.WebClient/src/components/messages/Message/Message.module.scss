@@ -57,6 +57,18 @@
     display: block;
 }
 
+.replyMessage {
+    border-left: 2px solid $primary-text-color;
+    padding: 0 10px;
+    margin-bottom: 5px;
+}
+
+.replyMessageText {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .messageText {
     margin-right: 7px;
 }

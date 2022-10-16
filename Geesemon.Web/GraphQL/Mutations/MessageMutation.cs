@@ -1,4 +1,5 @@
-﻿using Geesemon.DataAccess.Managers;
+﻿using FluentValidation;
+using Geesemon.DataAccess.Managers;
 using Geesemon.Model.Enums;
 using Geesemon.Model.Models;
 using Geesemon.Web.GraphQL.Auth;
@@ -19,36 +20,44 @@ namespace Geesemon.Web.GraphQL.Mutations
             IHttpContextAccessor httpContextAccessor,
             MessageManager messageManager, 
             ChatManager chatManager,
-            ReadMessagesManager readMessagesManager
+            ReadMessagesManager readMessagesManager,
+            IValidator<SentMessageInput> sentMessageInputValidator
             )
         {
             Field<MessageType, Message>()
                 .Name("Send")
                 .Argument<NonNullGraphType<SentMessageInputType>, SentMessageInput>("Input", "")
                 .ResolveAsync(async context =>
+                {
+                    var sentMessageInput = context.GetArgument<SentMessageInput>("Input");
+                    var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
+                    await sentMessageInputValidator.ValidateAndThrowAsync(sentMessageInput);
+
+                    var chat = await chatManager.GetByUsername(sentMessageInput.ChatUsername, currentUserId);
+                    if (!chat.UserChats.Any(uc => uc.UserId == currentUserId))
+                        throw new ExecutionError("User can sent messages only to chats that he participate.");
+
+                    Message? replyMessage = null;
+                    if(sentMessageInput.ReplyMessageId != null)
                     {
-                        var sentMessageInput = context.GetArgument<SentMessageInput>("Input");
-                        var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
-
-                        var chat = await chatManager.GetByUsername(sentMessageInput.ChatUsername, currentUserId);
-                        if(chat == null)
-                            throw new ExecutionError("Chat not found");
-
-                        if (!chat.UserChats.Any(uc => uc.UserId == currentUserId))
-                            throw new ExecutionError("User can sent messages only to chats that he participate.");
-
-                        Message newMessage = new Message()
-                        {
-                            ChatId = chat.Id,
-                            Text = sentMessageInput.Text,
-                            FromId = currentUserId,
-                            Type = MessageKind.Regular
-                        };
-                        newMessage = await messageManager.CreateAsync(newMessage);
-                        newMessage = messageActionSubscriptionService.Notify(newMessage, MessageActionKind.Create);
-                        chatActionSubscriptionService.Notify(chat, ChatActionKind.Update);
-                        return newMessage;
-                    })
+                        replyMessage = await messageManager.GetByIdAsync(sentMessageInput.ReplyMessageId);
+                        if (replyMessage.ChatId != chat.Id)
+                            throw new ExecutionError("User can reply messages only from one chat");
+                    }
+                    
+                    Message newMessage = new Message()
+                    {
+                        ChatId = chat.Id,
+                        Text = sentMessageInput.Text,
+                        FromId = currentUserId,
+                        Type = MessageKind.Regular,
+                        ReplyMessageId = replyMessage?.Id,
+                    };
+                    newMessage = await messageManager.CreateAsync(newMessage);
+                    newMessage = messageActionSubscriptionService.Notify(newMessage, MessageActionKind.Create);
+                    chatActionSubscriptionService.Notify(chat, ChatActionKind.Update);
+                    return newMessage;
+                })
                 .AuthorizeWith(AuthPolicies.Authenticated);
 
             Field<MessageType, Message>()

@@ -91,7 +91,7 @@ export const Messages: FC = () => {
         bottomOfMessagesRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
 
-    const onSetInUpdateMessage = () => {
+    const inputTextFocus = () => {
         inputTextRef.current?.focus();
     };
 
@@ -142,7 +142,7 @@ export const Messages: FC = () => {
                                       key={message.id}
                                       isFromVisible={!j && selectedChat?.type === ChatKind.Group && message.fromId !== authedUser?.id}
                                       message={message} 
-                                      onSetInUpdateMessage={onSetInUpdateMessage}
+                                      inputTextFocus={inputTextFocus}
                                     />
                                 ))}
                             </div>

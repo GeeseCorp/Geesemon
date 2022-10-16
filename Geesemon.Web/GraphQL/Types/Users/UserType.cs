@@ -14,23 +14,27 @@ namespace Geesemon.Web.GraphQL.Types
                .Name("FirstName")
                .Resolve(context => context.Source.FirstName);
 
-            Field<StringGraphType, string>()
+            Field<StringGraphType, string?>()
                .Name("LastName")
                .Resolve(context => context.Source.LastName);
+            
+            Field<NonNullGraphType<StringGraphType>, string>()
+               .Name("FullName")
+               .Resolve(context => context.Source.FullName);
 
             Field<NonNullGraphType<StringGraphType>, string>()
                .Name("Username")
                .Resolve(context => context.Source.Username);
 
-            Field<StringGraphType, string>()
+            Field<StringGraphType, string?>()
                .Name("Email")
                .Resolve(context => context.Source.Email);
 
-            Field<StringGraphType, string>()
+            Field<StringGraphType, string?>()
                .Name("PhoneNumber")
                .Resolve(context => context.Source.PhoneNumber);
 
-            Field<StringGraphType, string>()
+            Field<StringGraphType, string?>()
                .Name("Description")
                .Resolve(context => context.Source.Description);
 
