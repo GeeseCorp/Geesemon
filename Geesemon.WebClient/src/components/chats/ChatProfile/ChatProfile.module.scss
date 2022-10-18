@@ -47,31 +47,8 @@
     font-weight: 600;
 }
 
-.chatInfoButtons {
+.chatProfileButtons {
     margin: 10px;
-}
-
-.chatInfoButton {
-    height: 55px;
-    padding: 5px 15px;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    border-radius: 10px;
-    cursor: pointer;
-}
-
-.chatInfoButton:hover {
-    background-color: $secondary-button-hover-color;
-}
-
-.chatInfoButtonText {
-    margin-bottom: -5px;
-}
-
-.chatInfoButtonLabel {
-    color: $secondary-text-color;
-    font-size: 0.9rem;
 }
 
 .notifications {

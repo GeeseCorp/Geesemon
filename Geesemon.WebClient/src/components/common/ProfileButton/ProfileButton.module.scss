@@ -1,0 +1,34 @@
+@import '../../../App.scss';
+
+.profileButton {
+    height: 55px;
+    padding: 5px 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border-radius: 10px;
+    cursor: pointer;
+
+    .icon {
+        width: 25px;
+        margin-right: 10px;
+    }
+
+    .content {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .text {
+        margin-bottom: -2px;
+    }
+
+    .label {
+        color: $secondary-text-color;
+        font-size: 0.9rem;
+    }
+
+    &:hover {
+        background-color: $secondary-button-hover-color;
+    }
+}

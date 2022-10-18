@@ -1,6 +1,7 @@
 import { gql } from '@apollo/client';
 import { USER_FRAGMENT } from '../users/fragments';
-import { AuthResponseType } from './types';
+import { SESSION_FRAGMENT } from './fragments';
+import { AuthResponseType, Session } from './types';
 
 export type AuthLoginData = { auth: { login: AuthResponseType } };
 export type AuthLoginVars = { input: LoginInputType };
@@ -10,6 +11,7 @@ export type LoginInputType = {
 };
 export const AUTH_LOGIN_MUTATION = gql`
     ${USER_FRAGMENT}
+    ${SESSION_FRAGMENT}
     mutation AuthLogin($input: AuthLoginInputType!) {
         auth {
             login(input: $input) {
@@ -17,6 +19,9 @@ export const AUTH_LOGIN_MUTATION = gql`
                     ...UserFragment
                 }
                 token
+                session {
+                    ...SessionFragment
+                }
             }
         }
     }
@@ -33,6 +38,7 @@ export type RegisterInputType = {
 };
 export const AUTH_REGISTER_MUTATION = gql`
     ${USER_FRAGMENT}
+    ${SESSION_FRAGMENT}
     mutation AuthRegister($input: AuthRegisterInputType!) {
         auth {
             register(input: $input) {
@@ -40,6 +46,9 @@ export const AUTH_REGISTER_MUTATION = gql`
                     ...UserFragment
                 }
                 token
+                session {
+                    ...SessionFragment
+                }
             }
         }
     }
@@ -61,6 +70,32 @@ export const AUTH_TOGGLE_ONLINE_MUTATION = gql`
     mutation AuthToggleOnline($isOnline: Boolean!) {
         auth {
             toggleOnline(isOnline: $isOnline)
+        }
+    }
+`;
+
+export type AuthTermitateSessionData = { auth: { terminateAllOtherSessions: Session[] } };
+export type AuthTermitateSessionVars = { sessionId: string};
+export const AUTH_TERMINATE_SESSION_MUTATION = gql`
+${SESSION_FRAGMENT}
+    mutation AuthTerminateSession($sessionId: Guid!) {
+        auth {
+            terminateSession(sessionId: $sessionId) {
+                ...SessionFragment
+            }
+        }
+    }
+`;
+
+export type AuthTermitateAllOtherSessionData = { auth: { terminateAllOtherSessions: Session[] } };
+export type AuthTermitateAllOtherSessionVars = { };
+export const AUTH_TERMINATE_ALL_OTHER_SESSION_MUTATION = gql`
+${SESSION_FRAGMENT}
+    mutation AuthTerminateAllOtherSessions {
+        auth {
+            terminateAllOtherSessions{
+                ...SessionFragment
+            }
         }
     }
 `;

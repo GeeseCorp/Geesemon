@@ -140,7 +140,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                 .AuthorizeWith(AuthPolicies.Authenticated);
             
             Field<NonNullGraphType<SessionType>, Session>()
-                .Name("RemoveSession")
+                .Name("TerminateSession")
                 .Argument<NonNullGraphType<GuidGraphType>, Guid>("SessionId", "")
                 .ResolveAsync(async context =>
                 {
@@ -150,6 +150,16 @@ namespace Geesemon.Web.GraphQL.Mutations
                     if (session.UserId != userId)
                         throw new ExecutionError("You can not remove others sessions");
                     return await sessionManager.RemoveAsync(session);
+                })
+                .AuthorizeWith(AuthPolicies.Authenticated);
+            
+            Field<NonNullGraphType<ListGraphType<SessionType>>, IEnumerable<Session>>()
+                .Name("TerminateAllOtherSessions")
+                .ResolveAsync(async context =>
+                {
+                    var userId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
+                    string token = httpContextAccessor.HttpContext.Request.Headers[HeaderNames.Authorization];
+                    return await sessionManager.TerminateAllOthersSessionAsync(userId, token);
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
         }

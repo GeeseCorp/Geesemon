@@ -14,6 +14,7 @@ import { User } from '../../users/User/User';
 import s from './ChatProfile.module.scss';
 import { useNavigate } from 'react-router-dom';
 import { User as UserType } from '../../../behavior/features/users/types';
+import { ProfileButton } from '../../common/ProfileButton/ProfileButton';
 
 export enum Tab {
     Members = 'Members',
@@ -104,16 +105,15 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
                         )
                     }
                 </div>
-                <div className={s.chatInfoButtons}>
-                    <div className={s.chatInfoButton}>
-                        <img src={atSignSvg} width={25} className={'secondaryTextSvg'} alt={'atSignSvg'} />
-                        <div>
-                            <div className={s.chatInfoButtonText}>{chat.username}</div>
-                            <div className={s.chatInfoButtonLabel}>username</div>
-                        </div>
-                    </div>
-                    <div className={s.chatInfoButton}>
-                        <img src={notificationOutlinedSvg} width={25} className={'secondaryTextSvg'} alt={'notificationOutlinedSvg'} />
+                <div className={s.chatProfileButtons}>
+                    <ProfileButton 
+                      icon={<img src={atSignSvg} width={25} className={'secondaryTextSvg'} alt={'atSignSvg'} />}
+                      text={chat.username}
+                      label={'Username'}
+                    />
+                    <ProfileButton 
+                      icon={<img src={notificationOutlinedSvg} width={25} className={'secondaryTextSvg'} alt={'notificationOutlinedSvg'} />}
+                      text={(
                         <div className={s.notifications}>
                             <div className={s.chatInfoButtonText}>Notifications</div>
                             <Switch
@@ -121,10 +121,11 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
                               setChecked={setIsEnabledNotifications}
                             />
                         </div>
-                    </div>
+                      )}
+                    />
                 </div>
 
-                <div className={s.divider} />
+                <div className={'divider'} />
                 <div className={s.tabs}>
                     {(Object.keys(Tab) as Array<Tab>).map(tab =>
                         (chat.type === ChatKind.Personal || chat.type === ChatKind.Saved) && tab === Tab.Members
