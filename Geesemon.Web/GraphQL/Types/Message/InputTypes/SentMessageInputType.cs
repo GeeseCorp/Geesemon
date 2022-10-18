@@ -38,7 +38,7 @@ public class SentMessageInputValidator : AbstractValidator<SentMessageInput>
             .MustAsync(async (chatUsername, cancellation) =>
             {
                 var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
-                var chat = await chatManager.GetByUsername(chatUsername, currentUserId);
+                var chat = await chatManager.GetByUsernameAsync(chatUsername, currentUserId);
                 return chat != null;
             }).WithMessage("Chat not found");
 

@@ -47,7 +47,7 @@ export const User: FC<Props> = ({ user, selectMultiple = false, selectedUsers, s
                     ? <Avatar imageUrl={user.imageUrl} width={54} height={54} />
                     : (
                         <AvatarWithoutImage
-                          name={`${user.firstName} ${user.lastName}`}
+                          name={user.fullName}
                           backgroundColor={user.avatarColor}
                           width={54}
                           height={54}

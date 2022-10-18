@@ -151,7 +151,7 @@ export const Message: FC<Props> = ({ message, inputTextFocus, isFromVisible = fa
                               height={22}
                               fontSize={8}
                               backgroundColor={user.avatarColor}
-                              name={`${user.firstName} ${user.lastName}`}
+                              name={user.fullName}
                             />
                         ),
                     )}

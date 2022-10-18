@@ -53,6 +53,7 @@ export const Chats: FC = () => {
         {
             icon: <img src={settingsSvg} className={[s.menuItem, 'secondaryTextSvg'].join(' ')} alt={'settingsSvg'} />,
             content: 'Settings',
+            onClick: () => dispatch(appActions.setLeftSidebarState(LeftSidebarState.Settings)),
             type: 'default',
         },
         {

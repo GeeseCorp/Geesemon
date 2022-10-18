@@ -1,0 +1,27 @@
+@import '../../../../App.scss';
+
+.wrapper {
+    height: 100vh;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.form {
+    height: calc(100% - 76px);
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    position: relative;
+
+    .bottonSubmit {
+        position: absolute;
+        bottom: 5px;
+        right: 0;
+    }
+}

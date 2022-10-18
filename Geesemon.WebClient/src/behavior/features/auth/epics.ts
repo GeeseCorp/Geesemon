@@ -4,7 +4,7 @@ import { catchError, endWith, from, mergeMap, of, startWith } from 'rxjs';
 import { client } from '../../client';
 import { notificationsActions } from '../notifications/slice';
 import { authActions } from './slice';
-import { AUTH_ME_QUERY, AuthMeData, AuthMeVars } from './queries';
+import { AUTH_ME_QUERY, AuthMeData, AuthMeVars, AuthGetSessionsData, AuthGetSessionsVars, AUTH_GET_SESSIONS_QUERY } from './queries';
 import {
     AUTH_LOGIN_MUTATION,
     AUTH_REGISTER_MUTATION,
@@ -16,6 +16,15 @@ import {
     AuthToggleOnlineData,
     AuthToggleOnlineVars,
     AUTH_TOGGLE_ONLINE_MUTATION,
+    AuthTermitateAllOtherSessionData,
+    AuthTermitateAllOtherSessionVars,
+    AUTH_TERMINATE_ALL_OTHER_SESSION_MUTATION,
+    AuthTermitateSessionData,
+    AuthTermitateSessionVars,
+    AUTH_TERMINATE_SESSION_MUTATION,
+    AuthUpdateProfileData,
+    AuthUpdateProfileVars,
+    AUTH_UPDATE_PROFILE_MUTATION,
 } from './mutations';
 import { appActions } from '../app/slice';
 import { navigateActions } from '../navigate/slice';
@@ -140,6 +149,95 @@ export const toggleOnlineAsyncEpic: Epic<ReturnType<typeof authActions.toggleOnl
         ),
     );
 
+export const getSessionsAsyncEpic: Epic<ReturnType<typeof authActions.getSessionsAsync>, any, RootState> = (action$, state$) =>
+    action$.pipe(
+        ofType(authActions.getSessionsAsync.type),
+        mergeMap(action =>
+            from(client.mutate<AuthGetSessionsData, AuthGetSessionsVars>({
+                mutation: AUTH_GET_SESSIONS_QUERY,
+                variables: {},
+            })).pipe(
+                mergeMap(response => {
+                    if (response.errors?.length)
+                      return response.errors.map(e => notificationsActions.addError(e.message));
+                    if (!response.data)
+                     return [notificationsActions.addError('No response for get sessions')];
+                    return [
+                        authActions.setSessions(response.data.auth.getSessions),
+                    ];
+                }),
+                catchError(error => of(notificationsActions.addError(error.message))),
+                startWith(authActions.setSessionsGetLoading(true)),
+                endWith(authActions.setSessionsGetLoading(false)),
+            ),
+        ),
+    );
+
+export const terminateSessionAsyncEpic: Epic<ReturnType<typeof authActions.terminateSessionAsync>, any, RootState> = (action$, state$) =>
+    action$.pipe(
+        ofType(authActions.terminateSessionAsync.type),
+        mergeMap(action =>
+            from(client.mutate<AuthTermitateSessionData, AuthTermitateSessionVars>({
+                mutation: AUTH_TERMINATE_SESSION_MUTATION,
+                variables: { sessionId: action.payload.sessionId },
+            })).pipe(
+                mergeMap(response => {
+                    if (response.errors?.length)
+                      return response.errors.map(e => notificationsActions.addError(e.message));
+                    return [
+                        authActions.setSessions(state$.value.auth.sessions.filter(s => s.id !== action.payload.sessionId)),
+                    ];
+                }),
+                catchError(error => of(notificationsActions.addError(error.message))),
+            ),
+        ),
+    );
+
+export const terminateAllOtherSessionsAsyncEpic: Epic<ReturnType<typeof authActions.terminateAllOtherSessionsAsync>, any, RootState> = (action$, state$) =>
+    action$.pipe(
+        ofType(authActions.terminateAllOtherSessionsAsync.type),
+        mergeMap(action =>
+            from(client.mutate<AuthTermitateAllOtherSessionData, AuthTermitateAllOtherSessionVars>({
+                mutation: AUTH_TERMINATE_ALL_OTHER_SESSION_MUTATION,
+                variables: {},
+            })).pipe(
+                mergeMap(response => {
+                    if (response.errors?.length)
+                      return response.errors.map(e => notificationsActions.addError(e.message));
+                    return [
+                        authActions.setSessions([]),
+                    ];
+                }),
+                catchError(error => of(notificationsActions.addError(error.message))),
+                startWith(authActions.setTerminateAllOtherSessionsLoading(true)),
+                endWith(authActions.setTerminateAllOtherSessionsLoading(false)),
+            ),
+        ),
+    );
+
+export const updateProfileAsyncEpic: Epic<ReturnType<typeof authActions.updateProfileAsync>, any, RootState> = (action$, state$) =>
+    action$.pipe(
+        ofType(authActions.updateProfileAsync.type),
+        mergeMap(action =>
+            from(client.mutate<AuthUpdateProfileData, AuthUpdateProfileVars>({
+                mutation: AUTH_UPDATE_PROFILE_MUTATION,
+                variables: { input: action.payload },
+            })).pipe(
+                mergeMap(response => {
+                    if (response.errors?.length)
+                      return response.errors.map(e => notificationsActions.addError(e.message));
+                    return [
+                        authActions.updateAuthedUser(response.data?.auth.updateProfile),
+                        notificationsActions.addSuccess('Profile successfully updated'),
+                    ];
+                }),
+                catchError(error => of(notificationsActions.addError(error.message))),
+                startWith(authActions.setUpdateProfileLoading(true)),
+                endWith(authActions.setUpdateProfileLoading(false)),
+            ),
+        ),
+    );
+
 export const authEpics = combineEpics(
     meAsyncEpic,
     // @ts-ignore
@@ -147,4 +245,8 @@ export const authEpics = combineEpics(
     registerAsyncEpic,
     logoutEpic,
     toggleOnlineAsyncEpic,
+    getSessionsAsyncEpic,
+    terminateSessionAsyncEpic,
+    terminateAllOtherSessionsAsyncEpic,
+    updateProfileAsyncEpic,
 );

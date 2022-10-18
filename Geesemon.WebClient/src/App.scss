@@ -149,9 +149,9 @@ body {
     color: $danger-color;
 }
 
-.danger:hover {
-    background-color: #322525;
-}
+// .danger:hover {
+//     background-color: #322525;
+// }
 
 .headerTitle {
     font-size: 20px;
@@ -176,4 +176,9 @@ body {
 
 .dangerSvg {
     filter: $danger-filter;
+}
+
+.divider {
+    height: 15px;
+    background-color: #181818;
 }

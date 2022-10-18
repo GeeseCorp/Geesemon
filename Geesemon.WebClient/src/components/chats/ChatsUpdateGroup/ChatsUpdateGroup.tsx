@@ -84,7 +84,6 @@ export const ChatsUpdateGroup: FC<Props> = ({ chat }) => {
                             />
                         )
                     }
-
                 </div>
                 <Input
                   placeholder="Group name"
