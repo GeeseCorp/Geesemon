@@ -22,11 +22,13 @@ namespace Geesemon.Web.GraphQL.Mutations
         public AuthMutation(
             AuthService authService,
             UserManager userManager,
-            SessionManager sessionManager, 
+            SessionManager sessionManager,
+            FileManagerService fileManagerService,
             IHttpContextAccessor httpContextAccessor,
-            IServiceProvider serviceProvider,
             IValidator<AuthLoginInput> authLoginInputValidator,
-            IValidator<AuthRegisterInput> authRegisterInputValidator
+            IValidator<AuthRegisterInput> authRegisterInputValidator,
+            IValidator<AuthUpdateProfile> authUpdateProfileValidator,
+            IChatActivitySubscriptionService chatActivitySubscriptionService
             )
         {
             this.httpContextAccessor = httpContextAccessor;
@@ -131,10 +133,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                     session = await FillSession(session, isOnline);
                     await sessionManager.UpdateAsync(session);
                     
-                    using var scope = serviceProvider.CreateScope();
-                    var chatActivitySubscriptionService = scope.ServiceProvider.GetRequiredService<IChatActivitySubscriptionService>();
                     await chatActivitySubscriptionService.Notify(userId);
-
                     return true;
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
@@ -160,6 +159,33 @@ namespace Geesemon.Web.GraphQL.Mutations
                     var userId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
                     string token = httpContextAccessor.HttpContext.Request.Headers[HeaderNames.Authorization];
                     return await sessionManager.TerminateAllOthersSessionAsync(userId, token);
+                })
+                .AuthorizeWith(AuthPolicies.Authenticated);
+
+            Field<NonNullGraphType<UserType>, User>()
+                .Name("UpdateProfile")
+                .Argument<NonNullGraphType<AuthUpdateProfileType>, AuthUpdateProfile>("Input", "")
+                .ResolveAsync(async context =>
+                {
+                    var authUpdateProfile = context.GetArgument<AuthUpdateProfile>("Input");
+                    await authUpdateProfileValidator.ValidateAndThrowAsync(authUpdateProfile);
+
+                    string imageUrl;
+                    if(authUpdateProfile.Image != null)
+                        imageUrl = await fileManagerService.UploadFileAsync(FileManagerService.UsersAvatarsFolder, authUpdateProfile.Image);
+                    else
+                        imageUrl = authUpdateProfile.ImageUrl;
+
+                    var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
+                    var currentUser = await userManager.GetByIdAsync(currentUserId);
+                    currentUser.FirstName = authUpdateProfile.Firstname;
+                    currentUser.LastName = authUpdateProfile.Lastname;
+                    currentUser.Username = authUpdateProfile.Username;
+                    currentUser.ImageUrl = imageUrl;
+                    currentUser = await userManager.UpdateAsync(currentUser);
+
+                    await chatActivitySubscriptionService.Notify(currentUser.Id);
+                    return currentUser;
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
         }

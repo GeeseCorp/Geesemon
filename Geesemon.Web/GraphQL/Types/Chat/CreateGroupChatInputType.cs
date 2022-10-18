@@ -68,7 +68,7 @@ public class CreateGroupChatInputValidation : AbstractValidator<CreateGroupChatI
                     return false;
 
                 var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
-                var chat = await chatManager.GetByUsername(username, currentUserId);
+                var chat = await chatManager.GetByUsernameAsync(username, currentUserId);
                 return chat == null;
             }).WithMessage("Username already taken");
 

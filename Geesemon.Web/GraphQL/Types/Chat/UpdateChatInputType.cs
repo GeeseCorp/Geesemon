@@ -55,7 +55,7 @@ public class UpdateChatInputValidation : AbstractValidator<UpdateChatInput>
             .MustAsync(async (chat, username, cancellation) =>
             {
                 var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
-                var checkChat = await chatManager.GetByUsername(username, currentUserId);
+                var checkChat = await chatManager.GetByUsernameAsync(username, currentUserId);
                 return checkChat == null || checkChat.Id == chat.Id;
             }).WithMessage("Username already taken");
     }

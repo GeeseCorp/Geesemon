@@ -22,6 +22,9 @@ import {
     AuthTermitateSessionData,
     AuthTermitateSessionVars,
     AUTH_TERMINATE_SESSION_MUTATION,
+    AuthUpdateProfileData,
+    AuthUpdateProfileVars,
+    AUTH_UPDATE_PROFILE_MUTATION,
 } from './mutations';
 import { appActions } from '../app/slice';
 import { navigateActions } from '../navigate/slice';
@@ -212,6 +215,29 @@ export const terminateAllOtherSessionsAsyncEpic: Epic<ReturnType<typeof authActi
         ),
     );
 
+export const updateProfileAsyncEpic: Epic<ReturnType<typeof authActions.updateProfileAsync>, any, RootState> = (action$, state$) =>
+    action$.pipe(
+        ofType(authActions.updateProfileAsync.type),
+        mergeMap(action =>
+            from(client.mutate<AuthUpdateProfileData, AuthUpdateProfileVars>({
+                mutation: AUTH_UPDATE_PROFILE_MUTATION,
+                variables: { input: action.payload },
+            })).pipe(
+                mergeMap(response => {
+                    if (response.errors?.length)
+                      return response.errors.map(e => notificationsActions.addError(e.message));
+                    return [
+                        authActions.updateAuthedUser(response.data?.auth.updateProfile),
+                        notificationsActions.addSuccess('Profile successfully updated'),
+                    ];
+                }),
+                catchError(error => of(notificationsActions.addError(error.message))),
+                startWith(authActions.setUpdateProfileLoading(true)),
+                endWith(authActions.setUpdateProfileLoading(false)),
+            ),
+        ),
+    );
+
 export const authEpics = combineEpics(
     meAsyncEpic,
     // @ts-ignore
@@ -222,4 +248,5 @@ export const authEpics = combineEpics(
     getSessionsAsyncEpic,
     terminateSessionAsyncEpic,
     terminateAllOtherSessionsAsyncEpic,
+    updateProfileAsyncEpic,
 );

@@ -8,7 +8,8 @@ export enum LeftSidebarState{
 }
 
 export enum SettingsCategory{
-    Devices = 0,
+    UpdateProfile = 0,
+    Devices = 1,
 }
 
 export enum RightSidebarState{

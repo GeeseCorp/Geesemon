@@ -37,7 +37,7 @@ namespace Geesemon.Web.GraphQL.Queries
                     var username = context.GetArgument<string>("Username");
                     var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
                     var currentUsername = httpContextAccessor.HttpContext.User.Claims.GetUsername();
-                    var chat = await chatManager.GetByUsername(username, currentUserId);
+                    var chat = await chatManager.GetByUsernameAsync(username, currentUserId);
                     if(chat == null)
                     {
                         var user = await userManager.GetByUsernameAsync(username);

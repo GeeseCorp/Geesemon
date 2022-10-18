@@ -10,6 +10,7 @@ import { useAppDispatch, useAppSelector } from '../../../behavior/store';
 import { appActions, LeftSidebarState, SettingsCategory } from '../../../behavior/features/app/slice';
 import { ProfileButton } from '../../common/ProfileButton/ProfileButton';
 import { SettingsDevices } from '../categories/SettingsDevices/SettingsDevices';
+import { UpdateProfile } from '../categories/UpdateProfile/UpdateProfile';
 
 export const Settings: FC = () => {
     const dispatch = useAppDispatch();
@@ -19,6 +20,9 @@ export const Settings: FC = () => {
     switch(settingsCategory){
         case SettingsCategory.Devices:
             return <SettingsDevices />;
+ 
+        case SettingsCategory.UpdateProfile:
+            return <UpdateProfile />;
 
         default: 
         return (
@@ -35,16 +39,10 @@ export const Settings: FC = () => {
                         </div>
                     <div>
                         <HeaderButton
-                          keyName={'back'}
-                          onClick={() => dispatch(appActions.setLeftSidebarState(LeftSidebarState.Chats))}
+                          keyName={'Settings/UpdateProfile'}
+                          onClick={() => dispatch(appActions.setSettingsCategory(SettingsCategory.UpdateProfile))}
                         >
                             <img src={pencilOutlinedSvg} width={20} className={'secondaryTextSvg'} alt={'pencilOutlinedSvg'} />
-                        </HeaderButton>
-                        <HeaderButton
-                          keyName={'back'}
-                          onClick={() => dispatch(appActions.setLeftSidebarState(LeftSidebarState.Chats))}
-                        >
-                            <img src={threeDotsSvg} width={25} className={'secondaryTextSvg'} alt={'threeDotsSvg'} />
                         </HeaderButton>
                     </div>
                 </div>

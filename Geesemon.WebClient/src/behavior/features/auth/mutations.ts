@@ -1,5 +1,6 @@
 import { gql } from '@apollo/client';
 import { USER_FRAGMENT } from '../users/fragments';
+import { User } from '../users/types';
 import { SESSION_FRAGMENT } from './fragments';
 import { AuthResponseType, Session } from './types';
 
@@ -98,4 +99,24 @@ ${SESSION_FRAGMENT}
             }
         }
     }
+`;
+
+export type AuthUpdateProfileData = { auth: { updateProfile: User } };
+export type AuthUpdateProfileVars = {input: AuthUpdateProfileType};
+export type AuthUpdateProfileType = {
+    firstname: string;
+    lastname?: string | null;
+    username: string;
+    imageUrl?: string | null;
+    image?: File | null;
+};
+export const AUTH_UPDATE_PROFILE_MUTATION = gql`
+${USER_FRAGMENT}
+mutation AuthUpdateProfile($input: AuthUpdateProfileType!) {
+    auth {
+        updateProfile(input: $input) {
+            ...UserFragment
+        }
+    }
+}
 `;

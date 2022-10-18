@@ -12,16 +12,21 @@ namespace Geesemon.DataAccess.Providers.ChatProvider
         {
         }
 
-        public async Task<Chat?> GetByUsername(string chatUsername, Guid currentUserId)
+        public async Task<Chat?> GetByUsernameAsync(string chatUsername, Guid currentUserId)
         {
             return await context.Chats
                 .Include(c => c.UserChats)
                 .ThenInclude(uc => uc.User)
-                .FirstOrDefaultAsync(c => c.Type == ChatKind.Personal
+                .SingleOrDefaultAsync(c => c.Type == ChatKind.Personal
                     ? c.UserChats.All(uc => uc.User.Username == chatUsername || uc.UserId == currentUserId)
                     : c.Type == ChatKind.Saved
                         ? c.UserChats.All(uc => uc.User.Username == chatUsername && uc.UserId == currentUserId)
                         : c.Username == chatUsername && c.UserChats.Any(uc => uc.UserId == currentUserId));
+        }
+        
+        public async Task<Chat?> GetByUsernameAsync(string chatUsername)
+        {
+            return await context.Chats.SingleOrDefaultAsync(c => c.Username == chatUsername);
         }
         
         public async Task<int> GetMembersTotalAsync(Guid chatId)

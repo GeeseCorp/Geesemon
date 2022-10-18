@@ -80,7 +80,7 @@ namespace Geesemon.Web.GraphQL.Mutations
             var chatInp = context.GetArgument<CreatePersonalChatInput>("Input");
             var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
 
-            var checkChat = await chatManager.GetByUsername(chatInp.Username, currentUserId);
+            var checkChat = await chatManager.GetByUsernameAsync(chatInp.Username, currentUserId);
             if (checkChat != null)
                 throw new Exception("Personal chat already exists");
 

@@ -1,6 +1,6 @@
 import { AuthResponseType, Session } from './types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { LoginInputType, RegisterInputType } from './mutations';
+import { AuthUpdateProfileType, LoginInputType, RegisterInputType } from './mutations';
 import { removeAuthToken, setAuthToken } from '../../../utils/localStorageUtils';
 import { User } from '../users/types';
 
@@ -16,6 +16,8 @@ type InitialState = {
     sessions: Session[];
     sessionsGetLoading: boolean;
     terminateAllOtherSessionsLoading: boolean;
+
+    updateProfileLoading: boolean;
 };
 
 const initialState: InitialState = {
@@ -30,6 +32,8 @@ const initialState: InitialState = {
     sessions: [],
     sessionsGetLoading: false,
     terminateAllOtherSessionsLoading: false,
+
+    updateProfileLoading: false,
 };
 
 const slice = createSlice({
@@ -82,6 +86,14 @@ const slice = createSlice({
         terminateAllOtherSessionsAsync: (state: InitialState, action: PayloadAction) => state,
         setTerminateAllOtherSessionsLoading: (state: InitialState, action: PayloadAction<boolean>) => {
             state.terminateAllOtherSessionsLoading = action.payload;
+        },
+   
+        updateAuthedUser: (state: InitialState, action: PayloadAction<User | null | undefined>) => {
+            state.authedUser = action.payload;
+        },
+        updateProfileAsync: (state: InitialState, action: PayloadAction<AuthUpdateProfileType>) => state,
+        setUpdateProfileLoading: (state: InitialState, action: PayloadAction<boolean>) => {
+            state.updateProfileLoading = action.payload;
         },
 
         toInitialState: (state, action: PayloadAction) => initialState,
