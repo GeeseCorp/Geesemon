@@ -4,16 +4,15 @@ import { useAppDispatch, useAppSelector } from '../../../behavior/store';
 import { User } from '../User/User';
 import s from './Users.module.scss';
 import { SmallLoading } from '../../common/SmallLoading/SmallLoading';
-import {User as UserType } from '../../../behavior/features/users/types';
+import { User as UserType } from '../../../behavior/features/users/types';
 
 type Props = {
     onSelectedUsersChange?: (selectedUsers: UserType[]) => void;
     selectMultiple?: boolean;
     selectedUsers: UserType[];
-    setSelectedUsers: (selectedUsers: UserType[]) => void;
 };
 
-export const Users: FC<Props> = ({ onSelectedUsersChange, selectMultiple = false, selectedUsers, setSelectedUsers }) => {
+export const Users: FC<Props> = ({ onSelectedUsersChange, selectMultiple = false, selectedUsers }) => {
     const users = useAppSelector(s => s.users.users);
     const usersGetLoading = useAppSelector(s => s.users.usersGetLoading);
     const take = useAppSelector(s => s.users.take);
@@ -68,7 +67,6 @@ export const Users: FC<Props> = ({ onSelectedUsersChange, selectMultiple = false
                               user={user}
                               selectMultiple={selectMultiple}
                               selectedUsers={selectedUsers}
-                              setSelectedUsers={setSelectedUsers}
                               onSelectedUsersChange={onSelectedUsersChange}
                             />
                         </div>
@@ -79,7 +77,6 @@ export const Users: FC<Props> = ({ onSelectedUsersChange, selectMultiple = false
                               user={user}
                               selectMultiple={selectMultiple}
                               selectedUsers={selectedUsers}
-                              setSelectedUsers={setSelectedUsers}
                               onSelectedUsersChange={onSelectedUsersChange}
                             />
                         </div>

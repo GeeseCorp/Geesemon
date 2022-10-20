@@ -35,7 +35,7 @@ export const ViewMessageReadByModal: FC = () => {
         }
     };
 
-    const setSelectedUsersHanlder = (selectedUsers: UserType[]) => {
+    const onSelectedUsersChangeHandler = (selectedUsers: UserType[]) => {
         dispatch(navigateActions.navigateToChat({ username: selectedUsers[0].username }));
         dispatch(chatActions.setInViewMessageIdReadBy(null));
     };
@@ -60,7 +60,7 @@ export const ViewMessageReadByModal: FC = () => {
                         <User 
                           user={user} 
                           selectedUsers={[]} 
-                          setSelectedUsers={setSelectedUsersHanlder}
+                          onSelectedUsersChange={onSelectedUsersChangeHandler}
                         />
                     </div>
                 ))}

@@ -1,5 +1,9 @@
 @import '../../../App.scss';
 
+.wrapper {
+    position: relative;
+}
+
 .header {
     display: flex;
     justify-content: space-between;
@@ -103,4 +107,10 @@
 
 .tabContent {
     margin: 7px;
+}
+
+.buttonAddMembers {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
 }

@@ -1,0 +1,16 @@
+.wrapper {
+    position: relative;
+    height: 100vh;
+}
+
+.header {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.buttonAddMembers {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+}

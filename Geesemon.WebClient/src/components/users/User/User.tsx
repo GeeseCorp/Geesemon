@@ -9,11 +9,10 @@ type Props = {
     user: UserType;
     selectMultiple?: boolean;
     selectedUsers: UserType[];
-    setSelectedUsers: (selectedUsers: UserType[]) => void;
     onSelectedUsersChange?: (selectedUsers: UserType[]) => void;
 };
 
-export const User: FC<Props> = ({ user, selectMultiple = false, selectedUsers, setSelectedUsers, onSelectedUsersChange }) => {
+export const User: FC<Props> = ({ user, selectMultiple = false, selectedUsers, onSelectedUsersChange }) => {
     const onChangeHanlder = (user: UserType) => {
         let newSelectedUsers: UserType[];
         if (selectMultiple) {
@@ -25,9 +24,7 @@ export const User: FC<Props> = ({ user, selectMultiple = false, selectedUsers, s
         else {
             newSelectedUsers = [user];
         }
-        setSelectedUsers(newSelectedUsers);
         onSelectedUsersChange && onSelectedUsersChange(newSelectedUsers);
-
     };
 
     return (
@@ -56,7 +53,7 @@ export const User: FC<Props> = ({ user, selectMultiple = false, selectedUsers, s
                 }
                 <div className={s.userInfo}>
                     <div className={'bold'}>{user.firstName} {user.lastName}</div>
-                    <div className={'subText'}>{user.isOnline ? 'Online' : getLastTimeActivity(new Date(user.lastTimeOnline))}</div>
+                    <div className={'subText'}>{user.isOnline ? 'Online' : `last seen ${getLastTimeActivity(new Date(user.lastTimeOnline))}`}</div>
                 </div>
             </div>
         </div>
