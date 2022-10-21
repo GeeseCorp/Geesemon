@@ -140,7 +140,7 @@ export const Messages: FC = () => {
                                 {block.map((message, j) => (
                                     <Message 
                                       key={message.id}
-                                      isFromVisible={!j && selectedChat?.type === ChatKind.Group && message.fromId !== authedUser?.id}
+                                      isFromVisible={j === block.length - 1 && selectedChat?.type === ChatKind.Group && message.fromId !== authedUser?.id}
                                       message={message} 
                                       inputTextFocus={inputTextFocus}
                                     />

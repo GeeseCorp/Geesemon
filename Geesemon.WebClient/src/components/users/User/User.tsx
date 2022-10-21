@@ -4,6 +4,7 @@ import { Avatar } from '../../common/Avatar/Avatar';
 import { AvatarWithoutImage } from '../../common/AvatarWithoutImage/AvatarWithoutImage';
 import s from './User.module.scss';
 import { getLastTimeActivity } from '../../../utils/dateUtils';
+import { Checkbox } from '../../common/formControls/Checkbox/Checkbox';
 
 type Props = {
     user: UserType;
@@ -30,14 +31,10 @@ export const User: FC<Props> = ({ user, selectMultiple = false, selectedUsers, o
     return (
         <div key={user.id} className={s.user} onClick={() => onChangeHanlder(user)}>
             {selectMultiple &&
-                <div className={s.checkbox}>
-                    <input
-                      id={user.id}
-                      type={'checkbox'}
-                      checked={!!selectedUsers.some(u => u.id === user.id)}
-                      onChange={() => null}
-                    />
-                </div>
+                <Checkbox  
+                  checked={!!selectedUsers.some(u => u.id === user.id)}
+                  setChecked={() => null}
+                />
             }
             <div className={s.userInner}>
                 {user.imageUrl
