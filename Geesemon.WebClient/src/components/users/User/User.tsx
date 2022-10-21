@@ -5,15 +5,18 @@ import { AvatarWithoutImage } from '../../common/AvatarWithoutImage/AvatarWithou
 import s from './User.module.scss';
 import { getLastTimeActivity } from '../../../utils/dateUtils';
 import { Checkbox } from '../../common/formControls/Checkbox/Checkbox';
+import { MenuItem } from '../../common/Menu/Menu';
+import { ContextMenu } from '../../common/ContextMenu/ContextMenu';
 
 type Props = {
     user: UserType;
     selectMultiple?: boolean;
     selectedUsers: UserType[];
     onSelectedUsersChange?: (selectedUsers: UserType[]) => void;
+    getContextMenuItems?: (user: UserType) => MenuItem[];
 };
 
-export const User: FC<Props> = ({ user, selectMultiple = false, selectedUsers, onSelectedUsersChange }) => {
+export const User: FC<Props> = ({ user, selectMultiple = false, selectedUsers, onSelectedUsersChange, getContextMenuItems }) => {
     const onChangeHanlder = (user: UserType) => {
         let newSelectedUsers: UserType[];
         if (selectMultiple) {
@@ -28,8 +31,11 @@ export const User: FC<Props> = ({ user, selectMultiple = false, selectedUsers, o
         onSelectedUsersChange && onSelectedUsersChange(newSelectedUsers);
     };
 
+    const items = getContextMenuItems ? getContextMenuItems(user) : [];
+
     return (
-        <div key={user.id} className={s.user} onClick={() => onChangeHanlder(user)}>
+        <ContextMenu items={items}>
+            <div key={user.id} className={s.user} onClick={() => onChangeHanlder(user)}>
             {selectMultiple &&
                 <Checkbox  
                   checked={!!selectedUsers.some(u => u.id === user.id)}
@@ -54,5 +60,6 @@ export const User: FC<Props> = ({ user, selectMultiple = false, selectedUsers, o
                 </div>
             </div>
         </div>
+        </ContextMenu>
     );
 };

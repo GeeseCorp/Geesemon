@@ -9,6 +9,6 @@ namespace Geesemon.DataAccess.Providers.UserProvider
         Task<int> GetReadByCountByAsync(Guid messageId);
         Task<User?> GetByUsernameAsync(string login, params Expression<Func<User, object>>[] includes);
         Task<List<User>> GetAsync(Guid chatId);
-        Task<List<User>> GetAsync(int take, int skip, string q);
+        Task<List<User>> GetAsync(int take, int skip, string q, Guid? currentUserId);
     }
 }

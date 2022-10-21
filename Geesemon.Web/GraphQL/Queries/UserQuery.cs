@@ -9,7 +9,7 @@ namespace Geesemon.Web.GraphQL.Queries
 {
     public class UserQuery : ObjectGraphType
     {
-        public UserQuery(UserManager userManager)
+        public UserQuery(UserManager userManager, IHttpContextAccessor httpContextAccessor)
         {
             Field<NonNullGraphType<ListGraphType<UserType>>, List<User>>()
                 .Name("Get")
@@ -17,7 +17,8 @@ namespace Geesemon.Web.GraphQL.Queries
                 .ResolveAsync(async context =>
                 {
                     var input = context.GetArgument<UserGetInput>("Input");
-                    return await userManager.GetAsync(input.Take, input.Skip, input.Q);
+                    var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
+                    return await userManager.GetAsync(input.Take, input.Skip, input.Q, currentUserId);
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
 

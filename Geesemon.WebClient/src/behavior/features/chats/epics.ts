@@ -7,10 +7,12 @@ import { appActions, LeftSidebarState } from '../app/slice';
 import { navigateActions } from '../navigate/slice';
 import { notificationsActions } from '../notifications/slice';
 import {
+    ChatAddMembersData,
+    ChatAddMembersVars,
     ChatCreateGroupData,
     ChatCreateGroupVars, ChatCreatePersonalData,
     ChatCreatePersonalVars, ChatDeleteData,
-    ChatDeleteVars, CHAT_CREATE_GROUP_MUTATION, CHAT_CREATE_PERSONAL_MUTATION, CHAT_DELETE_MUTATION, MessageDeleteData,
+    ChatDeleteVars, ChatRemoveMembersData, ChatRemoveMembersVars, CHAT_ADD_MEMBERS_MUTATION, CHAT_CREATE_GROUP_MUTATION, CHAT_CREATE_PERSONAL_MUTATION, CHAT_DELETE_MUTATION, CHAT_REMOVE_MEMBERS_MUTATION, MessageDeleteData,
     MessageDeleteVars, MessageMakeReadData,
     MessageMakeReadVars, MessageSendData,
     MessageSendVars,
@@ -227,6 +229,36 @@ export const messageMakeReadAsyncEpic: Epic<ReturnType<typeof chatActions.messag
         ),
     );
 
+export const chatAddMembersAsyncEpic: Epic<ReturnType<typeof chatActions.chatAddMembersAsync>, any, RootState> = (action$, state$) =>
+    action$.pipe(
+        ofType(chatActions.chatAddMembersAsync.type),
+        mergeMap(action =>
+            from(client.mutate<ChatAddMembersData, ChatAddMembersVars>({
+                mutation: CHAT_ADD_MEMBERS_MUTATION,
+                variables: { input:  action.payload },
+            })).pipe(
+                mergeMap(response => []),
+                catchError(error => of(notificationsActions.addError(error.message))),
+                startWith(chatActions.setChatAddMembersLoading(true)),
+                endWith(chatActions.setChatAddMembersLoading(false)),
+            ),
+        ),
+    );
+
+export const chatRemoveMembersAsyncEpic: Epic<ReturnType<typeof chatActions.chatRemoveMembersAsync>, any, RootState> = (action$, state$) =>
+    action$.pipe(
+        ofType(chatActions.chatRemoveMembersAsync.type),
+        mergeMap(action =>
+            from(client.mutate<ChatRemoveMembersData, ChatRemoveMembersVars>({
+                mutation: CHAT_REMOVE_MEMBERS_MUTATION,
+                variables: { input:  action.payload },
+            })).pipe(
+                mergeMap(response => []),
+                catchError(error => of(notificationsActions.addError(error.message))),
+            ),
+        ),
+    );
+
 export const chatEpics = combineEpics(
     chatsGetAsyncEpic,
     // @ts-ignore
@@ -239,4 +271,6 @@ export const chatEpics = combineEpics(
     messageGetAsyncEpic,
     messageDeleteAsyncEpic,
     messageMakeReadAsyncEpic,
+    chatAddMembersAsyncEpic,
+    chatRemoveMembersAsyncEpic,
 );

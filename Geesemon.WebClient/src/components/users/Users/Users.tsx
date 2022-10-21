@@ -5,14 +5,16 @@ import { User } from '../User/User';
 import s from './Users.module.scss';
 import { SmallLoading } from '../../common/SmallLoading/SmallLoading';
 import { User as UserType } from '../../../behavior/features/users/types';
+import { MenuItem } from '../../common/Menu/Menu';
 
 type Props = {
     onSelectedUsersChange?: (selectedUsers: UserType[]) => void;
     selectMultiple?: boolean;
     selectedUsers: UserType[];
+    getContextMenuItems?: (user: UserType) => MenuItem[];
 };
 
-export const Users: FC<Props> = ({ onSelectedUsersChange, selectMultiple = false, selectedUsers }) => {
+export const Users: FC<Props> = ({ onSelectedUsersChange, selectMultiple = false, selectedUsers, getContextMenuItems }) => {
     const users = useAppSelector(s => s.users.users);
     const usersGetLoading = useAppSelector(s => s.users.usersGetLoading);
     const take = useAppSelector(s => s.users.take);
@@ -68,6 +70,7 @@ export const Users: FC<Props> = ({ onSelectedUsersChange, selectMultiple = false
                               selectMultiple={selectMultiple}
                               selectedUsers={selectedUsers}
                               onSelectedUsersChange={onSelectedUsersChange}
+                              getContextMenuItems={getContextMenuItems}
                             />
                         </div>
                     )
@@ -78,6 +81,7 @@ export const Users: FC<Props> = ({ onSelectedUsersChange, selectMultiple = false
                               selectMultiple={selectMultiple}
                               selectedUsers={selectedUsers}
                               onSelectedUsersChange={onSelectedUsersChange}
+                              getContextMenuItems={getContextMenuItems}
                             />
                         </div>
                     ),

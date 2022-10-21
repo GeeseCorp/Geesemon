@@ -11,20 +11,22 @@ export const isGuidEmpty = (guid: string): boolean => {
 
 export type ProcessStringOption = {
     fn: (key: number, result: string[]) => React.ReactNode;
-    regex: RegExp | string;
+    regex: RegExp;
 };
 
 export const processString = (options: ProcessStringOption[]) => {
     let key = 0;
 
-    function processInputWithRegex(option: ProcessStringOption, input: string | Array<string>): any {
-        if (!option.fn || typeof option.fn !== 'function')
+    const processInputWithRegex = (option: ProcessStringOption, input: string | Array<string>): any => {
+        if (!option.fn || !option.regex)
          return input;
 
-        if (!option.regex || !(option.regex instanceof RegExp))
-         return input;
-
-        if (typeof input === 'string') {
+        if (Array.isArray(input)) {
+            return input.map(chunk => {
+                return processInputWithRegex(option, chunk);
+            });
+        }
+        else {
             const regex = option.regex;
             let result = null;
             const output = [];
@@ -42,19 +44,14 @@ export const processString = (options: ProcessStringOption[]) => {
 
             output.push(input);
             return output;
-        } else if (Array.isArray(input)) {
-            return input.map(chunk => {
-                return processInputWithRegex(option, chunk);
-            });
-        } else 
-            return input;
-        }
+        } 
+    };
 
     return (input: string) => {
         if (!options || !Array.isArray(options) || !options.length) 
             return input;
 
-        options.forEach(function (option) {
+        options.forEach(option => {
             return input = processInputWithRegex(option, input);
         });
 

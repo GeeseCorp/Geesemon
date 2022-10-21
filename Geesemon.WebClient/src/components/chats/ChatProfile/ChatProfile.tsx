@@ -5,11 +5,12 @@ import atSignSvg from '../../../assets/svg/atSign.svg';
 import crossFilledSvg from '../../../assets/svg/crossFilled.svg';
 import notificationOutlinedSvg from '../../../assets/svg/notificationOutlined.svg';
 import pencilOutlinedSvg from '../../../assets/svg/pencilOutlined.svg';
+import deleteSvg from '../../../assets/svg/delete.svg';
 import { appActions, RightSidebarState } from '../../../behavior/features/app/slice';
 import { Chat } from '../../../behavior/features/chats';
 import { ChatKind } from '../../../behavior/features/chats/types';
 import { User as UserType } from '../../../behavior/features/users/types';
-import { useAppDispatch } from '../../../behavior/store';
+import { useAppDispatch, useAppSelector } from '../../../behavior/store';
 import { AvatarWithoutImage } from '../../common/AvatarWithoutImage/AvatarWithoutImage';
 import { Switch } from '../../common/formControls/Switch/Switch';
 import { HeaderButton } from '../../common/HeaderButton/HeaderButton';
@@ -17,6 +18,10 @@ import { ProfileButton } from '../../common/ProfileButton/ProfileButton';
 import { SmallPrimaryButton } from '../../common/SmallPrimaryButton/SmallPrimaryButton';
 import { User } from '../../users/User/User';
 import s from './ChatProfile.module.scss';
+import { MenuItem } from '../../common/Menu/Menu';
+import { chatActions } from '../../../behavior/features/chats/slice';
+import { useSelectedChat } from '../../../hooks/useSelectedChat';
+import { notificationsActions } from '../../../behavior/features/notifications/slice';
 
 export enum Tab {
     Members = 'Members',
@@ -34,6 +39,8 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
     const [selectedUsers, setSelectedUsers] = useState<UserType[]>([]);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    const authedUser = useAppSelector(s => s.auth.authedUser);
+    const selectedChat = useSelectedChat();
 
     useEffect(() => {
         if (selectedTab === Tab.Members && (chat.type === ChatKind.Personal || chat.type === ChatKind.Saved))
@@ -48,6 +55,29 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
         dispatch(appActions.setIsRightSidebarVisible(false));
     };
 
+    const getContextMenuItems = (user: UserType): MenuItem[] => {
+        const items: MenuItem[] = [];
+        console.log(user);
+        
+        if(user.id !== authedUser?.id)
+            items.push({
+                content: 'Remove from group',
+                icon: <img src={deleteSvg} width={20} className={'dangerSvg'} alt={'deleteSvg'} />,
+                onClick: () => {
+                    if(!selectedChat){
+                        dispatch(notificationsActions.addError('No selected chat'));            
+                        return;
+                    }
+                    dispatch(chatActions.chatRemoveMembersAsync({
+                        chatId: selectedChat.id,
+                        userIds: [user.id],
+                    }));
+                },
+                type: 'danger',
+            });
+        return items;
+    }; 
+
     const renderTab = () => {
         switch (selectedTab) {
             case Tab.Members:
@@ -57,6 +87,7 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
                       user={user}
                       selectedUsers={selectedUsers}
                       onSelectedUsersChange={onSelectedUsersChangeHandler}
+                      getContextMenuItems={getContextMenuItems}
                     />
                 ));
             default:

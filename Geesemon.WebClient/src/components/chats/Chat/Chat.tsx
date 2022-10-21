@@ -39,7 +39,7 @@ export const Chat: FC<Props> = ({ chat }) => {
     useEffect(() => {
         const userChat = chatActivity.data?.chatActivity;
         if (userChat) {
-            dispatch(chatActions.updateUserInChat(userChat));
+            dispatch(chatActions.addOrUpdateUserInChat(userChat));
             dispatch(chatActions.shallowUpdateChat(userChat.chat));
         }
     }, [chatActivity.data?.chatActivity]);

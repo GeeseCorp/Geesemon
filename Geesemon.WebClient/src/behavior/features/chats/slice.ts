@@ -4,6 +4,7 @@ import { string } from 'yup';
 import { shallowUpdateChat, sortChat } from '../../../utils/chatUtils';
 import { User } from '../users/types';
 import {
+    ChatsAddMembersInputType,
     CreateGroupChatInputType,
     CreatePersonalChatInputType,
     DeleteMessageInputType,
@@ -40,6 +41,8 @@ type InitialState = {
 
     chatByUsername?: Chat | null;
     chatGetByUsernameLoading: boolean;
+
+    chatAddMembersLoading: boolean;
 };
 
 const initialState: InitialState = {
@@ -61,6 +64,8 @@ const initialState: InitialState = {
 
     chatByUsername: null,
     chatGetByUsernameLoading: false,
+
+    chatAddMembersLoading: false,
 };
 
 const slice = createSlice({
@@ -164,14 +169,23 @@ const slice = createSlice({
         },
         messageDeleteAsync: (state, action: PayloadAction<DeleteMessageInputType>) => state,
 
-        updateUserInChat: (state, action: PayloadAction<UserChat>) => {
-            state.chats = state.chats.map(c => c.id === action.payload.chatId
-                ? {
-                    ...c, users: c.users.map(u => u.id === action.payload.user.id
-                        ? { ...u, ...action.payload.user }
-                        : u),
-                }
-                : c);
+        addOrUpdateUserInChat: (state, action: PayloadAction<UserChat>) => {
+            if(state.chats.find(c => c.users.find(u => u.id === action.payload.userId))){
+                state.chats = state.chats.map(c => c.id === action.payload.chatId
+                    ? {
+                        ...c, users: [action.payload.user ,...c.users],
+                    }
+                    : c);
+            }
+            else {
+                state.chats = state.chats.map(c => c.id === action.payload.chatId
+                    ? {
+                        ...c, users: c.users.map(u => u.id === action.payload.user.id
+                            ? { ...u, ...action.payload.user }
+                            : u),
+                    }
+                    : c);
+            }
         },
 
         shallowUpdateChat: (state, action: PayloadAction<Chat>) => {
@@ -214,6 +228,13 @@ const slice = createSlice({
         setChatGetByUsernameLoading: (state, action: PayloadAction<boolean>) => {
             state.chatGetByUsernameLoading = action.payload;
         },
+      
+        chatAddMembersAsync: (state, action: PayloadAction<ChatsAddMembersInputType>) => state,
+        setChatAddMembersLoading: (state, action: PayloadAction<boolean>) => {
+            state.chatAddMembersLoading = action.payload;
+        },
+
+        chatRemoveMembersAsync: (state, action: PayloadAction<ChatsAddMembersInputType>) => state,
 
         toInitialState: (state, action: PayloadAction) => initialState,
     },

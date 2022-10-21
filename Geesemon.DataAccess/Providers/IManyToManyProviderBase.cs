@@ -4,7 +4,7 @@
     {
         Task<T> CreateAsync(T entity);
 
-        Task<IList<T>> CreateManyAsync(IList<T> entities);
+        Task<IEnumerable<T>> CreateManyAsync(IEnumerable<T> entities);
 
         abstract Task<T> RemoveAsync(T entity);
     }
