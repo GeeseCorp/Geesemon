@@ -48,7 +48,15 @@ export const Message: FC<Props> = ({ message, inputTextFocus, isFromVisible = fa
                 regex: /(http|https):\/\/(\S+)\.([a-z]{2,}?)(.*?)( |\,|$|\.)/gim,
                 fn: (key, result) => (
                     <span key={key}>
-                        <a target="_blank" href={`${result[1]}://${result[2]}.${result[3]}${result[4]}`} rel="noreferrer">{result[2]}.{result[3]}{result[4]}</a>{result[5]}
+                        <a
+                          style={{ textDecoration: 'underline' }}
+                          target="_blank"
+                          href={`${result[1]}://${result[2]}.${result[3]}${result[4]}`} 
+                          rel="noreferrer"
+                        >
+                            {result[2]}.{result[3]}{result[4]}
+                        </a>
+                        {result[5]}
                     </span>
                 ),
             },
@@ -56,12 +64,20 @@ export const Message: FC<Props> = ({ message, inputTextFocus, isFromVisible = fa
                 regex: /(\S+)\.([a-z]{2,}?)(.*?)( |\,|$|\.)/gim,
                 fn: (key, result) => (
                     <span key={key}>
-                        <a target="_blank" href={`http://${result[1]}.${result[2]}${result[3]}`} rel="noreferrer">{result[1]}.{result[2]}{result[3]}</a>{result[4]}
+                        <a 
+                          style={{ textDecoration: 'underline' }}
+                          target="_blank" 
+                          href={`http://${result[1]}.${result[2]}${result[3]}`} 
+                          rel="noreferrer"
+                        >
+                            {result[1]}.{result[2]}{result[3]}
+                        </a>
+                        {result[4]}
                     </span>
                 ),
             },
             {
-                regex: /(\@(\w+))/gim,
+                regex: /(@(\w+))/gim,
                 fn: (key, result) => (
                     <Link key={key} to={`/${result[2]}`}>{result[1]}</Link>
                 ),

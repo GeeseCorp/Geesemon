@@ -57,9 +57,16 @@ export const chatGetByUsernameAsyncEpic: Epic<ReturnType<typeof chatActions.chat
                 query: CHATS_GET_BY_USERNAME_QUERY,
                 variables: { username: action.payload },
             })).pipe(
-                mergeMap(response => [
-                    chatActions.setChatByUsername(response.data.chat.getByUsername),
-                ]),
+                mergeMap(response => {
+                    if(!response.data.chat.getByUsername)
+                        return[
+                            notificationsActions.addError('Chat not found'),
+                            navigateActions.navigate(-1),
+                        ];
+                    return [
+                        chatActions.setChatByUsername(response.data.chat.getByUsername),
+                    ];
+                }),
                 catchError(error => of(notificationsActions.addError(error.message))),
                 startWith(chatActions.setChatGetByUsernameLoading(true)),
                 endWith(chatActions.setChatGetByUsernameLoading(false)),
