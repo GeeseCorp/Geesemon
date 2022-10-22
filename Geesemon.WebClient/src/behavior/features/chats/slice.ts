@@ -124,7 +124,9 @@ const slice = createSlice({
         addInStartMessages: (state, action: PayloadAction<{ chatId: string; messages: Message[] }>) => {
             const newChats = state.chats.map(chat => {
                 if (chat.id === action.payload.chatId) {
-                    chat.messages = [...action.payload.messages, ...chat.messages];
+                    let addMessages = [...action.payload.messages];
+                    addMessages = addMessages.filter(message => !chat.messages.some(m => m.id === message.id));
+                    chat.messages = [...addMessages, ...chat.messages];
                     // chat.messages = chat.messages.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
                 }
                 return chat;
