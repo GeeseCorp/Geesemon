@@ -1,6 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { message } from 'antd';
-import { string } from 'yup';
 import { shallowUpdateChat, sortChat } from '../../../utils/chatUtils';
 import { User } from '../users/types';
 import {
