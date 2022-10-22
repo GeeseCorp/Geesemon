@@ -9,31 +9,17 @@ namespace Geesemon.Web.Services.ChatActionsSubscription
     {
         private readonly ISubject<ChatAction> chatActionStream = new Subject<ChatAction>();
 
-        private readonly IServiceProvider serviceProvider;
-
-        public ChatActionSubscriptionService(IServiceProvider serviceProvider)
+        public Chat Notify(Chat chat, ChatActionKind type, IEnumerable<Guid> forUserIds)
         {
-            this.serviceProvider = serviceProvider;
-        }
-
-        public Chat Notify(Chat chat, ChatActionKind type)
-        {
-            chatActionStream.OnNext(new ChatAction { Chat = chat, Type = type });
+            foreach(var forUserId in forUserIds)
+                chatActionStream.OnNext(new ChatAction { Chat = chat, Type = type, ForUserId = forUserId });
             return chat;
         }
 
-        public async Task<IObservable<ChatAction>> Subscribe(Guid userId)
+        public async Task<IObservable<ChatAction>> Subscribe(Guid forUserId)
         {
             return chatActionStream
-                .Where(m =>
-                {
-                    using var scope = serviceProvider.CreateScope();
-                    var chatManager = scope.ServiceProvider.GetRequiredService<ChatManager>();
-                    var chats = chatManager.GetAllForUserAsync(userId).GetAwaiter().GetResult();
-                    var chatIdList = chats.Select(c => c.Id);
-
-                    return chatIdList.Contains(m.Chat.Id);
-                })
+                .Where(ca => ca.ForUserId == forUserId)
                 .AsObservable();
         }
 

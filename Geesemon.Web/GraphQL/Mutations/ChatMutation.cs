@@ -121,7 +121,8 @@ namespace Geesemon.Web.GraphQL.Mutations
             await userChatManager.CreateManyAsync(userChat);
 
             chat = await chat.MapForUserAsync(currentUserId, serviceProvider);
-            return chatActionSubscriptionService.Notify(chat, ChatActionKind.Create); ;
+            chatActionSubscriptionService.Notify(chat, ChatActionKind.Add, userChat.Select(uc => uc.UserId));
+            return chat;
         }
 
         private async Task<Chat?> ResolveCreateGroup(IResolveFieldContext context)
@@ -130,6 +131,7 @@ namespace Geesemon.Web.GraphQL.Mutations
             var userChatManager = context.RequestServices.GetRequiredService<UserChatManager>();
             var userManager = context.RequestServices.GetRequiredService<UserManager>();
             var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
+            var currentUsername = httpContextAccessor.HttpContext.User.Claims.GetUsername();
             var chatInput = context.GetArgument<CreateGroupChatInput>("Input");
             await createGroupChatInputValidator.ValidateAndThrowAsync(chatInput);
 
@@ -155,11 +157,9 @@ namespace Geesemon.Web.GraphQL.Mutations
                 userChat.Add(new UserChat { UserId = userId, ChatId = chat.Id });
             await userChatManager.CreateManyAsync(userChat);
 
-            chatActionSubscriptionService.Notify(chat, ChatActionKind.Create);
+            chatActionSubscriptionService.Notify(chat, ChatActionKind.Add, userChat.Select(uc => uc.UserId));
 
-            var user = await userManager.GetByIdAsync(currentUserId);
-
-            await messageSubscriptionService.SentSystemMessageAsync($"@{user.Username} created the group \"{chat.Name}\"", chat.Id);
+            await messageSubscriptionService.SentSystemMessageAsync($"@{currentUsername} created the group \"{chat.Name}\"", chat.Id);
             return chat;
         }
 
@@ -181,9 +181,9 @@ namespace Geesemon.Web.GraphQL.Mutations
                 throw exception;
 
             //NOTE: Because functionality in ChatActionSubscriptionService depends on chat being in database we need to run notify before deletion
-            chatActionSubscriptionService.Notify(chat, ChatActionKind.Delete);
-
-            await chatManager.RemoveAsync(chatInput);
+            var userChats = await userChatManager.Get(chat.Id);
+            await chatManager.RemoveAsync(chat.Id);
+            chatActionSubscriptionService.Notify(chat, ChatActionKind.Delete, userChats.Select(uc => uc.UserId));
             return true;
         }
 
@@ -206,7 +206,8 @@ namespace Geesemon.Web.GraphQL.Mutations
             chat.Name = chatUpdateInput.Name;
             await chatManager.UpdateAsync(chat);
 
-            chatActionSubscriptionService.Notify(chat, ChatActionKind.Update);
+            var userChats = await userChatManager.Get(chat.Id);
+            chatActionSubscriptionService.Notify(chat, ChatActionKind.Update, userChats.Select(uc => uc.UserId));
             return chat;
         }
         
@@ -221,7 +222,7 @@ namespace Geesemon.Web.GraphQL.Mutations
             if (chat == null || !await chatManager.IsUserInChat(currentUserId, chat.Id))
                 throw exception;
 
-            if (chat.Type != ChatKind.Group && chat.CreatorId != currentUserId)
+            if (chat.Type != ChatKind.Group || chat.CreatorId != currentUserId)
                 throw exception;
 
             var newUserChats = new List<UserChat>();
@@ -242,8 +243,9 @@ namespace Geesemon.Web.GraphQL.Mutations
             }
 
             await userChatManager.CreateManyAsync(newUserChats);
+            chatActionSubscriptionService.Notify(chat, ChatActionKind.Add, newUserChats.Select(uc => uc.UserId));
 
-            foreach(var userChat in newUserChats)
+            foreach (var userChat in newUserChats)
             {
                 var newMessage = new Message
                 {
@@ -269,7 +271,7 @@ namespace Geesemon.Web.GraphQL.Mutations
             if (chat == null || !await chatManager.IsUserInChat(currentUserId, chat.Id))
                 throw exception;
 
-            if (chat.Type != ChatKind.Group && chat.CreatorId != currentUserId)
+            if (chat.Type != ChatKind.Group || chat.CreatorId != currentUserId)
                 throw exception;
 
             var removeUserChats = new List<UserChat>();
@@ -286,8 +288,9 @@ namespace Geesemon.Web.GraphQL.Mutations
                 removeUserChats.Add(userChat);
             }
 
+            chatActionSubscriptionService.Notify(chat, ChatActionKind.Delete, removeUserChats.Select(uc => uc.UserId));
 
-            foreach(var userChat in removeUserChats)
+            foreach (var userChat in removeUserChats)
             {
                 await userChatManager.RemoveAsync(userChat);
 

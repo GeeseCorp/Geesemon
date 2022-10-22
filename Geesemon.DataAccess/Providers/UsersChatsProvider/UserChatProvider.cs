@@ -38,5 +38,12 @@ namespace Geesemon.DataAccess.Providers.UsersChatsProvider
             return await context.UserChats
                 .SingleOrDefaultAsync(uc => uc.ChatId == chatId && uc.UserId == userId);
         }
+        
+        public async Task<IEnumerable<UserChat>> Get(Guid chatId)
+        {    
+            return await context.UserChats
+                .Where(uc => uc.ChatId == chatId)
+                .ToListAsync();
+        }
     }
 }

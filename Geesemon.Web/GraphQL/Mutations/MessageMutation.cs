@@ -21,7 +21,8 @@ namespace Geesemon.Web.GraphQL.Mutations
             MessageManager messageManager, 
             ChatManager chatManager,
             ReadMessagesManager readMessagesManager,
-            IValidator<SentMessageInput> sentMessageInputValidator
+            IValidator<SentMessageInput> sentMessageInputValidator,
+            UserChatManager userChatManager
             )
         {
             Field<MessageType, Message>()
@@ -55,7 +56,10 @@ namespace Geesemon.Web.GraphQL.Mutations
                     };
                     newMessage = await messageManager.CreateAsync(newMessage);
                     newMessage = messageActionSubscriptionService.Notify(newMessage, MessageActionKind.Create);
-                    chatActionSubscriptionService.Notify(chat, ChatActionKind.Update);
+
+                    //var userChats = await userChatManager.Get(chat.Id);
+                    //chatActionSubscriptionService.Notify(chat, ChatActionKind.Update, userChats.Select(uc => uc.UserId));
+
                     return newMessage;
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
@@ -134,8 +138,11 @@ namespace Geesemon.Web.GraphQL.Mutations
                         ReadById = currentUserId,
                     });
                     messageActionSubscriptionService.Notify(message, MessageActionKind.Update);
-                    var chat = await chatManager.GetByIdAsync(message.ChatId);
-                    chatActionSubscriptionService.Notify(chat, ChatActionKind.Update);
+
+                    //var chat = await chatManager.GetByIdAsync(message.ChatId);
+                    //var userChats = await userChatManager.Get(chat.Id);
+                    //chatActionSubscriptionService.Notify(chat, ChatActionKind.Update, userChats.Select(uc => uc.UserId));
+
                     return message;
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);

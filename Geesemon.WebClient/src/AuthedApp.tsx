@@ -63,7 +63,7 @@ export const AuthedApp: FC = () => {
         const data = chatActionSubscription.data;
         if (data) {
             switch (data?.chatActions.type) {
-                case ChatActionKind.Create:
+                case ChatActionKind.Add:
                     dispatch(chatActions.addChats([data.chatActions.chat]));
                     break;
                 case ChatActionKind.Update:

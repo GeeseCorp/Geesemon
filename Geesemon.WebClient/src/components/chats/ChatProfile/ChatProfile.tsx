@@ -57,9 +57,7 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
 
     const getContextMenuItems = (user: UserType): MenuItem[] => {
         const items: MenuItem[] = [];
-        console.log(user);
-        
-        if(user.id !== authedUser?.id)
+        if(user.id !== authedUser?.id && selectedChat?.creatorId === authedUser?.id)
             items.push({
                 content: 'Remove from group',
                 icon: <img src={deleteSvg} width={20} className={'dangerSvg'} alt={'deleteSvg'} />,
@@ -176,16 +174,12 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
                 </div>
                 <div className={s.tabContent}>{renderTab()}</div>
             </div>
-            {chat.type === ChatKind.Group && (
+            {chat.type === ChatKind.Group && chat.creatorId === authedUser?.id && (
                 <div className={s.buttonAddMembers}>
-                <SmallPrimaryButton onClick={() => dispatch(appActions.setRightSidebarState(RightSidebarState.GroupAddMembers))}>
-                    {/* {updateProfileLoading 
-                        ? <SmallLoading />
-                        : <img src={addUserFilledSvg} width={15} className={'primaryTextSvg'} alt={'addUserFilledSvg'} />
-                    } */}
-                    <img src={addUserFilledSvg} width={20} className={'primaryTextSvg'} alt={'addUserFilledSvg'} />
-                </SmallPrimaryButton>
-            </div>
+                    <SmallPrimaryButton onClick={() => dispatch(appActions.setRightSidebarState(RightSidebarState.GroupAddMembers))}>
+                        <img src={addUserFilledSvg} width={20} className={'primaryTextSvg'} alt={'addUserFilledSvg'} />
+                    </SmallPrimaryButton>
+                </div>
             )}
         </div>
     );
