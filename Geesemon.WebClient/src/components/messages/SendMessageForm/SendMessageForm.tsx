@@ -1,17 +1,19 @@
-import React, { FC, KeyboardEvent, MutableRefObject, useEffect, useState } from 'react';
-import s from './SendMessageForm.module.scss';
-import smile from '../../../assets/svg/smile.svg';
-import send from '../../../assets/svg/send.svg';
-import check from '../../../assets/svg/check.svg';
-import clip from '../../../assets/svg/clip.svg';
-import pencilOutlined from '../../../assets/svg/pencilOutlined.svg';
-import microphone from '../../../assets/svg/microphone.svg';
-import crossFilled from '../../../assets/svg/crossFilled.svg';
 import { AnimatePresence, motion } from 'framer-motion';
-import { SmallPrimaryButton } from '../../common/SmallPrimaryButton/SmallPrimaryButton';
-import { useAppDispatch, useAppSelector } from '../../../behavior/store';
+import { FC, KeyboardEvent, MutableRefObject, useEffect, useState } from 'react';
+import checkSvg from '../../../assets/svg/check.svg';
+import clipSvg from '../../../assets/svg/clip.svg';
+import crossFilledSvg from '../../../assets/svg/crossFilled.svg';
+import microphoneSvg from '../../../assets/svg/microphone.svg';
+import pencilOutlinedSvg from '../../../assets/svg/pencilOutlined.svg';
+import sendSvg from '../../../assets/svg/send.svg';
+import smileSvg from '../../../assets/svg/smile.svg';
+import replySvg from '../../../assets/svg/reply.svg';
 import { chatActions } from '../../../behavior/features/chats';
-import { useParams } from 'react-router-dom';
+import { Mode } from '../../../behavior/features/chats/slice';
+import { useAppDispatch, useAppSelector } from '../../../behavior/store';
+import { useSelectedChat } from '../../../hooks/useSelectedChat';
+import { SmallPrimaryButton } from '../../common/SmallPrimaryButton/SmallPrimaryButton';
+import s from './SendMessageForm.module.scss';
 
 const INPUT_TEXT_DEFAULT_HEIGHT = '25px';
 
@@ -23,27 +25,19 @@ type Props = {
 export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => {
     const mode = useAppSelector(s => s.chats.mode);
     const inUpdateMessageId = useAppSelector(s => s.chats.inUpdateMessageId);
+    const replyMessageId = useAppSelector(s => s.chats.replyMessageId);
     const [messageText, setMessageText] = useState('');
     const dispatch = useAppDispatch();
-    const params = useParams();
-    const chatUsername = params.chatUsername as string;
-    const chats = useAppSelector(s => s.chats.chats);
-    const chatByUsername = useAppSelector(s => s.chats.chatByUsername);
-    const chat = chats.find(c => c.username === chatUsername);
-    const selectedChat = chat || chatByUsername;
+    const selectedChat = useSelectedChat();
     const messages = selectedChat?.messages || [];
     const inUpdateMessage = messages.find(m => m.id === inUpdateMessageId);
+    const replyMessage = messages.find(m => m.id === replyMessageId);
 
     useEffect(() => {
         if (inUpdateMessageId && inUpdateMessage) {
             setNewMessageText(inUpdateMessage.text || '');
         }
     }, [inUpdateMessageId]);
-
-    const onInputText = () => {
-        const newMessageText = inputTextRef.current?.value || '';
-        setNewMessageText(newMessageText);
-    };
 
     const setNewMessageText = (newMessageText: string): void => {
         if (inputTextRef.current) {
@@ -60,28 +54,9 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
         }
     };
 
-    const sendMessageHandler = () => {
-        if (!messageText)
-            return;
-
-        if(selectedChat){
-            dispatch(chatActions.messageSendAsync({
-                chatId: selectedChat.id,
-                sentMessageInputType: {
-                    chatUsername: selectedChat.username,
-                    text: messageText,
-                },
-            }));
-            setMessageText('');
-            if (inputTextRef.current)
-                inputTextRef.current.style.height = INPUT_TEXT_DEFAULT_HEIGHT;
-            scrollToBottom();
-        }
-    };
-
     const onKeyUpInputText = (e: KeyboardEvent<HTMLTextAreaElement>) => {
         if (e.code === 'Enter' && !e.shiftKey) {
-            strongButtonClickHandler();
+            primaryButtonClickHandler();
         }
     };
 
@@ -93,12 +68,42 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
 
     const closeExtraBlockHandler = () => {
         switch (mode) {
-            case 'Updating':
+            case Mode.Updating:
                 setNewMessageText('');
                 dispatch(chatActions.setInUpdateMessageId(null));
+                dispatch(chatActions.setMode(Mode.Text));
+                break;
+            case Mode.Reply:
+                dispatch(chatActions.setReplyMessageId(null));
+                dispatch(chatActions.setMode(Mode.Text));
                 break;
         }
 
+    };
+
+    const sendMessageHandler = () => {
+        if (!messageText)
+            return;
+
+        if(selectedChat){
+            setMessageText('');
+            dispatch(chatActions.messageSendAsync({
+                chatId: selectedChat.id,
+                sentMessageInput: {
+                    chatUsername: selectedChat.username,
+                    text: messageText,
+                    replyMessageId,
+                },
+            }));
+            
+            if (inputTextRef.current)
+                inputTextRef.current.style.height = INPUT_TEXT_DEFAULT_HEIGHT;
+
+            scrollToBottom();
+
+            if(mode === Mode.Reply)
+                closeExtraBlockHandler();
+        }
     };
 
     const updateMessageHandler = () => {
@@ -111,14 +116,84 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
         }
     };
 
-    const strongButtonClickHandler = () => {
+    const primaryButtonClickHandler = () => {
         switch (mode) {
-            case 'Text':
+            case Mode.Text:
+            case Mode.Reply:
                 sendMessageHandler();
                 break;
-            case 'Updating':
+            case Mode.Updating:
                 updateMessageHandler();
                 break;
+        }
+    };
+
+    const renderExtraBlock = () => {
+        switch(mode){
+            case Mode.Updating:
+                return(
+                    <>
+                        <div className={s.icon}>
+                            <img src={pencilOutlinedSvg} width={20} className={'primarySvg'} alt={'pencilOutlinedSvg'} />
+                        </div>
+                        <div className={s.actionAndText}>
+                            <div className={s.action}>Updating</div>
+                            <div className={s.text}>{inUpdateMessage?.text}</div>
+                        </div>
+                    </>
+                );
+            case Mode.Reply:
+                return(
+                    <>
+                        <div className={s.icon}>
+                            <img src={replySvg} width={25} className={'primarySvg'} alt={'replySvg'} />
+                        </div>
+                        <div className={s.actionAndText}>
+                            <div className={s.action}>{replyMessage?.from?.fullName}</div>
+                            <div className={s.text}>{replyMessage?.text}</div>
+                        </div>
+                    </>
+                );
+        }
+    };
+
+    const renderPrimaryButtonIcon = () => {
+        switch(mode) {
+            case Mode.Text:
+            case Mode.Reply:
+                return(
+                    messageText
+                        ? (
+                            <motion.img
+                              key={'send'}
+                              initial={{ scale: 0, opacity: 0 }}
+                              animate={{ scale: 1, opacity: 1 }}
+                              src={sendSvg}
+                              className={'primaryTextSvg'}
+                            />
+                        )
+                        : (
+                            <motion.img
+                              key={'microphone'}
+                              initial={{ scale: 0, opacity: 0 }}
+                              animate={{ scale: 1, opacity: 1 }}
+                              src={microphoneSvg}
+                              width={25}
+                              className={'primaryTextSvg'}
+                            />
+                        )
+                );
+            case Mode.Updating:
+                return (
+                    <motion.img
+                      key={'update'}
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      src={checkSvg}
+                      width={25}
+                      className={'primaryTextSvg'}
+                    />
+                );
         }
     };
 
@@ -126,75 +201,38 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
         <div className={s.wrapper}>
             <div className={s.inner}>
                 <div className={s.wrapperInputText}>
-                    {inUpdateMessage &&
+                    {mode !== Mode.Text &&
                         <div className={s.extraBlockWrapper}>
                             <div className={s.extraBlockInner}>
-                                <div className={s.icon}>
-                                    <img src={pencilOutlined} width={20} className={'primarySvg'} />
-                                </div>
-                                <div className={s.actionAndText}>
-                                    <div className={s.action}>Updating</div>
-                                    <div className={s.text}>{inUpdateMessage.text}</div>
-                                </div>
+                                {renderExtraBlock()}
                             </div>
                             <div onClick={closeExtraBlockHandler} className={s.close}>
-                                <img src={crossFilled} width={15} className={'secondaryTextSvg'} />
+                                <img src={crossFilledSvg} width={15} className={'secondaryTextSvg'} alt={'crossFilledSvg'} />
                             </div>
                         </div>
                     }
                     <div className={s.innerInputText}>
                         <div className={s.inputTextButton}>
-                            <img src={smile} width={20} className={'secondaryTextSvg'} />
+                            <img src={smileSvg} width={20} className={'secondaryTextSvg'} alt={'smileSvg'} />
                         </div>
                         <textarea
                           value={messageText}
                           placeholder={'Message'}
                           ref={inputTextRef}
-                          onInput={onInputText}
+                          onChange={e => setNewMessageText(e.target.value)}
                           className={s.inputText}
                           onKeyUp={onKeyUpInputText}
                           onKeyDown={onKeyDownInputText}
                         />
                         <div className={s.inputTextButton}>
-                            <img src={clip} width={20} className={'secondaryTextSvg'} />
+                            <img src={clipSvg} width={20} className={'secondaryTextSvg'} alt={'clipSvg'} />
                         </div>
                     </div>
                 </div>
                 <div className={s.buttonSend}>
-                    <SmallPrimaryButton onClick={strongButtonClickHandler}>
+                    <SmallPrimaryButton onClick={primaryButtonClickHandler}>
                         <AnimatePresence>
-                            {inUpdateMessageId
-                                ? (
-<motion.img
-  key={'update'}
-  initial={{ scale: 0, opacity: 0 }}
-  animate={{ scale: 1, opacity: 1 }}
-  src={check}
-  width={25}
-  className={'primaryTextSvg'}
-/>
-)
-                                : messageText
-                                    ? (
-<motion.img
-  key={'send'}
-  initial={{ scale: 0, opacity: 0 }}
-  animate={{ scale: 1, opacity: 1 }}
-  src={send}
-  className={'primaryTextSvg'}
-/>
-)
-                                    : (
-<motion.img
-  key={'microphone'}
-  initial={{ scale: 0, opacity: 0 }}
-  animate={{ scale: 1, opacity: 1 }}
-  src={microphone}
-  width={25}
-  className={'primaryTextSvg'}
-/>
-)
-                            }
+                            {renderPrimaryButtonIcon()}
                         </AnimatePresence>
                     </SmallPrimaryButton>
                 </div>

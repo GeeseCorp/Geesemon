@@ -53,16 +53,46 @@
     white-space: nowrap;
 }
 
+.timeAndChecks {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.chatSubtitle {
+    display: flex;
+    justify-content: space-between;
+    gap: 5px;
+}
+
 .chatLastMessage {
+    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
+.notReadMessagesCount {
+    min-width: 0;
+    background-color: $primary-color;
+    min-width: 25px;
+    height: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50px;
+    padding: 0 5px;
+}
+
 .chatSelected {
-    background-color: #766AC8;
+    background-color: $primary-color;
 }
 
 .chatSelected * {
     color: white !important;
+}
+
+.chatSelected .notReadMessagesCount {
+    background-color: $primary-text-color;
+    color: $primary-color !important;
 }

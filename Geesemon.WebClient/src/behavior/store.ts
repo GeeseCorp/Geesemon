@@ -29,8 +29,8 @@ export const store = configureStore({
 
 const rootEpic = combineEpics(
   chatEpics,
-  authEpics,
   // @ts-ignore
+  authEpics,
   userEpics,
 );
 // @ts-ignore

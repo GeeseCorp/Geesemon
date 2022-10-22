@@ -1,0 +1,32 @@
+@import '../../../../App.scss';
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.primaryTitle {
+    color: $primary-color;
+    margin: 10px 0 0 15px;
+}
+
+.block {
+    margin: 5px;
+}
+
+.session {
+    padding: 15px;
+    border-radius: 10px;
+    cursor: pointer;
+
+    .title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+}
+
+.session:hover {
+    background-color: $secondary-button-hover-color;
+}

@@ -1,48 +1,66 @@
-import {createSlice, PayloadAction} from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 export enum LeftSidebarState{
-    Chats,
-    CreateGroupChat,
-    CreatePersonalChat,
+    Chats = 0,
+    CreateGroupChat = 1,
+    CreatePersonalChat = 2,
+    Settings = 3,
+}
+
+export enum SettingsCategory{
+    UpdateProfile = 0,
+    Devices = 1,
 }
 
 export enum RightSidebarState{
-    Profile,
-    UpdateGroup,
+    Profile = 'Profile',
+    UpdateGroup = 'UpdateGroup',
+    GroupAddMembers = 'GroupAddMembers',
 }
 
 export type InitialState = {
-    initialised: boolean
-    isRightSidebarVisible: boolean
-    leftSidebarState: LeftSidebarState
-    rightSidebarState: RightSidebarState
-}
+    initialised: boolean;
+
+    leftSidebarState: LeftSidebarState;
+    settingsCategory?: SettingsCategory | null;
+
+    isRightSidebarVisible: boolean;
+    rightSidebarState: RightSidebarState;
+};
 
 const initialState: InitialState = {
     initialised: false,
-    isRightSidebarVisible: false,
+
     leftSidebarState: LeftSidebarState.Chats,
+    settingsCategory: null,
+
+    isRightSidebarVisible: false,
     rightSidebarState: RightSidebarState.Profile,
-}
+};
 
 export const appSlice = createSlice({
     name: 'app',
     initialState,
     reducers: {
         setInitialised: (state, action: PayloadAction<boolean>) => {
-            state.initialised = action.payload
+            state.initialised = action.payload;
         },
-        setIsRightSidebarVisible: (state, action: PayloadAction<boolean>) => {
-            state.isRightSidebarVisible = action.payload
-        },
+ 
         setLeftSidebarState: (state, action: PayloadAction<LeftSidebarState>) => {
-            state.leftSidebarState = action.payload
+            state.leftSidebarState = action.payload;
+        },
+        setSettingsCategory: (state, action: PayloadAction<SettingsCategory | null | undefined>) => {
+            state.settingsCategory = action.payload;
+        },
+
+        setIsRightSidebarVisible: (state, action: PayloadAction<boolean>) => {
+            state.isRightSidebarVisible = action.payload;
         },
         setRightSidebarState: (state, action: PayloadAction<RightSidebarState>) => {
-            state.rightSidebarState = action.payload
+            state.rightSidebarState = action.payload;
         },
     },
-})
+});
 
-export const appActions = appSlice.actions
-export const appReducer = appSlice.reducer
+export const appActions = appSlice.actions;
+export const appReducer = appSlice.reducer;

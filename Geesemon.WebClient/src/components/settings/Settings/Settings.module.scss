@@ -1,0 +1,34 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header>div {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.wrapperImage {
+    position: relative;
+    height: 240px;
+}
+
+.wrapperImage img {
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
+}
+
+.name {
+    font-size: 18px;
+    font-weight: 600;
+    position: absolute;
+    bottom: 10px;
+    left: 20px;
+}
+
+.profileButtons {
+    margin: 10px;
+}

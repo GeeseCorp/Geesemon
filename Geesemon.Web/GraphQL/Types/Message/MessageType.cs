@@ -35,6 +35,22 @@ namespace Geesemon.Web.GraphQL.Types
                 .Name("ChatId")
                 .Resolve(ctx => ctx.Source.ChatId);
 
+            Field<GuidGraphType, Guid?>()
+                .Name("ReplyMessageId")
+                .Resolve(ctx => ctx.Source.ReplyMessageId);
+
+            Field<MessageType, Message?>()
+                .Name("ReplyMessage")
+                .ResolveAsync(async ctx =>
+                {
+                    if (ctx.Source.ReplyMessageId == null)
+                        return null;
+
+                    using var scope = serviceProvider.CreateScope();
+                    var messageManager = scope.ServiceProvider.GetRequiredService<MessageManager>();
+                    return await messageManager.GetByIdAsync(ctx.Source.ReplyMessageId);
+                });
+
             Field<BooleanGraphType, bool>()
                 .Name("IsEdited")
                 .Resolve(ctx => ctx.Source.IsEdited);

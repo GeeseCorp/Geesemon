@@ -1,19 +1,27 @@
 import { FC, useEffect, useState } from 'react';
-import atSign from '../../../assets/svg/atSign.svg';
-import crossFilled from '../../../assets/svg/crossFilled.svg';
+import { useNavigate } from 'react-router-dom';
+import addUserFilledSvg from '../../../assets/svg/addUserFilled.svg';
+import atSignSvg from '../../../assets/svg/atSign.svg';
+import crossFilledSvg from '../../../assets/svg/crossFilled.svg';
 import notificationOutlinedSvg from '../../../assets/svg/notificationOutlined.svg';
 import pencilOutlinedSvg from '../../../assets/svg/pencilOutlined.svg';
+import deleteSvg from '../../../assets/svg/delete.svg';
 import { appActions, RightSidebarState } from '../../../behavior/features/app/slice';
 import { Chat } from '../../../behavior/features/chats';
 import { ChatKind } from '../../../behavior/features/chats/types';
-import { useAppDispatch } from '../../../behavior/store';
+import { User as UserType } from '../../../behavior/features/users/types';
+import { useAppDispatch, useAppSelector } from '../../../behavior/store';
 import { AvatarWithoutImage } from '../../common/AvatarWithoutImage/AvatarWithoutImage';
 import { Switch } from '../../common/formControls/Switch/Switch';
 import { HeaderButton } from '../../common/HeaderButton/HeaderButton';
+import { ProfileButton } from '../../common/ProfileButton/ProfileButton';
+import { SmallPrimaryButton } from '../../common/SmallPrimaryButton/SmallPrimaryButton';
 import { User } from '../../users/User/User';
 import s from './ChatProfile.module.scss';
-import { useNavigate } from 'react-router-dom';
-import { User as UserType } from '../../../behavior/features/users/types';
+import { MenuItem } from '../../common/Menu/Menu';
+import { chatActions } from '../../../behavior/features/chats/slice';
+import { useSelectedChat } from '../../../hooks/useSelectedChat';
+import { notificationsActions } from '../../../behavior/features/notifications/slice';
 
 export enum Tab {
     Members = 'Members',
@@ -31,6 +39,8 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
     const [selectedUsers, setSelectedUsers] = useState<UserType[]>([]);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    const authedUser = useAppSelector(s => s.auth.authedUser);
+    const selectedChat = useSelectedChat();
 
     useEffect(() => {
         if (selectedTab === Tab.Members && (chat.type === ChatKind.Personal || chat.type === ChatKind.Saved))
@@ -39,10 +49,32 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
             setSelectedTab(Tab.Members);
     }, [chat]);
 
-    const setSelectedUsersHandler = (users: UserType[]) => {
-        setSelectedUsers(users);
-        navigate(`/${users[0].username}`);
+    const onSelectedUsersChangeHandler = (selectedUsers: UserType[]) => {
+        setSelectedUsers(selectedUsers);
+        navigate(`/${selectedUsers[0].username}`);
+        dispatch(appActions.setIsRightSidebarVisible(false));
     };
+
+    const getContextMenuItems = (user: UserType): MenuItem[] => {
+        const items: MenuItem[] = [];
+        if(user.id !== authedUser?.id && selectedChat?.creatorId === authedUser?.id)
+            items.push({
+                content: 'Remove from group',
+                icon: <img src={deleteSvg} width={20} className={'dangerSvg'} alt={'deleteSvg'} />,
+                onClick: () => {
+                    if(!selectedChat){
+                        dispatch(notificationsActions.addError('No selected chat'));            
+                        return;
+                    }
+                    dispatch(chatActions.chatRemoveMembersAsync({
+                        chatId: selectedChat.id,
+                        userIds: [user.id],
+                    }));
+                },
+                type: 'danger',
+            });
+        return items;
+    }; 
 
     const renderTab = () => {
         switch (selectedTab) {
@@ -52,7 +84,8 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
                       key={user.id}
                       user={user}
                       selectedUsers={selectedUsers}
-                      setSelectedUsers={setSelectedUsersHandler}
+                      onSelectedUsersChange={onSelectedUsersChangeHandler}
+                      getContextMenuItems={getContextMenuItems}
                     />
                 ));
             default:
@@ -61,14 +94,14 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
     };
 
     return (
-        <div>
+        <div className={s.wrapper}>
             <div className={['header', s.header].join(' ')}>
                 <div className={s.headerCloseAndTitle}>
                     <HeaderButton
                       keyName={'RightSidebar/Close'}
                       onClick={() => dispatch(appActions.setIsRightSidebarVisible(false))}
                     >
-                        <img src={crossFilled} width={15} className={'secondaryTextSvg'} />
+                        <img src={crossFilledSvg} width={15} className={'secondaryTextSvg'} alt={'crossFilledSvg'} />
                     </HeaderButton>
                     <div className={'headerTitle'}>Profile</div>
                 </div>
@@ -77,7 +110,7 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
                       keyName={'RightSidebar/UpdateGroup'}
                       onClick={() => dispatch(appActions.setRightSidebarState(RightSidebarState.UpdateGroup))}
                     >
-                        <img src={pencilOutlinedSvg} width={20} className={'secondaryTextSvg'} />
+                        <img src={pencilOutlinedSvg} width={20} className={'secondaryTextSvg'} alt={'pencilOutlinedSvg'} />
                     </HeaderButton>
                 }
             </div>
@@ -86,8 +119,8 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
                     {chat?.imageUrl
                         ? (
                             <div className={s.wrapperAvatar}>
-                            <img src={chat.imageUrl} className={s.avatar} />
-                            <div className={s.name}>{chat.name}</div>
+                                <img src={chat.imageUrl} className={s.avatar} alt={'imageUrl'} />
+                                <div className={s.name}>{chat.name}</div>
                             </div>
                         )
                         : (
@@ -103,16 +136,15 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
                         )
                     }
                 </div>
-                <div className={s.chatInfoButtons}>
-                    <div className={s.chatInfoButton}>
-                        <img src={atSign} width={25} className={'secondaryTextSvg'} />
-                        <div>
-                            <div className={s.chatInfoButtonText}>{chat.username}</div>
-                            <div className={s.chatInfoButtonLabel}>username</div>
-                        </div>
-                    </div>
-                    <div className={s.chatInfoButton}>
-                        <img src={notificationOutlinedSvg} width={25} className={'secondaryTextSvg'} />
+                <div className={s.chatProfileButtons}>
+                    <ProfileButton 
+                      icon={<img src={atSignSvg} width={25} className={'secondaryTextSvg'} alt={'atSignSvg'} />}
+                      text={chat.username}
+                      label={'Username'}
+                    />
+                    <ProfileButton 
+                      icon={<img src={notificationOutlinedSvg} width={25} className={'secondaryTextSvg'} alt={'notificationOutlinedSvg'} />}
+                      text={(
                         <div className={s.notifications}>
                             <div className={s.chatInfoButtonText}>Notifications</div>
                             <Switch
@@ -120,10 +152,11 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
                               setChecked={setIsEnabledNotifications}
                             />
                         </div>
-                    </div>
+                      )}
+                    />
                 </div>
 
-                <div className={s.divider} />
+                <div className={'divider'} />
                 <div className={s.tabs}>
                     {(Object.keys(Tab) as Array<Tab>).map(tab =>
                         (chat.type === ChatKind.Personal || chat.type === ChatKind.Saved) && tab === Tab.Members
@@ -141,6 +174,13 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
                 </div>
                 <div className={s.tabContent}>{renderTab()}</div>
             </div>
+            {chat.type === ChatKind.Group && chat.creatorId === authedUser?.id && (
+                <div className={s.buttonAddMembers}>
+                    <SmallPrimaryButton onClick={() => dispatch(appActions.setRightSidebarState(RightSidebarState.GroupAddMembers))}>
+                        <img src={addUserFilledSvg} width={20} className={'primaryTextSvg'} alt={'addUserFilledSvg'} />
+                    </SmallPrimaryButton>
+                </div>
+            )}
         </div>
     );
 };

@@ -63,7 +63,7 @@ export const ChatsUpdateGroup: FC<Props> = ({ chat }) => {
                   keyName={'RightSidebar/ChatsUpdateGroup/Back'}
                   onClick={() => dispatch(appActions.setRightSidebarState(RightSidebarState.Profile))}
                 >
-                    <img src={backSvg} width={20} className={'secondaryTextSvg'} />
+                    <img src={backSvg} width={20} className={'secondaryTextSvg'} alt={'backSvg'} />
                 </HeaderButton>
                 <div className={'headerTitle'}>Update</div>
             </div>
@@ -74,7 +74,7 @@ export const ChatsUpdateGroup: FC<Props> = ({ chat }) => {
                       className={s.inputFile}
                       ref={inputFileRef}
                       onChange={changeInputFileHandler}
-                      accept="igemage/png, ima/gif, image/jpeg"
+                      accept="image/png, image/gif, image/jpeg"
                     />
                     {newImage
                         ? (
@@ -83,6 +83,7 @@ export const ChatsUpdateGroup: FC<Props> = ({ chat }) => {
                               width={newImage ? 100 : 60}
                               height={newImage ? 100 : 60}
                               className={newImage ? s.image : 'primaryTextSvg'}
+                              alt={'cameraSvg'} 
                             />
                         )
                         : (
@@ -91,10 +92,10 @@ export const ChatsUpdateGroup: FC<Props> = ({ chat }) => {
                               width={image ? 100 : 60}
                               height={image ? 100 : 60}
                               className={image ? s.image : 'primaryTextSvg'}
+                              alt={'cameraSvg'} 
                             />
                         )
                     }
-
                 </div>
                 <Input
                   placeholder="Group name"

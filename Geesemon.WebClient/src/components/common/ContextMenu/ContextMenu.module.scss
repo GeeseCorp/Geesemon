@@ -13,6 +13,10 @@
     border-radius: 5px;
     cursor: pointer;
     display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 2px 10px;
+    min-width: 160px;
 }
 
 .menuItem:hover {
@@ -23,11 +27,18 @@
     border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;
 }
+
 .menuItem td:last-child {
     border-bottom-right-radius: 10px;
     border-top-right-radius: 10px;
 }
 
-.icon, .content {
-    padding: 5px 10px;
+.icon {
+    width: 25px;
+    padding: 7px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
+
+.content {}

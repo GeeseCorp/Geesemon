@@ -3,6 +3,7 @@ import { Entity } from '../../common';
 export type User = {
   firstName: string;
   lastName: string;
+  fullName: string;
   username: string;
   email: string;
   phoneNumber: string;

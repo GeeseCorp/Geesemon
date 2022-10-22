@@ -78,6 +78,9 @@ namespace Geesemon.DataAccess.Migrations
                     b.Property<bool>("IsEdited")
                         .HasColumnType("bit");
 
+                    b.Property<Guid?>("ReplyMessageId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Text")
                         .HasColumnType("nvarchar(max)");
 
@@ -92,6 +95,8 @@ namespace Geesemon.DataAccess.Migrations
                     b.HasIndex("ChatId");
 
                     b.HasIndex("FromId");
+
+                    b.HasIndex("ReplyMessageId");
 
                     b.ToTable("Messages");
                 });
@@ -267,9 +272,15 @@ namespace Geesemon.DataAccess.Migrations
                         .HasForeignKey("FromId")
                         .OnDelete(DeleteBehavior.SetNull);
 
+                    b.HasOne("Geesemon.Model.Models.Message", "ReplyMessage")
+                        .WithMany("RepliedMessages")
+                        .HasForeignKey("ReplyMessageId");
+
                     b.Navigation("Chat");
 
                     b.Navigation("From");
+
+                    b.Navigation("ReplyMessage");
                 });
 
             modelBuilder.Entity("Geesemon.Model.Models.ReadMessage", b =>
@@ -331,6 +342,8 @@ namespace Geesemon.DataAccess.Migrations
             modelBuilder.Entity("Geesemon.Model.Models.Message", b =>
                 {
                     b.Navigation("ReadBy");
+
+                    b.Navigation("RepliedMessages");
                 });
 
             modelBuilder.Entity("Geesemon.Model.Models.User", b =>

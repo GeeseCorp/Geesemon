@@ -44,8 +44,8 @@ public class UpdateChatInputValidation : AbstractValidator<UpdateChatInput>
             .NotNull()
             .MustAsync(async (id, cancellation) =>
             {
-                var Chat = await chatManager.GetByIdAsync(id);
-                return Chat != null;
+                var chat = await chatManager.GetByIdAsync(id);
+                return chat != null;
             }).WithMessage("Chat with current id does not exists"); ;
 
         RuleFor(r => r.Name)
@@ -60,7 +60,7 @@ public class UpdateChatInputValidation : AbstractValidator<UpdateChatInput>
             .MustAsync(async (chat, username, cancellation) =>
             {
                 var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
-                var checkChat = await chatManager.GetByUsername(username, currentUserId);
+                var checkChat = await chatManager.GetByUsernameAsync(username, currentUserId);
                 return checkChat == null || checkChat.Id == chat.Id;
             }).WithMessage("Username already taken");
     }

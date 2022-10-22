@@ -1,4 +1,6 @@
 import { gql } from '@apollo/client';
+import { USER_FRAGMENT } from '../users/fragments';
+import { User } from '../users/types';
 import { CHAT_FRAGMENT, MESSAGE_FRAGMENT } from './fragments';
 import { Chat, Message } from './types';
 
@@ -52,6 +54,7 @@ export type MessageSendVars = { input: SentMessageInputType };
 export type SentMessageInputType = {
     chatUsername: string;
     text: string;
+    replyMessageId?: string | null;
 };
 export const MESSAGE_SEND_MUTATION = gql`
     ${MESSAGE_FRAGMENT}
@@ -95,7 +98,6 @@ export const MESSAGE_DELETE_MUTATION = gql`
             }
         }
     }
-
 `;
 
 export type MessageMakeReadData = { message: { makeRead: Message } };
@@ -109,5 +111,34 @@ export const MESSAGE_MAKE_READ_MUTATION = gql`
           }
         }
       }
+`;
 
+export type ChatAddMembersData = { chat: { addMembers: User[] } };
+export type ChatAddMembersVars = { input: ChatsAddMembersInputType };
+export type ChatsAddMembersInputType = { 
+    chatId: string;
+    userIds: string[];
+};
+export const CHAT_ADD_MEMBERS_MUTATION = gql`
+    ${USER_FRAGMENT}
+    mutation ChatAddMembers($input: ChatsAddMembersInputType!) {
+        chat {
+          addMembers(input: $input) {
+            ...UserFragment
+          }
+        }
+      }
+`;
+
+export type ChatRemoveMembersData = { chat: { addMembers: User[] } };
+export type ChatRemoveMembersVars = { input: ChatsAddMembersInputType };
+export const CHAT_REMOVE_MEMBERS_MUTATION = gql`
+    ${USER_FRAGMENT}
+    mutation ChatRemoveMembers($input: ChatsAddMembersInputType!) {
+        chat {
+          removeMembers(input: $input) {
+            ...UserFragment
+          }
+        }
+      }
 `;

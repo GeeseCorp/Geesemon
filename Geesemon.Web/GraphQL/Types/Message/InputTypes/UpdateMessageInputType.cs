@@ -6,8 +6,18 @@ public class UpdateMessageInputType : InputObjectGraphType<UpdateMessageInput>
 {
     public UpdateMessageInputType()
     {
-        Field<NonNullGraphType<GuidGraphType>>("MessageId");
+        Field<NonNullGraphType<GuidGraphType>, Guid>()
+            .Name("MessageId")
+            .Resolve(context => context.Source.MessageId);
 
-        Field<NonNullGraphType<StringGraphType>>("Text");
+        Field<NonNullGraphType<StringGraphType>, string>()
+            .Name("Text")
+            .Resolve(context => context.Source.Text);
     }
+}
+
+public class UpdateMessageInput
+{
+    public Guid MessageId { get; set; }
+    public string Text { get; set; }
 }

@@ -22,13 +22,13 @@ namespace Geesemon.Web.GraphQL.Mutations
         public AuthMutation(
             AuthService authService,
             UserManager userManager,
-            ChatManager chatManager, 
-            UserChatManager userChatManager,
-            SessionManager sessionManager, 
+            SessionManager sessionManager,
+            FileManagerService fileManagerService,
             IHttpContextAccessor httpContextAccessor,
-            IServiceProvider serviceProvider,
             IValidator<AuthLoginInput> authLoginInputValidator,
-            IValidator<AuthRegisterInput> authRegisterInputValidator
+            IValidator<AuthRegisterInput> authRegisterInputValidator,
+            IValidator<AuthUpdateProfile> authUpdateProfileValidator,
+            IChatActivitySubscriptionService chatActivitySubscriptionService
             )
         {
             this.httpContextAccessor = httpContextAccessor;
@@ -62,20 +62,6 @@ namespace Geesemon.Web.GraphQL.Mutations
                         Email = authRegisterInput.Email,
                         Role = UserRole.User,
                     });
-
-                    var savedChat = new Chat
-                    {
-                        CreatorId = newUser.Id,
-                        Type = ChatKind.Saved,
-                        Id = newUser.Id,
-                    };
-                    savedChat = await chatManager.CreateAsync(savedChat);
-
-                    var userChat = new List<UserChat>
-                    {
-                        new UserChat { UserId = newUser.Id, ChatId = savedChat.Id },
-                    };
-                    await userChatManager.CreateManyAsync(userChat);
 
                     var session = new Session
                     {
@@ -147,16 +133,13 @@ namespace Geesemon.Web.GraphQL.Mutations
                     session = await FillSession(session, isOnline);
                     await sessionManager.UpdateAsync(session);
                     
-                    using var scope = serviceProvider.CreateScope();
-                    var chatActivitySubscriptionService = scope.ServiceProvider.GetRequiredService<IChatActivitySubscriptionService>();
                     await chatActivitySubscriptionService.Notify(userId);
-
                     return true;
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
             
             Field<NonNullGraphType<SessionType>, Session>()
-                .Name("RemoveSession")
+                .Name("TerminateSession")
                 .Argument<NonNullGraphType<GuidGraphType>, Guid>("SessionId", "")
                 .ResolveAsync(async context =>
                 {
@@ -166,6 +149,43 @@ namespace Geesemon.Web.GraphQL.Mutations
                     if (session.UserId != userId)
                         throw new ExecutionError("You can not remove others sessions");
                     return await sessionManager.RemoveAsync(session);
+                })
+                .AuthorizeWith(AuthPolicies.Authenticated);
+            
+            Field<NonNullGraphType<ListGraphType<SessionType>>, IEnumerable<Session>>()
+                .Name("TerminateAllOtherSessions")
+                .ResolveAsync(async context =>
+                {
+                    var userId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
+                    string token = httpContextAccessor.HttpContext.Request.Headers[HeaderNames.Authorization];
+                    return await sessionManager.TerminateAllOthersSessionAsync(userId, token);
+                })
+                .AuthorizeWith(AuthPolicies.Authenticated);
+
+            Field<NonNullGraphType<UserType>, User>()
+                .Name("UpdateProfile")
+                .Argument<NonNullGraphType<AuthUpdateProfileType>, AuthUpdateProfile>("Input", "")
+                .ResolveAsync(async context =>
+                {
+                    var authUpdateProfile = context.GetArgument<AuthUpdateProfile>("Input");
+                    await authUpdateProfileValidator.ValidateAndThrowAsync(authUpdateProfile);
+
+                    string imageUrl;
+                    if(authUpdateProfile.Image != null)
+                        imageUrl = await fileManagerService.UploadFileAsync(FileManagerService.UsersAvatarsFolder, authUpdateProfile.Image);
+                    else
+                        imageUrl = authUpdateProfile.ImageUrl;
+
+                    var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
+                    var currentUser = await userManager.GetByIdAsync(currentUserId);
+                    currentUser.FirstName = authUpdateProfile.Firstname;
+                    currentUser.LastName = authUpdateProfile.Lastname;
+                    currentUser.Username = authUpdateProfile.Username;
+                    currentUser.ImageUrl = imageUrl;
+                    currentUser = await userManager.UpdateAsync(currentUser);
+
+                    await chatActivitySubscriptionService.Notify(currentUser.Id);
+                    return currentUser;
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
         }

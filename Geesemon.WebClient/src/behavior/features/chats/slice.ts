@@ -4,6 +4,7 @@ import { string } from 'yup';
 import { shallowUpdateChat, sortChat } from '../../../utils/chatUtils';
 import { User } from '../users/types';
 import {
+    ChatsAddMembersInputType,
     CreateGroupChatInputType,
     CreatePersonalChatInputType,
     DeleteMessageInputType,
@@ -11,17 +12,25 @@ import {
     SentMessageInputType,
     UpdateMessageInputType,
 } from './mutations';
-import { MessageGetVars } from './queries';
+import { ChatsGetVars, MessageGetVars } from './queries';
 import { Chat, Message, UserChat } from './types';
 
-export type Mode = 'Text' | 'Audio' | 'Updating' | 'Reply';
+export enum Mode {
+    Text = 0,
+    Audio = 1,
+    Updating = 2,
+    Reply = 3,
+}
 
 type InitialState = {
     chats: Chat[];
     chatsGetLoading: boolean;
+    chatsGetHasNext: boolean;
 
     messageGetLoading: boolean;
+    messagesGetHasNext: boolean;
 
+    replyMessageId?: string | null;
     inUpdateMessageId?: string | null;
     mode: Mode;
 
@@ -32,16 +41,21 @@ type InitialState = {
 
     chatByUsername?: Chat | null;
     chatGetByUsernameLoading: boolean;
+
+    chatAddMembersLoading: boolean;
 };
 
 const initialState: InitialState = {
     chats: [],
     chatsGetLoading: false,
+    chatsGetHasNext: true,
 
     messageGetLoading: false,
+    messagesGetHasNext: true,
 
+    replyMessageId: null,
     inUpdateMessageId: null,
-    mode: 'Text',
+    mode: Mode.Text,
 
     createChatLoading: false,
 
@@ -50,6 +64,8 @@ const initialState: InitialState = {
 
     chatByUsername: null,
     chatGetByUsernameLoading: false,
+
+    chatAddMembersLoading: false,
 };
 
 const slice = createSlice({
@@ -62,11 +78,20 @@ const slice = createSlice({
         setInUpdateMessageId: (state, action: PayloadAction<string | null | undefined>) => {
             state.inUpdateMessageId = action.payload;
         },
-        addChats: (state, action: PayloadAction<Chat[]>) => {
-            state.chats = sortChat([...state.chats, ...action.payload]);
+        setReplyMessageId: (state, action: PayloadAction<string | null | undefined>) => {
+            state.replyMessageId = action.payload;
         },
+
+        addChats: (state, action: PayloadAction<Chat[]>) => {
+            if(action.payload.length)
+                state.chats = sortChat([...state.chats, ...action.payload]);
+        },
+        chatsGetAsync: state => state,
         setChatsGetLoading: (state, action: PayloadAction<boolean>) => {
             state.chatsGetLoading = action.payload;
+        },
+        setChatsGetHasNext: (state, action: PayloadAction<boolean>) => {
+            state.chatsGetHasNext = action.payload;
         },
 
         setCreateGroupLoading: (state, action: PayloadAction<boolean>) => {
@@ -89,12 +114,27 @@ const slice = createSlice({
         setMessageGetLoading: (state, action: PayloadAction<boolean>) => {
             state.messageGetLoading = action.payload;
         },
+        setMessagesGetHasNext: (state, action: PayloadAction<boolean>) => {
+            state.messageGetLoading = action.payload;
+        },
         messageGetAsync: (state, action: PayloadAction<MessageGetVars>) => state,
-        addMessages: (state, action: PayloadAction<{ chatId: string; messages: Message[] }>) => {
+        addInStartMessages: (state, action: PayloadAction<{ chatId: string; messages: Message[] }>) => {
             const newChats = state.chats.map(chat => {
                 if (chat.id === action.payload.chatId) {
-                    chat.messages = [...action.payload.messages, ...chat.messages];
-                    chat.messages = chat.messages.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+                    let addMessages = [...action.payload.messages];
+                    addMessages = addMessages.filter(message => !chat.messages.some(m => m.id === message.id));
+                    chat.messages = [...addMessages, ...chat.messages];
+                    // chat.messages = chat.messages.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+                }
+                return chat;
+            });
+            state.chats = sortChat(newChats);
+        },
+        addInEndMessages: (state, action: PayloadAction<{ chatId: string; messages: Message[] }>) => {
+            const newChats = state.chats.map(chat => {
+                if (chat.id === action.payload.chatId) {
+                    chat.messages = [...chat.messages, ...action.payload.messages];
+                    // chat.messages = chat.messages.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
                 }
                 return chat;
             });
@@ -104,31 +144,47 @@ const slice = createSlice({
         deleteMessage: (state, action: PayloadAction<Message>) => {
             const newChats = state.chats.map(chat => {
                 chat.messages = chat.messages.filter(m => m.id !== action.payload.id);
+                chat.messages = chat.messages.map(m => m.replyMessageId === action.payload.id
+                    ? { ...m, replyMessageId: null, replyMessage: null }
+                    : m);
                 return chat;
             });
             state.chats = sortChat(newChats);
         },
 
+        messageSendAsync: (state, action: PayloadAction<{chatId: string; sentMessageInput: SentMessageInputType}>) => state,
+        messageUpdateAsync: (state, action: PayloadAction<UpdateMessageInputType>) => state,
         updateMessage: (state, action: PayloadAction<Message>) => {
             const chat = state.chats.find(c => c.messages.some(m => m.id === action.payload.id));
             if (chat) {
                 chat.messages = chat.messages.map(message =>
                     message.id === action.payload.id
                         ? action.payload
-                        : message,
+                        : message.replyMessageId === action.payload.id
+                            ? { ...message, replyMessageId: action.payload.id, replyMessage: action.payload }
+                            : message,
                 );
             }
         },
         messageDeleteAsync: (state, action: PayloadAction<DeleteMessageInputType>) => state,
 
-        updateUserInChat: (state, action: PayloadAction<UserChat>) => {
-            state.chats = state.chats.map(c => c.id === action.payload.chatId
-                ? {
-                    ...c, users: c.users.map(u => u.id === action.payload.user.id
-                        ? { ...u, ...action.payload.user }
-                        : u),
-                }
-                : c);
+        addOrUpdateUserInChat: (state, action: PayloadAction<UserChat>) => {
+            if(state.chats.find(c => c.users.find(u => u.id === action.payload.userId))){
+                state.chats = state.chats.map(c => c.id === action.payload.chatId
+                    ? {
+                        ...c, users: [action.payload.user ,...c.users],
+                    }
+                    : c);
+            }
+            else {
+                state.chats = state.chats.map(c => c.id === action.payload.chatId
+                    ? {
+                        ...c, users: c.users.map(u => u.id === action.payload.user.id
+                            ? { ...u, ...action.payload.user }
+                            : u),
+                    }
+                    : c);
+            }
         },
 
         shallowUpdateChat: (state, action: PayloadAction<Chat>) => {
@@ -169,15 +225,13 @@ const slice = createSlice({
         setChatGetByUsernameLoading: (state, action: PayloadAction<boolean>) => {
             state.chatGetByUsernameLoading = action.payload;
         },
-        
-        chatsGetAsync: state => state,
-        createPersonalChatAsync: (state, action: PayloadAction<CreatePersonalChatInputType>) => state,
-        createGroupChatAsync: (state, action: PayloadAction<CreateGroupChatInputType>) => state,
-        chatDeleteAsync: (state, action: PayloadAction<string>) => state,
-        messageSendAsync: (state, action: PayloadAction<{sentMessageInputType: SentMessageInputType; chatId: string}>) => state,
-        messageUpdateAsync: (state, action: PayloadAction<UpdateMessageInputType>) => state,
-        messageMakeReadAsync: (state, action: PayloadAction<MessageMakeReadVars>) => state,
-        chatGetByUsernameAsync: (state, action: PayloadAction<string>) => state,
+      
+        chatAddMembersAsync: (state, action: PayloadAction<ChatsAddMembersInputType>) => state,
+        setChatAddMembersLoading: (state, action: PayloadAction<boolean>) => {
+            state.chatAddMembersLoading = action.payload;
+        },
+
+        chatRemoveMembersAsync: (state, action: PayloadAction<ChatsAddMembersInputType>) => state,
 
         toInitialState: (state, action: PayloadAction) => initialState,
     },

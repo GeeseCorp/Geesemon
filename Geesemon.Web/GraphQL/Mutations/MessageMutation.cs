@@ -1,8 +1,10 @@
-﻿using Geesemon.DataAccess.Managers;
+﻿using FluentValidation;
+using Geesemon.DataAccess.Managers;
 using Geesemon.Model.Enums;
 using Geesemon.Model.Models;
 using Geesemon.Web.GraphQL.Auth;
 using Geesemon.Web.GraphQL.Types;
+using Geesemon.Web.Services.ChatActionsSubscription;
 using Geesemon.Web.Services.MessageSubscription;
 using GraphQL;
 using GraphQL.Types;
@@ -14,57 +16,71 @@ namespace Geesemon.Web.GraphQL.Mutations
     {
         public MessageMutation(
             IMessageActionSubscriptionService messageActionSubscriptionService,
+            IChatActionSubscriptionService chatActionSubscriptionService,
             IHttpContextAccessor httpContextAccessor,
             MessageManager messageManager, 
             ChatManager chatManager,
-            ReadMessagesManager readMessagesManager
+            ReadMessagesManager readMessagesManager,
+            IValidator<SentMessageInput> sentMessageInputValidator,
+            UserChatManager userChatManager
             )
         {
-            Field<MessageType>()
+            Field<MessageType, Message>()
                 .Name("Send")
                 .Argument<NonNullGraphType<SentMessageInputType>, SentMessageInput>("Input", "")
                 .ResolveAsync(async context =>
+                {
+                    var sentMessageInput = context.GetArgument<SentMessageInput>("Input");
+                    var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
+                    await sentMessageInputValidator.ValidateAndThrowAsync(sentMessageInput);
+
+                    var chat = await chatManager.GetByUsernameAsync(sentMessageInput.ChatUsername, currentUserId);
+                    if (!chat.UserChats.Any(uc => uc.UserId == currentUserId))
+                        throw new ExecutionError("User can sent messages only to chats that he participate.");
+
+                    Message? replyMessage = null;
+                    if(sentMessageInput.ReplyMessageId != null)
                     {
-                        var sentMessageInput = context.GetArgument<SentMessageInput>("Input");
-                        var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
+                        replyMessage = await messageManager.GetByIdAsync(sentMessageInput.ReplyMessageId);
+                        if (replyMessage.ChatId != chat.Id)
+                            throw new ExecutionError("User can reply messages only from one chat");
+                    }
+                    
+                    Message newMessage = new Message()
+                    {
+                        ChatId = chat.Id,
+                        Text = sentMessageInput.Text,
+                        FromId = currentUserId,
+                        Type = MessageKind.Regular,
+                        ReplyMessageId = replyMessage?.Id,
+                    };
+                    newMessage = await messageManager.CreateAsync(newMessage);
+                    newMessage = messageActionSubscriptionService.Notify(newMessage, MessageActionKind.Create);
 
-                        var chat = await chatManager.GetByUsername(sentMessageInput.ChatUsername, currentUserId);
-                        if(chat == null)
-                            throw new ExecutionError("Chat not found");
+                    //var userChats = await userChatManager.Get(chat.Id);
+                    //chatActionSubscriptionService.Notify(chat, ChatActionKind.Update, userChats.Select(uc => uc.UserId));
 
-                        var isUserInChat = await chatManager.IsUserInChat(currentUserId, chat.Id);
-                        if (!isUserInChat)
-                            throw new ExecutionError("User can sent messages only to chats that he participate.");
-
-                        Message newMessage = new Message()
-                        {
-                            ChatId = chat.Id,
-                            Text = sentMessageInput.Text,
-                            FromId = currentUserId,
-                            Type = MessageKind.Regular
-                        };
-
-                        newMessage = await messageManager.CreateAsync(newMessage);
-
-                        return messageActionSubscriptionService.Notify(newMessage, MessageActionKind.Create);
-                    })
+                    return newMessage;
+                })
                 .AuthorizeWith(AuthPolicies.Authenticated);
 
-            Field<MessageType>()
+            Field<MessageType, Message>()
                 .Name("Delete")
                 .Argument<NonNullGraphType<DeleteMessageInputType>, DeleteMessageInput>("Input", "")
                 .ResolveAsync(async context =>
                 {
                     var input = context.GetArgument<DeleteMessageInput>("Input");
-                    var currentUserId = httpContextAccessor?.HttpContext?.User.Claims.GetUserId();
+                    var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
 
                     var message = await messageManager.GetByIdAsync(input.MessageId);
 
                     if (message == null)
                         throw new Exception("Message not found.");
 
+                    var chat = await chatManager.GetByIdAsync(message.ChatId);
                     if (message.FromId != currentUserId)
-                        throw new Exception("User can't delete other user's messages.");
+                        if (!await chatManager.IsUserInChat(currentUserId, message.ChatId) || chat.Type != ChatKind.Personal)
+                            throw new Exception("User can't delete other user's messages.");
 
                     await messageManager.RemoveAsync(message.Id);
 
@@ -72,7 +88,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
 
-            Field<MessageType>()
+            Field<MessageType, Message>()
                 .Name("Update")
                 .Argument<NonNullGraphType<UpdateMessageInputType>, UpdateMessageInput>("Input", "")
                 .ResolveAsync(async context =>
@@ -121,7 +137,13 @@ namespace Geesemon.Web.GraphQL.Mutations
                         MessageId = messageId,
                         ReadById = currentUserId,
                     });
-                    return messageActionSubscriptionService.Notify(message, MessageActionKind.Update);
+                    messageActionSubscriptionService.Notify(message, MessageActionKind.Update);
+
+                    //var chat = await chatManager.GetByIdAsync(message.ChatId);
+                    //var userChats = await userChatManager.Get(chat.Id);
+                    //chatActionSubscriptionService.Notify(chat, ChatActionKind.Update, userChats.Select(uc => uc.UserId));
+
+                    return message;
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
         }

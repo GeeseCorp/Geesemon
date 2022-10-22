@@ -1,33 +1,33 @@
-import {AnimatePresence, motion} from 'framer-motion';
-import React, {Dispatch, FC, useEffect, useRef} from 'react';
-import s from "./Menu.module.scss";
-import {Link} from "react-router-dom";
+import { AnimatePresence, motion } from 'framer-motion';
+import React, { Dispatch, FC, useEffect, useRef } from 'react';
+import s from './Menu.module.scss';
+import { Link } from 'react-router-dom';
 
 export type MenuItem = {
-    icon?: React.ReactNode,
-    content: React.ReactNode,
-    onClick?: () => void,
-    type: 'default' | 'danger'
-    link?: string
-}
+    icon?: React.ReactNode;
+    content: React.ReactNode;
+    onClick?: () => void;
+    type: 'default' | 'danger';
+    link?: string;
+};
 
 type Props = {
-    items: MenuItem[]
-    left?: number
-    top?: number
-    right?: number
-    bottom?: number
-    setOpen: Dispatch<React.SetStateAction<boolean>>
+    items: MenuItem[];
+    left?: number;
+    top?: number;
+    right?: number;
+    bottom?: number;
+    setOpen: Dispatch<React.SetStateAction<boolean>>;
 };
-export const Menu: FC<Props> = ({items, left, top, right, bottom, setOpen}) => {
+export const Menu: FC<Props> = ({ items, left, top, right, bottom, setOpen }) => {
     const menuRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
         document.addEventListener('mousedown', onClickOff);
         return () => {
             document.removeEventListener('mousedown', onClickOff);
-        }
-    }, [])
+        };
+    }, []);
 
     const onClickOff = (event: MouseEvent) => {
         if (event.target !== menuRef.current && !menuRef.current?.contains(event.target as Node)) {
@@ -38,13 +38,13 @@ export const Menu: FC<Props> = ({items, left, top, right, bottom, setOpen}) => {
     return (
         <AnimatePresence>
             <motion.div
-                initial={{opacity: 0, scale: 0.5}}
-                animate={{opacity: 1, scale: 1}}
-                exit={{opacity: 0, scale: 0.5}}
-                transition={{duration: .25}}
-                className={s.menuItems}
-                ref={menuRef}
-                style={{
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.5 }}
+              transition={{ duration: .25 }}
+              className={s.menuItems}
+              ref={menuRef}
+              style={{
                     left,
                     top,
                     right,
@@ -54,35 +54,35 @@ export const Menu: FC<Props> = ({items, left, top, right, bottom, setOpen}) => {
                 {items.map((item, i) => {
                     const onClick = () => {
                         item.onClick && item.onClick();
-                        setOpen(false)
-                    }
+                        setOpen(false);
+                    };
                     if (item.link) {
                         return (
                             <Link
-                                key={i}
-                                to={item.link}
+                              key={i}
+                              to={item.link}
                             >
                                 <div
-                                    key={i}
-                                    onClick={() => setOpen(false)}
-                                    className={[s.menuItem, item.type === 'danger' && 'danger'].join(' ')}
+                                  key={i}
+                                  onClick={() => setOpen(false)}
+                                  className={[s.menuItem, item.type === 'danger' && 'danger'].join(' ')}
                                 >
                                     <div className={s.icon}>{item.icon}</div>
                                     <div className={s.content}>{item.content}</div>
                                 </div>
                             </Link>
-                        )
+                        );
                     }
                     return (
                         <div
-                            key={i}
-                            onClick={onClick}
-                            className={[s.menuItem, item.type === 'danger' && 'danger'].join(' ')}
+                          key={i}
+                          onClick={onClick}
+                          className={[s.menuItem, item.type === 'danger' && 'danger'].join(' ')}
                         >
                             <div className={s.icon}>{item.icon}</div>
                             <div className={s.content}>{item.content}</div>
                         </div>
-                    )
+                    );
                 })}
             </motion.div>
         </AnimatePresence>

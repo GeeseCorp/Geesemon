@@ -51,10 +51,10 @@ namespace Geesemon.DataAccess.Providers.UserProvider
                 .ToListAsync();
         }
 
-        public Task<List<User>> GetAsync(int take, int skip, string q)
+        public Task<List<User>> GetAsync(int take, int skip, string q, Guid? currentUserId = null)
         {
             return context.Users
-                .Where(u => u.Username.Contains(q) || u.Email.Contains(q))
+                .Where(u => (u.Username.Contains(q) || (u.Email != null && u.Email.Contains(q))) && u.Id != currentUserId)
                 .OrderBy(u => u.FirstName)
                 .ThenBy(u => u.LastName)
                 .Skip(skip)

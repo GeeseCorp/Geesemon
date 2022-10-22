@@ -1,17 +1,18 @@
 import { AnimatePresence } from 'framer-motion';
-import { FC, useEffect, useState } from 'react';
-import back from '../../../assets/svg/back.svg';
-import crossFilled from '../../../assets/svg/crossFilled.svg';
-import logout from '../../../assets/svg/logout.svg';
-import menu from '../../../assets/svg/menu.svg';
-import pencilFilled from '../../../assets/svg/pencilFilled.svg';
-import saved from '../../../assets/svg/saved.svg';
-import settings from '../../../assets/svg/settings.svg';
+import { FC, useEffect, useRef, useState } from 'react';
+import backSvg from '../../../assets/svg/back.svg';
+import crossFilledSvg from '../../../assets/svg/crossFilled.svg';
+import logoutSvg from '../../../assets/svg/logout.svg';
+import menuSvg from '../../../assets/svg/menu.svg';
+import pencilFilledSvg from '../../../assets/svg/pencilFilled.svg';
 import personSvg from '../../../assets/svg/person.svg';
+import savedSvg from '../../../assets/svg/saved.svg';
+import settingsSvg from '../../../assets/svg/settings.svg';
 import { appActions, LeftSidebarState } from '../../../behavior/features/app/slice';
 import { authActions } from '../../../behavior/features/auth/slice';
 import { chatActions } from '../../../behavior/features/chats';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
+import { useOnScreen } from '../../../hooks/useOnScreen';
 import { Search } from '../../common/formControls/Search/Search';
 import { HeaderButton } from '../../common/HeaderButton/HeaderButton';
 import { LeftSidebarSmallPrimaryButton } from '../../common/LeftSidebarSmallPrimaryButton/LeftSidebarSmallPrimaryButton';
@@ -21,38 +22,42 @@ import { SmallPrimaryButton } from '../../common/SmallPrimaryButton/SmallPrimary
 import { Chat } from '../Chat/Chat';
 import s from './Chats.module.scss';
 
-type Props = {};
-
-export const Chats: FC<Props> = ({ }) => {
-    const [isEnabledSearchMode, setIsEnabledSearchMode] = useState(false);
+export const Chats: FC = () => {
+    const dispatch = useAppDispatch();
     const logoutLoading = useAppSelector(s => s.auth.logoutLoading);
     const authedUser = useAppSelector(s => s.auth.authedUser);
-    const [isMenuVisible, setIsMenuVisible] = useState(false);
     const chatsGetLoading = useAppSelector(s => s.chats.chatsGetLoading);
+    const chatsGetHasNext = useAppSelector(s => s.chats.chatsGetHasNext);
     const chats = useAppSelector(s => s.chats.chats);
+    const [isMenuVisible, setIsMenuVisible] = useState(false);
+    const [isEnabledSearchMode, setIsEnabledSearchMode] = useState(false);
     const [searchValue, setSearchValue] = useState('');
-    const dispatch = useAppDispatch();
     const [isCreateChatMenuVisible, setIsCreateChatMenuVisible] = useState(false);
+    const [take] = useState(30);
+    const lastChatRef = useRef<HTMLDivElement | null>(null);
+    const isLastChatOnScreen = useOnScreen(lastChatRef);
 
     useEffect(() => {
-        if (!chats.length)
-            dispatch(chatActions.chatsGetAsync());
-    }, []);
+        if(!chatsGetLoading && chatsGetHasNext && (!chats.length || isLastChatOnScreen)){
+            dispatch(chatActions.chatsGetAsync({ skip: chats.length, take }));
+        }
+    }, [isLastChatOnScreen]);
 
     const menuItems: MenuItem[] = [
         {
-            icon: <img src={saved} className={[s.menuItem, 'secondaryTextSvg'].join(' ')} />,
+            icon: <img src={savedSvg} className={[s.menuItem, 'secondaryTextSvg'].join(' ')} alt={'savedSvg'} />,
             content: 'Saved',
             type: 'default',
             link: `/${authedUser?.username}`,
         },
         {
-            icon: <img src={settings} className={[s.menuItem, 'secondaryTextSvg'].join(' ')} />,
+            icon: <img src={settingsSvg} className={[s.menuItem, 'secondaryTextSvg'].join(' ')} alt={'settingsSvg'} />,
             content: 'Settings',
+            onClick: () => dispatch(appActions.setLeftSidebarState(LeftSidebarState.Settings)),
             type: 'default',
         },
         {
-            icon: logoutLoading ? <SmallLoading /> : <img src={logout} className={[s.menuItem, 'secondaryTextSvg'].join(' ')} />,
+            icon: logoutLoading ? <SmallLoading /> : <img src={logoutSvg} className={[s.menuItem, 'secondaryTextSvg'].join(' ')} alt={'logoutSvg'} />,
             content: 'Logout',
             onClick: () => dispatch(authActions.logoutAsync()),
             type: 'default',
@@ -61,13 +66,13 @@ export const Chats: FC<Props> = ({ }) => {
 
     const createChatMenuItems: MenuItem[] = [
         {
-            icon: <img src={personSvg} className={[s.menuItem, 'secondaryTextSvg'].join(' ')} />,
+            icon: <img src={personSvg} className={[s.menuItem, 'secondaryTextSvg'].join(' ')} alt={'personSvg'} />,
             content: 'New group',
             type: 'default',
             onClick: () => dispatch(appActions.setLeftSidebarState(LeftSidebarState.CreateGroupChat)),
         },
         {
-            icon: <img src={personSvg} className={[s.menuItem, 'secondaryTextSvg'].join(' ')} />,
+            icon: <img src={personSvg} className={[s.menuItem, 'secondaryTextSvg'].join(' ')} alt={'personSvg'} />,
             content: 'New personal chat',
             type: 'default',
             onClick: () => dispatch(appActions.setLeftSidebarState(LeftSidebarState.CreatePersonalChat)),
@@ -85,13 +90,13 @@ export const Chats: FC<Props> = ({ }) => {
                                   keyName={'back'}
                                   onClick={() => setIsEnabledSearchMode(false)}
                                 >
-                                    <img src={back} width={25} className={'secondaryTextSvg'} />
+                                    <img src={backSvg} width={25} className={'secondaryTextSvg'} alt={'backSvg'} />
                                 </HeaderButton>
                             )
                             : (
                                 <>
                                 <HeaderButton keyName={'menu'} onClick={() => setIsMenuVisible(true)}>
-                                    <img src={menu} width={20} className={'secondaryTextSvg'} />
+                                    <img src={menuSvg} width={20} className={'secondaryTextSvg'} alt={'menuSvg'} />
                                 </HeaderButton>
                                 {isMenuVisible &&
                                     <Menu
@@ -115,7 +120,17 @@ export const Chats: FC<Props> = ({ }) => {
                 ? <div>search</div>
                 : (
                     <div className={s.chats}>
-                        {chats.map(chat => <Chat key={chat.id} chat={chat} />)}
+                        {chats.map((chat, i) => (
+                            <div 
+                              key={chat.id}
+                              ref={el => {
+                                if(i === chats.length - 1)
+                                    lastChatRef.current = el;
+                              }}
+                            >
+                                <Chat chat={chat} />
+                            </div>
+                        ))}
                         {chatsGetLoading && 
                             <div className={s.loading}>
                                 <SmallLoading />
@@ -132,8 +147,8 @@ export const Chats: FC<Props> = ({ }) => {
                             >
                                 <SmallPrimaryButton>
                                     {isCreateChatMenuVisible
-                                        ? <img src={crossFilled} width={15} className={'primaryTextSvg'} />
-                                        : <img src={pencilFilled} width={25} className={'primaryTextSvg'} />}
+                                        ? <img src={crossFilledSvg} width={15} className={'primaryTextSvg'} alt={'crossFilledSvg'} />
+                                        : <img src={pencilFilledSvg} width={25} className={'primaryTextSvg'} alt={'pencilFilledSvg'} />}
                                 </SmallPrimaryButton>
                                 {isCreateChatMenuVisible &&
                                     <Menu

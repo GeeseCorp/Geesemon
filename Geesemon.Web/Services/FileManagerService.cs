@@ -25,9 +25,11 @@ public class FileManagerService
         await cloudinary.CreateFolderAsync(folderPath);
     }
 
-    public async Task<string> UploadFileAsync(string folderPath, IFormFile file)
+    public async Task<string> UploadFileAsync(string folderPath, IFormFile file, bool withHash = true)
     {
         var fileNameWithoutExtention = Path.GetFileNameWithoutExtension(file.FileName);
+        if (withHash)
+            fileNameWithoutExtention = $"{Guid.NewGuid()}_{fileNameWithoutExtention}";
         var publicId = string.IsNullOrEmpty(folderPath) ? fileNameWithoutExtention : $"{folderPath}/{fileNameWithoutExtention}";
         var filePath = string.IsNullOrEmpty(folderPath) ? file.FileName : $"{folderPath}/{file.FileName}";
 

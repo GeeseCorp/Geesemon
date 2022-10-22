@@ -4,9 +4,12 @@ import { User } from '../users/types';
 export type Message = {
     text?: string | null;
     type: MessageKind;
+    isEdited: boolean;
     fromId?: string | null;
     from?: User | null;
     chatId: string;
+    replyMessageId?: string | null;
+    replyMessage?: Message | null;
     readBy: User[];
     readByCount: number;
 } & Entity;
@@ -31,6 +34,7 @@ export type Chat = {
     imageColor: string;
     membersTotal: number;
     membersOnline: number;
+    notReadMessagesCount: number;
     creatorId: string;
     messages: Message[];
     users: User[];
@@ -60,7 +64,7 @@ export type MessageActions = {
 };
 
 export enum ChatActionKind {
-    Create = 'CREATE',
+    Add = 'ADD',
     Update = 'UPDATE',
     Delete = 'DELETE',
     Clear = ' CLEAR',

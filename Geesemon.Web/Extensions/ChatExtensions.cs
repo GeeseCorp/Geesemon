@@ -10,6 +10,7 @@ public static class ChatExtensions
     {
         using var scope = serviceProvider.CreateScope();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager>();
+        var messageManager = scope.ServiceProvider.GetRequiredService<MessageManager>();
         switch (chat.Type)
         {
             case ChatKind.Personal:
@@ -27,6 +28,7 @@ public static class ChatExtensions
                 chat.ImageUrl = user.ImageUrl;
                 break;
         }
+        chat.NotReadMessagesCount = await messageManager.GetNotReadMessagesCount(chat.Id, currentUserId);
         return chat;
     }
     

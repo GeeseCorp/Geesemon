@@ -12,16 +12,21 @@ namespace Geesemon.DataAccess.Providers.ChatProvider
         {
         }
 
-        public async Task<Chat?> GetByUsername(string chatUsername, Guid currentUserId)
+        public async Task<Chat?> GetByUsernameAsync(string chatUsername, Guid currentUserId)
         {
             return await context.Chats
                 .Include(c => c.UserChats)
                 .ThenInclude(uc => uc.User)
-                .FirstOrDefaultAsync(c => c.Type == ChatKind.Personal
-                    ? c.UserChats.Any(uc => uc.User.Username == chatUsername && uc.UserId != currentUserId)
+                .SingleOrDefaultAsync(c => c.Type == ChatKind.Personal
+                    ? c.UserChats.All(uc => uc.User.Username == chatUsername || uc.UserId == currentUserId)
                     : c.Type == ChatKind.Saved
-                        ? c.UserChats.Any(uc => uc.User.Username == chatUsername && uc.UserId == currentUserId)
+                        ? c.UserChats.All(uc => uc.User.Username == chatUsername && uc.UserId == currentUserId)
                         : c.Username == chatUsername && c.UserChats.Any(uc => uc.UserId == currentUserId));
+        }
+        
+        public async Task<Chat?> GetByUsernameAsync(string chatUsername)
+        {
+            return await context.Chats.SingleOrDefaultAsync(c => c.Username == chatUsername);
         }
         
         public async Task<int> GetMembersTotalAsync(Guid chatId)
@@ -70,9 +75,10 @@ namespace Geesemon.DataAccess.Providers.ChatProvider
 
         public async Task<bool> IsUserInChat(Guid userId, Guid chatId)
         {
-            var chat = await context.Chats.Include(c => c.UserChats)
+            var chat = await context.Chats
+                .Include(c => c.UserChats)
                 .FirstOrDefaultAsync(c => c.Id == chatId && c.UserChats.Any(uc => uc.UserId == userId));
-
+            var a = chat?.Id;
             return chat != null;
         }
     }

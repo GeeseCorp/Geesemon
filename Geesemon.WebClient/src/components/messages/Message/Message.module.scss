@@ -36,6 +36,28 @@
     min-width: 0;
     overflow-wrap: break-word;
     line-height: 1.3125;
+
+
+}
+
+.message {
+    a {
+        color: $primary-color;
+    }
+
+    &.messageMy .messageText a,
+    &.messageSystem .messageText a {
+        color: $primary-text-color;
+
+        &:hover {
+            color: $primary-text-color;
+        }
+    }
+
+    .messageText a:hover {
+        color: $primary-color;
+        text-decoration: underline;
+    }
 }
 
 .messageMy {
@@ -49,6 +71,24 @@
     background-color: rgba(136, 52, 137, 0.5);
     border-radius: 60px;
     padding: 2px 10px;
+}
+
+.from {
+    font-size: 0.9rem;
+    margin-bottom: 3px;
+    display: block;
+}
+
+.replyMessage {
+    border-left: 2px solid $primary-text-color;
+    padding: 0 10px;
+    margin-bottom: 5px;
+}
+
+.replyMessageText {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .messageText {

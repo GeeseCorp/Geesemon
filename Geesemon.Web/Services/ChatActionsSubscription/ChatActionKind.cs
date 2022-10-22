@@ -2,10 +2,8 @@
 
 public enum ChatActionKind
 {
-    Create,
+    Add,
     Update,
     Delete,
     Clear,
-    AddUser,
-    RemoveUser
 }
