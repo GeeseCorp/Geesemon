@@ -16,6 +16,7 @@ import { Checks } from '../Checks/Checks';
 import s from './Message.module.scss';
 import { useSelectedChat } from '../../../hooks/useSelectedChat';
 import { Mode } from '../../../behavior/features/chats/slice';
+import { processString, ProcessStringOption } from '../../../utils/stringUtils';
 
 type Props = {
     message: MessageType;
@@ -42,6 +43,49 @@ export const Message: FC<Props> = ({ message, inputTextFocus, isFromVisible = fa
     }, [isVisible]);
 
     const messageContent = () => {
+        const config: ProcessStringOption[] = [
+            {
+                regex: /(http|https):\/\/(\S+)\.([a-z]{2,}?)(.*?)( |\,|$|\.)/gim,
+                fn: (key, result) => (
+                    <span key={key}>
+                        <a
+                          style={{ textDecoration: 'underline' }}
+                          target="_blank"
+                          href={`${result[1]}://${result[2]}.${result[3]}${result[4]}`} 
+                          rel="noreferrer"
+                        >
+                            {result[2]}.{result[3]}{result[4]}
+                        </a>
+                        {result[5]}
+                    </span>
+                ),
+            },
+            {
+                regex: /(\S+)\.([a-z]{2,}?)(.*?)( |\,|$|\.)/gim,
+                fn: (key, result) => (
+                    <span key={key}>
+                        <a 
+                          style={{ textDecoration: 'underline' }}
+                          target="_blank" 
+                          href={`http://${result[1]}.${result[2]}${result[3]}`} 
+                          rel="noreferrer"
+                        >
+                            {result[1]}.{result[2]}{result[3]}
+                        </a>
+                        {result[4]}
+                    </span>
+                ),
+            },
+            {
+                regex: /(@(\w+))/gim,
+                fn: (key, result) => (
+                    <Link key={key} to={`/${result[2]}`}>{result[1]}</Link>
+                ),
+            },
+        ];
+        
+        const messageText = processString(config)(message.text || '');
+
         switch (message.type) {
             case MessageKind.System:
                 return (
@@ -52,7 +96,7 @@ export const Message: FC<Props> = ({ message, inputTextFocus, isFromVisible = fa
                         }}
                       className={[s.message, s.messageSystem].join(' ')}
                     >
-                        <span className={s.messageText}>{message.text}</span>
+                        <span className={s.messageText}>{messageText}</span>
                     </div>
                 );
             default:
@@ -70,7 +114,7 @@ export const Message: FC<Props> = ({ message, inputTextFocus, isFromVisible = fa
                               className={[s.from, 'bold'].join(' ')} 
                               style={{ color: message.from?.avatarColor }}
                             >
-                                {message.from?.firstName} {message.from?.firstName}
+                                {message.from?.firstName} {message.from?.lastName}
                             </Link>
                         )}
                         {message.replyMessage && (
@@ -87,7 +131,7 @@ export const Message: FC<Props> = ({ message, inputTextFocus, isFromVisible = fa
                                 <div className={['small primary', s.replyMessageText].join(' ')}>{message.replyMessage?.text}</div>
                             </div>
                         )}
-                        <span className={s.messageText}>{message.text}</span>
+                        <span className={s.messageText}>{messageText}</span>
                         <span className={s.messageInfo}>
                             {message.isEdited &&
                                 <span className={'small light'}>edited</span>

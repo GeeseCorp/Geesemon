@@ -13,8 +13,9 @@ export enum SettingsCategory{
 }
 
 export enum RightSidebarState{
-    Profile = 0,
-    UpdateGroup = 1,
+    Profile = 'Profile',
+    UpdateGroup = 'UpdateGroup',
+    GroupAddMembers = 'GroupAddMembers',
 }
 
 export type InitialState = {

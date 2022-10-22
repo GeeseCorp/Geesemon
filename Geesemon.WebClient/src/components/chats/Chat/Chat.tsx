@@ -17,6 +17,7 @@ import { ContextMenu } from '../../common/ContextMenu/ContextMenu';
 import { MenuItem } from '../../common/Menu/Menu';
 import { OnlineIndicator } from '../../common/OnlineIndicator/OnlineIndicator';
 import s from './Chat.module.scss';
+import { Checks } from '../../messages/Checks/Checks';
 
 type Props = {
     chat: ChatType;
@@ -39,7 +40,7 @@ export const Chat: FC<Props> = ({ chat }) => {
     useEffect(() => {
         const userChat = chatActivity.data?.chatActivity;
         if (userChat) {
-            dispatch(chatActions.updateUserInChat(userChat));
+            dispatch(chatActions.addOrUpdateUserInChat(userChat));
             dispatch(chatActions.shallowUpdateChat(userChat.chat));
         }
     }, [chatActivity.data?.chatActivity]);
@@ -103,7 +104,10 @@ export const Chat: FC<Props> = ({ chat }) => {
                         <div className={s.chatInfo}>
                             <div className={s.chatTitle}>
                                 <div className={['bold', s.name].join(' ')}>{chat.name}</div>
-                                <div className={'small light'}>{lastMessage && getTimeWithoutSeconds(new Date(lastMessage.createdAt))}</div>
+                                <div className={s.timeAndChecks}>
+                                    {lastMessage?.fromId === authedUser?.id && <Checks double={!!lastMessage?.readBy?.length} />}
+                                    <span className={'small light'}>{lastMessage && getTimeWithoutSeconds(new Date(lastMessage.createdAt))}</span>
+                                </div>
                             </div>
                             <div className={s.chatSubtitle}>
                                 <div className={s.chatLastMessage}>

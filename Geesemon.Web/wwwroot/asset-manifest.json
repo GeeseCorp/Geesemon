@@ -1,10 +1,11 @@
 {
   "files": {
-    "main.css": "/static/css/main.59967e5d.css",
-    "main.js": "/static/js/main.372b00d2.js",
+    "main.css": "/static/css/main.dbdf0b1b.css",
+    "main.js": "/static/js/main.247ee579.js",
     "static/media/settings.svg": "/static/media/settings.5ce75b923316447e65b4193b76a349b5.svg",
     "static/media/microphone.svg": "/static/media/microphone.0ee15e41889ee128084bfb787e311b3c.svg",
     "static/media/camera.svg": "/static/media/camera.624136d02f8065cd9bc5d2c2ff03635c.svg",
+    "static/media/addUserFilled.svg": "/static/media/addUserFilled.939dcec518874a595e5e538046762455.svg",
     "static/media/atSign.svg": "/static/media/atSign.9c003518088ed90c516c7e57936ad0e6.svg",
     "static/media/clip.svg": "/static/media/clip.5b44779592dbe7f51d5b74f2ab6e8949.svg",
     "static/media/smile.svg": "/static/media/smile.3e3d47c9abb03eae4d924a5c02e33e3b.svg",
@@ -28,11 +29,11 @@
     "static/media/next.svg": "/static/media/next.e616739078a36aa04268d4f7c2d952bf.svg",
     "static/media/logout.svg": "/static/media/logout.a7631ed82996a1e1ee28481503244e15.svg",
     "static/media/threeDots.svg": "/static/media/threeDots.687e2c923110b3319185cb227236b412.svg",
-    "main.59967e5d.css.map": "/static/css/main.59967e5d.css.map",
-    "main.372b00d2.js.map": "/static/js/main.372b00d2.js.map"
+    "main.dbdf0b1b.css.map": "/static/css/main.dbdf0b1b.css.map",
+    "main.247ee579.js.map": "/static/js/main.247ee579.js.map"
   },
   "entrypoints": [
-    "static/css/main.59967e5d.css",
-    "static/js/main.372b00d2.js"
+    "static/css/main.dbdf0b1b.css",
+    "static/js/main.247ee579.js"
   ]
 }

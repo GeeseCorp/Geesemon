@@ -4,16 +4,19 @@ import { Avatar } from '../../common/Avatar/Avatar';
 import { AvatarWithoutImage } from '../../common/AvatarWithoutImage/AvatarWithoutImage';
 import s from './User.module.scss';
 import { getLastTimeActivity } from '../../../utils/dateUtils';
+import { Checkbox } from '../../common/formControls/Checkbox/Checkbox';
+import { MenuItem } from '../../common/Menu/Menu';
+import { ContextMenu } from '../../common/ContextMenu/ContextMenu';
 
 type Props = {
     user: UserType;
     selectMultiple?: boolean;
     selectedUsers: UserType[];
-    setSelectedUsers: (selectedUsers: UserType[]) => void;
     onSelectedUsersChange?: (selectedUsers: UserType[]) => void;
+    getContextMenuItems?: (user: UserType) => MenuItem[];
 };
 
-export const User: FC<Props> = ({ user, selectMultiple = false, selectedUsers, setSelectedUsers, onSelectedUsersChange }) => {
+export const User: FC<Props> = ({ user, selectMultiple = false, selectedUsers, onSelectedUsersChange, getContextMenuItems }) => {
     const onChangeHanlder = (user: UserType) => {
         let newSelectedUsers: UserType[];
         if (selectMultiple) {
@@ -25,22 +28,19 @@ export const User: FC<Props> = ({ user, selectMultiple = false, selectedUsers, s
         else {
             newSelectedUsers = [user];
         }
-        setSelectedUsers(newSelectedUsers);
         onSelectedUsersChange && onSelectedUsersChange(newSelectedUsers);
-
     };
 
+    const items = getContextMenuItems ? getContextMenuItems(user) : [];
+
     return (
-        <div key={user.id} className={s.user} onClick={() => onChangeHanlder(user)}>
+        <ContextMenu items={items}>
+            <div key={user.id} className={s.user} onClick={() => onChangeHanlder(user)}>
             {selectMultiple &&
-                <div className={s.checkbox}>
-                    <input
-                      id={user.id}
-                      type={'checkbox'}
-                      checked={!!selectedUsers.some(u => u.id === user.id)}
-                      onChange={() => null}
-                    />
-                </div>
+                <Checkbox  
+                  checked={!!selectedUsers.some(u => u.id === user.id)}
+                  setChecked={() => null}
+                />
             }
             <div className={s.userInner}>
                 {user.imageUrl
@@ -56,9 +56,10 @@ export const User: FC<Props> = ({ user, selectMultiple = false, selectedUsers, s
                 }
                 <div className={s.userInfo}>
                     <div className={'bold'}>{user.firstName} {user.lastName}</div>
-                    <div className={'subText'}>{user.isOnline ? 'Online' : getLastTimeActivity(new Date(user.lastTimeOnline))}</div>
+                    <div className={'subText'}>{user.isOnline ? 'Online' : `last seen ${getLastTimeActivity(new Date(user.lastTimeOnline))}`}</div>
                 </div>
             </div>
         </div>
+        </ContextMenu>
     );
 };

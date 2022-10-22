@@ -64,7 +64,7 @@ export type MessageActions = {
 };
 
 export enum ChatActionKind {
-    Create = 'CREATE',
+    Add = 'ADD',
     Update = 'UPDATE',
     Delete = 'DELETE',
     Clear = ' CLEAR',

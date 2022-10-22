@@ -27,29 +27,27 @@ export const Messages: FC = () => {
     const [isFirstTimeMessagesRendered, setIsFirstTimeMessagesRendered] = useState(false);
 
     useEffect(() => {
-        if(selectedChat?.messages) {
-            const blocks: MessageType[][] = [];
-            let block: MessageType[] = [];
-            selectedChat?.messages.forEach((message, i) => {
-                if(i === selectedChat?.messages.length - 1) {
-                    if(i !== 0 && message.fromId !== selectedChat?.messages[i - 1].fromId){
-                        blocks.push(block);
-                        block = [];
-                    }
-                    block.push(message);
-                    blocks.push(block);
-                }
-                else if(i === 0 || message.fromId === selectedChat?.messages[i - 1].fromId) {
-                    block.push(message);
-                }
-                else {
+        const blocks: MessageType[][] = [];
+        let block: MessageType[] = [];
+        selectedChat?.messages.forEach((message, i) => {
+            if(i === selectedChat?.messages.length - 1) {
+                if(i !== 0 && message.fromId !== selectedChat?.messages[i - 1].fromId){
                     blocks.push(block);
                     block = [];
-                    block.push(message);
                 }
-            });
-            setMessageBlocks(blocks);
-        }
+                block.push(message);
+                blocks.push(block);
+            }
+            else if(i === 0 || message.fromId === selectedChat?.messages[i - 1].fromId) {
+                block.push(message);
+            }
+            else {
+                blocks.push(block);
+                block = [];
+                block.push(message);
+            }
+        });
+        setMessageBlocks(blocks);
     }, [selectedChat?.messages]);
 
     useEffect(() => {
@@ -140,7 +138,7 @@ export const Messages: FC = () => {
                                 {block.map((message, j) => (
                                     <Message 
                                       key={message.id}
-                                      isFromVisible={!j && selectedChat?.type === ChatKind.Group && message.fromId !== authedUser?.id}
+                                      isFromVisible={j === block.length - 1 && selectedChat?.type === ChatKind.Group && message.fromId !== authedUser?.id}
                                       message={message} 
                                       inputTextFocus={inputTextFocus}
                                     />

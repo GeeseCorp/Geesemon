@@ -40,7 +40,7 @@ const slice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
-        meAsync: (state: InitialState, action: PayloadAction) => state,
+        meAsync: (state: InitialState) => state,
         setMeLoading: (state: InitialState, action: PayloadAction<boolean>) => {
             state.meLoading = action.payload;
         },

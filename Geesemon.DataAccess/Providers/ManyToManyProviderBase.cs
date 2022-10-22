@@ -20,7 +20,7 @@ namespace Geesemon.DataAccess.Providers
             return entity;
         }
 
-        public async Task<IList<T>> CreateManyAsync(IList<T> entities)
+        public async Task<IEnumerable<T>> CreateManyAsync(IEnumerable<T> entities)
         {
             foreach(var entity in entities)
             {

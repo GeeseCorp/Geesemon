@@ -36,7 +36,6 @@ const schema: Yup.SchemaOf<FormValues> = Yup.object({
 export const ChatsCreateGroup: FC = () => {
     const createGroupLoading = useAppSelector(s => s.chats.createChatLoading);
     const inputFileRef = useRef<HTMLInputElement | null>(null);
-    const [users, setUsers] = useState<User[]>([]);
     const [image, setImage] = useState<File | null>(null);
     const [state, setState] = useState<'Members' | 'ImageAndName'>('Members');
     const dispatch = useAppDispatch();
@@ -54,7 +53,7 @@ export const ChatsCreateGroup: FC = () => {
             dispatch(chatActions.createGroupChatAsync({
                 name,
                 username,
-                usersId: users.map(u => u.id),
+                usersId: selectedUsers.map(u => u.id),
                 image,
             }));
         },
@@ -93,9 +92,8 @@ export const ChatsCreateGroup: FC = () => {
                         </div>
                         <Users
                           selectMultiple
-                          onSelectedUsersChange={setUsers}
+                          onSelectedUsersChange={setSelectedUsers}
                           selectedUsers={selectedUsers}
-                          setSelectedUsers={setSelectedUsers}
                         />
                         <LeftSidebarSmallPrimaryButton>
                             <SmallPrimaryButton onClick={() => setState('ImageAndName')}>

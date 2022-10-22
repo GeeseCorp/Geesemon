@@ -53,6 +53,12 @@
     white-space: nowrap;
 }
 
+.timeAndChecks {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
 .chatSubtitle {
     display: flex;
     justify-content: space-between;

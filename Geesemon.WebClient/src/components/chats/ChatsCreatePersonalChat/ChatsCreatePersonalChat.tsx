@@ -20,16 +20,12 @@ export const ChatsCreatePersonalChat: FC<Props> = () => {
     const navigate = useNavigate();
 
     const onSelectedUsersChange = (selectedUsers: User[]) => {
+        setSelectedUsers(selectedUsers);
         const user = users.find(u => u.id === selectedUsers[0].id);
         if(!user){
             dispatch(notificationsActions.addError('User not found ofr create personal chat'));
             return;
         }
-        // dispatch(chatActions.createPersonalChatAsync({
-        //     username: user.username,
-        // }));
-        navigate(`/${user.username}`);
-        dispatch(appActions.setLeftSidebarState(LeftSidebarState.Chats));
     };
 
     const onQChange = (value: string) => {
@@ -57,7 +53,6 @@ export const ChatsCreatePersonalChat: FC<Props> = () => {
             </div>
             <Users
               selectedUsers={selectedUsers}
-              setSelectedUsers={setSelectedUsers}
               onSelectedUsersChange={onSelectedUsersChange}
             />
         </div>

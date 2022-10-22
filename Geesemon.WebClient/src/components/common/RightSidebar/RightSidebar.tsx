@@ -6,6 +6,7 @@ import { useSelectedChat } from '../../../hooks/useSelectedChat';
 import { ChatProfile } from '../../chats/ChatProfile/ChatProfile';
 import { ChatsUpdateGroup } from '../../chats/ChatsUpdateGroup/ChatsUpdateGroup';
 import s from './RightSidebar.module.scss';
+import { ChatsAddMembers } from '../../chats/ChatsAddMembers/ChatsAddMembers';
 
 export const RightSidebar: FC = () => {
     const isRightSidebarVisible = useAppSelector(s => s.app.isRightSidebarVisible);
@@ -21,6 +22,8 @@ export const RightSidebar: FC = () => {
                 return <ChatProfile chat={selectedChat} />;
             case RightSidebarState.UpdateGroup:
                 return <ChatsUpdateGroup chat={selectedChat} />;
+            case RightSidebarState.GroupAddMembers:
+                return <ChatsAddMembers />;
         }
     };
 

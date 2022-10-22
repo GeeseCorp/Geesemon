@@ -36,6 +36,28 @@
     min-width: 0;
     overflow-wrap: break-word;
     line-height: 1.3125;
+
+
+}
+
+.message {
+    a {
+        color: $primary-color;
+    }
+
+    &.messageMy .messageText a,
+    &.messageSystem .messageText a {
+        color: $primary-text-color;
+
+        &:hover {
+            color: $primary-text-color;
+        }
+    }
+
+    .messageText a:hover {
+        color: $primary-color;
+        text-decoration: underline;
+    }
 }
 
 .messageMy {
