@@ -1,6 +1,7 @@
-import { Chat, ChatActions, MessageActions, UserChat } from './types';
+import { Chat, ChatActions, ChatMembers, MessageActions, UserChat } from './types';
 import { gql } from '@apollo/client';
 import { CHAT_FRAGMENT, MESSAGE_FRAGMENT, USER_CHAT_FRAGMENT } from './fragments';
+import { USER_FRAGMENT } from '../users/fragments';
 
 export type MessageActionsData = { messageActions: MessageActions };
 export type MessageActionsVars = {};
@@ -37,6 +38,20 @@ export const CHAT_ACTIVITY_SUBSCRIPTIONS = gql`
     subscription ChatActivity($chatId: Guid!, $token: String!){
       chatActivity(chatId: $chatId, token: $token){
         ...UserChatFragment
+      }
+    }
+`;
+
+export type ChatMembersData = { chatMembers: ChatMembers };
+export type ChatMembersVars = { chatId: string; token: string };
+export const CHAT_MEMBERS_SUBSCRIPTIONS = gql`
+    ${USER_FRAGMENT}
+    subscription ChatMembers($chatId: Guid!, $token: String!){
+      chatMembers(chatId: $chatId, token: $token){
+        type
+        user {
+          ...UserFragment
+        }
       }
     }
 `;
