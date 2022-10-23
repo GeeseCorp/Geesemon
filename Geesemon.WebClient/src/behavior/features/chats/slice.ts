@@ -230,11 +230,21 @@ const slice = createSlice({
         },
       
         chatAddMembersAsync: (state, action: PayloadAction<ChatsAddMembersInputType>) => state,
+        chatAddMembers: (state, action: PayloadAction<{chatId: string; members: User[]}>) => {
+            state.chats = state.chats.map(c => c.id === action.payload.chatId
+                ? { ...c, users: [...action.payload.members, ...c.users] }
+                : c);
+        },
         setChatAddMembersLoading: (state, action: PayloadAction<boolean>) => {
             state.chatAddMembersLoading = action.payload;
         },
 
         chatRemoveMembersAsync: (state, action: PayloadAction<ChatsAddMembersInputType>) => state,
+        chatRemoveMembers: (state, action: PayloadAction<{chatId: string; members: User[]}>) => {
+            state.chats = state.chats.map(c => c.id === action.payload.chatId
+                ? { ...c, users: c.users.filter(u => !action.payload.members.some(m => m.id === u.id)) }
+                : c);
+        },
 
         toInitialState: (state, action: PayloadAction) => initialState,
     },

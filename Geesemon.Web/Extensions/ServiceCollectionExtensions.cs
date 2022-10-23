@@ -68,6 +68,7 @@ namespace Geesemon.Web.Extensions
             services.AddSingleton<IMessageActionSubscriptionService, MessageActionSubscriptionService>();
             services.AddSingleton<IChatActionSubscriptionService, ChatActionSubscriptionService>();
             services.AddSingleton<IChatActivitySubscriptionService, ChatActivitySubscriptionService>();
+            services.AddSingleton<IChatMembersSubscriptionService, ChatMembersSubscriptionService>();
 
             return services;
         }

@@ -73,3 +73,12 @@ export type ChatActions = {
     type: ChatActionKind;
     chat: Chat;
 };
+
+export enum ChatMembersKind {
+    Add = 'ADD',
+    Delete = 'DELETE',
+}
+export type ChatMembers = {
+    type: ChatMembersKind;
+    user: User;
+};

@@ -10,6 +10,7 @@ using Geesemon.Web.Services.ChatActivitySubscription;
 using Geesemon.Web.Services.MessageSubscription;
 using GraphQL;
 using GraphQL.Types;
+using System.Reactive.Linq;
 
 namespace Geesemon.Web.GraphQL.Subscriptions
 {
@@ -22,7 +23,7 @@ namespace Geesemon.Web.GraphQL.Subscriptions
             IHttpContextAccessor httpContextAccessor,
             IServiceProvider serviceProvider,
             AuthService authService,
-            MessageManager messageManager
+            IChatMembersSubscriptionService chatMembersSubscriptionService
             )
         {
             // Messages
@@ -63,7 +64,7 @@ namespace Geesemon.Web.GraphQL.Subscriptions
             
             Field<NonNullGraphType<UserChatType>, UserChat>()
                 .Name("ChatActivity")
-                .Argument<GuidGraphType, Guid>("ChatId", "")
+                .Argument<NonNullGraphType<GuidGraphType>, Guid>("ChatId", "")
                 .Argument<NonNullGraphType<StringGraphType>, string>("Token", "")
                 .SubscribeAsync(async context =>
                 {
@@ -79,6 +80,24 @@ namespace Geesemon.Web.GraphQL.Subscriptions
                     var userChat = context.Source as UserChat;
                     userChat.Chat = await userChat.Chat.MapForUserAsync(currentUserId, serviceProvider);
                     return userChat;
+                })
+                .AuthorizeWith(AuthPolicies.Authenticated);
+            
+            Field<NonNullGraphType<ChatMembersType>, ChatMembers>()
+                .Name("ChatMembers")
+                .Argument<NonNullGraphType<GuidGraphType>, Guid>("ChatId", "")
+                .Argument<NonNullGraphType<StringGraphType>, string>("Token", "")
+                .Subscribe(context =>
+                {
+                    var chatId = context.GetArgument<Guid>("ChatId");
+                    return chatMembersSubscriptionService.Subscribe(chatId);
+                })
+                .Resolve(context =>
+                {
+                    var token = context.GetArgument<string>("Token");
+                    var claimsPrimcipal = authService.ValidateAccessToken(token);
+                    var currentUserId = claimsPrimcipal.Identities.First().Claims.GetUserId();
+                    return context.Source as ChatMembers;
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
         }

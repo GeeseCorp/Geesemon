@@ -21,6 +21,7 @@ namespace Geesemon.Web.GraphQL.Mutations
         private readonly IChatActionSubscriptionService chatActionSubscriptionService;
         private readonly IMessageActionSubscriptionService messageSubscriptionService;
         private readonly IChatActivitySubscriptionService chatActivitySubscriptionService;
+        private readonly IChatMembersSubscriptionService chatMembersSubscriptionService;
         private readonly ChatManager chatManager;
         private readonly UserChatManager userChatManager;
         private readonly UserManager userManager;
@@ -35,6 +36,7 @@ namespace Geesemon.Web.GraphQL.Mutations
             IChatActionSubscriptionService chatActionSubscriptionService,
             IMessageActionSubscriptionService messageSubscriptionService,
             IChatActivitySubscriptionService chatActivitySubscriptionService,
+            IChatMembersSubscriptionService chatMembersSubscriptionService,
             ChatManager chatManager,
             UserChatManager userChatManager,
             UserManager userManager,
@@ -85,6 +87,7 @@ namespace Geesemon.Web.GraphQL.Mutations
             this.chatActionSubscriptionService = chatActionSubscriptionService;
             this.messageSubscriptionService = messageSubscriptionService;
             this.chatActivitySubscriptionService = chatActivitySubscriptionService;
+            this.chatMembersSubscriptionService = chatMembersSubscriptionService;
             this.chatManager = chatManager;
             this.userChatManager = userChatManager;
             this.userManager = userManager;
@@ -255,7 +258,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                 };
                 newMessage = await messageManager.CreateAsync(newMessage);
                 messageSubscriptionService.Notify(newMessage, MessageActionKind.Create);
-                await chatActivitySubscriptionService.Notify(userChat.UserId);
+                chatMembersSubscriptionService.Notify(userChat.User, ChatMembersKind.Add, chat.Id);
             }
             return newUserChats.Select(uc => uc.User);
         }
@@ -302,7 +305,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                 };
                 newMessage = await messageManager.CreateAsync(newMessage);
                 messageSubscriptionService.Notify(newMessage, MessageActionKind.Create);
-                await chatActivitySubscriptionService.Notify(userChat.UserId);
+                chatMembersSubscriptionService.Notify(userChat.User, ChatMembersKind.Delete, chat.Id);
             }
             return removeUserChats.Select(uc => uc.User);
         }
