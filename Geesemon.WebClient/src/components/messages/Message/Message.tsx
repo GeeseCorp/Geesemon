@@ -96,7 +96,7 @@ export const Message: FC<Props> = ({ message, inputTextFocus, isFromVisible = fa
                         }}
                       className={[s.message, s.messageSystem].join(' ')}
                     >
-                        <span className={s.messageText}>{messageText}</span>
+                        <div className={`${s.messageText} textCenter`}>{messageText}</div>
                     </div>
                 );
             default:
@@ -139,7 +139,7 @@ export const Message: FC<Props> = ({ message, inputTextFocus, isFromVisible = fa
                             <span className={'small light'}>
                                 {getTimeWithoutSeconds(new Date(message.createdAt))}
                             </span>
-                            {isMessageMy && <Checks double={!!message.readBy?.length} />}
+                            {isMessageMy && selectedChat?.type !== ChatKind.Saved && <Checks double={!!message.readBy?.length} />}
                         </span>
                     </div>
                 );

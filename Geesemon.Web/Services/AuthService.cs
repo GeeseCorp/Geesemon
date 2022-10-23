@@ -36,7 +36,7 @@ public class AuthService
         };
         JwtSecurityToken token = new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.Now.AddDays(30),
+                expires: DateTime.UtcNow.AddDays(30),
                 signingCredentials: signingCredentials);
         return Bearer + " " + new JwtSecurityTokenHandler().WriteToken(token);
     }

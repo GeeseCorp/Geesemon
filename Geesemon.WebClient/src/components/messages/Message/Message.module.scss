@@ -36,13 +36,15 @@
     min-width: 0;
     overflow-wrap: break-word;
     line-height: 1.3125;
-
-
 }
 
 .message {
     a {
         color: $primary-color;
+    }
+
+    &:not(.messageSystem) .messageText {
+        margin-right: 7px;
     }
 
     &.messageMy .messageText a,
@@ -89,10 +91,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-}
-
-.messageText {
-    margin-right: 7px;
 }
 
 .messageInfo {

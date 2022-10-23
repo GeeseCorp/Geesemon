@@ -7,7 +7,6 @@ using Geesemon.Web.GraphQL.Auth;
 using Geesemon.Web.GraphQL.Types;
 using Geesemon.Web.Services;
 using Geesemon.Web.Services.ChatActionsSubscription;
-using Geesemon.Web.Services.ChatActivitySubscription;
 using Geesemon.Web.Services.MessageSubscription;
 using GraphQL;
 using GraphQL.Types;
@@ -20,7 +19,6 @@ namespace Geesemon.Web.GraphQL.Mutations
         private readonly FileManagerService fileManagerService;
         private readonly IChatActionSubscriptionService chatActionSubscriptionService;
         private readonly IMessageActionSubscriptionService messageSubscriptionService;
-        private readonly IChatActivitySubscriptionService chatActivitySubscriptionService;
         private readonly IChatMembersSubscriptionService chatMembersSubscriptionService;
         private readonly ChatManager chatManager;
         private readonly UserChatManager userChatManager;
@@ -35,7 +33,6 @@ namespace Geesemon.Web.GraphQL.Mutations
             FileManagerService fileManagerService,
             IChatActionSubscriptionService chatActionSubscriptionService,
             IMessageActionSubscriptionService messageSubscriptionService,
-            IChatActivitySubscriptionService chatActivitySubscriptionService,
             IChatMembersSubscriptionService chatMembersSubscriptionService,
             ChatManager chatManager,
             UserChatManager userChatManager,
@@ -86,7 +83,6 @@ namespace Geesemon.Web.GraphQL.Mutations
             this.fileManagerService = fileManagerService;
             this.chatActionSubscriptionService = chatActionSubscriptionService;
             this.messageSubscriptionService = messageSubscriptionService;
-            this.chatActivitySubscriptionService = chatActivitySubscriptionService;
             this.chatMembersSubscriptionService = chatMembersSubscriptionService;
             this.chatManager = chatManager;
             this.userChatManager = userChatManager;
