@@ -22,5 +22,7 @@ public class Message : Entity
     public Message? ReplyMessage { get; set; }
     public IEnumerable<Message>? RepliedMessages { get; set; }
 
+    public string? FileUrl { get; set; }
+
     public List<ReadMessage>? ReadBy { get; set; }
 }

@@ -11,7 +11,7 @@ public class FileManagerService
 
     public const string GroupImagesFolder = "Images/GroupImages";
     
-    public const string FilesFolder = "Files/{0}";
+    public const string FilesFolder = "Files";
 
     private readonly Cloudinary cloudinary;
 

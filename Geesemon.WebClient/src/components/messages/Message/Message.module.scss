@@ -38,6 +38,12 @@
     line-height: 1.3125;
 }
 
+.file {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
 .message {
     a {
         color: $primary-color;

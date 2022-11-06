@@ -79,6 +79,10 @@ namespace Geesemon.Web.GraphQL.Types
                     var messageId = context.Source.Id;
                     return await userManager.GetReadByCountByAsync(messageId);
                 });
+
+            Field<StringGraphType, string?>()
+                .Name("FileUrl")
+                .Resolve(ctx => ctx.Source.FileUrl);
         }
     }
 }

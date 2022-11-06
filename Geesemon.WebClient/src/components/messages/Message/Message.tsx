@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import deleteSvg from '../../../assets/svg/delete.svg';
 import pencilOutlinedSvg from '../../../assets/svg/pencilOutlined.svg';
 import replySvg from '../../../assets/svg/reply.svg';
+import fileSvg from '../../../assets/svg/file.svg';
 import { chatActions } from '../../../behavior/features/chats';
 import { ChatKind, Message as MessageType, MessageKind } from '../../../behavior/features/chats/types';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
@@ -16,7 +17,7 @@ import { Checks } from '../Checks/Checks';
 import s from './Message.module.scss';
 import { useSelectedChat } from '../../../hooks/useSelectedChat';
 import { Mode } from '../../../behavior/features/chats/slice';
-import { processString, ProcessStringOption } from '../../../utils/stringUtils';
+import { getFileExtension, getFileName, processString, ProcessStringOption } from '../../../utils/stringUtils';
 
 type Props = {
     message: MessageType;
@@ -130,6 +131,14 @@ export const Message: FC<Props> = ({ message, inputTextFocus, isFromVisible = fa
                                 </div>
                                 <div className={['small primary', s.replyMessageText].join(' ')}>{message.replyMessage?.text}</div>
                             </div>
+                        )}
+                        {message.fileUrl && (
+                            <a href={message.fileUrl} target="_blank" rel="noreferrer">
+                                <div className={s.file}>
+                                    <img src={fileSvg} width={25} className={'primaryTextSvg'} alt={'fileSvg'} />
+                                    <div>{message.fileUrl && getFileName(message.fileUrl)}</div>
+                                </div>
+                            </a>
                         )}
                         <span className={s.messageText}>{messageText}</span>
                         <span className={s.messageInfo}>

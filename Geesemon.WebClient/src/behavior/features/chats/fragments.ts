@@ -18,6 +18,7 @@ export const MESSAGE_WITHOUT_REPLY_MESSAGE_FRAGMENT = gql`
             ...UserFragment
         }
         readByCount
+        fileUrl
         createdAt
         updatedAt
     }

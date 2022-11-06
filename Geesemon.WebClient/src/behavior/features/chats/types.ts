@@ -12,6 +12,7 @@ export type Message = {
     replyMessage?: Message | null;
     readBy: User[];
     readByCount: number;
+    fileUrl?: string;
 } & Entity;
 
 export enum MessageKind {

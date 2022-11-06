@@ -4,6 +4,7 @@ using Geesemon.Model.Enums;
 using Geesemon.Model.Models;
 using Geesemon.Web.GraphQL.Auth;
 using Geesemon.Web.GraphQL.Types;
+using Geesemon.Web.Services;
 using Geesemon.Web.Services.ChatActionsSubscription;
 using Geesemon.Web.Services.MessageSubscription;
 using GraphQL;
@@ -16,16 +17,15 @@ namespace Geesemon.Web.GraphQL.Mutations
     {
         public MessageMutation(
             IMessageActionSubscriptionService messageActionSubscriptionService,
-            IChatActionSubscriptionService chatActionSubscriptionService,
             IHttpContextAccessor httpContextAccessor,
             MessageManager messageManager, 
             ChatManager chatManager,
             ReadMessagesManager readMessagesManager,
             IValidator<SentMessageInput> sentMessageInputValidator,
-            UserChatManager userChatManager
+            FileManagerService fileManagerService
             )
         {
-            Field<MessageType, Message>()
+            Field<NonNullGraphType<ListGraphType<MessageType>>, IEnumerable<Message>>()
                 .Name("Send")
                 .Argument<NonNullGraphType<SentMessageInputType>, SentMessageInput>("Input", "")
                 .ResolveAsync(async context =>
@@ -45,22 +45,45 @@ namespace Geesemon.Web.GraphQL.Mutations
                         if (replyMessage.ChatId != chat.Id)
                             throw new ExecutionError("User can reply messages only from one chat");
                     }
-                    
-                    Message newMessage = new Message()
+
+                    if(sentMessageInput.Files.Count() > 0)
                     {
-                        ChatId = chat.Id,
-                        Text = sentMessageInput.Text,
-                        FromId = currentUserId,
-                        Type = MessageKind.Regular,
-                        ReplyMessageId = replyMessage?.Id,
-                    };
-                    newMessage = await messageManager.CreateAsync(newMessage);
-                    newMessage = messageActionSubscriptionService.Notify(newMessage, MessageActionKind.Create);
-
-                    //var userChats = await userChatManager.Get(chat.Id);
-                    //chatActionSubscriptionService.Notify(chat, ChatActionKind.Update, userChats.Select(uc => uc.UserId));
-
-                    return newMessage;
+                        var newMessages = new List<Message>();
+                        await Parallel.ForEachAsync(sentMessageInput.Files, async (file, token) =>
+                        {
+                            var fileUrl = await fileManagerService.UploadFileAsync(FileManagerService.FilesFolder, file);
+                            Message newMessage = new Message()
+                            {
+                                ChatId = chat.Id,
+                                Text = sentMessageInput.Files.Count() == newMessages.Count - 1 ? sentMessageInput.Text : null,
+                                FromId = currentUserId,
+                                Type = MessageKind.Regular,
+                                ReplyMessageId = replyMessage?.Id,
+                                FileUrl = fileUrl,
+                            };
+                            newMessages.Add(newMessage);
+                        });
+                        await Parallel.ForEachAsync(newMessages, async (message, token) =>
+                        {
+                            message = await messageManager.CreateAsync(message);
+                            messageActionSubscriptionService.Notify(message, MessageActionKind.Create);
+                        });
+                        return newMessages;
+                    }
+                    else
+                    {
+                        Message newMessage = new Message()
+                        {
+                            ChatId = chat.Id,
+                            Text = sentMessageInput.Text,
+                            FromId = currentUserId,
+                            Type = MessageKind.Regular,
+                            ReplyMessageId = replyMessage?.Id,
+                        };
+                        newMessage = await messageManager.CreateAsync(newMessage);
+                        messageActionSubscriptionService.Notify(newMessage, MessageActionKind.Create);
+                        return new List<Message> { newMessage };
+                    }
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
 
