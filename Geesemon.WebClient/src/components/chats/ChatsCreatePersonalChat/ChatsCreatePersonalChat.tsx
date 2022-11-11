@@ -26,6 +26,9 @@ export const ChatsCreatePersonalChat: FC<Props> = () => {
             dispatch(notificationsActions.addError('User not found ofr create personal chat'));
             return;
         }
+
+        navigate(`/${user.username}`);
+        dispatch(appActions.setLeftSidebarState(LeftSidebarState.Chats));
     };
 
     const onQChange = (value: string) => {

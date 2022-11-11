@@ -5,8 +5,8 @@ import deleteSvg from '../../../assets/svg/delete.svg';
 import pinSvg from '../../../assets/svg/pin.svg';
 import notificationOutlinedSvg from '../../../assets/svg/notificationOutlined.svg';
 import { Chat as ChatType, chatActions } from '../../../behavior/features/chats';
-import { ChatActivityData, ChatActivityVars, CHAT_ACTIVITY_SUBSCRIPTIONS } from '../../../behavior/features/chats/subscriptions';
-import { ChatKind } from '../../../behavior/features/chats/types';
+import { ChatActivityData, ChatActivityVars, ChatMembersData, ChatMembersVars, CHAT_ACTIVITY_SUBSCRIPTIONS, CHAT_MEMBERS_SUBSCRIPTIONS } from '../../../behavior/features/chats/subscriptions';
+import { ChatKind, ChatMembersKind } from '../../../behavior/features/chats/types';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
 import { useSelectedChatUsername } from '../../../hooks/useSelectedChat';
 import { getTimeWithoutSeconds } from '../../../utils/dateUtils';
@@ -30,6 +30,9 @@ export const Chat: FC<Props> = ({ chat }) => {
     const chatActivity = useSubscription<ChatActivityData, ChatActivityVars>(CHAT_ACTIVITY_SUBSCRIPTIONS, {
         variables: { chatId: chat.id, token: getAuthToken() || '' },
     });
+    const chatMembers = useSubscription<ChatMembersData, ChatMembersVars>(CHAT_MEMBERS_SUBSCRIPTIONS, {
+        variables: { chatId: chat.id, token: getAuthToken() || '' },
+    });
     const navigate = useNavigate();
 
     const oppositeUser = chat.type === ChatKind.Personal ? chat.users.filter(u => u.id !== authedUser?.id)[0] : null;
@@ -44,6 +47,19 @@ export const Chat: FC<Props> = ({ chat }) => {
             dispatch(chatActions.shallowUpdateChat(userChat.chat));
         }
     }, [chatActivity.data?.chatActivity]);
+
+    useEffect(() => {
+        if (chatMembers.data?.chatMembers) {
+            switch(chatMembers.data.chatMembers.type){
+                case ChatMembersKind.Add:
+                    dispatch(chatActions.chatAddMembers({ chatId: chat.id, members: [chatMembers.data.chatMembers.user] }));
+                break;
+                case ChatMembersKind.Delete:
+                    dispatch(chatActions.chatRemoveMembers({ chatId: chat.id, members: [chatMembers.data.chatMembers.user] }));
+                break;
+            }
+        }
+    }, [chatMembers.data?.chatMembers]);
 
     const getContextMenuItems = (): MenuItem[] => {
         const items: MenuItem[] = [];
