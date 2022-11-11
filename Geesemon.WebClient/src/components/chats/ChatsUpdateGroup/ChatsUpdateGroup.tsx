@@ -18,7 +18,7 @@ type Props = {
 
 type FormValues = {
     groupName: string | null | undefined;
-    username: string;
+    identifier: string;
 };
 
 const schema: Yup.SchemaOf<FormValues> = Yup.object({
@@ -26,7 +26,7 @@ const schema: Yup.SchemaOf<FormValues> = Yup.object({
         .max(100, 'Must be 100 characters or less')
         .required('Required'),
         
-    username: Yup.string()
+    identifier: Yup.string()
     .max(100, 'Must be 100 characters or less')
     .required('Required'),
 });
@@ -39,13 +39,13 @@ export const ChatsUpdateGroup: FC<Props> = ({ chat }) => {
     const formik = useFormik<FormValues>({
         initialValues: {
             groupName: chat.name,
-            username: chat.username,
+            identifier: chat.identifier,
         },
         validationSchema: schema,
-        onSubmit: ({ groupName, username }) => {
+        onSubmit: ({ groupName, identifier }) => {
             // dispatch(chatActions.createGroupChatAsync({
             //     groupName,
-            //     username,
+            //     identifier,
             //     image,
             // }));
         },
@@ -108,13 +108,13 @@ export const ChatsUpdateGroup: FC<Props> = ({ chat }) => {
                 />
 
                 <Input
-                  placeholder="Username"
-                  name={nameof<FormValues>('username')}
-                  value={formik.values.username}
+                  placeholder="Identifier"
+                  name={nameof<FormValues>('identifier')}
+                  value={formik.values.identifier}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  touched={formik.touched.username}
-                  errors={formik.errors.username}
+                  touched={formik.touched.identifier}
+                  errors={formik.errors.identifier}
                 />
 
                 {/* <Input

@@ -34,7 +34,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                     var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
                     await sentMessageInputValidator.ValidateAndThrowAsync(sentMessageInput);
 
-                    var chat = await chatManager.GetByUsernameAsync(sentMessageInput.ChatUsername, currentUserId);
+                    var chat = await chatManager.GetByIdentifierAsync(sentMessageInput.Identifier, currentUserId);
                     if (!chat.UserChats.Any(uc => uc.UserId == currentUserId))
                         throw new ExecutionError("User can sent messages only to chats that he participate.");
 

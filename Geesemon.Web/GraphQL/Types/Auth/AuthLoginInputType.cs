@@ -9,8 +9,8 @@ public class AuthLoginInputType : InputObjectGraphType<AuthLoginInput>
         : base()
     {
         Field<NonNullGraphType<StringGraphType>, string>()
-           .Name("Username")
-           .Resolve(context => context.Source.Username);
+           .Name("Identifier")
+           .Resolve(context => context.Source.Identifier);
 
         Field<NonNullGraphType<StringGraphType>, string>()
            .Name("Password")
@@ -20,7 +20,7 @@ public class AuthLoginInputType : InputObjectGraphType<AuthLoginInput>
 
 public class AuthLoginInput
 {
-    public string Username { get; set; }
+    public string Identifier { get; set; }
 
     public string Password { get; set; }
 }
@@ -29,7 +29,7 @@ public class AuthLoginInputValidation : AbstractValidator<AuthLoginInput>
 {
     public AuthLoginInputValidation()
     {
-        RuleFor(r => r.Username)
+        RuleFor(r => r.Identifier)
             .NotEmpty()
             .NotNull()
             .MaximumLength(100);

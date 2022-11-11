@@ -18,8 +18,8 @@ public class CreateGroupChatInputType : InputObjectGraphType<CreateGroupChatInpu
             .Resolve(context => context.Source.Name);
         
         Field<NonNullGraphType<StringGraphType>, string>()
-            .Name("Username")
-            .Resolve(context => context.Source.Username);
+            .Name("Identifier")
+            .Resolve(context => context.Source.Identifier);
 
         Field<UploadGraphType, IFormFile>()
             .Name("Image")
@@ -31,7 +31,7 @@ public class CreateGroupChatInput
 {
     public List<Guid> UsersId { get; set; }
     public string Name { get; set; }
-    public string Username { get; set; }
+    public string Identifier { get; set; }
     public IFormFile Image { get; set; }
 }
 
@@ -57,20 +57,20 @@ public class CreateGroupChatInputValidation : AbstractValidator<CreateGroupChatI
             .NotNull()
             .MaximumLength(100);
         
-        RuleFor(r => r.Username)
+        RuleFor(r => r.Identifier)
             .NotEmpty()
             .NotNull()
             .MaximumLength(100)
-            .MustAsync(async (username, cancellation) =>
+            .MustAsync(async (identifier, cancellation) =>
             {
-                var currentUsername = httpContextAccessor.HttpContext.User.Claims.GetUsername();
-                if (currentUsername == username)
+                var currentIdentifier = httpContextAccessor.HttpContext.User.Claims.GetIdentifier();
+                if (currentIdentifier == identifier)
                     return false;
 
                 var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
-                var chat = await chatManager.GetByUsernameAsync(username, currentUserId);
+                var chat = await chatManager.GetByIdentifierAsync(identifier, currentUserId);
                 return chat == null;
-            }).WithMessage("Username already taken");
+            }).WithMessage("Identifier already taken");
 
         RuleFor(r => r.Image);
     }

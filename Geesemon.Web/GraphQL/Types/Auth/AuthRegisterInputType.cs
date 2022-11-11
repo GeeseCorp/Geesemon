@@ -9,8 +9,8 @@ namespace Geesemon.Web.GraphQL.Types
             : base()
         {
             Field<NonNullGraphType<StringGraphType>, string>()
-               .Name("Username")
-               .Resolve(context => context.Source.Username);
+               .Name("Identifier")
+               .Resolve(context => context.Source.Identifier);
 
             Field<NonNullGraphType<StringGraphType>, string>()
                .Name("Password")
@@ -32,7 +32,7 @@ namespace Geesemon.Web.GraphQL.Types
 
     public class AuthRegisterInput
     {
-        public string Username { get; set; }
+        public string Identifier { get; set; }
 
         public string Password { get; set; }
 
@@ -47,7 +47,7 @@ namespace Geesemon.Web.GraphQL.Types
     {
         public AuthRegisterInputValidation()
         {
-            RuleFor(r => r.Username)
+            RuleFor(r => r.Identifier)
                 .NotEmpty()
                 .NotNull()
                 .MaximumLength(100);

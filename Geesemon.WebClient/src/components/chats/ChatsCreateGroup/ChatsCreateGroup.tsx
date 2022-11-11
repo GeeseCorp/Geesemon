@@ -1,8 +1,10 @@
-import React, { ChangeEvent, FC, useRef, useState } from 'react';
-import { Input } from '../../common/formControls/Input/Input';
-import s from './ChatsCreateGroup.module.css';
-import camera from '../../../assets/svg/camera.svg';
-import next from '../../../assets/svg/next.svg';
+import { useFormik } from 'formik';
+import { ChangeEvent, FC, useRef, useState } from 'react';
+import * as Yup from 'yup';
+import backSvg from '../../../assets/svg/back.svg';
+import cameraSvg from '../../../assets/svg/camera.svg';
+import nextSvg from '../../../assets/svg/next.svg';
+import { appActions, LeftSidebarState } from '../../../behavior/features/app/slice';
 import { chatActions } from '../../../behavior/features/chats';
 import { usersActions } from '../../../behavior/features/users/slice';
 import { User } from '../../../behavior/features/users/types';
@@ -18,7 +20,7 @@ import s from './ChatsCreateGroup.module.css';
 
 type FormValues = {
     name: string;
-    username: string;
+    identifier: string;
 };
 
 const schema: Yup.SchemaOf<FormValues> = Yup.object({
@@ -26,7 +28,7 @@ const schema: Yup.SchemaOf<FormValues> = Yup.object({
         .max(100, 'Must be 100 characters or less')
         .required('Required'),
 
-    username: Yup.string()
+    identifier: Yup.string()
         .max(100, 'Must be 100 characters or less')
         .required('Required'),
 });
@@ -42,13 +44,15 @@ export const ChatsCreateGroup: FC = () => {
     const formik = useFormik<FormValues>({
         initialValues: {
             name: '',
-            username: '',
+            identifier: '',
         },
         validationSchema: schema,
-        onSubmit: ({ name, username }) => {
+        onSubmit: ({ name, identifier }) => {
+            console.log('submit');
+
             dispatch(chatActions.createGroupChatAsync({
                 name,
-                username,
+                identifier,
                 usersId: selectedUsers.map(u => u.id),
                 image,
             }));
@@ -137,12 +141,12 @@ export const ChatsCreateGroup: FC = () => {
                             />
                             <Input
                               placeholder="Username"
-                              name={nameof<FormValues>('username')}
-                              value={formik.values.username}
+                              name={nameof<FormValues>('identifier')}
+                              value={formik.values.identifier}
                               onChange={formik.handleChange}
                               onBlur={formik.handleBlur}
-                              touched={formik.touched.username}
-                              errors={formik.errors.username}
+                              touched={formik.touched.identifier}
+                              errors={formik.errors.identifier}
                             />
                             <LeftSidebarSmallPrimaryButton>
                                 <SmallPrimaryButton

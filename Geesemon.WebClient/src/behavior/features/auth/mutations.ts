@@ -7,7 +7,7 @@ import { AuthResponseType, Session } from './types';
 export type AuthLoginData = { auth: { login: AuthResponseType } };
 export type AuthLoginVars = { input: LoginInputType };
 export type LoginInputType = {
-    username: string;
+    identifier: string;
     password: string;
 };
 export const AUTH_LOGIN_MUTATION = gql`
@@ -33,7 +33,7 @@ export type AuthRegisterVars = { input: RegisterInputType };
 export type RegisterInputType = {
     firstName: string;
     lastName?: string | null;
-    username: string;
+    identifier: string;
     email?: string | null;
     password: string;
 };
@@ -106,7 +106,7 @@ export type AuthUpdateProfileVars = {input: AuthUpdateProfileType};
 export type AuthUpdateProfileType = {
     firstname: string;
     lastname?: string | null;
-    username: string;
+    identifier: string;
     imageUrl?: string | null;
     image?: File | null;
 };

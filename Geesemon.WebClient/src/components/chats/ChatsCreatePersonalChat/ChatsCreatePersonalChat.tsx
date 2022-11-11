@@ -27,7 +27,7 @@ export const ChatsCreatePersonalChat: FC<Props> = () => {
             return;
         }
 
-        navigate(`/${user.username}`);
+        navigate(`/${user.identifier}`);
         dispatch(appActions.setLeftSidebarState(LeftSidebarState.Chats));
     };
 

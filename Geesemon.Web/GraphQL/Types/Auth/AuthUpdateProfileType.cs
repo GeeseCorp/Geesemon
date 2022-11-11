@@ -20,8 +20,8 @@ public class AuthUpdateProfileType : InputObjectGraphType<AuthUpdateProfile>
            .Resolve(context => context.Source.Lastname);
 
         Field<NonNullGraphType<StringGraphType>, string>()
-           .Name("Username")
-           .Resolve(context => context.Source.Username);
+           .Name("Identifier")
+           .Resolve(context => context.Source.Identifier);
         
         Field<StringGraphType, string?>()
            .Name("ImageUrl")
@@ -37,7 +37,7 @@ public class AuthUpdateProfile
 {
     public string Firstname { get; set; }
     public string? Lastname { get; set; }
-    public string Username { get; set; }
+    public string Identifier { get; set; }
     public string? ImageUrl { get; set; }
     public IFormFile? Image { get; set; }
 }
@@ -54,17 +54,17 @@ public class AuthUpdateProfileValidator : AbstractValidator<AuthUpdateProfile>
         RuleFor(r => r.Lastname)
             .MaximumLength(100);
         
-        RuleFor(r => r.Username)
+        RuleFor(r => r.Identifier)
             .NotEmpty()
             .NotNull()
             .MaximumLength(100)
-            .MustAsync(async (input, username, cancellation) =>
+            .MustAsync(async (input, identifier, cancellation) =>
             {
                 var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
-                var chat = await chatManager.GetByUsernameAsync(username);
-                var user = await userManager.GetByUsernameAsync(username);
+                var chat = await chatManager.GetByIdentifierAsync(identifier);
+                var user = await userManager.GetByIdentifierAsync(identifier);
                 return chat == null && (user == null || user.Id == currentUserId);
-            }).WithMessage("Username already taken");
+            }).WithMessage("Identifier already taken");
 
         RuleFor(r => r.ImageUrl)
             .MaximumLength(1000);

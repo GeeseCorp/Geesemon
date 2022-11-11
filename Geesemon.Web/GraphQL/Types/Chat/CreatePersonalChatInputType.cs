@@ -7,12 +7,12 @@ public class CreatePersonalChatInputType : InputObjectGraphType<CreatePersonalCh
     public CreatePersonalChatInputType()
     {
         Field<NonNullGraphType<StringGraphType>, string>()
-            .Name("Username")
-            .Resolve(context => context.Source.Username);
+            .Name("Identifier")
+            .Resolve(context => context.Source.Identifier);
     }
 }
 
 public class CreatePersonalChatInput
 {
-    public string Username { get; set; }
+    public string Identifier { get; set; }
 }

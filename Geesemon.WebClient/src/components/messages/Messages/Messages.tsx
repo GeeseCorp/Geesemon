@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { chatActions } from '../../../behavior/features/chats';
 import { ChatKind, Message as MessageType } from '../../../behavior/features/chats/types';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
-import { useSelectedChat, useSelectedChatUsername } from '../../../hooks/useSelectedChat';
+import { useSelectedChat, useSelectedChatIdentifier } from '../../../hooks/useSelectedChat';
 import { isGuidEmpty } from '../../../utils/stringUtils';
 import { Avatar } from '../../common/Avatar/Avatar';
 import { AvatarWithoutImage } from '../../common/AvatarWithoutImage/AvatarWithoutImage';
@@ -13,7 +13,7 @@ import { SendMessageForm } from '../SendMessageForm/SendMessageForm';
 import s from './Messages.module.scss';
 
 export const Messages: FC = () => {
-    const selectedChatUsername = useSelectedChatUsername();
+    const selectedChatIdentifier = useSelectedChatIdentifier();
     const messageGetLoading = useAppSelector(s => s.chats.messageGetLoading);
     const messagesGetHasNext = useAppSelector(s => s.chats.messagesGetHasNext);
     const selectedChat = useSelectedChat();
@@ -66,7 +66,7 @@ export const Messages: FC = () => {
 
     useEffect(() => {
         bottomOfMessagesRef.current?.scrollIntoView();
-    }, [selectedChatUsername]);
+    }, [selectedChatIdentifier]);
 
     const onScrollHandler = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
         const element = e.currentTarget;
@@ -115,7 +115,7 @@ export const Messages: FC = () => {
                     return (
                         <div key={blockFirstElement.id} className={s.messagesBlock}>
                             {blockFirstElement.fromId && blockFirstElement.fromId !== authedUser?.id && selectedChat?.type === ChatKind.Group && (
-                                <Link to={`/${blockFirstElement.from?.username}`}>
+                                <Link to={`/${blockFirstElement.from?.identifier}`}>
                                     {blockFirstElement?.from?.imageUrl
                                     ? (
                                         <Avatar

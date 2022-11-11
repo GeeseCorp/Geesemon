@@ -9,8 +9,8 @@ public class SentMessageInputType : InputObjectGraphType<SentMessageInput>
     public SentMessageInputType()
     {
         Field<NonNullGraphType<StringGraphType>, string>()
-            .Name("ChatUsername")
-            .Resolve(context => context.Source.ChatUsername);
+            .Name("Identifier")
+            .Resolve(context => context.Source.Identifier);
         
         Field<NonNullGraphType<StringGraphType>, string>()
             .Name("Text")
@@ -24,7 +24,7 @@ public class SentMessageInputType : InputObjectGraphType<SentMessageInput>
 
 public class SentMessageInput
 {
-    public string ChatUsername { get; set; }
+    public string Identifier { get; set; }
     public string Text { get; set; }
     public Guid? ReplyMessageId { get; set; }
 }
@@ -33,12 +33,12 @@ public class SentMessageInputValidator : AbstractValidator<SentMessageInput>
 {
     public SentMessageInputValidator(ChatManager chatManager, IHttpContextAccessor httpContextAccessor, MessageManager messageManager)
     {
-        RuleFor(r => r.ChatUsername)
+        RuleFor(r => r.Identifier)
             .NotNull()
-            .MustAsync(async (chatUsername, cancellation) =>
+            .MustAsync(async (chatIdentifier, cancellation) =>
             {
                 var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
-                var chat = await chatManager.GetByUsernameAsync(chatUsername, currentUserId);
+                var chat = await chatManager.GetByIdentifierAsync(chatIdentifier, currentUserId);
                 return chat != null;
             }).WithMessage("Chat not found");
 

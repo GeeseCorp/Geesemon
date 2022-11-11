@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Geesemon.DataAccess.Providers.ChatProvider
 {
-    public class ChatProvider : ProviderBase<Chat>, IChatProvider
+    public class ChatProvider : ProviderBase<Chat>
     {
 
         public ChatProvider(AppDbContext appDbContext)
@@ -12,21 +12,21 @@ namespace Geesemon.DataAccess.Providers.ChatProvider
         {
         }
 
-        public async Task<Chat?> GetByUsernameAsync(string chatUsername, Guid currentUserId)
+        public async Task<Chat?> GetByIdentifierAsync(string chatIdentifier, Guid currentUserId)
         {
             return await context.Chats
                 .Include(c => c.UserChats)
                 .ThenInclude(uc => uc.User)
                 .SingleOrDefaultAsync(c => c.Type == ChatKind.Personal
-                    ? c.UserChats.All(uc => uc.User.Username == chatUsername || uc.UserId == currentUserId)
+                    ? c.UserChats.All(uc => uc.User.Identifier == chatIdentifier || uc.UserId == currentUserId)
                     : c.Type == ChatKind.Saved
-                        ? c.UserChats.All(uc => uc.User.Username == chatUsername && uc.UserId == currentUserId)
-                        : c.Username == chatUsername && c.UserChats.Any(uc => uc.UserId == currentUserId));
+                        ? c.UserChats.All(uc => uc.User.Identifier == chatIdentifier && uc.UserId == currentUserId)
+                        : c.Identifier == chatIdentifier && c.UserChats.Any(uc => uc.UserId == currentUserId));
         }
         
-        public async Task<Chat?> GetByUsernameAsync(string chatUsername)
+        public async Task<Chat?> GetByIdentifierAsync(string chatIdentifier)
         {
-            return await context.Chats.SingleOrDefaultAsync(c => c.Username == chatUsername);
+            return await context.Chats.SingleOrDefaultAsync(c => c.Identifier == chatIdentifier);
         }
         
         public async Task<int> GetMembersTotalAsync(Guid chatId)

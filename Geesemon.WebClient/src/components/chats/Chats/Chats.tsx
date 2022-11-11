@@ -48,7 +48,7 @@ export const Chats: FC = () => {
             icon: <img src={savedSvg} className={[s.menuItem, 'secondaryTextSvg'].join(' ')} alt={'savedSvg'} />,
             content: 'Saved',
             type: 'default',
-            link: `/${authedUser?.username}`,
+            link: `/${authedUser?.identifier}`,
         },
         {
             icon: <img src={settingsSvg} className={[s.menuItem, 'secondaryTextSvg'].join(' ')} alt={'settingsSvg'} />,

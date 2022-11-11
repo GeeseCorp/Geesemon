@@ -102,11 +102,11 @@ namespace Geesemon.Web.GraphQL.Mutations
             var chatInp = context.GetArgument<CreatePersonalChatInput>("Input");
             var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
 
-            var checkChat = await chatManager.GetByUsernameAsync(chatInp.Username, currentUserId);
+            var checkChat = await chatManager.GetByIdentifierAsync(chatInp.Identifier, currentUserId);
             if (checkChat != null)
                 throw new Exception("Personal chat already exists");
 
-            var oppositeUser = await userManager.GetByUsernameAsync(chatInp.Username);
+            var oppositeUser = await userManager.GetByIdentifierAsync(chatInp.Identifier);
 
             var chat = new Chat
             {
@@ -134,7 +134,7 @@ namespace Geesemon.Web.GraphQL.Mutations
             var userChatManager = context.RequestServices.GetRequiredService<UserChatManager>();
             var userManager = context.RequestServices.GetRequiredService<UserManager>();
             var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
-            var currentUsername = httpContextAccessor.HttpContext.User.Claims.GetUsername();
+            var currentUserIdentifier = httpContextAccessor.HttpContext.User.Claims.GetIdentifier();
             var chatInput = context.GetArgument<CreateGroupChatInput>("Input");
             await createGroupChatInputValidator.ValidateAndThrowAsync(chatInput);
 
@@ -147,7 +147,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                 Type = ChatKind.Group,
                 CreatorId = currentUserId,
                 Name = chatInput.Name,
-                Username = chatInput.Username,
+                Identifier = chatInput.Identifier,
                 ImageUrl = imageUrl,
             };
             chat = await chatManager.CreateAsync(chat);
@@ -162,7 +162,7 @@ namespace Geesemon.Web.GraphQL.Mutations
 
             chatActionSubscriptionService.Notify(chat, ChatActionKind.Add, userChat.Select(uc => uc.UserId));
 
-            await messageSubscriptionService.SentSystemMessageAsync($"@{currentUsername} created the group \"{chat.Name}\"", chat.Id);
+            await messageSubscriptionService.SentSystemMessageAsync($"@{currentUserIdentifier} created the group \"{chat.Name}\"", chat.Id);
             return chat;
         }
 
@@ -210,7 +210,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                 chat.ImageUrl = await fileManagerService.UploadFileAsync(FileManagerService.GroupImagesFolder, chatUpdateInput.Image);
 
             chat.Name = chatUpdateInput.Name;
-            chat.Username = chatUpdateInput.Username;
+            chat.Identifier = chatUpdateInput.Identifier ;
             await chatManager.UpdateAsync(chat);
 
             var userChats = await userChatManager.Get(chat.Id);
@@ -223,7 +223,7 @@ namespace Geesemon.Web.GraphQL.Mutations
             var chatsAddMembersInput = context.GetArgument<ChatsAddMembersInput>("Input");
             var chat = await chatManager.GetByIdAsync(chatsAddMembersInput.ChatId);
             var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
-            var currentUsername = httpContextAccessor.HttpContext.User.Claims.GetUsername();
+            var currentIdentifier = httpContextAccessor.HttpContext.User.Claims.GetIdentifier();
 
             Exception exception = new Exception("User can update only group chats he own.");
             if (chat == null || !await chatManager.IsUserInChat(currentUserId, chat.Id))
@@ -257,7 +257,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                 var newMessage = new Message
                 {
                     ChatId = chatsAddMembersInput.ChatId,
-                    Text = $"@{currentUsername} added @{userChat.User.Username}",
+                    Text = $"@{currentIdentifier} added @{userChat.User.Identifier}",
                     Type = MessageKind.System,
                 };
                 newMessage = await messageManager.CreateAsync(newMessage);
@@ -272,7 +272,7 @@ namespace Geesemon.Web.GraphQL.Mutations
             var chatsAddMembersInput = context.GetArgument<ChatsAddMembersInput>("Input");
             var chat = await chatManager.GetByIdAsync(chatsAddMembersInput.ChatId);
             var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
-            var currentUsername = httpContextAccessor.HttpContext.User.Claims.GetUsername();
+            var currentIdentifier = httpContextAccessor.HttpContext.User.Claims.GetIdentifier();
 
             Exception exception = new Exception("User can update only group chats he own.");
             if (chat == null || !await chatManager.IsUserInChat(currentUserId, chat.Id))
@@ -290,7 +290,7 @@ namespace Geesemon.Web.GraphQL.Mutations
 
                 var userChat = await userChatManager.Get(chatsAddMembersInput.ChatId, userId);
                 if (userChat == null)
-                    throw new ExecutionError($"User {user.Username} not in chat");
+                    throw new ExecutionError($"User {user.Identifier} not in chat");
 
                 removeUserChats.Add(userChat);
             }
@@ -304,7 +304,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                 var newMessage = new Message
                 {
                     ChatId = chatsAddMembersInput.ChatId,
-                    Text = $"@{currentUsername} removed @{userChat.User.Username}",
+                    Text = $"@{currentIdentifier} removed @{userChat.User.Identifier}",
                     Type = MessageKind.System,
                 };
                 newMessage = await messageManager.CreateAsync(newMessage);

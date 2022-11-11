@@ -90,7 +90,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
             dispatch(chatActions.messageSendAsync({
                 chatId: selectedChat.id,
                 sentMessageInput: {
-                    chatUsername: selectedChat.username,
+                    identifier: selectedChat.identifier,
                     text: messageText,
                     replyMessageId,
                 },

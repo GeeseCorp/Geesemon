@@ -37,8 +37,8 @@ type InitialState = {
     messageIdsMakeReadLoading: string[];
     inViewMessageIdReadBy?: string | null;
 
-    chatByUsername?: Chat | null;
-    chatGetByUsernameLoading: boolean;
+    chatByIdentifier?: Chat | null;
+    chatGetByIdentifierLoading: boolean;
 
     chatAddMembersLoading: boolean;
 };
@@ -60,8 +60,8 @@ const initialState: InitialState = {
     messageIdsMakeReadLoading: [],
     inViewMessageIdReadBy: null,
 
-    chatByUsername: null,
-    chatGetByUsernameLoading: false,
+    chatByIdentifier: null,
+    chatGetByIdentifierLoading: false,
 
     chatAddMembersLoading: false,
 };
@@ -84,7 +84,7 @@ const slice = createSlice({
             if(action.payload.length)
                 state.chats = sortChat([...state.chats, ...action.payload]);
         },
-        chatsGetAsync: state => state,
+        chatsGetAsync: (state, action: PayloadAction<ChatsGetVars>) => state,
         setChatsGetLoading: (state, action: PayloadAction<boolean>) => {
             state.chatsGetLoading = action.payload;
         },
@@ -95,6 +95,8 @@ const slice = createSlice({
         setCreateGroupLoading: (state, action: PayloadAction<boolean>) => {
             state.createChatLoading = action.payload;
         },
+        createPersonalChatAsync: (state, action: PayloadAction<CreatePersonalChatInputType>) => state,
+        createGroupChatAsync: (state, action: PayloadAction<CreateGroupChatInputType>) => state,
 
         updateChat: (state, action: PayloadAction<Chat>) => {
             const newChats = state.chats.map(chat =>
@@ -108,6 +110,7 @@ const slice = createSlice({
         deleteChat: (state, action: PayloadAction<string>) => {
             state.chats = state.chats.filter(c => c.id !== action.payload);
         },
+        chatDeleteAsync: (state, action: PayloadAction<string>) => state,
 
         setMessageGetLoading: (state, action: PayloadAction<boolean>) => {
             state.messageGetLoading = action.payload;
@@ -198,6 +201,7 @@ const slice = createSlice({
         removeMessageIdMakeReadLoading: (state, action: PayloadAction<string>) => {
             state.messageIdsMakeReadLoading = state.messageIdsMakeReadLoading.filter(m => m !== action.payload);
         },
+        messageMakeReadAsync: (state, action: PayloadAction<MessageMakeReadVars>) => state,
 
         setInViewMessageIdReadBy: (state, action: PayloadAction<string | null | undefined>) => {
             state.inViewMessageIdReadBy = action.payload;
@@ -217,11 +221,12 @@ const slice = createSlice({
                 : c);
         },
     
-        setChatByUsername: (state, action: PayloadAction<Chat | null | undefined>) => {
-            state.chatByUsername = action.payload;
+        chatGetByIdentifierAsync: (state, action: PayloadAction<string>) => state,
+        setChatByIdentifier: (state, action: PayloadAction<Chat | null | undefined>) => {
+            state.chatByIdentifier = action.payload;
         },
-        setChatGetByUsernameLoading: (state, action: PayloadAction<boolean>) => {
-            state.chatGetByUsernameLoading = action.payload;
+        setChatGetByIdentifierLoading: (state, action: PayloadAction<boolean>) => {
+            state.chatGetByIdentifierLoading = action.payload;
         },
       
         chatAddMembersAsync: (state, action: PayloadAction<ChatsAddMembersInputType>) => state,

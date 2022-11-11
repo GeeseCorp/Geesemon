@@ -41,7 +41,7 @@ export const CHAT_FRAGMENT = gql`
     fragment ChatFragment on ChatType {
         id
         name
-        username
+        identifier
         type
         imageUrl
         imageColor

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Geesemon.DataAccess.Providers.MessageProvider
 {
-    public class MessageProvider : ProviderBase<Message>, IMessageProvider
+    public class MessageProvider : ProviderBase<Message>
     {
         public MessageProvider(AppDbContext appDbContext)
             : base(appDbContext)

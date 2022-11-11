@@ -110,7 +110,7 @@ export const Message: FC<Props> = ({ message, inputTextFocus, isFromVisible = fa
                     >
                         {isFromVisible && (
                             <Link 
-                              to={`/${message.from?.username}`}
+                              to={`/${message.from?.identifier}`}
                               className={[s.from, 'bold'].join(' ')} 
                               style={{ color: message.from?.avatarColor }}
                             >

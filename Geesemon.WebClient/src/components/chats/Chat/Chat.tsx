@@ -8,7 +8,7 @@ import { Chat as ChatType, chatActions } from '../../../behavior/features/chats'
 import { ChatActivityData, ChatActivityVars, ChatMembersData, ChatMembersVars, CHAT_ACTIVITY_SUBSCRIPTIONS, CHAT_MEMBERS_SUBSCRIPTIONS } from '../../../behavior/features/chats/subscriptions';
 import { ChatKind, ChatMembersKind } from '../../../behavior/features/chats/types';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
-import { useSelectedChatUsername } from '../../../hooks/useSelectedChat';
+import { useSelectedChatIdentifier } from '../../../hooks/useSelectedChat';
 import { getTimeWithoutSeconds } from '../../../utils/dateUtils';
 import { getAuthToken } from '../../../utils/localStorageUtils';
 import { Avatar } from '../../common/Avatar/Avatar';
@@ -24,7 +24,7 @@ type Props = {
 };
 
 export const Chat: FC<Props> = ({ chat }) => {
-    const selectedChatUsername = useSelectedChatUsername();
+    const selectedChatIdentifier = useSelectedChatIdentifier();
     const dispatch = useAppDispatch();
     const authedUser = useAppSelector(s => s.auth.authedUser);
     const chatActivity = useSubscription<ChatActivityData, ChatActivityVars>(CHAT_ACTIVITY_SUBSCRIPTIONS, {
@@ -84,7 +84,7 @@ export const Chat: FC<Props> = ({ chat }) => {
                 icon: <img src={deleteSvg} width={20} className={'dangerSvg'} alt={'deleteSvg'} />,
                 onClick: () => {
                     dispatch(chatActions.chatDeleteAsync(chat.id));
-                    if(selectedChatUsername === chat.username)
+                    if(selectedChatIdentifier === chat.identifier)
                         navigate('/');
                 },
                 type: 'danger',
@@ -97,9 +97,9 @@ export const Chat: FC<Props> = ({ chat }) => {
           key={chat.id}
           items={getContextMenuItems()}
         >
-            <div className={[s.chat, chat.username === selectedChatUsername ? s.chatSelected : null].join(' ')}>
+            <div className={[s.chat, chat.identifier === selectedChatIdentifier ? s.chatSelected : null].join(' ')}>
                 <Link
-                  to={`/${chat.username}`}
+                  to={`/${chat.identifier}`}
                   className={s.chatLink}
                 >
                     <div className={s.chatInner}>

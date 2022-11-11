@@ -30,21 +30,21 @@ namespace Geesemon.Web.GraphQL.Queries
                 .AuthorizeWith(AuthPolicies.Authenticated);
             
             Field<ChatType, Chat?>()
-                .Name("GetByUsername")
-                .Argument<NonNullGraphType<StringGraphType>, string>("Username", "")
+                .Name("GetByIdentifier")
+                .Argument<NonNullGraphType<StringGraphType>, string>("Identifier", "")
                 .ResolveAsync(async context =>
                 {
-                    var username = context.GetArgument<string>("Username");
+                    var identifier = context.GetArgument<string>("Identifier");
                     var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
-                    var currentUsername = httpContextAccessor.HttpContext.User.Claims.GetUsername();
-                    var chat = await chatManager.GetByUsernameAsync(username, currentUserId);
+                    var currentIdentifier = httpContextAccessor.HttpContext.User.Claims.GetIdentifier();
+                    var chat = await chatManager.GetByIdentifierAsync(identifier, currentUserId);
                     if(chat == null)
                     {
-                        var user = await userManager.GetByUsernameAsync(username);
+                        var user = await userManager.GetByIdentifierAsync(identifier);
                         if (user == null)
                             return null;
 
-                        var kind = user.Username == currentUsername ? ChatKind.Saved : ChatKind.Personal;
+                        var kind = user.Identifier == currentIdentifier ? ChatKind.Saved : ChatKind.Personal;
                         return new Chat().MapWithUser(user, kind);
                     }
                     return await chat.MapForUserAsync(currentUserId, serviceProvider);
