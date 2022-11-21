@@ -18,6 +18,7 @@ import s from './Message.module.scss';
 import { useSelectedChat } from '../../../hooks/useSelectedChat';
 import { Mode } from '../../../behavior/features/chats/slice';
 import { getFileExtension, getFileName, processString, ProcessStringOption } from '../../../utils/stringUtils';
+import { FileType, getFileType } from '../../../utils/fileUtils';
 
 type Props = {
     message: MessageType;
@@ -50,10 +51,10 @@ export const Message: FC<Props> = ({ message, inputTextFocus, isFromVisible = fa
                 fn: (key, result) => (
                     <span key={key}>
                         <a
-                          style={{ textDecoration: 'underline' }}
-                          target="_blank"
-                          href={`${result[1]}://${result[2]}.${result[3]}${result[4]}`} 
-                          rel="noreferrer"
+                            style={{ textDecoration: 'underline' }}
+                            target="_blank"
+                            href={`${result[1]}://${result[2]}.${result[3]}${result[4]}`}
+                            rel="noreferrer"
                         >
                             {result[2]}.{result[3]}{result[4]}
                         </a>
@@ -65,11 +66,11 @@ export const Message: FC<Props> = ({ message, inputTextFocus, isFromVisible = fa
                 regex: /(\S+)\.([a-z]{2,}?)(.*?)( |\,|$|\.)/gim,
                 fn: (key, result) => (
                     <span key={key}>
-                        <a 
-                          style={{ textDecoration: 'underline' }}
-                          target="_blank" 
-                          href={`http://${result[1]}.${result[2]}${result[3]}`} 
-                          rel="noreferrer"
+                        <a
+                            style={{ textDecoration: 'underline' }}
+                            target="_blank"
+                            href={`http://${result[1]}.${result[2]}${result[3]}`}
+                            rel="noreferrer"
                         >
                             {result[1]}.{result[2]}{result[3]}
                         </a>
@@ -84,18 +85,19 @@ export const Message: FC<Props> = ({ message, inputTextFocus, isFromVisible = fa
                 ),
             },
         ];
-        
+
         const messageText = processString(config)(message.text || '');
+        const fileType = message.fileUrl ? getFileType(message.fileUrl) : null;
 
         switch (message.type) {
             case MessageKind.System:
                 return (
                     <div
-                      ref={el => {
+                        ref={el => {
                             if (!isReadByMe)
                                 ref.current = el;
                         }}
-                      className={[s.message, s.messageSystem].join(' ')}
+                        className={[s.message, s.messageSystem].join(' ')}
                     >
                         <div className={`${s.messageText} textCenter`}>{messageText}</div>
                     </div>
@@ -103,57 +105,93 @@ export const Message: FC<Props> = ({ message, inputTextFocus, isFromVisible = fa
             default:
                 return (
                     <div
-                      ref={el => {
+                        ref={el => {
                             if (!isReadByMe)
                                 ref.current = el;
                         }}
-                      className={[s.message, isMessageMy ? s.messageMy : null].join(' ')}
+                        className={[s.message, isMessageMy ? s.messageMy : null, message.text || fileType === FileType.File ? s.messagePadding : null].join(' ')}
                     >
                         {isFromVisible && (
-                            <Link 
-                              to={`/${message.from?.username}`}
-                              className={[s.from, 'bold'].join(' ')} 
-                              style={{ color: message.from?.avatarColor }}
+                            <Link
+                                to={`/${message.from?.username}`}
+                                className={[s.from, 'bold'].join(' ')}
+                                style={{ color: message.from?.avatarColor }}
                             >
                                 {message.from?.firstName} {message.from?.lastName}
                             </Link>
                         )}
                         {message.replyMessage && (
                             <div
-                              style={{ borderColor: selectedChat?.type === ChatKind.Group ? message.replyMessage.from?.avatarColor : '' }} 
-                              className={s.replyMessage}
+                                style={{ borderColor: selectedChat?.type === ChatKind.Group ? message.replyMessage.from?.avatarColor : '' }}
+                                className={s.replyMessage}
                             >
-                                <div 
-                                  style={{ color: selectedChat?.type === ChatKind.Group ? message.replyMessage.from?.avatarColor : '' }} 
-                                  className={'small bold primary'}
+                                <div
+                                    style={{ color: selectedChat?.type === ChatKind.Group ? message.replyMessage.from?.avatarColor : '' }}
+                                    className={'small bold primary'}
                                 >
                                     {message.replyMessage?.from?.fullName}
                                 </div>
                                 <div className={['small primary', s.replyMessageText].join(' ')}>{message.replyMessage?.text}</div>
                             </div>
                         )}
-                        {message.fileUrl && (
-                            <a href={message.fileUrl} target="_blank" rel="noreferrer">
-                                <div className={s.file}>
-                                    <img src={fileSvg} width={25} className={'primaryTextSvg'} alt={'fileSvg'} />
-                                    <div>{message.fileUrl && getFileName(message.fileUrl)}</div>
-                                </div>
-                            </a>
-                        )}
-                        <span className={s.messageText}>{messageText}</span>
-                        <span className={s.messageInfo}>
-                            {message.isEdited &&
-                                <span className={'small light'}>edited</span>
-                            }
-                            <span className={'small light'}>
-                                {getTimeWithoutSeconds(new Date(message.createdAt))}
+                        {message.fileUrl && renderFile(message.fileUrl, message.text ? null : message.createdAt)}
+                        {message.text && <span className={s.messageText}>{messageText}</span>}
+                        {message.text && (
+                            <span className={s.messageInfo}>
+                                {renderMessageInfo()}
                             </span>
-                            {isMessageMy && selectedChat?.type !== ChatKind.Saved && <Checks double={!!message.readBy?.length} />}
-                        </span>
+                        )}
                     </div>
                 );
         }
     };
+
+    const renderMessageInfo = () => {
+        return (
+            <>
+                {message.isEdited &&
+                    <span className={'small light'}>edited</span>
+                }
+                <span className={'small light'}>
+                    {getTimeWithoutSeconds(new Date(message.createdAt))}
+                </span>
+                {isMessageMy && selectedChat?.type !== ChatKind.Saved && <Checks double={!!message.readBy?.length} />}
+            </>
+        )
+    }
+
+    const renderFile = (fileUrl: string, date: string | null = null) => {
+        const fileType = getFileType(fileUrl);
+        switch (fileType) {
+            case FileType.Image:
+                return (
+                    <div className={s.mediaWrapper}>
+                        <img src={fileUrl} alt={fileUrl} className={s.media} />
+                        {date && (
+                            <div className={s.fileMessageInfo}>{renderMessageInfo()}</div>
+                        )}
+                    </div>
+                )
+            case FileType.Video:
+                return (
+                    <div className={s.mediaWrapper}>
+                        <video controls src={fileUrl} className={s.media} />
+                        {date && (
+                            <div className={s.fileMessageInfo}>{renderMessageInfo()}</div>
+                        )}
+                    </div>
+                )
+            default:
+                return (
+                    <a href={message.fileUrl} target="_blank" rel="noreferrer">
+                        <div className={s.file}>
+                            <img src={fileSvg} width={25} className={'primaryTextSvg'} alt={'fileSvg'} />
+                            <div>{message.fileUrl && getFileName(message.fileUrl)}</div>
+                        </div>
+                    </a>
+                )
+        }
+    }
 
     const setInUpdateMessageHanlder = (messageId: string) => {
         dispatch(chatActions.setInUpdateMessageId(messageId));
@@ -175,47 +213,47 @@ export const Message: FC<Props> = ({ message, inputTextFocus, isFromVisible = fa
             type: 'default',
         }];
 
-        if(message.fromId === authedUser?.id)
+        if (message.fromId === authedUser?.id)
             items.push({
                 content: 'Update',
                 icon: <img src={pencilOutlinedSvg} width={15} className={'primaryTextSvg'} alt={'pencilOutlinedSvg'} />,
                 onClick: () => setInUpdateMessageHanlder(message.id),
                 type: 'default',
             });
-     
-        if(selectedChat?.type !== ChatKind.Saved)
+
+        if (selectedChat?.type !== ChatKind.Saved)
             items.push({
                 content: <div className={s.readBy}>
-                <div>{message.readByCount} seen</div>
-                <div className={s.last3ReadBy}>
-                    {message.readBy.slice(0, 3).map(user => user.imageUrl
-                        ? (
-                            <Avatar
-                              key={user.id}
-                              width={22}
-                              height={22}
-                              imageUrl={user.imageUrl}
-                            />
+                    <div>{message.readByCount} seen</div>
+                    <div className={s.last3ReadBy}>
+                        {message.readBy.slice(0, 3).map(user => user.imageUrl
+                            ? (
+                                <Avatar
+                                    key={user.id}
+                                    width={22}
+                                    height={22}
+                                    imageUrl={user.imageUrl}
+                                />
                             )
-                        : (
-                            <AvatarWithoutImage
-                              key={user.id}
-                              width={22}
-                              height={22}
-                              fontSize={8}
-                              backgroundColor={user.avatarColor}
-                              name={user.fullName}
-                            />
-                        ),
-                    )}
+                            : (
+                                <AvatarWithoutImage
+                                    key={user.id}
+                                    width={22}
+                                    height={22}
+                                    fontSize={8}
+                                    backgroundColor={user.avatarColor}
+                                    name={user.fullName}
+                                />
+                            ),
+                        )}
                     </div>
                 </div>,
                 icon: <Checks double />,
                 onClick: () => dispatch(chatActions.setInViewMessageIdReadBy(message.id)),
                 type: 'default',
             });
-    
-        if(message.fromId === authedUser?.id || selectedChat?.type === ChatKind.Personal)
+
+        if (message.fromId === authedUser?.id || selectedChat?.type === ChatKind.Personal)
             items.push({
                 content: 'Delete',
                 icon: <img src={deleteSvg} width={20} className={'dangerSvg'} alt={'deleteSvg'} />,
