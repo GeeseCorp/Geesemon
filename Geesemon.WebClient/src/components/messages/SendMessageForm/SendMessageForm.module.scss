@@ -70,27 +70,36 @@
     width: calc(100% - 60px);
 }
 
-.extraBlockWrapper .icon {
-    width: 35px;
-    border-right: 2px solid $primary-color;
-    padding-right: 10px;
-}
+.extraBlockWrapper {
+    .icon {
+        width: 35px;
+        border-right: 2px solid $primary-color;
+        padding-right: 10px;
+    }
 
-.extraBlockWrapper * {
-    font-size: 12px;
-}
+    * {
+        font-size: 12px;
+    }
 
-.extraBlockWrapper .action {
-    color: $primary-color;
-}
+    .action {
+        color: $primary-color;
+    }
 
-.extraBlockWrapper .text {
-    color: $secondary-text-color;
-    margin-top: -3px;
-    margin-bottom: -1px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    .text {
+        color: $secondary-text-color;
+        margin-top: -3px;
+        margin-bottom: -1px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .media{
+        width: 30px;
+        height: 30px;
+        object-fit: cover;
+        border-radius: 2px;
+    }
 }
 
 .files {

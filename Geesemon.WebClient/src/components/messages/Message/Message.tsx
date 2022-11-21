@@ -136,7 +136,7 @@ export const Message: FC<Props> = ({ message, inputTextFocus, isFromVisible = fa
                         )}
                         {message.fileUrl && renderFile(message.fileUrl, message.text ? null : message.createdAt)}
                         {message.text && <span className={s.messageText}>{messageText}</span>}
-                        {message.text && (
+                        {(message.text || fileType === FileType.File) && (
                             <span className={s.messageInfo}>
                                 {renderMessageInfo()}
                             </span>

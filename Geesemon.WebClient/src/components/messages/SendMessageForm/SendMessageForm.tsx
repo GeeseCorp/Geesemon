@@ -16,6 +16,9 @@ import { useSelectedChat } from '../../../hooks/useSelectedChat';
 import { SmallPrimaryButton } from '../../common/SmallPrimaryButton/SmallPrimaryButton';
 import s from './SendMessageForm.module.scss';
 import { InputFile } from '../../common/formControls/InputFile/InputFile';
+import { FileType, getFileType } from '../../../utils/fileUtils';
+import { Message } from '../../../behavior/features/chats/types';
+import { getFileName } from '../../../utils/stringUtils';
 
 const INPUT_TEXT_DEFAULT_HEIGHT = '25px';
 
@@ -88,9 +91,9 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
         if (!messageText && !files.length)
             return;
 
-        if(!selectedChat)
-           return;
-        
+        if (!selectedChat)
+            return;
+
         setMessageText('');
         setFiles([]);
         dispatch(chatActions.messageSendAsync({
@@ -102,13 +105,13 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                 files,
             },
         }));
-        
+
         if (inputTextRef.current)
             inputTextRef.current.style.height = INPUT_TEXT_DEFAULT_HEIGHT;
 
         scrollToBottom();
 
-        if(mode === Mode.Reply)
+        if (mode === Mode.Reply)
             closeExtraBlockHandler();
     };
 
@@ -135,69 +138,80 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
     };
 
     const renderExtraBlock = () => {
-        switch(mode){
-            case Mode.Updating:
-                return(
-                    <>
-                        <div className={s.icon}>
-                            <img src={pencilOutlinedSvg} width={20} className={'primarySvg'} alt={'pencilOutlinedSvg'} />
-                        </div>
-                        <div className={s.actionAndText}>
-                            <div className={s.action}>Updating</div>
-                            <div className={s.text}>{inUpdateMessage?.text}</div>
-                        </div>
-                    </>
-                );
-            case Mode.Reply:
-                return(
-                    <>
-                        <div className={s.icon}>
-                            <img src={replySvg} width={25} className={'primarySvg'} alt={'replySvg'} />
-                        </div>
-                        <div className={s.actionAndText}>
-                            <div className={s.action}>{replyMessage?.from?.fullName}</div>
-                            <div className={s.text}>{replyMessage?.text}</div>
-                        </div>
-                    </>
-                );
+        const renderExtraBlockRelatedMessage = (svg: string, action?: string | null, messageText?: string | null, fileUrl?: string | null, fileType?: FileType | null) => {
+            let file: JSX.Element | null = null;
+            switch (fileType) {
+                case FileType.Image:
+                    file = <img src={fileUrl || ''} className={s.media} />
+                    break;
+                case FileType.Video:
+                    file = <video src={fileUrl || ''} className={s.media} />
+                    break;
+            }
+            switch (fileType) {
+                default:
+                    return (
+                        <>
+                            <div className={s.icon}>
+                                <img src={svg} width={20} className={'primarySvg'} alt={'pencilOutlinedSvg'} />
+                            </div>
+                            {file}
+                            <div className={s.actionAndText}>
+                                <div className={s.action}>{action}</div>
+                                <div className={s.text}>{messageText}</div>
+                            </div>
+                        </>
+                    )
+            }
+        }
+
+        switch (mode) {
+            case Mode.Updating: {
+                const fileType = inUpdateMessage?.fileUrl ? getFileType(inUpdateMessage.fileUrl) : null;
+                return renderExtraBlockRelatedMessage(pencilOutlinedSvg, 'Updating', inUpdateMessage?.text || getFileName(inUpdateMessage?.fileUrl || ''), inUpdateMessage?.fileUrl, fileType)
+            }
+            case Mode.Reply: {
+                const fileType = replyMessage?.fileUrl ? getFileType(replyMessage.fileUrl) : null;
+                return renderExtraBlockRelatedMessage(replySvg, replyMessage?.from?.fullName, replyMessage?.text || getFileName(replyMessage?.fileUrl || ''), replyMessage?.fileUrl, fileType)
+            }
         }
     };
 
     const renderPrimaryButtonIcon = () => {
-        switch(mode) {
+        switch (mode) {
             case Mode.Text:
             case Mode.Reply:
                 return (
                     messageText || files.length
                         ? (
                             <motion.img
-                              key={'send'}
-                              initial={{ scale: 0, opacity: 0 }}
-                              animate={{ scale: 1, opacity: 1 }}
-                              src={sendSvg}
-                              className={'primaryTextSvg'}
+                                key={'send'}
+                                initial={{ scale: 0, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                src={sendSvg}
+                                className={'primaryTextSvg'}
                             />
                         )
                         : (
                             <motion.img
-                              key={'microphone'}
-                              initial={{ scale: 0, opacity: 0 }}
-                              animate={{ scale: 1, opacity: 1 }}
-                              src={microphoneSvg}
-                              width={25}
-                              className={'primaryTextSvg'}
+                                key={'microphone'}
+                                initial={{ scale: 0, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                src={microphoneSvg}
+                                width={25}
+                                className={'primaryTextSvg'}
                             />
                         )
                 );
             case Mode.Updating:
                 return (
                     <motion.img
-                      key={'update'}
-                      initial={{ scale: 0, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      src={checkSvg}
-                      width={25}
-                      className={'primaryTextSvg'}
+                        key={'update'}
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        src={checkSvg}
+                        width={25}
+                        className={'primaryTextSvg'}
                     />
                 );
         }
@@ -242,13 +256,13 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                             <img src={smileSvg} width={20} className={'secondaryTextSvg'} alt={'smileSvg'} />
                         </div>
                         <textarea
-                          value={messageText}
-                          placeholder={'Message'}
-                          ref={inputTextRef}
-                          onChange={e => setNewMessageText(e.target.value)}
-                          className={s.inputText}
-                          onKeyUp={onKeyUpInputText}
-                          onKeyDown={onKeyDownInputText}
+                            value={messageText}
+                            placeholder={'Message'}
+                            ref={inputTextRef}
+                            onChange={e => setNewMessageText(e.target.value)}
+                            className={s.inputText}
+                            onKeyUp={onKeyUpInputText}
+                            onKeyDown={onKeyDownInputText}
                         />
                         <InputFile multiple onChange={newFiles => setFiles(newFiles ? [...files, ...newFiles] : [])}>
                             <div className={s.inputTextButton}>
