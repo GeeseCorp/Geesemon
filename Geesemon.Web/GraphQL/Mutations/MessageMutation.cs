@@ -161,6 +161,9 @@ namespace Geesemon.Web.GraphQL.Mutations
 
                     if (message.FromId != currentUserId)
                         throw new Exception("User can't update other user's messages.");
+                    
+                    if (message.ForwardedMessage != null)
+                        throw new Exception("You can not update forwarded messages.");
 
                     message.Text = input.Text;
                     message.IsEdited = true;

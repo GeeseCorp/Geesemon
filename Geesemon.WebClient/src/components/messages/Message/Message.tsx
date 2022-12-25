@@ -220,9 +220,9 @@ export const Message: FC<Props> = ({ message, inputTextFocus, isFromVisible = fa
                             <div>{message.fileUrl && getFileName(message.fileUrl)}</div>
                         </div>
                     </a>
-                )
+                );
         }
-    }
+    };
 
     const setInUpdateMessageHanlder = (messageId: string) => {
         dispatch(chatActions.setInUpdateMessageId(messageId));
@@ -249,7 +249,7 @@ export const Message: FC<Props> = ({ message, inputTextFocus, isFromVisible = fa
             type: 'default',
         }];
 
-        if (message.fromId === authedUser?.id)
+        if (message.fromId === authedUser?.id && !message.forwardedMessage)
             items.push({
                 content: 'Update',
                 icon: <img src={pencilOutlinedSvg} width={15} className={'primaryTextSvg'} alt={'pencilOutlinedSvg'} />,
