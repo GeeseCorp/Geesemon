@@ -1,6 +1,14 @@
 import { Entity } from '../../common';
 import { User } from '../users/types';
 
+export type ForwardedMessage = {
+    text?: string | null;
+    type: MessageKind;
+    fromId?: string | null;
+    from?: User | null;
+    fileUrl?: string | null;
+};
+
 export type Message = {
     text?: string | null;
     type: MessageKind;
@@ -15,13 +23,6 @@ export type Message = {
     fileUrl?: string;
     forwardedMessage?: ForwardedMessage | null;
 } & Entity;
-
-export type ForwardedMessage = {
-    text?: string | null;
-    type: MessageKind;
-    fromId?: string | null;
-    from?: User | null;
-};
 
 export enum MessageKind {
     Regular = 'REGULAR',

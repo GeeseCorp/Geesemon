@@ -40,6 +40,7 @@ export const MESSAGE_FRAGMENT = gql`
             from{
                 ...UserFragment
             }
+            fileUrl
         }
     }
 `;

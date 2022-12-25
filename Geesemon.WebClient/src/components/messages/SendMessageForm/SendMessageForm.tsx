@@ -92,7 +92,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
     };
 
     const sendMessageHandler = () => {
-        if (!messageText && !files.length)
+        if (!messageText && !files.length && !forwardMessages.length)
             return;
 
         if (!selectedChat)
@@ -201,7 +201,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
             case Mode.Reply:
             case Mode.Forward:
                 return (
-                    messageText || files.length
+                    messageText || files.length || forwardMessages.length
                         ? (
                             <motion.img
                                 key={'send'}

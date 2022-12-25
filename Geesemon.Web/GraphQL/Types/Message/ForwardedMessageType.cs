@@ -30,5 +30,9 @@ public class ForwardedMessageType : ObjectGraphType<ForwardedMessage>
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager>();
                 return await userManager.GetByIdAsync(ctx.Source.FromId);
             });
+
+        Field<StringGraphType, string?>()
+            .Name("FileUrl")
+            .Resolve(ctx => ctx.Source.FileUrl);
     }
 }

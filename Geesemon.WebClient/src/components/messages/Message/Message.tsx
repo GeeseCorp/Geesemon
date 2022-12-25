@@ -103,46 +103,77 @@ export const Message: FC<Props> = ({ message, inputTextFocus, isFromVisible = fa
                     </div>
                 );
             default:
-                return (
-                    <div
-                        ref={el => {
-                            if (!isReadByMe)
-                                ref.current = el;
-                        }}
-                        className={[s.message, isMessageMy ? s.messageMy : null, message.text || fileType === FileType.File ? s.messagePadding : null].join(' ')}
-                    >
-                        {isFromVisible && (
+                if (message.forwardedMessage) {
+                    const forwardedMessageText = processString(config)(message.forwardedMessage?.text || '');
+                    const forwardedMessageFileType = message.forwardedMessage.fileUrl ? getFileType(message.forwardedMessage.fileUrl) : null;
+                    return (
+                        <div
+                            ref={el => {
+                                if (!isReadByMe)
+                                    ref.current = el;
+                            }}
+                            className={[s.message, isMessageMy ? s.messageMy : null, message.forwardedMessage.text || fileType === FileType.File ? s.messagePadding : null].join(' ')}
+                        >
                             <Link
                                 to={`/${message.from?.username}`}
-                                className={[s.from, 'bold'].join(' ')}
+                                className={[s.from, 'bold', message.forwardedMessage && message.forwardedMessage.fileUrl && s.messagePadding].join(' ')}
                                 style={{ color: message.from?.avatarColor }}
                             >
-                                {message.from?.firstName} {message.from?.lastName}
+                                Forwarded from {message.from?.fullName}
                             </Link>
-                        )}
-                        {message.replyMessage && (
-                            <div
-                                style={{ borderColor: selectedChat?.type === ChatKind.Group ? message.replyMessage.from?.avatarColor : '' }}
-                                className={s.replyMessage}
-                            >
-                                <div
-                                    style={{ color: selectedChat?.type === ChatKind.Group ? message.replyMessage.from?.avatarColor : '' }}
-                                    className={'small bold primary'}
+                            {message.forwardedMessage?.fileUrl && renderFile(message.forwardedMessage.fileUrl, message.forwardedMessage.text ? null : message.createdAt)}
+                            {message.forwardedMessage.text && <span className={s.messageText}>{forwardedMessageText}</span>}
+                            {(message.forwardedMessage.text || forwardedMessageFileType === FileType.File) && (
+                                <span className={s.messageInfo}>
+                                    {renderMessageInfo()}
+                                </span>
+                            )}
+                        </div>
+                    );
+                }
+                else {
+                    return (
+                        <div
+                            ref={el => {
+                                if (!isReadByMe)
+                                    ref.current = el;
+                            }}
+                            className={[s.message, isMessageMy ? s.messageMy : null, message.text || fileType === FileType.File ? s.messagePadding : null].join(' ')}
+                        >
+                            {isFromVisible && (
+                                <Link
+                                    to={`/${message.from?.username}`}
+                                    className={[s.from, 'bold'].join(' ')}
+                                    style={{ color: message.from?.avatarColor }}
                                 >
-                                    {message.replyMessage?.from?.fullName}
+                                    {message.from?.fullName}
+                                </Link>
+                            )}
+                            {message.replyMessage && (
+                                <div
+                                    style={{ borderColor: selectedChat?.type === ChatKind.Group ? message.replyMessage.from?.avatarColor : '' }}
+                                    className={s.replyMessage}
+                                >
+                                    <div
+                                        style={{ color: selectedChat?.type === ChatKind.Group ? message.replyMessage.from?.avatarColor : '' }}
+                                        className={'small bold primary'}
+                                    >
+                                        {message.replyMessage?.from?.fullName}
+                                    </div>
+                                    <div className={['small primary', s.replyMessageText].join(' ')}>{message.replyMessage?.text}</div>
                                 </div>
-                                <div className={['small primary', s.replyMessageText].join(' ')}>{message.replyMessage?.text}</div>
-                            </div>
-                        )}
-                        {message.fileUrl && renderFile(message.fileUrl, message.text ? null : message.createdAt)}
-                        {message.text && <span className={s.messageText}>{messageText}</span>}
-                        {(message.text || fileType === FileType.File) && (
-                            <span className={s.messageInfo}>
-                                {renderMessageInfo()}
-                            </span>
-                        )}
-                    </div>
-                );
+                            )}
+                            {message.fileUrl && renderFile(message.fileUrl, message.text ? null : message.createdAt)}
+                            {message.text && <span className={s.messageText}>{messageText}</span>}
+                            {(message.text || fileType === FileType.File) && (
+                                <span className={s.messageInfo}>
+                                    {renderMessageInfo()}
+                                </span>
+                            )}
+                        </div>
+                    );
+
+                }
         }
     };
 

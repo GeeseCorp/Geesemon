@@ -36,8 +36,8 @@ public class SentMessageInput
     public string ChatUsername { get; set; }
     public string? Text { get; set; }
     public Guid? ReplyMessageId { get; set; }
-    public IEnumerable<IFormFile> Files { get; set; }
-    public IEnumerable<Guid> ForwardedMessageIds { get; set; }
+    public IEnumerable<IFormFile> Files { get; set; } = new List<IFormFile>();
+    public IEnumerable<Guid> ForwardedMessageIds { get; set; } = new List<Guid>();
 }
 
 public class SentMessageInputValidator : AbstractValidator<SentMessageInput>
@@ -56,7 +56,7 @@ public class SentMessageInputValidator : AbstractValidator<SentMessageInput>
         RuleFor(r => r.Text)
             .Must((input, text) =>
             {
-                return !(input.Files.Count() == 0 && string.IsNullOrEmpty(input.Text));
+                return !(input.Files.Count() == 0 && string.IsNullOrEmpty(input.Text) && input.ForwardedMessageIds.Count() == 0);
             }).WithMessage("Message text can not be empty");
 
         RuleFor(r => r.ReplyMessageId)

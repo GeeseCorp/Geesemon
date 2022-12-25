@@ -11,6 +11,8 @@ public class ForwardedMessage
     public Guid? FromId { get; set; }
     public User? From { get; set; }
 
+    public string? FileUrl { get; set; }
+
     public static ForwardedMessage GetForwardedMessage(Message message)
     {
         return new ForwardedMessage
@@ -18,6 +20,7 @@ public class ForwardedMessage
             Text = message.Text,
             Type = message.Type,
             FromId = message.FromId,
+            FileUrl = message.FileUrl,
         };
     }
 }
