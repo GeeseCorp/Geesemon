@@ -1,4 +1,5 @@
 ﻿using Geesemon.DataAccess.Managers;
+using Geesemon.Model.Common;
 using Geesemon.Model.Enums;
 using Geesemon.Model.Models;
 using GraphQL;
@@ -83,6 +84,10 @@ namespace Geesemon.Web.GraphQL.Types
             Field<StringGraphType, string?>()
                 .Name("FileUrl")
                 .Resolve(ctx => ctx.Source.FileUrl);
+            
+            Field<ForwardedMessageType, ForwardedMessage?>()
+                .Name("ForwardedMessage")
+                .Resolve(ctx => ctx.Source.ForwardedMessage);
         }
     }
 }

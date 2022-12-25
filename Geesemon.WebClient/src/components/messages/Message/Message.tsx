@@ -1,3 +1,4 @@
+import s from './Message.module.scss';
 import { FC, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import deleteSvg from '../../../assets/svg/delete.svg';
@@ -14,10 +15,9 @@ import { AvatarWithoutImage } from '../../common/AvatarWithoutImage/AvatarWithou
 import { ContextMenu } from '../../common/ContextMenu/ContextMenu';
 import { MenuItem } from '../../common/Menu/Menu';
 import { Checks } from '../Checks/Checks';
-import s from './Message.module.scss';
 import { useSelectedChat } from '../../../hooks/useSelectedChat';
 import { Mode } from '../../../behavior/features/chats/slice';
-import { getFileExtension, getFileName, processString, ProcessStringOption } from '../../../utils/stringUtils';
+import { getFileName, processString, ProcessStringOption } from '../../../utils/stringUtils';
 import { FileType, getFileType } from '../../../utils/fileUtils';
 
 type Props = {
@@ -205,6 +205,11 @@ export const Message: FC<Props> = ({ message, inputTextFocus, isFromVisible = fa
         inputTextFocus && inputTextFocus();
     };
 
+    const setForwardMessagesHanlder = (messages: MessageType[]) => {
+        dispatch(chatActions.setForwardMessages(messages));
+        dispatch(chatActions.setMode(Mode.ForwardSelectChat));
+    };
+
     const getContextMenuItems = (): MenuItem[] => {
         const items: MenuItem[] = [{
             content: 'Reply',
@@ -220,6 +225,30 @@ export const Message: FC<Props> = ({ message, inputTextFocus, isFromVisible = fa
                 onClick: () => setInUpdateMessageHanlder(message.id),
                 type: 'default',
             });
+
+        items.push(
+            {
+                content: 'Copy',
+                // icon: <img src={pencilOutlinedSvg} width={15} className={'primaryTextSvg'} alt={'pencilOutlinedSvg'} />,
+                type: 'default',
+            },
+            {
+                content: 'Pin',
+                // icon: <img src={pencilOutlinedSvg} width={15} className={'primaryTextSvg'} alt={'pencilOutlinedSvg'} />,
+                type: 'default',
+            },
+            {
+                content: 'Forward',
+                icon: <img src={replySvg} width={17} className={['primaryTextSvg', s.forwardSvg].join(' ')} alt={'forwardSvg'} />,
+                onClick: () => setForwardMessagesHanlder([message]),
+                type: 'default',
+            },
+            {
+                content: 'Select',
+                // icon: <img src={pencilOutlinedSvg} width={15} className={'primaryTextSvg'} alt={'pencilOutlinedSvg'} />,
+                type: 'default',
+            },
+        );
 
         if (selectedChat?.type !== ChatKind.Saved)
             items.push({

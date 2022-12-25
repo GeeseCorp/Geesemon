@@ -40,7 +40,7 @@ export const ContextMenu: FC<Props> = ({ children, items }) => {
                     onRightClick(event.clientX, event.clientY);
                 },
             })}
-            {open && (
+            {open && items.length > 0 && (
                 <AnimatePresence>
                     <motion.div
                       initial={{ opacity: 0, scale: 0.5 }}

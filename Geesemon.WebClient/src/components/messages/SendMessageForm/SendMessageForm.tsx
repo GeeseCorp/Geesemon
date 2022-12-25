@@ -17,7 +17,6 @@ import { SmallPrimaryButton } from '../../common/SmallPrimaryButton/SmallPrimary
 import s from './SendMessageForm.module.scss';
 import { InputFile } from '../../common/formControls/InputFile/InputFile';
 import { FileType, getFileType } from '../../../utils/fileUtils';
-import { Message } from '../../../behavior/features/chats/types';
 import { getFileName } from '../../../utils/stringUtils';
 
 const INPUT_TEXT_DEFAULT_HEIGHT = '25px';
@@ -38,6 +37,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
     const inUpdateMessage = messages.find(m => m.id === inUpdateMessageId);
     const replyMessage = messages.find(m => m.id === replyMessageId);
     const [files, setFiles] = useState<File[]>([]);
+    const forwardMessages = useAppSelector(s => s.chats.forwardMessages);
 
     useEffect(() => {
         if (inUpdateMessageId && inUpdateMessage) {
@@ -83,6 +83,10 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                 dispatch(chatActions.setReplyMessageId(null));
                 dispatch(chatActions.setMode(Mode.Text));
                 break;
+            case Mode.Forward:
+                dispatch(chatActions.setForwardMessages([]));
+                dispatch(chatActions.setMode(Mode.Text));
+                break;
         }
 
     };
@@ -103,6 +107,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                 text: messageText,
                 replyMessageId,
                 files,
+                forwardedMessageIds: forwardMessages.map(m => m.id),
             },
         }));
 
@@ -111,7 +116,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
 
         scrollToBottom();
 
-        if (mode === Mode.Reply)
+        if (mode === Mode.Reply || mode === Mode.Forward)
             closeExtraBlockHandler();
     };
 
@@ -129,6 +134,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
         switch (mode) {
             case Mode.Text:
             case Mode.Reply:
+            case Mode.Forward:
                 sendMessageHandler();
                 break;
             case Mode.Updating:
@@ -138,14 +144,14 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
     };
 
     const renderExtraBlock = () => {
-        const renderExtraBlockRelatedMessage = (svg: string, action?: string | null, messageText?: string | null, fileUrl?: string | null, fileType?: FileType | null) => {
+        const renderExtraBlockRelatedMessage = (svg: string, iconClassName?: string | null, action?: string | null, messageText?: string | null, fileUrl?: string | null, fileType?: FileType | null) => {
             let file: JSX.Element | null = null;
             switch (fileType) {
                 case FileType.Image:
-                    file = <img src={fileUrl || ''} className={s.media} />
+                    file = <img src={fileUrl || ''} className={s.media} />;
                     break;
                 case FileType.Video:
-                    file = <video src={fileUrl || ''} className={s.media} />
+                    file = <video src={fileUrl || ''} className={s.media} />;
                     break;
             }
             switch (fileType) {
@@ -153,7 +159,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                     return (
                         <>
                             <div className={s.icon}>
-                                <img src={svg} width={20} className={'primarySvg'} alt={'pencilOutlinedSvg'} />
+                                <img src={svg} width={20} className={['primarySvg', iconClassName].join(' ')} alt={'pencilOutlinedSvg'} />
                             </div>
                             {file}
                             <div className={s.actionAndText}>
@@ -161,18 +167,30 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                                 <div className={s.text}>{messageText}</div>
                             </div>
                         </>
-                    )
+                    );
             }
-        }
+        };
 
         switch (mode) {
             case Mode.Updating: {
                 const fileType = inUpdateMessage?.fileUrl ? getFileType(inUpdateMessage.fileUrl) : null;
-                return renderExtraBlockRelatedMessage(pencilOutlinedSvg, 'Updating', inUpdateMessage?.text || getFileName(inUpdateMessage?.fileUrl || ''), inUpdateMessage?.fileUrl, fileType)
+                return renderExtraBlockRelatedMessage(pencilOutlinedSvg, null, 'Updating', inUpdateMessage?.text || getFileName(inUpdateMessage?.fileUrl || ''), inUpdateMessage?.fileUrl, fileType);
             }
             case Mode.Reply: {
                 const fileType = replyMessage?.fileUrl ? getFileType(replyMessage.fileUrl) : null;
-                return renderExtraBlockRelatedMessage(replySvg, replyMessage?.from?.fullName, replyMessage?.text || getFileName(replyMessage?.fileUrl || ''), replyMessage?.fileUrl, fileType)
+                return renderExtraBlockRelatedMessage(replySvg, null, replyMessage?.from?.fullName, replyMessage?.text || getFileName(replyMessage?.fileUrl || ''), replyMessage?.fileUrl, fileType);
+            }
+            case Mode.Forward: {
+                switch (forwardMessages.length) {
+                    case 0:
+                        return null;
+                    case 1:
+                        const forwardMessage = forwardMessages[0];
+                        return renderExtraBlockRelatedMessage(replySvg, s.forwardSvg, forwardMessage?.from?.fullName, forwardMessage?.text || getFileName(forwardMessage?.fileUrl || ''), forwardMessage?.fileUrl, null);
+                    default:
+                        const action = forwardMessages[0]?.from?.fullName + ' and others';
+                        return renderExtraBlockRelatedMessage(replySvg, s.forwardSvg, action, `${forwardMessages.length} forwarded messages`, null, null);
+                }
             }
         }
     };
@@ -181,6 +199,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
         switch (mode) {
             case Mode.Text:
             case Mode.Reply:
+            case Mode.Forward:
                 return (
                     messageText || files.length
                         ? (
@@ -221,7 +240,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
         <div className={s.wrapper}>
             <div className={s.inner}>
                 <div className={s.wrapperInputText}>
-                    {mode !== Mode.Text &&
+                    {mode !== Mode.Text && mode !== Mode.ForwardSelectChat &&
                         <div className={s.extraBlockWrapper}>
                             <div className={s.extraBlockInner}>
                                 {renderExtraBlock()}

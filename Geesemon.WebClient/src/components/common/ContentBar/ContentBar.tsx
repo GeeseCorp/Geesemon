@@ -6,6 +6,7 @@ import { useSelectedChatUsername } from '../../../hooks/useSelectedChat';
 import { ChatHeader } from '../../chats/ChatHeader/ChatHeader';
 import { Messages } from '../../messages/Messages/Messages';
 import { ViewMessageReadByModal } from '../../messages/ViewMessageReadByModal/ViewMessageReadByModal';
+import { SelectChatForForwardMessagesModal } from '../../messages/SelectChatForForwardMessagesModal/SelectChatForForwardMessagesModal';
 import s from './ContentBar.module.scss';
 
 export const ContentBar: FC = () => {
@@ -54,6 +55,7 @@ export const ContentBar: FC = () => {
     return (
         <div className={s.wrapper}>
             <ViewMessageReadByModal />
+            <SelectChatForForwardMessagesModal />
             {selectedChatUsername
                 ? (
                     <>

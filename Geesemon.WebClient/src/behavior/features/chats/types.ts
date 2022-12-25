@@ -13,7 +13,15 @@ export type Message = {
     readBy: User[];
     readByCount: number;
     fileUrl?: string;
+    forwardedMessage?: ForwardedMessage | null;
 } & Entity;
+
+export type ForwardedMessage = {
+    text?: string | null;
+    type: MessageKind;
+    fromId?: string | null;
+    from?: User | null;
+};
 
 export enum MessageKind {
     Regular = 'REGULAR',
