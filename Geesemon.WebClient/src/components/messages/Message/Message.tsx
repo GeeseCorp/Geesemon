@@ -119,7 +119,7 @@ export const Message: FC<Props> = ({ message, inputTextFocus, isFromVisible = fa
                                 className={[s.from, 'bold', message.forwardedMessage && message.forwardedMessage.fileUrl && s.messagePadding].join(' ')}
                                 style={{ color: message.from?.avatarColor }}
                             >
-                                Forwarded from {message.from?.fullName}
+                                Forwarded from {message.forwardedMessage.from?.fullName}
                             </Link>
                             {message.forwardedMessage?.fileUrl && renderFile(message.forwardedMessage.fileUrl, message.forwardedMessage.text ? null : message.createdAt)}
                             {message.forwardedMessage.text && <span className={s.messageText}>{forwardedMessageText}</span>}
