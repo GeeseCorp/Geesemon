@@ -33,6 +33,15 @@ export const MESSAGE_FRAGMENT = gql`
         replyMessage {
             ...MessageWithoutReplyMessageFragment
         }
+        forwardedMessage{
+            text
+            type
+            fromId
+            from{
+                ...UserFragment
+            }
+            fileUrl
+        }
     }
 `;
 

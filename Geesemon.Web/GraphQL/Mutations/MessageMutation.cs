@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Geesemon.DataAccess.Managers;
+using Geesemon.Model.Common;
 using Geesemon.Model.Enums;
 using Geesemon.Model.Models;
 using Geesemon.Web.GraphQL.Auth;
@@ -18,7 +19,7 @@ namespace Geesemon.Web.GraphQL.Mutations
         public MessageMutation(
             IMessageActionSubscriptionService messageActionSubscriptionService,
             IHttpContextAccessor httpContextAccessor,
-            MessageManager messageManager, 
+            MessageManager messageManager,
             ChatManager chatManager,
             ReadMessagesManager readMessagesManager,
             IValidator<SentMessageInput> sentMessageInputValidator,
@@ -39,51 +40,85 @@ namespace Geesemon.Web.GraphQL.Mutations
                         throw new ExecutionError("User can sent messages only to chats that he participate.");
 
                     Message? replyMessage = null;
-                    if(sentMessageInput.ReplyMessageId != null)
+                    if (sentMessageInput.ReplyMessageId != null)
                     {
                         replyMessage = await messageManager.GetByIdAsync(sentMessageInput.ReplyMessageId);
                         if (replyMessage.ChatId != chat.Id)
                             throw new ExecutionError("User can reply messages only from one chat");
                     }
 
-                    if(sentMessageInput.Files.Count() > 0)
+                    var newMessages = new List<Message>();
+
+                    if (sentMessageInput.Files != null && sentMessageInput.Files.Count() > 0)
                     {
-                        var newMessages = new List<Message>();
                         await Parallel.ForEachAsync(sentMessageInput.Files, async (file, token) =>
                         {
                             var fileUrl = await fileManagerService.UploadFileAsync(FileManagerService.FilesFolder, file);
-                            Message newMessage = new Message()
+                            var newMessage = new Message()
                             {
                                 ChatId = chat.Id,
                                 Text = sentMessageInput.Files.Count() == newMessages.Count - 1 ? sentMessageInput.Text : null,
                                 FromId = currentUserId,
-                                Type = MessageKind.Regular,
                                 ReplyMessageId = replyMessage?.Id,
                                 FileUrl = fileUrl,
                             };
                             newMessages.Add(newMessage);
                         });
-                        await Parallel.ForEachAsync(newMessages, async (message, token) =>
-                        {
-                            message = await messageManager.CreateAsync(message);
-                            messageActionSubscriptionService.Notify(message, MessageActionKind.Create);
-                        });
-                        return newMessages;
                     }
-                    else
+
+                    if(sentMessageInput.ForwardedMessageIds != null && sentMessageInput.ForwardedMessageIds.Count() > 0)
                     {
+                        if(newMessages.Count == 0)
+                        {
+                            var newMessage = new Message()
+                            {
+                                ChatId = chat.Id,
+                                Text = sentMessageInput.Text,
+                                FromId = currentUserId,
+                                ReplyMessageId = replyMessage?.Id,
+                            };
+                            newMessages.Add(newMessage);
+                        }
+                        
+                        await Parallel.ForEachAsync(sentMessageInput.ForwardedMessageIds, async (forwardedMessageId, token) =>
+                        {
+                            var message = await messageManager.GetByIdAsync(forwardedMessageId);
+                            var newMessage = new Message()
+                            {
+                                ChatId = chat.Id,
+                                FromId = currentUserId,
+                                ReplyMessageId = replyMessage?.Id,
+                                ForwardedMessage = ForwardedMessage.GetForwardedMessage(message),
+                            };
+                            newMessages.Add(newMessage);
+                        });
+                    }
+
+                    if(newMessages.Count == 0)
+                    {
+                        if (string.IsNullOrEmpty(sentMessageInput.Text))
+                            throw new ExecutionError("Message text can not be empty");
+
                         Message newMessage = new Message()
                         {
                             ChatId = chat.Id,
                             Text = sentMessageInput.Text,
                             FromId = currentUserId,
-                            Type = MessageKind.Regular,
                             ReplyMessageId = replyMessage?.Id,
                         };
-                        newMessage = await messageManager.CreateAsync(newMessage);
-                        messageActionSubscriptionService.Notify(newMessage, MessageActionKind.Create);
-                        return new List<Message> { newMessage };
+                        newMessages.Add(newMessage);
                     }
+
+                    var createdMessages = new List<Message>();
+                    foreach(var newMessage in newMessages)
+                    {
+                        var createdMessage = await messageManager.CreateAsync(newMessage);
+                        messageActionSubscriptionService.Notify(createdMessage, MessageActionKind.Create);
+                        createdMessages.Add(createdMessage);
+                    }
+
+                    return createdMessages;
+
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
 
@@ -126,6 +161,9 @@ namespace Geesemon.Web.GraphQL.Mutations
 
                     if (message.FromId != currentUserId)
                         throw new Exception("User can't update other user's messages.");
+                    
+                    if (message.ForwardedMessage != null)
+                        throw new Exception("You can not update forwarded messages.");
 
                     message.Text = input.Text;
                     message.IsEdited = true;
@@ -135,7 +173,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                     return messageActionSubscriptionService.Notify(message, MessageActionKind.Update);
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
-            
+
             Field<NonNullGraphType<MessageType>, Message>()
                 .Name("MakeRead")
                 .Argument<NonNullGraphType<GuidGraphType>, Guid>("MessageId", "")
@@ -147,11 +185,11 @@ namespace Geesemon.Web.GraphQL.Mutations
                     var message = await messageManager.GetByIdAsync(messageId);
                     if (message == null)
                         throw new ExecutionError("Message not found.");
-                    
+
                     if (message.FromId == currentUserId)
                         throw new ExecutionError("You can not read your message");
 
-                    if(!await chatManager.IsUserInChat(currentUserId, message.ChatId))
+                    if (!await chatManager.IsUserInChat(currentUserId, message.ChatId))
                         throw new ExecutionError("You can not read messages which is not in your chats");
 
                     await readMessagesManager.CreateAsync(new ReadMessage

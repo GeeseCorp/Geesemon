@@ -55,7 +55,8 @@ export type SentMessageInputType = {
     chatUsername: string;
     text?: string | null;
     replyMessageId?: string | null;
-    files: File[];
+    files?: File[];
+    forwardedMessageIds?: string[];
 };
 export const MESSAGE_SEND_MUTATION = gql`
     ${MESSAGE_FRAGMENT}

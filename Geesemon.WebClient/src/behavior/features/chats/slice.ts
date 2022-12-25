@@ -18,6 +18,8 @@ export enum Mode {
     Audio = 1,
     Updating = 2,
     Reply = 3,
+    ForwardSelectChat = 4,
+    Forward = 5,
 }
 
 type InitialState = {
@@ -30,6 +32,7 @@ type InitialState = {
 
     replyMessageId?: string | null;
     inUpdateMessageId?: string | null;
+    forwardMessages: Message[];
     mode: Mode;
 
     createChatLoading: boolean;
@@ -53,6 +56,7 @@ const initialState: InitialState = {
 
     replyMessageId: null,
     inUpdateMessageId: null,
+    forwardMessages: [],
     mode: Mode.Text,
 
     createChatLoading: false,
@@ -78,6 +82,9 @@ const slice = createSlice({
         },
         setReplyMessageId: (state, action: PayloadAction<string | null | undefined>) => {
             state.replyMessageId = action.payload;
+        },
+        setForwardMessages: (state, action: PayloadAction<Message[]>) => {
+            state.forwardMessages = action.payload;
         },
 
         addChats: (state, action: PayloadAction<Chat[]>) => {

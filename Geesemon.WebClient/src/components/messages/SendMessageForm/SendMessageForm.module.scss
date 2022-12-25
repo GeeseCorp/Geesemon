@@ -162,6 +162,10 @@
     right: -55px;
 }
 
+.forwardSvg {
+    transform: scaleX(-1);
+}
+
 @media (max-width: 1200px) {
     .wrapper {
         width: calc(100% - 75px);
