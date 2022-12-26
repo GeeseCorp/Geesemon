@@ -1,16 +1,13 @@
 ﻿using FluentValidation;
 using Geesemon.DataAccess.Managers;
 using Geesemon.Model.Common;
-using Geesemon.Model.Enums;
 using Geesemon.Model.Models;
 using Geesemon.Web.GraphQL.Auth;
 using Geesemon.Web.GraphQL.Types;
 using Geesemon.Web.Services;
-using Geesemon.Web.Services.ChatActionsSubscription;
 using Geesemon.Web.Services.MessageSubscription;
 using GraphQL;
 using GraphQL.Types;
-using System;
 
 namespace Geesemon.Web.GraphQL.Mutations
 {
@@ -23,6 +20,7 @@ namespace Geesemon.Web.GraphQL.Mutations
             ChatManager chatManager,
             ReadMessagesManager readMessagesManager,
             IValidator<SentMessageInput> sentMessageInputValidator,
+            IValidator<DeleteMessageInput> deleteMessageInputValidator,
             FileManagerService fileManagerService
             )
         {
@@ -68,7 +66,7 @@ namespace Geesemon.Web.GraphQL.Mutations
 
                     if(sentMessageInput.ForwardedMessageIds != null && sentMessageInput.ForwardedMessageIds.Count() > 0)
                     {
-                        if(newMessages.Count == 0)
+                        if(newMessages.Count == 0 && !string.IsNullOrEmpty(sentMessageInput.Text))
                         {
                             var newMessage = new Message()
                             {
@@ -80,7 +78,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                             newMessages.Add(newMessage);
                         }
                         
-                        await Parallel.ForEachAsync(sentMessageInput.ForwardedMessageIds, async (forwardedMessageId, token) =>
+                        foreach(var forwardedMessageId in sentMessageInput.ForwardedMessageIds)
                         {
                             var message = await messageManager.GetByIdAsync(forwardedMessageId);
                             var newMessage = new Message()
@@ -91,7 +89,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                                 ForwardedMessage = ForwardedMessage.GetForwardedMessage(message),
                             };
                             newMessages.Add(newMessage);
-                        });
+                        }
                     }
 
                     if(newMessages.Count == 0)
@@ -122,27 +120,28 @@ namespace Geesemon.Web.GraphQL.Mutations
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
 
-            Field<MessageType, Message>()
+            Field<ListGraphType<MessageType>, IEnumerable<Message>>()
                 .Name("Delete")
                 .Argument<NonNullGraphType<DeleteMessageInputType>, DeleteMessageInput>("Input", "")
                 .ResolveAsync(async context =>
                 {
                     var input = context.GetArgument<DeleteMessageInput>("Input");
-                    var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
+                    await deleteMessageInputValidator.ValidateAndThrowAsync(input);
 
-                    var message = await messageManager.GetByIdAsync(input.MessageId);
+                    var deletedMessages = new List<Message>();
+                    foreach (var messageId in input.MessageIds)
+                    {
+                        var deletedMessage = await messageManager.GetByIdAsync(messageId);
+                        await messageManager.RemoveAsync(deletedMessage);
+                        deletedMessages.Add(deletedMessage);
+                    }
 
-                    if (message == null)
-                        throw new Exception("Message not found.");
+                    foreach(var deletedMessage in deletedMessages)
+                    {
+                        messageActionSubscriptionService.Notify(deletedMessage, MessageActionKind.Delete);
+                    }
 
-                    var chat = await chatManager.GetByIdAsync(message.ChatId);
-                    if (message.FromId != currentUserId)
-                        if (!await chatManager.IsUserInChat(currentUserId, message.ChatId) || chat.Type != ChatKind.Personal)
-                            throw new Exception("User can't delete other user's messages.");
-
-                    await messageManager.RemoveAsync(message.Id);
-
-                    return messageActionSubscriptionService.Notify(message, MessageActionKind.Delete);
+                    return deletedMessages;
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
 

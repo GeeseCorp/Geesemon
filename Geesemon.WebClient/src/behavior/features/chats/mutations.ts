@@ -86,10 +86,10 @@ export const MESSAGE_UPDATE_MUTATION = gql`
     }
 `;
 
-export type MessageDeleteData = { message: { delete: Message } };
+export type MessageDeleteData = { message: { delete: Message[] } };
 export type MessageDeleteVars = { input: DeleteMessageInputType };
 export type DeleteMessageInputType = {
-    messageId: string;
+    messageIds: string[];
 };
 export const MESSAGE_DELETE_MUTATION = gql`
     ${MESSAGE_FRAGMENT}

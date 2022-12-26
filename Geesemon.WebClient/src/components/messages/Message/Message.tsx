@@ -5,6 +5,7 @@ import deleteSvg from '../../../assets/svg/delete.svg';
 import pencilOutlinedSvg from '../../../assets/svg/pencilOutlined.svg';
 import replySvg from '../../../assets/svg/reply.svg';
 import fileSvg from '../../../assets/svg/file.svg';
+import selectSvg from '../../../assets/svg/select.svg';
 import { chatActions } from '../../../behavior/features/chats';
 import { ChatKind, Message as MessageType, MessageKind } from '../../../behavior/features/chats/types';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
@@ -19,6 +20,7 @@ import { useSelectedChat } from '../../../hooks/useSelectedChat';
 import { Mode } from '../../../behavior/features/chats/slice';
 import { getFileName, processString, ProcessStringOption } from '../../../utils/stringUtils';
 import { FileType, getFileType } from '../../../utils/fileUtils';
+import { Checkbox } from '../../common/formControls/Checkbox/Checkbox';
 
 type Props = {
     message: MessageType;
@@ -27,6 +29,7 @@ type Props = {
 };
 
 export const Message: FC<Props> = ({ message, inputTextFocus, isFromVisible = false }) => {
+    const selectedMessageIds = useAppSelector(s => s.chats.selectedMessageIds);
     const messageIdsMakeReadLoading = useAppSelector(s => s.chats.messageIdsMakeReadLoading);
     const authedUser = useAppSelector(s => s.auth.authedUser);
     const dispatch = useAppDispatch();
@@ -188,8 +191,8 @@ export const Message: FC<Props> = ({ message, inputTextFocus, isFromVisible = fa
                 </span>
                 {isMessageMy && selectedChat?.type !== ChatKind.Saved && <Checks double={!!message.readBy?.length} />}
             </>
-        )
-    }
+        );
+    };
 
     const renderFile = (fileUrl: string, date: string | null = null) => {
         const fileType = getFileType(fileUrl);
@@ -236,97 +239,152 @@ export const Message: FC<Props> = ({ message, inputTextFocus, isFromVisible = fa
         inputTextFocus && inputTextFocus();
     };
 
-    const setForwardMessagesHanlder = (messages: MessageType[]) => {
-        dispatch(chatActions.setForwardMessages(messages));
+    const setForwardMessageIdsHanlder = (messageIds: string[]) => {
+        dispatch(chatActions.setForwardMessageIds(messageIds));
         dispatch(chatActions.setMode(Mode.ForwardSelectChat));
     };
 
     const getContextMenuItems = (): MenuItem[] => {
-        const items: MenuItem[] = [{
-            content: 'Reply',
-            icon: <img src={replySvg} width={17} className={'primaryTextSvg'} alt={'replySvg'} />,
-            onClick: () => setReplyMessageHanlder(message.id),
-            type: 'default',
-        }];
+        const items: MenuItem[] = [];
 
-        if (message.fromId === authedUser?.id && !message.forwardedMessage)
+        if (selectedMessageIds.length) {
             items.push({
-                content: 'Update',
-                icon: <img src={pencilOutlinedSvg} width={15} className={'primaryTextSvg'} alt={'pencilOutlinedSvg'} />,
-                onClick: () => setInUpdateMessageHanlder(message.id),
-                type: 'default',
-            });
-
-        items.push(
-            {
-                content: 'Copy',
-                // icon: <img src={pencilOutlinedSvg} width={15} className={'primaryTextSvg'} alt={'pencilOutlinedSvg'} />,
-                type: 'default',
-            },
-            {
-                content: 'Pin',
-                // icon: <img src={pencilOutlinedSvg} width={15} className={'primaryTextSvg'} alt={'pencilOutlinedSvg'} />,
-                type: 'default',
-            },
-            {
-                content: 'Forward',
+                content: 'Forward Selected',
                 icon: <img src={replySvg} width={17} className={['primaryTextSvg', s.forwardSvg].join(' ')} alt={'forwardSvg'} />,
-                onClick: () => setForwardMessagesHanlder([message]),
-                type: 'default',
-            },
-            {
-                content: 'Select',
-                // icon: <img src={pencilOutlinedSvg} width={15} className={'primaryTextSvg'} alt={'pencilOutlinedSvg'} />,
-                type: 'default',
-            },
-        );
-
-        if (selectedChat?.type !== ChatKind.Saved)
-            items.push({
-                content: <div className={s.readBy}>
-                    <div>{message.readByCount} seen</div>
-                    <div className={s.last3ReadBy}>
-                        {message.readBy.slice(0, 3).map(user => user.imageUrl
-                            ? (
-                                <Avatar
-                                    key={user.id}
-                                    width={22}
-                                    height={22}
-                                    imageUrl={user.imageUrl}
-                                />
-                            )
-                            : (
-                                <AvatarWithoutImage
-                                    key={user.id}
-                                    width={22}
-                                    height={22}
-                                    fontSize={8}
-                                    backgroundColor={user.avatarColor}
-                                    name={user.fullName}
-                                />
-                            ),
-                        )}
-                    </div>
-                </div>,
-                icon: <Checks double />,
-                onClick: () => dispatch(chatActions.setInViewMessageIdReadBy(message.id)),
+                onClick: () => setForwardMessageIdsHanlder(selectedMessageIds),
                 type: 'default',
             });
 
-        if (message.fromId === authedUser?.id || selectedChat?.type === ChatKind.Personal)
             items.push({
-                content: 'Delete',
+                content: 'Delete Selected',
                 icon: <img src={deleteSvg} width={20} className={'dangerSvg'} alt={'deleteSvg'} />,
-                onClick: () => dispatch(chatActions.messageDeleteAsync({ messageId: message.id })),
+                onClick: () => dispatch(chatActions.messageDeleteAsync({ messageIds: selectedMessageIds })),
                 type: 'danger',
             });
+
+            items.push({
+                content: 'Clear Selection',
+                icon: <img src={selectSvg} width={15} className={'primaryTextSvg'} alt={'selectSvg'} />,
+                onClick: () => {
+                    dispatch(chatActions.setSelectedMessageIds([]));
+                    dispatch(chatActions.setMode(Mode.Text));
+                },
+                type: 'default',
+            });
+        }
+        else {
+            items.push({
+                content: 'Reply',
+                icon: <img src={replySvg} width={17} className={'primaryTextSvg'} alt={'replySvg'} />,
+                onClick: () => setReplyMessageHanlder(message.id),
+                type: 'default',
+            });
+
+            if (message.fromId === authedUser?.id && !message.forwardedMessage)
+                items.push({
+                    content: 'Update',
+                    icon: <img src={pencilOutlinedSvg} width={15} className={'primaryTextSvg'} alt={'pencilOutlinedSvg'} />,
+                    onClick: () => setInUpdateMessageHanlder(message.id),
+                    type: 'default',
+                });
+
+            items.push(
+                {
+                    content: 'Copy',
+                    // icon: <img src={pencilOutlinedSvg} width={15} className={'primaryTextSvg'} alt={'pencilOutlinedSvg'} />,
+                    type: 'default',
+                },
+                {
+                    content: 'Pin',
+                    // icon: <img src={pencilOutlinedSvg} width={15} className={'primaryTextSvg'} alt={'pencilOutlinedSvg'} />,
+                    type: 'default',
+                },
+                {
+                    content: 'Forward',
+                    icon: <img src={replySvg} width={17} className={['primaryTextSvg', s.forwardSvg].join(' ')} alt={'forwardSvg'} />,
+                    onClick: () => setForwardMessageIdsHanlder([message.id]),
+                    type: 'default',
+                },
+                {
+                    content: 'Select',
+                    icon: <img src={selectSvg} width={15} className={'primaryTextSvg'} alt={'selectSvg'} />,
+                    onClick: () => dispatch(chatActions.setSelectedMessageIds([message.id])),
+                    type: 'default',
+                },
+            );
+
+            if (selectedChat?.type !== ChatKind.Saved)
+                items.push({
+                    content: <div className={s.readBy}>
+                        <div>{message.readByCount} seen</div>
+                        <div className={s.last3ReadBy}>
+                            {message.readBy.slice(0, 3).map(user => user.imageUrl
+                                ? (
+                                    <Avatar
+                                        key={user.id}
+                                        width={22}
+                                        height={22}
+                                        imageUrl={user.imageUrl}
+                                    />
+                                )
+                                : (
+                                    <AvatarWithoutImage
+                                        key={user.id}
+                                        width={22}
+                                        height={22}
+                                        fontSize={8}
+                                        backgroundColor={user.avatarColor}
+                                        name={user.fullName}
+                                    />
+                                ),
+                            )}
+                        </div>
+                    </div>,
+                    icon: <Checks double />,
+                    onClick: () => dispatch(chatActions.setInViewMessageIdReadBy(message.id)),
+                    type: 'default',
+                });
+
+            if (message.fromId === authedUser?.id || selectedChat?.type === ChatKind.Personal)
+                items.push({
+                    content: 'Delete',
+                    icon: <img src={deleteSvg} width={20} className={'dangerSvg'} alt={'deleteSvg'} />,
+                    onClick: () => dispatch(chatActions.messageDeleteAsync({ messageIds: [message.id] })),
+                    type: 'danger',
+                });
+        }
 
         return items;
     };
 
+    const selectionChange = (checked?: boolean) => {
+        if (checked === undefined) {
+            checked = !selectedMessageIds.find(id => message.id === id);
+        }
+
+        let newSelectedMessageIds = [];
+
+        if (checked) {
+            newSelectedMessageIds = [...selectedMessageIds, message.id];
+        }
+        else {
+            newSelectedMessageIds = selectedMessageIds.filter(id => message.id !== id);
+        }
+        dispatch(chatActions.setSelectedMessageIds(newSelectedMessageIds));
+
+    };
+
     return (
         <ContextMenu items={getContextMenuItems()}>
-            {messageContent()}
+            <div className={s.wrapperMessage} onClick={() => selectedMessageIds.length && selectionChange()}>
+                {selectedMessageIds.length > 0 && (
+                    <Checkbox
+                        checked={!!selectedMessageIds.find(id => message.id === id)}
+                        setChecked={checked => selectionChange(checked)}
+                    />
+                )}
+                <div className={s.messageContent}>{messageContent()}</div>
+            </div>
         </ContextMenu>
     );
 };

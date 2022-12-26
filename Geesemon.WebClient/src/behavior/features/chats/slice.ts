@@ -32,7 +32,8 @@ type InitialState = {
 
     replyMessageId?: string | null;
     inUpdateMessageId?: string | null;
-    forwardMessages: Message[];
+    forwardMessageIds: string[];
+    selectedMessageIds: string[];
     mode: Mode;
 
     createChatLoading: boolean;
@@ -56,7 +57,8 @@ const initialState: InitialState = {
 
     replyMessageId: null,
     inUpdateMessageId: null,
-    forwardMessages: [],
+    forwardMessageIds: [],
+    selectedMessageIds: [],
     mode: Mode.Text,
 
     createChatLoading: false,
@@ -83,12 +85,15 @@ const slice = createSlice({
         setReplyMessageId: (state, action: PayloadAction<string | null | undefined>) => {
             state.replyMessageId = action.payload;
         },
-        setForwardMessages: (state, action: PayloadAction<Message[]>) => {
-            state.forwardMessages = action.payload;
+        setForwardMessageIds: (state, action: PayloadAction<string[]>) => {
+            state.forwardMessageIds = action.payload;
+        },
+        setSelectedMessageIds: (state, action: PayloadAction<string[]>) => {
+            state.selectedMessageIds = action.payload;
         },
 
         addChats: (state, action: PayloadAction<Chat[]>) => {
-            if(action.payload.length)
+            if (action.payload.length)
                 state.chats = sortChat([...state.chats, ...action.payload]);
         },
         chatsGetAsync: (state, action: PayloadAction<ChatsGetVars>) => state,
@@ -160,7 +165,7 @@ const slice = createSlice({
             state.chats = sortChat(newChats);
         },
 
-        messageSendAsync: (state, action: PayloadAction<{chatId: string; sentMessageInput: SentMessageInputType}>) => state,
+        messageSendAsync: (state, action: PayloadAction<{ chatId: string; sentMessageInput: SentMessageInputType }>) => state,
         messageUpdateAsync: (state, action: PayloadAction<UpdateMessageInputType>) => state,
         updateMessage: (state, action: PayloadAction<Message>) => {
             const chat = state.chats.find(c => c.messages.some(m => m.id === action.payload.id));
@@ -177,10 +182,10 @@ const slice = createSlice({
         messageDeleteAsync: (state, action: PayloadAction<DeleteMessageInputType>) => state,
 
         addOrUpdateUserInChat: (state, action: PayloadAction<UserChat>) => {
-            if(state.chats.find(c => c.users.find(u => u.id === action.payload.userId))){
+            if (state.chats.find(c => c.users.find(u => u.id === action.payload.userId))) {
                 state.chats = state.chats.map(c => c.id === action.payload.chatId
                     ? {
-                        ...c, users: [action.payload.user ,...c.users],
+                        ...c, users: [action.payload.user, ...c.users],
                     }
                     : c);
             }
@@ -227,7 +232,7 @@ const slice = createSlice({
                 }
                 : c);
         },
-    
+
         chatGetByUsernameAsync: (state, action: PayloadAction<string>) => state,
         setChatByUsername: (state, action: PayloadAction<Chat | null | undefined>) => {
             state.chatByUsername = action.payload;
@@ -235,9 +240,9 @@ const slice = createSlice({
         setChatGetByUsernameLoading: (state, action: PayloadAction<boolean>) => {
             state.chatGetByUsernameLoading = action.payload;
         },
-      
+
         chatAddMembersAsync: (state, action: PayloadAction<ChatsAddMembersInputType>) => state,
-        chatAddMembers: (state, action: PayloadAction<{chatId: string; members: User[]}>) => {
+        chatAddMembers: (state, action: PayloadAction<{ chatId: string; members: User[] }>) => {
             state.chats = state.chats.map(c => c.id === action.payload.chatId
                 ? { ...c, users: [...action.payload.members, ...c.users] }
                 : c);
@@ -247,7 +252,7 @@ const slice = createSlice({
         },
 
         chatRemoveMembersAsync: (state, action: PayloadAction<ChatsAddMembersInputType>) => state,
-        chatRemoveMembers: (state, action: PayloadAction<{chatId: string; members: User[]}>) => {
+        chatRemoveMembers: (state, action: PayloadAction<{ chatId: string; members: User[] }>) => {
             state.chats = state.chats.map(c => c.id === action.payload.chatId
                 ? { ...c, users: c.users.filter(u => !action.payload.members.some(m => m.id === u.id)) }
                 : c);
