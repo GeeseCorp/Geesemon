@@ -15,6 +15,9 @@ public class ForwardedMessage
 
     public static ForwardedMessage GetForwardedMessage(Message message)
     {
+        if(message.ForwardedMessage != null)
+            return message.ForwardedMessage;
+
         return new ForwardedMessage
         {
             Text = message.Text,
