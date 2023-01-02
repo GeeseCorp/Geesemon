@@ -23,7 +23,7 @@ type Props = {
     chat: ChatType;
     withSelected?: boolean;
     withMenu?: boolean;
-    onClickChat: (chatUsername: string) => void;
+    onClickChat: (chatIdentifier: string) => void;
 };
 
 export const Chat: FC<Props> = ({ chat, withSelected = true, withMenu = true, onClickChat }) => {
@@ -100,12 +100,12 @@ export const Chat: FC<Props> = ({ chat, withSelected = true, withMenu = true, on
 
     return (
         <ContextMenu
-            key={chat.id}
-            items={getContextMenuItems()}
+          key={chat.id}
+          items={getContextMenuItems()}
         >
             <div
-                className={[s.chat, chat.username === selectedChatUsername && withSelected ? s.chatSelected : null].join(' ')}
-                onClick={() => onClickChat(chat.username)}
+              className={[s.chat, chat.identifier === selectedChatIdentifier && withSelected ? s.chatSelected : null].join(' ')}
+              onClick={() => onClickChat(chat.identifier)}
             >
                 <div className={s.chatInner}>
                     <div className={s.avatar}>
@@ -113,10 +113,10 @@ export const Chat: FC<Props> = ({ chat, withSelected = true, withMenu = true, on
                             ? <Avatar imageUrl={chat.imageUrl} width={54} height={54} />
                             : (
                                 <AvatarWithoutImage
-                                    name={chat.name || ''}
-                                    backgroundColor={chat.imageColor}
-                                    width={54}
-                                    height={54}
+                                  name={chat.name || ''}
+                                  backgroundColor={chat.imageColor}
+                                  width={54}
+                                  height={54}
                                 />
                             )
                         }

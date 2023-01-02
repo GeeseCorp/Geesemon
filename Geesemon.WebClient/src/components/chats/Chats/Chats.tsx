@@ -67,8 +67,8 @@ export const Chats: FC = () => {
         },
     ];
 
-    const onClickChat = (chatUsername: string) => {
-        dispatch(navigateActions.navigateToChat({ username: chatUsername }));
+    const onClickChat = (identifier: string) => {
+        dispatch(navigateActions.navigateToChat({ identifier }));
     };
 
     return (
@@ -79,8 +79,8 @@ export const Chats: FC = () => {
                         {isEnabledSearchMode
                             ? (
                                 <HeaderButton
-                                    keyName={'back'}
-                                    onClick={() => setIsEnabledSearchMode(false)}
+                                  keyName={'back'}
+                                  onClick={() => setIsEnabledSearchMode(false)}
                                 >
                                     <img src={backSvg} width={25} className={'secondaryTextSvg'} alt={'backSvg'} />
                                 </HeaderButton>
@@ -92,9 +92,9 @@ export const Chats: FC = () => {
                                     </HeaderButton>
                                     {isMenuVisible &&
                                         <Menu
-                                            items={menuItems}
-                                            top={50}
-                                            setOpen={setIsMenuVisible}
+                                          items={menuItems}
+                                          top={50}
+                                          setOpen={setIsMenuVisible}
                                         />
                                     }
                                 </>
@@ -103,9 +103,9 @@ export const Chats: FC = () => {
                     </AnimatePresence>
                 </div>
                 <Search
-                    value={searchValue}
-                    setValue={setSearchValue}
-                    onFocus={() => setIsEnabledSearchMode(true)}
+                  value={searchValue}
+                  setValue={setSearchValue}
+                  onFocus={() => setIsEnabledSearchMode(true)}
                 />
             </div>
             {isEnabledSearchMode
@@ -120,8 +120,8 @@ export const Chats: FC = () => {
                         }
                         <LeftSidebarSmallPrimaryButton>
                             <div
-                                className={s.smallPrimaryButton}
-                                onClick={isCreateChatMenuVisible
+                              className={s.smallPrimaryButton}
+                              onClick={isCreateChatMenuVisible
                                     ? () => setIsCreateChatMenuVisible(false)
                                     : () => setIsCreateChatMenuVisible(true)
                                 }
@@ -134,10 +134,10 @@ export const Chats: FC = () => {
                                 </SmallPrimaryButton>
                                 {isCreateChatMenuVisible &&
                                     <Menu
-                                        items={createChatMenuItems}
-                                        top={-90}
-                                        right={0}
-                                        setOpen={setIsCreateChatMenuVisible}
+                                      items={createChatMenuItems}
+                                      top={-90}
+                                      right={0}
+                                      setOpen={setIsCreateChatMenuVisible}
                                     />
                                 }
                             </div>

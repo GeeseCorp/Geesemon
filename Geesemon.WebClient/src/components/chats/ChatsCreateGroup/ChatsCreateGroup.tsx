@@ -140,7 +140,7 @@ export const ChatsCreateGroup: FC = () => {
                               errors={formik.errors.name}
                             />
                             <Input
-                              placeholder="Username"
+                              placeholder="Identifier"
                               name={nameof<FormValues>('identifier')}
                               value={formik.values.identifier}
                               onChange={formik.handleChange}

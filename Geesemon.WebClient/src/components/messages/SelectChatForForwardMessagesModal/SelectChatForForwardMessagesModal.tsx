@@ -36,8 +36,8 @@ export const SelectChatForForwardMessagesModal = () => {
         dispatch(chatActions.setForwardMessages([]));
     };
 
-    const onClickChat = (chatUsername: string) => {
-        dispatch(navigateActions.navigateToChat({ username: chatUsername }));
+    const onClickChat = (identifier: string) => {
+        dispatch(navigateActions.navigateToChat({ identifier }));
         dispatch(chatActions.setMode(Mode.Forward));
     };
 
