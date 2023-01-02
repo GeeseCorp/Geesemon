@@ -71,7 +71,10 @@ export const UpdateProfile: FC<Props> = ({ }) => {
             <form onSubmit={formik.handleSubmit} className={s.form}>
                 <InputPhoto
                   image={image ? URL.createObjectURL(image) : imageUrl} 
-                  onChange={e => e.target.files && setImage(e.target.files[0])}
+                  onChange={files => {
+                    setImage(files?.length ? files[0] : null);
+                    setImageUrl('');
+                  }}
                 />
                 <Input
                   placeholder="Firstname"

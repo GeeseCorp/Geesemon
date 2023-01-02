@@ -43,7 +43,7 @@
     margin-bottom: 5px;
 }
 
-.extraBlockWrapper .close {
+.close {
     width: 30px;
     height: 30px;
     cursor: pointer;
@@ -54,7 +54,7 @@
     transition: 0.5s all ease;
 }
 
-.extraBlockWrapper .close:hover {
+.close:hover {
     background-color: #2C2C2C;
 }
 
@@ -70,27 +70,76 @@
     width: calc(100% - 60px);
 }
 
-.extraBlockWrapper .icon {
-    width: 35px;
-    border-right: 2px solid $primary-color;
-    padding-right: 10px;
+.extraBlockWrapper {
+    .icon {
+        width: 35px;
+        border-right: 2px solid $primary-color;
+        padding-right: 10px;
+    }
+
+    * {
+        font-size: 12px;
+    }
+
+    .action {
+        color: $primary-color;
+    }
+
+    .text {
+        color: $secondary-text-color;
+        margin-top: -3px;
+        margin-bottom: -1px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .media{
+        width: 30px;
+        height: 30px;
+        object-fit: cover;
+        border-radius: 2px;
+    }
 }
 
-.extraBlockWrapper * {
-    font-size: 12px;
-}
+.files {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 5px;
 
-.extraBlockWrapper .action {
-    color: $primary-color;
-}
+    .file {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 5px;
 
-.extraBlockWrapper .text {
-    color: $secondary-text-color;
-    margin-top: -3px;
-    margin-bottom: -1px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+        .icon {
+            width: 35px;
+            border-right: 2px solid $primary-color;
+            padding-right: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .info {
+            min-width: 0;
+            flex: 1;
+            display: flex;
+            align-items: center;
+
+            .infoInner {
+                min-width: 0;
+                flex: 1;
+            }
+
+            .name {}
+
+            .size {
+                color: $secondary-text-color;
+                font-size: 0.9rem;
+            }
+        }
+    }
 }
 
 .innerInputText {
@@ -100,8 +149,8 @@
 }
 
 .inputText {
+    flex: 1;
     background-color: $surface-color;
-    width: 100%;
     height: 28px;
     resize: none;
     border: none;
@@ -111,6 +160,10 @@
 .buttonSend {
     position: absolute;
     right: -55px;
+}
+
+.forwardSvg {
+    transform: scaleX(-1);
 }
 
 @media (max-width: 1200px) {

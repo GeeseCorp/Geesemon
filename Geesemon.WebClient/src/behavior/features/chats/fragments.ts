@@ -18,6 +18,7 @@ export const MESSAGE_WITHOUT_REPLY_MESSAGE_FRAGMENT = gql`
             ...UserFragment
         }
         readByCount
+        fileUrl
         createdAt
         updatedAt
     }
@@ -31,6 +32,15 @@ export const MESSAGE_FRAGMENT = gql`
         replyMessageId
         replyMessage {
             ...MessageWithoutReplyMessageFragment
+        }
+        forwardedMessage{
+            text
+            type
+            fromId
+            from{
+                ...UserFragment
+            }
+            fileUrl
         }
     }
 `;

@@ -58,3 +58,19 @@ export const processString = (options: ProcessStringOption[]) => {
         return input;
     };
 };
+
+export const getFileName = (str: string): string => {
+    const parts = str.split('/');
+    if(!parts.length)
+        return '';
+    const lastPart = parts[parts.length - 1];
+    return lastPart.substring(37);
+};
+
+export const getFileExtension = (str: string): string => {
+    const parts = str.split('.');
+    if(!parts.length)
+        return '';
+    const lastPart = parts[parts.length - 1];
+    return lastPart.substring(1);
+};

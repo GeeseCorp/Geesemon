@@ -31,18 +31,29 @@
     align-self: start;
     background-color: $surface-color;
     border-radius: 7px 7px 7px 0;
-    padding: 6px 10px;
     max-width: 70%;
     min-width: 0;
     overflow-wrap: break-word;
     line-height: 1.3125;
+}
 
+.messagePadding {
+    padding: 6px 10px;
+}
 
+.file {
+    display: flex;
+    gap: 10px;
+    align-items: center;
 }
 
 .message {
     a {
         color: $primary-color;
+    }
+
+    &:not(.messageSystem) .messageText {
+        margin-right: 7px;
     }
 
     &.messageMy .messageText a,
@@ -91,10 +102,6 @@
     white-space: nowrap;
 }
 
-.messageText {
-    margin-right: 7px;
-}
-
 .messageInfo {
     float: right;
     transform: translateY(4px);
@@ -102,4 +109,33 @@
 
 .messageInfo>*:not(:last-child) {
     margin-right: 5px;
+}
+
+.mediaWrapper {
+    position: relative;
+    max-width: 100%;
+    max-height: 500px;
+
+    .media {
+        max-width: 100%;
+        max-height: 500px;
+        border-radius: 5px;
+    }
+
+    .fileMessageInfo {
+        position: absolute;
+        right: 3px;
+        bottom: 3px;
+        background-color: $message-time-background;
+        padding: 0 5px 0 5px;
+        border-radius: 5px;
+    }
+
+    .fileMessageInfo>*:not(:last-child) {
+        margin-right: 5px;
+    }
+}
+
+.forwardSvg {
+    transform: scaleX(-1);
 }

@@ -6,7 +6,7 @@ namespace Geesemon.Model.Models;
 public class Message : Entity
 {
     public string? Text { get; set; }
-    public MessageKind Type { get; set; }
+    public MessageKind Type { get; set; } = MessageKind.Regular;
     public bool IsEdited { get; set; } = false;
 
     [NotMapped]
@@ -22,5 +22,9 @@ public class Message : Entity
     public Message? ReplyMessage { get; set; }
     public IEnumerable<Message>? RepliedMessages { get; set; }
 
+    public string? FileUrl { get; set; }
+
     public List<ReadMessage>? ReadBy { get; set; }
+
+    public ForwardedMessage? ForwardedMessage { get; set; }
 }

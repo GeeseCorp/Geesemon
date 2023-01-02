@@ -21,9 +21,12 @@ import { Checks } from '../../messages/Checks/Checks';
 
 type Props = {
     chat: ChatType;
+    withSelected?: boolean;
+    withMenu?: boolean;
+    onClickChat: (chatUsername: string) => void;
 };
 
-export const Chat: FC<Props> = ({ chat }) => {
+export const Chat: FC<Props> = ({ chat, withSelected = true, withMenu = true, onClickChat }) => {
     const selectedChatIdentifier = useSelectedChatIdentifier();
     const dispatch = useAppDispatch();
     const authedUser = useAppSelector(s => s.auth.authedUser);
@@ -50,35 +53,38 @@ export const Chat: FC<Props> = ({ chat }) => {
 
     useEffect(() => {
         if (chatMembers.data?.chatMembers) {
-            switch(chatMembers.data.chatMembers.type){
+            switch (chatMembers.data.chatMembers.type) {
                 case ChatMembersKind.Add:
                     dispatch(chatActions.chatAddMembers({ chatId: chat.id, members: [chatMembers.data.chatMembers.user] }));
-                break;
+                    break;
                 case ChatMembersKind.Delete:
                     dispatch(chatActions.chatRemoveMembers({ chatId: chat.id, members: [chatMembers.data.chatMembers.user] }));
-                break;
+                    break;
             }
         }
     }, [chatMembers.data?.chatMembers]);
 
     const getContextMenuItems = (): MenuItem[] => {
+        if (!withMenu)
+            return [];
+
         const items: MenuItem[] = [];
 
         items.push({
             content: 'Pin',
             icon: <img src={pinSvg} width={20} className={'primaryTextSvg'} alt={'pinSvg'} />,
-            onClick: () => {},
+            onClick: () => { },
             type: 'default',
         });
 
         items.push({
             content: 'Unmute',
             icon: <img src={notificationOutlinedSvg} width={20} className={'primaryTextSvg'} alt={'notificationOutlinedSvg'} />,
-            onClick: () => {},
+            onClick: () => { },
             type: 'default',
         });
 
-        if(chat.creatorId === authedUser?.id || chat.type === ChatKind.Personal)
+        if (chat.creatorId === authedUser?.id || chat.type === ChatKind.Personal)
             items.push({
                 content: 'Delete chat',
                 icon: <img src={deleteSvg} width={20} className={'dangerSvg'} alt={'deleteSvg'} />,
@@ -90,58 +96,56 @@ export const Chat: FC<Props> = ({ chat }) => {
                 type: 'danger',
             });
         return items;
-    }; 
+    };
 
     return (
         <ContextMenu
-          key={chat.id}
-          items={getContextMenuItems()}
+            key={chat.id}
+            items={getContextMenuItems()}
         >
-            <div className={[s.chat, chat.identifier === selectedChatIdentifier ? s.chatSelected : null].join(' ')}>
-                <Link
-                  to={`/${chat.identifier}`}
-                  className={s.chatLink}
-                >
-                    <div className={s.chatInner}>
-                        <div className={s.avatar}>
-                            {chat.imageUrl
-                                ? <Avatar imageUrl={chat.imageUrl} width={54} height={54} />
-                                : (
-                                    <AvatarWithoutImage
-                                      name={chat.name || ''}
-                                      backgroundColor={chat.imageColor}
-                                      width={54}
-                                      height={54}
-                                    />
-                                )
-                            }
-                            {isOnline && <OnlineIndicator right={1} bottom={1} />}
-                        </div>
-                        <div className={s.chatInfo}>
-                            <div className={s.chatTitle}>
-                                <div className={['bold', s.name].join(' ')}>{chat.name}</div>
-                                <div className={s.timeAndChecks}>
-                                    {lastMessage?.fromId === authedUser?.id && <Checks double={!!lastMessage?.readBy?.length} />}
-                                    <span className={'small light'}>{lastMessage && getTimeWithoutSeconds(new Date(lastMessage.createdAt))}</span>
-                                </div>
-                            </div>
-                            <div className={s.chatSubtitle}>
-                                <div className={s.chatLastMessage}>
-                                    {chat.type === ChatKind.Group
-                                        && lastMessage?.fromId
-                                        && lastMessage?.fromId !== authedUser?.id 
-                                        && <span>{lastMessage?.from?.firstName}: </span>
-                                    }
-                                    <span className="secondary">{lastMessage?.text}</span>
-                                </div>
-                                {!!chat.notReadMessagesCount && 
-                                    <div className={s.notReadMessagesCount}>{chat.notReadMessagesCount}</div>
-                                }
-                            </div>
-                        </div>
-
+            <div
+                className={[s.chat, chat.username === selectedChatUsername && withSelected ? s.chatSelected : null].join(' ')}
+                onClick={() => onClickChat(chat.username)}
+            >
+                <div className={s.chatInner}>
+                    <div className={s.avatar}>
+                        {chat.imageUrl
+                            ? <Avatar imageUrl={chat.imageUrl} width={54} height={54} />
+                            : (
+                                <AvatarWithoutImage
+                                    name={chat.name || ''}
+                                    backgroundColor={chat.imageColor}
+                                    width={54}
+                                    height={54}
+                                />
+                            )
+                        }
+                        {isOnline && <OnlineIndicator right={1} bottom={1} />}
                     </div>
-                </Link>
+                    <div className={s.chatInfo}>
+                        <div className={s.chatTitle}>
+                            <div className={['bold', s.name].join(' ')}>{chat.name}</div>
+                            <div className={s.timeAndChecks}>
+                                {lastMessage?.fromId === authedUser?.id && <Checks double={!!lastMessage?.readBy?.length} />}
+                                <span className={'small light'}>{lastMessage && getTimeWithoutSeconds(new Date(lastMessage.createdAt))}</span>
+                            </div>
+                        </div>
+                        <div className={s.chatSubtitle}>
+                            <div className={s.chatLastMessage}>
+                                {chat.type === ChatKind.Group
+                                    && lastMessage?.fromId
+                                    && lastMessage?.fromId !== authedUser?.id
+                                    && <span>{lastMessage?.from?.firstName}: </span>
+                                }
+                                <span className="secondary">{lastMessage?.text}</span>
+                            </div>
+                            {!!chat.notReadMessagesCount &&
+                                <div className={s.notReadMessagesCount}>{chat.notReadMessagesCount}</div>
+                            }
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </ContextMenu>
     );

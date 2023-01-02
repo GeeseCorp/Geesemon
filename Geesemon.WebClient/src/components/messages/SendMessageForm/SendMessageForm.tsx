@@ -8,12 +8,16 @@ import pencilOutlinedSvg from '../../../assets/svg/pencilOutlined.svg';
 import sendSvg from '../../../assets/svg/send.svg';
 import smileSvg from '../../../assets/svg/smile.svg';
 import replySvg from '../../../assets/svg/reply.svg';
+import fileSvg from '../../../assets/svg/file.svg';
 import { chatActions } from '../../../behavior/features/chats';
 import { Mode } from '../../../behavior/features/chats/slice';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
 import { useSelectedChat } from '../../../hooks/useSelectedChat';
 import { SmallPrimaryButton } from '../../common/SmallPrimaryButton/SmallPrimaryButton';
 import s from './SendMessageForm.module.scss';
+import { InputFile } from '../../common/formControls/InputFile/InputFile';
+import { FileType, getFileType } from '../../../utils/fileUtils';
+import { getFileName } from '../../../utils/stringUtils';
 
 const INPUT_TEXT_DEFAULT_HEIGHT = '25px';
 
@@ -32,6 +36,8 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
     const messages = selectedChat?.messages || [];
     const inUpdateMessage = messages.find(m => m.id === inUpdateMessageId);
     const replyMessage = messages.find(m => m.id === replyMessageId);
+    const [files, setFiles] = useState<File[]>([]);
+    const forwardMessages = useAppSelector(s => s.chats.forwardMessages);
 
     useEffect(() => {
         if (inUpdateMessageId && inUpdateMessage) {
@@ -47,7 +53,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                 inputTextRef.current.style.height = INPUT_TEXT_DEFAULT_HEIGHT;
                 return;
             }
-            if (inputTextRef.current.scrollHeight > 400 || inputTextRef.current.scrollHeight < 25)
+            if (inputTextRef.current.scrollHeight > 300 || inputTextRef.current.scrollHeight < 25)
                 return;
 
             inputTextRef.current.style.height = (inputTextRef.current.scrollHeight) + 'px';
@@ -77,33 +83,41 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                 dispatch(chatActions.setReplyMessageId(null));
                 dispatch(chatActions.setMode(Mode.Text));
                 break;
+            case Mode.Forward:
+                dispatch(chatActions.setForwardMessages([]));
+                dispatch(chatActions.setMode(Mode.Text));
+                break;
         }
 
     };
 
     const sendMessageHandler = () => {
-        if (!messageText)
+        if (!messageText && !files.length && !forwardMessages.length)
             return;
 
-        if(selectedChat){
-            setMessageText('');
-            dispatch(chatActions.messageSendAsync({
-                chatId: selectedChat.id,
-                sentMessageInput: {
-                    identifier: selectedChat.identifier,
-                    text: messageText,
-                    replyMessageId,
-                },
-            }));
-            
-            if (inputTextRef.current)
-                inputTextRef.current.style.height = INPUT_TEXT_DEFAULT_HEIGHT;
+        if (!selectedChat)
+            return;
 
-            scrollToBottom();
+        setMessageText('');
+        setFiles([]);
+        dispatch(chatActions.messageSendAsync({
+            chatId: selectedChat.id,
+            sentMessageInput: {
+                chatUsername: selectedChat.username,
+                text: messageText,
+                replyMessageId,
+                files,
+                forwardedMessageIds: forwardMessages.map(m => m.id),
+            },
+        }));
 
-            if(mode === Mode.Reply)
-                closeExtraBlockHandler();
-        }
+        if (inputTextRef.current)
+            inputTextRef.current.style.height = INPUT_TEXT_DEFAULT_HEIGHT;
+
+        scrollToBottom();
+
+        if (mode === Mode.Reply || mode === Mode.Forward)
+            closeExtraBlockHandler();
     };
 
     const updateMessageHandler = () => {
@@ -120,6 +134,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
         switch (mode) {
             case Mode.Text:
             case Mode.Reply:
+            case Mode.Forward:
                 sendMessageHandler();
                 break;
             case Mode.Updating:
@@ -129,69 +144,93 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
     };
 
     const renderExtraBlock = () => {
-        switch(mode){
-            case Mode.Updating:
-                return(
-                    <>
-                        <div className={s.icon}>
-                            <img src={pencilOutlinedSvg} width={20} className={'primarySvg'} alt={'pencilOutlinedSvg'} />
-                        </div>
-                        <div className={s.actionAndText}>
-                            <div className={s.action}>Updating</div>
-                            <div className={s.text}>{inUpdateMessage?.text}</div>
-                        </div>
-                    </>
-                );
-            case Mode.Reply:
-                return(
-                    <>
-                        <div className={s.icon}>
-                            <img src={replySvg} width={25} className={'primarySvg'} alt={'replySvg'} />
-                        </div>
-                        <div className={s.actionAndText}>
-                            <div className={s.action}>{replyMessage?.from?.fullName}</div>
-                            <div className={s.text}>{replyMessage?.text}</div>
-                        </div>
-                    </>
-                );
+        const renderExtraBlockRelatedMessage = (svg: string, iconClassName?: string | null, action?: string | null, messageText?: string | null, fileUrl?: string | null, fileType?: FileType | null) => {
+            let file: JSX.Element | null = null;
+            switch (fileType) {
+                case FileType.Image:
+                    file = <img src={fileUrl || ''} className={s.media} />;
+                    break;
+                case FileType.Video:
+                    file = <video src={fileUrl || ''} className={s.media} />;
+                    break;
+            }
+            switch (fileType) {
+                default:
+                    return (
+                        <>
+                            <div className={s.icon}>
+                                <img src={svg} width={20} className={['primarySvg', iconClassName].join(' ')} alt={'pencilOutlinedSvg'} />
+                            </div>
+                            {file}
+                            <div className={s.actionAndText}>
+                                <div className={s.action}>{action}</div>
+                                <div className={s.text}>{messageText}</div>
+                            </div>
+                        </>
+                    );
+            }
+        };
+
+        switch (mode) {
+            case Mode.Updating: {
+                const fileType = inUpdateMessage?.fileUrl ? getFileType(inUpdateMessage.fileUrl) : null;
+                return renderExtraBlockRelatedMessage(pencilOutlinedSvg, null, 'Updating', inUpdateMessage?.text || getFileName(inUpdateMessage?.fileUrl || ''), inUpdateMessage?.fileUrl, fileType);
+            }
+            case Mode.Reply: {
+                const fileType = replyMessage?.fileUrl ? getFileType(replyMessage.fileUrl) : null;
+                return renderExtraBlockRelatedMessage(replySvg, null, replyMessage?.from?.fullName, replyMessage?.text || getFileName(replyMessage?.fileUrl || ''), replyMessage?.fileUrl, fileType);
+            }
+            case Mode.Forward: {
+                switch (forwardMessages.length) {
+                    case 0:
+                        return null;
+                    case 1:
+                        const forwardMessage = forwardMessages[0];
+                        return renderExtraBlockRelatedMessage(replySvg, s.forwardSvg, forwardMessage?.from?.fullName, forwardMessage?.text || getFileName(forwardMessage?.fileUrl || ''), forwardMessage?.fileUrl, null);
+                    default:
+                        const action = forwardMessages[0]?.from?.fullName + ' and others';
+                        return renderExtraBlockRelatedMessage(replySvg, s.forwardSvg, action, `${forwardMessages.length} forwarded messages`, null, null);
+                }
+            }
         }
     };
 
     const renderPrimaryButtonIcon = () => {
-        switch(mode) {
+        switch (mode) {
             case Mode.Text:
             case Mode.Reply:
-                return(
-                    messageText
+            case Mode.Forward:
+                return (
+                    messageText || files.length || forwardMessages.length
                         ? (
                             <motion.img
-                              key={'send'}
-                              initial={{ scale: 0, opacity: 0 }}
-                              animate={{ scale: 1, opacity: 1 }}
-                              src={sendSvg}
-                              className={'primaryTextSvg'}
+                                key={'send'}
+                                initial={{ scale: 0, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                src={sendSvg}
+                                className={'primaryTextSvg'}
                             />
                         )
                         : (
                             <motion.img
-                              key={'microphone'}
-                              initial={{ scale: 0, opacity: 0 }}
-                              animate={{ scale: 1, opacity: 1 }}
-                              src={microphoneSvg}
-                              width={25}
-                              className={'primaryTextSvg'}
+                                key={'microphone'}
+                                initial={{ scale: 0, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                src={microphoneSvg}
+                                width={25}
+                                className={'primaryTextSvg'}
                             />
                         )
                 );
             case Mode.Updating:
                 return (
                     <motion.img
-                      key={'update'}
-                      initial={{ scale: 0, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      src={checkSvg}
-                      width={25}
-                      className={'primaryTextSvg'}
+                        key={'update'}
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        src={checkSvg}
+                        width={25}
+                        className={'primaryTextSvg'}
                     />
                 );
         }
@@ -201,7 +240,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
         <div className={s.wrapper}>
             <div className={s.inner}>
                 <div className={s.wrapperInputText}>
-                    {mode !== Mode.Text &&
+                    {mode !== Mode.Text && mode !== Mode.ForwardSelectChat &&
                         <div className={s.extraBlockWrapper}>
                             <div className={s.extraBlockInner}>
                                 {renderExtraBlock()}
@@ -211,22 +250,44 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                             </div>
                         </div>
                     }
+                    {files.length > 0 && (
+                        <div className={s.files}>
+                            {files.map(file => (
+                                <div className={s.file}>
+                                    <div className={s.icon}>
+                                        <img src={fileSvg} width={20} className={'primarySvg'} alt={'pencilOutlinedSvg'} />
+                                    </div>
+                                    <div className={s.info}>
+                                        <div className={s.infoInner}>
+                                            <div className={s.name}>{file.name}</div>
+                                            <div className={s.size}>{file.size} B</div>
+                                        </div>
+                                        <div onClick={() => setFiles(files.filter(f => f !== file))} className={s.close}>
+                                            <img src={crossFilledSvg} width={15} className={'secondaryTextSvg'} alt={'crossFilledSvg'} />
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                     <div className={s.innerInputText}>
                         <div className={s.inputTextButton}>
                             <img src={smileSvg} width={20} className={'secondaryTextSvg'} alt={'smileSvg'} />
                         </div>
                         <textarea
-                          value={messageText}
-                          placeholder={'Message'}
-                          ref={inputTextRef}
-                          onChange={e => setNewMessageText(e.target.value)}
-                          className={s.inputText}
-                          onKeyUp={onKeyUpInputText}
-                          onKeyDown={onKeyDownInputText}
+                            value={messageText}
+                            placeholder={'Message'}
+                            ref={inputTextRef}
+                            onChange={e => setNewMessageText(e.target.value)}
+                            className={s.inputText}
+                            onKeyUp={onKeyUpInputText}
+                            onKeyDown={onKeyDownInputText}
                         />
-                        <div className={s.inputTextButton}>
-                            <img src={clipSvg} width={20} className={'secondaryTextSvg'} alt={'clipSvg'} />
-                        </div>
+                        <InputFile multiple onChange={newFiles => setFiles(newFiles ? [...files, ...newFiles] : [])}>
+                            <div className={s.inputTextButton}>
+                                <img src={clipSvg} width={20} className={'secondaryTextSvg'} alt={'clipSvg'} />
+                            </div>
+                        </InputFile>
                     </div>
                 </div>
                 <div className={s.buttonSend}>

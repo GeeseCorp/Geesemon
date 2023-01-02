@@ -1,6 +1,7 @@
 ﻿using Geesemon.Model.Common;
 using Geesemon.Model.Models;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace Geesemon.DataAccess
 {
@@ -90,6 +91,11 @@ namespace Geesemon.DataAccess
                 .WithOne(m => m.ReplyMessage)
                 .HasForeignKey(x => x.ReplyMessageId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
+
+            modelBuilder.Entity<Message>()
+                .Property(e => e.ForwardedMessage).HasConversion(
+                    v => JsonConvert.SerializeObject(v, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }),
+                    v => JsonConvert.DeserializeObject<ForwardedMessage>(v, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }));
 
             modelBuilder.Entity<Chat>()
                 .HasOne(c => c.Creator)

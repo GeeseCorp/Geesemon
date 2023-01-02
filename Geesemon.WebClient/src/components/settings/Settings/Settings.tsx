@@ -11,6 +11,7 @@ import { appActions, LeftSidebarState, SettingsCategory } from '../../../behavio
 import { ProfileButton } from '../../common/ProfileButton/ProfileButton';
 import { SettingsDevices } from '../categories/SettingsDevices/SettingsDevices';
 import { UpdateProfile } from '../categories/UpdateProfile/UpdateProfile';
+import { AvatarWithoutImage } from '../../common/AvatarWithoutImage/AvatarWithoutImage';
 
 export const Settings: FC = () => {
     const dispatch = useAppDispatch();
@@ -47,10 +48,25 @@ export const Settings: FC = () => {
                     </div>
                 </div>
                 <div>
-                    <div className={s.wrapperImage}>
-                        <img className={s.image} src={authedUser?.imageUrl} alt={'imageUrl'} />
-                        <div className={s.name}>{authedUser?.fullName}</div>
-                    </div>
+                    {authedUser?.imageUrl
+                        ? (
+                            <div className={s.wrapperImage}>
+                                <img className={s.image} src={authedUser?.imageUrl} alt={'imageUrl'} />
+                                <div className={s.name}>{authedUser?.fullName}</div>
+                            </div>
+                        )
+                        : (
+                            <div className={s.imageAndName}>
+                                <AvatarWithoutImage
+                                  name={authedUser?.fullName || ''}
+                                  backgroundColor={authedUser?.avatarColor}
+                                  width={100}
+                                  height={100}
+                                />
+                                <div className={s.avatarWithoutImageName}>{authedUser?.fullName}</div>
+                            </div>
+                        )
+                    }
                     <div className={s.profileButtons}>
                         <ProfileButton 
                           icon={<img src={atSignSvg} width={25} className={'secondaryTextSvg'} alt={'atSignSvg'} />}
