@@ -19,7 +19,7 @@ type Props = {};
 type FormValues = {
     firstname: string;
     lastname?: string;
-    username: string;
+    identifier: string;
 };
 
 const schema: Yup.SchemaOf<FormValues> = Yup.object({
@@ -28,7 +28,7 @@ const schema: Yup.SchemaOf<FormValues> = Yup.object({
         .required('Required'),
     lastname: Yup.string()
         .max(100, 'Must be 100 characters or less'),
-    username: Yup.string()
+    identifier: Yup.string()
         .max(100, 'Must be 100 characters or less')
         .required('Required'),
 });
@@ -41,14 +41,14 @@ export const UpdateProfile: FC<Props> = ({ }) => {
         initialValues: {
             firstname: authedUser?.firstName || '',
             lastname: authedUser?.lastName || '',
-            username: authedUser?.username || '',
+            identifier: authedUser?.identifier || '',
         },
         validationSchema: schema,
-        onSubmit: ({ firstname, lastname, username }) => {
+        onSubmit: ({ firstname, lastname, identifier }) => {
             dispatch(authActions.updateProfileAsync({
                 firstname,
                 lastname,
-                username,
+                identifier,
                 image,
                 imageUrl,
             }));
@@ -95,13 +95,13 @@ export const UpdateProfile: FC<Props> = ({ }) => {
                   errors={formik.errors.lastname}
                 />
                 <Input
-                  placeholder="Username"
-                  name={nameof<FormValues>('username')}
-                  value={formik.values.username}
+                  placeholder="Identifier"
+                  name={nameof<FormValues>('identifier')}
+                  value={formik.values.identifier}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  touched={formik.touched.username}
-                  errors={formik.errors.username}
+                  touched={formik.touched.identifier}
+                  errors={formik.errors.identifier}
                 />
                 <div className={s.bottonSubmit}>
                     <SmallPrimaryButton type="submit">

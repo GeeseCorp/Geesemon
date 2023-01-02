@@ -7,7 +7,7 @@ namespace Geesemon.Model.Models;
 public class Chat : Entity
 {
     public string? Name { get; set; }
-    public string? Username { get; set; }
+    public string? Identifier { get; set; }
 
     public ChatKind Type { get; set; }
 

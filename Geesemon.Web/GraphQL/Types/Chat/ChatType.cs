@@ -15,8 +15,8 @@ namespace Geesemon.Web.GraphQL.Types
                  .Resolve(context => context.Source.Name);
             
             Field<StringGraphType, string?>()
-                 .Name("Username")
-                 .Resolve(context => context.Source.Username);
+                 .Name("Identifier")
+                 .Resolve(context => context.Source.Identifier);
 
             Field<NonNullGraphType<ChatKindType>, ChatKind>()
                 .Name("Type")

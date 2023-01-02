@@ -1,8 +1,7 @@
 ﻿using FluentValidation;
 using Geesemon.DataAccess.Managers;
-using Geesemon.Model.Models;
 using GraphQL.Types;
-using Microsoft.AspNetCore.Http;
+using GraphQL.Upload.AspNetCore;
 
 namespace Geesemon.Web.GraphQL.Types;
 
@@ -19,8 +18,12 @@ public class UpdateChatInputType : InputObjectGraphType<UpdateChatInput>
             .Resolve(context => context.Source.Name);
         
         Field<NonNullGraphType<StringGraphType>, string>()
-            .Name("Username")
-            .Resolve(context => context.Source.Username);
+            .Name("Identifier")
+            .Resolve(context => context.Source.Identifier );
+
+        Field<UploadGraphType, IFormFile>()
+            .Name("Image")
+            .Resolve(context => context.Source.Image);
     }
 }
 
@@ -28,7 +31,9 @@ public class UpdateChatInput
 {
     public Guid Id { get; set; }
     public string Name { get; set; }
-    public string Username { get; set; }
+    public string Identifier  { get; set; }
+
+    public IFormFile Image { get; set; }
 }
 
 public class UpdateChatInputValidation : AbstractValidator<UpdateChatInput>
@@ -48,15 +53,15 @@ public class UpdateChatInputValidation : AbstractValidator<UpdateChatInput>
             .NotNull()
             .MaximumLength(100);
 
-        RuleFor(r => r.Username)
+        RuleFor(r => r.Identifier )
             .NotEmpty()
             .NotNull()
             .MaximumLength(100)
-            .MustAsync(async (chat, username, cancellation) =>
+            .MustAsync(async (chat, identifier, cancellation) =>
             {
                 var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
-                var checkChat = await chatManager.GetByUsernameAsync(username, currentUserId);
+                var checkChat = await chatManager.GetByIdentifierAsync(identifier, currentUserId);
                 return checkChat == null || checkChat.Id == chat.Id;
-            }).WithMessage("Username already taken");
+            }).WithMessage("Identifier already taken");
     }
 }

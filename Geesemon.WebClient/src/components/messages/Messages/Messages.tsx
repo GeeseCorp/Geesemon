@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { chatActions } from '../../../behavior/features/chats';
 import { ChatKind, Message as MessageType } from '../../../behavior/features/chats/types';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
-import { useSelectedChat, useSelectedChatUsername } from '../../../hooks/useSelectedChat';
+import { useSelectedChat, useSelectedChatIdentifier } from '../../../hooks/useSelectedChat';
 import { isGuidEmpty } from '../../../utils/stringUtils';
 import { Avatar } from '../../common/Avatar/Avatar';
 import { AvatarWithoutImage } from '../../common/AvatarWithoutImage/AvatarWithoutImage';
@@ -13,7 +13,7 @@ import { SendMessageForm } from '../SendMessageForm/SendMessageForm';
 import s from './Messages.module.scss';
 
 export const Messages: FC = () => {
-    const selectedChatUsername = useSelectedChatUsername();
+    const selectedChatIdentifier = useSelectedChatIdentifier();
     const messageGetLoading = useAppSelector(s => s.chats.messageGetLoading);
     const messagesGetHasNext = useAppSelector(s => s.chats.messagesGetHasNext);
     const selectedChat = useSelectedChat();
@@ -66,7 +66,7 @@ export const Messages: FC = () => {
 
     useEffect(() => {
         bottomOfMessagesRef.current?.scrollIntoView();
-    }, [selectedChatUsername]);
+    }, [selectedChatIdentifier]);
 
     useEffect(() => {
         dispatch(chatActions.setSelectedMessageIds([]));
@@ -114,46 +114,46 @@ export const Messages: FC = () => {
                         {/* {Array.from({ length: 100 }).map((_, i) => (
                             <div key={i}>{i}</div>
                         ))} */}
-                        {messageBlocks.map(block => {
-                            const blockFirstElement = block[0];
-                            return (
-                                <div key={blockFirstElement.id} className={s.messagesBlock}>
-                                    {blockFirstElement.fromId && blockFirstElement.fromId !== authedUser?.id && selectedChat?.type === ChatKind.Group && (
-                                        <Link to={`/${blockFirstElement.from?.username}`}>
-                                            {blockFirstElement?.from?.imageUrl
-                                                ? (
-                                                    <Avatar
-                                                        width={42}
-                                                        height={42}
-                                                        imageUrl={blockFirstElement?.from?.imageUrl}
-                                                    />
-                                                )
-                                                : (
-                                                    <AvatarWithoutImage
-                                                        name={blockFirstElement?.from?.firstName + ' ' + blockFirstElement.from?.lastName}
-                                                        backgroundColor={blockFirstElement.from?.avatarColor}
-                                                        width={42}
-                                                        height={42}
-                                                    />
-                                                )}
-                                        </Link>
+                {messageBlocks.map(block => {
+                    const blockFirstElement = block[0];
+                    return (
+                        <div key={blockFirstElement.id} className={s.messagesBlock}>
+                            {blockFirstElement.fromId && blockFirstElement.fromId !== authedUser?.id && selectedChat?.type === ChatKind.Group && (
+                                <Link to={`/${blockFirstElement.from?.identifier}`}>
+                                    {blockFirstElement?.from?.imageUrl
+                                    ? (
+                                        <Avatar
+                                          width={42}
+                                          height={42}
+                                          imageUrl={blockFirstElement?.from?.imageUrl}
+                                        />
+                                    )
+                                    : (
+                                        <AvatarWithoutImage
+                                          name={blockFirstElement?.from?.firstName + ' ' + blockFirstElement.from?.lastName}
+                                          backgroundColor={blockFirstElement.from?.avatarColor}
+                                          width={42}
+                                          height={42}
+                                        />
                                     )}
-                                    <div className={s.innerMessagesBlock}>
-                                        {block.map((message, j) => (
-                                            <Message
-                                                key={message.id}
-                                                isFromVisible={j === block.length - 1 && selectedChat?.type === ChatKind.Group && message.fromId !== authedUser?.id}
-                                                message={message}
-                                                inputTextFocus={inputTextFocus}
-                                            />
-                                        ))}
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </InfiniteScroll>
-                    <div ref={bottomOfMessagesRef} />
-                </div>
+                            </Link>
+                            )}
+                            <div className={s.innerMessagesBlock}>
+                                {block.map((message, j) => (
+                                    <Message 
+                                      key={message.id}
+                                      isFromVisible={j === block.length - 1 && selectedChat?.type === ChatKind.Group && message.fromId !== authedUser?.id}
+                                      message={message} 
+                                      inputTextFocus={inputTextFocus}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    );
+                })}
+                </InfiniteScroll>
+                <div ref={bottomOfMessagesRef} />
+            </div>
             }
             <SendMessageForm scrollToBottom={scrollToBottom} inputTextRef={inputTextRef} />
         </div>

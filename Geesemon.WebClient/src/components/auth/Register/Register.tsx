@@ -1,4 +1,3 @@
-import { FormEvent, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { authActions } from '../../../behavior/features/auth/slice';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
@@ -13,7 +12,7 @@ type FormValues = {
     firstName: string;
     lastName?: string;
     email?: string;
-    username: string;
+    identifier: string;
     password: string;
 };
 
@@ -29,7 +28,7 @@ const schema: Yup.SchemaOf<FormValues> = Yup.object({
         .email('Bad email')
         .max(100, 'Must be 100 characters or less'),
 
-        username: Yup.string()
+        identifier: Yup.string()
         .max(100, 'Must be 100 characters or less')
         .required('Required'),
 
@@ -47,16 +46,16 @@ export const Register = () => {
             firstName: '',
             lastName: undefined,
             email: undefined,
-            username: '',
+            identifier: '',
             password: '',
         },
         validationSchema: schema,
-        onSubmit: ({ firstName, lastName, email, username, password }) => {
+        onSubmit: ({ firstName, lastName, email, identifier, password }) => {
             dispatch(authActions.registerAsync({
                 firstName,
                 lastName: lastName || undefined,
                 email: email || undefined,
-                username,
+                identifier,
                 password,
             }));
         },
@@ -94,13 +93,13 @@ export const Register = () => {
                   errors={formik.errors.email}
                 />
                 <Input
-                  placeholder="Username"
-                  name={nameof<FormValues>('username')}
-                  value={formik.values.username}
+                  placeholder="Identifier"
+                  name={nameof<FormValues>('identifier')}
+                  value={formik.values.identifier}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  touched={formik.touched.username}
-                  errors={formik.errors.username}
+                  touched={formik.touched.identifier}
+                  errors={formik.errors.identifier}
                 />
                 <Input
                   placeholder="Password"

@@ -13,7 +13,7 @@ public class User : Entity
     [NotMapped]
     public string FullName { get => $"{FirstName} {LastName}"; }
 
-    public string Username { get; set; }
+    public string Identifier { get; set; }
 
     public string? Description { get; set; }
 

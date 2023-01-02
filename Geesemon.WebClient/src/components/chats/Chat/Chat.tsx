@@ -8,7 +8,7 @@ import { Chat as ChatType, chatActions } from '../../../behavior/features/chats'
 import { ChatActivityData, ChatActivityVars, ChatMembersData, ChatMembersVars, CHAT_ACTIVITY_SUBSCRIPTIONS, CHAT_MEMBERS_SUBSCRIPTIONS } from '../../../behavior/features/chats/subscriptions';
 import { ChatKind, ChatMembersKind } from '../../../behavior/features/chats/types';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
-import { useSelectedChatUsername } from '../../../hooks/useSelectedChat';
+import { useSelectedChatIdentifier } from '../../../hooks/useSelectedChat';
 import { getTimeWithoutSeconds } from '../../../utils/dateUtils';
 import { getAuthToken } from '../../../utils/localStorageUtils';
 import { Avatar } from '../../common/Avatar/Avatar';
@@ -23,11 +23,11 @@ type Props = {
     chat: ChatType;
     withSelected?: boolean;
     withMenu?: boolean;
-    onClickChat: (chatUsername: string) => void;
+    onClickChat: (chatIdentifier: string) => void;
 };
 
 export const Chat: FC<Props> = ({ chat, withSelected = true, withMenu = true, onClickChat }) => {
-    const selectedChatUsername = useSelectedChatUsername();
+    const selectedChatIdentifier = useSelectedChatIdentifier();
     const dispatch = useAppDispatch();
     const authedUser = useAppSelector(s => s.auth.authedUser);
     const chatActivity = useSubscription<ChatActivityData, ChatActivityVars>(CHAT_ACTIVITY_SUBSCRIPTIONS, {
@@ -90,7 +90,7 @@ export const Chat: FC<Props> = ({ chat, withSelected = true, withMenu = true, on
                 icon: <img src={deleteSvg} width={20} className={'dangerSvg'} alt={'deleteSvg'} />,
                 onClick: () => {
                     dispatch(chatActions.chatDeleteAsync(chat.id));
-                    if (selectedChatUsername === chat.username)
+                    if(selectedChatIdentifier === chat.identifier)
                         navigate('/');
                 },
                 type: 'danger',
@@ -100,12 +100,12 @@ export const Chat: FC<Props> = ({ chat, withSelected = true, withMenu = true, on
 
     return (
         <ContextMenu
-            key={chat.id}
-            items={getContextMenuItems()}
+          key={chat.id}
+          items={getContextMenuItems()}
         >
             <div
-                className={[s.chat, chat.username === selectedChatUsername && withSelected ? s.chatSelected : null].join(' ')}
-                onClick={() => onClickChat(chat.username)}
+              className={[s.chat, chat.identifier === selectedChatIdentifier && withSelected ? s.chatSelected : null].join(' ')}
+              onClick={() => onClickChat(chat.identifier)}
             >
                 <div className={s.chatInner}>
                     <div className={s.avatar}>
@@ -113,10 +113,10 @@ export const Chat: FC<Props> = ({ chat, withSelected = true, withMenu = true, on
                             ? <Avatar imageUrl={chat.imageUrl} width={54} height={54} />
                             : (
                                 <AvatarWithoutImage
-                                    name={chat.name || ''}
-                                    backgroundColor={chat.imageColor}
-                                    width={54}
-                                    height={54}
+                                  name={chat.name || ''}
+                                  backgroundColor={chat.imageColor}
+                                  width={54}
+                                  height={54}
                                 />
                             )
                         }

@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace Geesemon.DataAccess.Providers.UserProvider
 {
-    public class UserProvider : ProviderBase<User>, IUserProvider
+    public class UserProvider : ProviderBase<User>
     {
 
         public UserProvider(AppDbContext appDbContext)
@@ -30,11 +30,11 @@ namespace Geesemon.DataAccess.Providers.UserProvider
                 .CountAsync(u => u.ReadMessages.Any(r => r.MessageId == messageId));
         }
 
-        public virtual Task<User?> GetByUsernameAsync(string username, params Expression<Func<User, object>>[] includes)
+        public virtual Task<User?> GetByIdentifierAsync(string identifier, params Expression<Func<User, object>>[] includes)
         {
             return includes.Aggregate(context.Users.AsQueryable(),
                 (current, include) => current.Include(include))
-                    .FirstOrDefaultAsync(e => e.Username == username);
+                    .FirstOrDefaultAsync(e => e.Identifier == identifier);
         }
 
         public virtual Task<User?> GetByEmailAsync(string email, params Expression<Func<User, object>>[] includes)
@@ -54,7 +54,7 @@ namespace Geesemon.DataAccess.Providers.UserProvider
         public Task<List<User>> GetAsync(int take, int skip, string q, Guid? currentUserId = null)
         {
             return context.Users
-                .Where(u => (u.Username.Contains(q) || (u.Email != null && u.Email.Contains(q))) && u.Id != currentUserId)
+                .Where(u => (u.Identifier.Contains(q) || (u.Email != null && u.Email.Contains(q))) && u.Id != currentUserId)
                 .OrderBy(u => u.FirstName)
                 .ThenBy(u => u.LastName)
                 .Skip(skip)

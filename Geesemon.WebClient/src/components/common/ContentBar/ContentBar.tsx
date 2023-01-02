@@ -2,7 +2,7 @@ import { FC, useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { chatActions } from '../../../behavior/features/chats';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
-import { useSelectedChatUsername } from '../../../hooks/useSelectedChat';
+import { useSelectedChatIdentifier } from '../../../hooks/useSelectedChat';
 import { ChatHeader } from '../../chats/ChatHeader/ChatHeader';
 import { Messages } from '../../messages/Messages/Messages';
 import { ViewMessageReadByModal } from '../../messages/ViewMessageReadByModal/ViewMessageReadByModal';
@@ -10,13 +10,13 @@ import { SelectChatForForwardMessagesModal } from '../../messages/SelectChatForF
 import s from './ContentBar.module.scss';
 
 export const ContentBar: FC = () => {
-    const selectedChatUsername = useSelectedChatUsername();
+    const selectedChatIdentifier = useSelectedChatIdentifier();
     const dispatch = useAppDispatch();
     const chats = useAppSelector(c => c.chats.chats);
-    const chat = chats.find(c => c.username === selectedChatUsername);
+    const chat = chats.find(c => c.identifier === selectedChatIdentifier);
     const chatsGetLoading = useAppSelector(c => c.chats.chatsGetLoading);
-    const chatByUsername = useAppSelector(c => c.chats.chatByUsername);
-    const chatGetByUsernameLoading = useAppSelector(c => c.chats.chatGetByUsernameLoading);
+    const chatByIdentifier = useAppSelector(c => c.chats.chatByIdentifier);
+    const chatGetByIdentifierLoading = useAppSelector(c => c.chats.chatGetByIdentifierLoading);
 
     const [items, setItems] = useState(Array.from({ length: 20 }));
     const [hasMore, setHasMore] = useState(true);
@@ -39,16 +39,16 @@ export const ContentBar: FC = () => {
     };
 
     useEffect(() => {
-        if(selectedChatUsername && !chat && !chatsGetLoading && !chatGetByUsernameLoading){
+        if(selectedChatIdentifier && !chat && !chatsGetLoading && !chatGetByIdentifierLoading){
             console.log('req');
-            dispatch(chatActions.chatGetByUsernameAsync(selectedChatUsername));
+            dispatch(chatActions.chatGetByIdentifierAsync(selectedChatIdentifier));
         }
-    }, [selectedChatUsername]);
+    }, [selectedChatIdentifier]);
    
     useEffect(() => {
-        if(chats.find(c => c.username === selectedChatUsername) && chatByUsername){
-            dispatch(chatActions.updateChat(chatByUsername));
-            dispatch(chatActions.setChatByUsername(null));
+        if(chats.find(c => c.identifier === selectedChatIdentifier) && chatByIdentifier){
+            dispatch(chatActions.updateChat(chatByIdentifier));
+            dispatch(chatActions.setChatByIdentifier(null));
         }
     }, [chats]);
  
@@ -56,7 +56,7 @@ export const ContentBar: FC = () => {
         <div className={s.wrapper}>
             <ViewMessageReadByModal />
             <SelectChatForForwardMessagesModal />
-            {selectedChatUsername
+            {selectedChatIdentifier
                 ? (
                     <>
                         <ChatHeader />

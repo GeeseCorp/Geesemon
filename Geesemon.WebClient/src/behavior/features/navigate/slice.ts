@@ -16,8 +16,8 @@ export const navigateSlice = createSlice({
         navigate: (state, action: PayloadAction<To | number>) => {
             state.to = action.payload;
         },
-        navigateToChat: (state, action: PayloadAction<{username: string}>) => {
-            state.to = action.payload.username;
+        navigateToChat: (state, action: PayloadAction<{identifier: string}>) => {
+            state.to = action.payload.identifier;
         },
         removeNavigate: (state, action: PayloadAction) => {
             state.to = null;

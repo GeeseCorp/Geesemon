@@ -70,8 +70,8 @@ export const Settings: FC = () => {
                     <div className={s.profileButtons}>
                         <ProfileButton 
                           icon={<img src={atSignSvg} width={25} className={'secondaryTextSvg'} alt={'atSignSvg'} />}
-                          text={authedUser?.username}
-                          label={'Username'}
+                          text={authedUser?.identifier}
+                          label={'Identifier'}
                         />
                     </div>
                     <div className={'divider'} />

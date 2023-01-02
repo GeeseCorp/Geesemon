@@ -23,8 +23,8 @@ namespace Geesemon.Web.GraphQL.Types
                .Resolve(context => context.Source.FullName);
 
             Field<NonNullGraphType<StringGraphType>, string>()
-               .Name("Username")
-               .Resolve(context => context.Source.Username);
+               .Name("Identifier")
+               .Resolve(context => context.Source.Identifier);
 
             Field<StringGraphType, string?>()
                .Name("Email")

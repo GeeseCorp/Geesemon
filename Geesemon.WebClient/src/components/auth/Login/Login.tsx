@@ -9,12 +9,12 @@ import { Input } from '../../common/formControls/Input/Input';
 import s from './Login.module.scss';
 
 type FormValues = {
-    username: string;
+    identifier: string;
     password: string;
 };
 
 const schema: Yup.SchemaOf<FormValues> = Yup.object({
-    username: Yup.string()
+    identifier: Yup.string()
         .max(100, 'Must be 100 characters or less')
         .required('Required'),
         
@@ -28,13 +28,13 @@ export const Login = () => {
     const loginLoading = useAppSelector(s => s.auth.loginLoading);
     const formik = useFormik<FormValues>({
         initialValues: {
-            username: '',
+            identifier: '',
             password: '',
         },
         validationSchema: schema,
-        onSubmit: ({ username, password }) => {
+        onSubmit: ({ identifier, password }) => {
             dispatch(authActions.loginAsync({
-                username,
+                identifier,
                 password,
             }));
         },
@@ -45,13 +45,13 @@ export const Login = () => {
             <h1 className={s.title}>Login in Geesemon</h1>
             <form onSubmit={formik.handleSubmit}>
                 <Input
-                  placeholder="Username"
-                  name={nameof<FormValues>('username')}
-                  value={formik.values.username}
+                  placeholder="Identifier"
+                  name={nameof<FormValues>('identifier')}
+                  value={formik.values.identifier}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  touched={formik.touched.username}
-                  errors={formik.errors.username}
+                  touched={formik.touched.identifier}
+                  errors={formik.errors.identifier}
                 />
                 <Input
                   placeholder="Password"

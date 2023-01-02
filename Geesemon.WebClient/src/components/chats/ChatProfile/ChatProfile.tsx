@@ -51,7 +51,7 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
 
     const onSelectedUsersChangeHandler = (selectedUsers: UserType[]) => {
         setSelectedUsers(selectedUsers);
-        navigate(`/${selectedUsers[0].username}`);
+        navigate(`/${selectedUsers[0].identifier}`);
         dispatch(appActions.setIsRightSidebarVisible(false));
     };
 
@@ -139,8 +139,8 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
                 <div className={s.chatProfileButtons}>
                     <ProfileButton 
                       icon={<img src={atSignSvg} width={25} className={'secondaryTextSvg'} alt={'atSignSvg'} />}
-                      text={chat.username}
-                      label={'Username'}
+                      text={chat.identifier}
+                      label={'Identifier'}
                     />
                     <ProfileButton 
                       icon={<img src={notificationOutlinedSvg} width={25} className={'secondaryTextSvg'} alt={'notificationOutlinedSvg'} />}

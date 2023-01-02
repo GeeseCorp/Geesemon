@@ -21,10 +21,10 @@ import {
     MESSAGE_UPDATE_MUTATION,
 } from './mutations';
 import {
-    ChatsGetByUsernameData,
-    ChatsGetByUsernameVars,
+    ChatsGetByIdentifierData,
+    ChatsGetByIdentifierVars,
     ChatsGetData,
-    ChatsGetVars, CHATS_GET_BY_USERNAME_QUERY, CHATS_GET_QUERY, MessageGetData,
+    ChatsGetVars, CHATS_GET_BY_IDENTIFIER_QUERY, CHATS_GET_QUERY, MessageGetData,
     MessageGetVars, MESSAGE_GET_QUERY,
 } from './queries';
 import { chatActions } from './slice';
@@ -51,27 +51,27 @@ export const chatsGetAsyncEpic: Epic<ReturnType<typeof chatActions.chatsGetAsync
         ),
     );
 
-export const chatGetByUsernameAsyncEpic: Epic<ReturnType<typeof chatActions.chatGetByUsernameAsync>, any, RootState> = (action$, state$) =>
+export const chatGetByIdentifierAsyncEpic: Epic<ReturnType<typeof chatActions.chatGetByIdentifierAsync>, any, RootState> = (action$, state$) =>
     action$.pipe(
-        ofType(chatActions.chatGetByUsernameAsync.type),
+        ofType(chatActions.chatGetByIdentifierAsync.type),
         mergeMap(action =>
-            from(client.query<ChatsGetByUsernameData, ChatsGetByUsernameVars>({
-                query: CHATS_GET_BY_USERNAME_QUERY,
-                variables: { username: action.payload },
+            from(client.query<ChatsGetByIdentifierData, ChatsGetByIdentifierVars>({
+                query: CHATS_GET_BY_IDENTIFIER_QUERY,
+                variables: { identifier: action.payload },
             })).pipe(
                 mergeMap(response => {
-                    if(!response.data.chat.getByUsername)
+                    if(!response.data.chat.getByIdentifier)
                         return[
                             notificationsActions.addError('Chat not found'),
                             navigateActions.navigate(-1),
                         ];
                     return [
-                        chatActions.setChatByUsername(response.data.chat.getByUsername),
+                        chatActions.setChatByIdentifier(response.data.chat.getByIdentifier),
                     ];
                 }),
                 catchError(error => of(notificationsActions.addError(error.message))),
-                startWith(chatActions.setChatGetByUsernameLoading(true)),
-                endWith(chatActions.setChatGetByUsernameLoading(false)),
+                startWith(chatActions.setChatGetByIdentifierLoading(true)),
+                endWith(chatActions.setChatGetByIdentifierLoading(false)),
             ),
         ),
     );
@@ -87,7 +87,7 @@ export const createGroupChatAsyncEpic: Epic<ReturnType<typeof chatActions.create
                 mergeMap(response => [
                     // chatActions.addChats([response.data?.chat.createGroup as Chat]),
                     appActions.setLeftSidebarState(LeftSidebarState.Chats),
-                    navigateActions.navigate(`./${response.data?.chat.createGroup.username}`),
+                    navigateActions.navigate(`./${response.data?.chat.createGroup.identifier}`),
                 ]),
                 catchError(error => of(notificationsActions.addError(error.message))),
                 startWith(chatActions.setCreateGroupLoading(true)),
@@ -107,7 +107,7 @@ export const createPersonalChatAsyncEpic: Epic<ReturnType<typeof chatActions.cre
                 mergeMap(response => [
                     // chatActions.addChats([response.data?.chat.createGroup as Chat]),
                     appActions.setLeftSidebarState(LeftSidebarState.Chats),
-                    navigateActions.navigate(`./${response.data?.chat.createPersonal.username}`),
+                    navigateActions.navigate(`./${response.data?.chat.createPersonal.identifier}`),
                 ]),
                 catchError(error => of(notificationsActions.addError(error.message))),
                 startWith(chatActions.setCreateGroupLoading(true)),
@@ -137,7 +137,7 @@ export const messageSendAsyncEpic: Epic<ReturnType<typeof chatActions.messageSen
             isGuidEmpty(action.payload.chatId)
                 ? from(client.mutate<ChatCreatePersonalData, ChatCreatePersonalVars>({
                     mutation: CHAT_CREATE_PERSONAL_MUTATION,
-                    variables: { input: { username: action.payload.sentMessageInput.chatUsername } },
+                    variables: { input: { identifier: action.payload.sentMessageInput.identifier } },
                 })).pipe(
                     mergeMap(response => 
                         from(client.mutate<MessageSendData, MessageSendVars>({
@@ -262,7 +262,7 @@ export const chatRemoveMembersAsyncEpic: Epic<ReturnType<typeof chatActions.chat
 export const chatEpics = combineEpics(
     chatsGetAsyncEpic,
     // @ts-ignore
-    chatGetByUsernameAsyncEpic,
+    chatGetByIdentifierAsyncEpic,
     createGroupChatAsyncEpic,
     createPersonalChatAsyncEpic,
     chatDeleteAsyncEpic,

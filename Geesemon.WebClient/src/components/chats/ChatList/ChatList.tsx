@@ -7,7 +7,7 @@ import { Chat } from "../Chat/Chat";
 type Props = {
     withSelected?: boolean;
     withMenu?: boolean;
-    onClickChat: (chatUsername: string) => void;
+    onClickChat: (chatIdentifier: string) => void;
 };
 
 export const ChatList = ({ withSelected = true, withMenu = true, onClickChat }: Props) => {

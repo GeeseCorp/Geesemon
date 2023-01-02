@@ -77,7 +77,7 @@ namespace Geesemon.DataAccess
 
             modelBuilder.Entity<User>(entity =>
             {
-                entity.HasIndex(e => e.Username).IsUnique();
+                entity.HasIndex(e => e.Identifier).IsUnique();
                 entity.HasIndex(e => e.Email).IsUnique();
             });
 

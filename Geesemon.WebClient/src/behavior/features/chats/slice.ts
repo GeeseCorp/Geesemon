@@ -41,8 +41,8 @@ type InitialState = {
     messageIdsMakeReadLoading: string[];
     inViewMessageIdReadBy?: string | null;
 
-    chatByUsername?: Chat | null;
-    chatGetByUsernameLoading: boolean;
+    chatByIdentifier?: Chat | null;
+    chatGetByIdentifierLoading: boolean;
 
     chatAddMembersLoading: boolean;
 };
@@ -66,8 +66,8 @@ const initialState: InitialState = {
     messageIdsMakeReadLoading: [],
     inViewMessageIdReadBy: null,
 
-    chatByUsername: null,
-    chatGetByUsernameLoading: false,
+    chatByIdentifier: null,
+    chatGetByIdentifierLoading: false,
 
     chatAddMembersLoading: false,
 };
@@ -232,13 +232,13 @@ const slice = createSlice({
                 }
                 : c);
         },
-
-        chatGetByUsernameAsync: (state, action: PayloadAction<string>) => state,
-        setChatByUsername: (state, action: PayloadAction<Chat | null | undefined>) => {
-            state.chatByUsername = action.payload;
+    
+        chatGetByIdentifierAsync: (state, action: PayloadAction<string>) => state,
+        setChatByIdentifier: (state, action: PayloadAction<Chat | null | undefined>) => {
+            state.chatByIdentifier = action.payload;
         },
-        setChatGetByUsernameLoading: (state, action: PayloadAction<boolean>) => {
-            state.chatGetByUsernameLoading = action.payload;
+        setChatGetByIdentifierLoading: (state, action: PayloadAction<boolean>) => {
+            state.chatGetByIdentifierLoading = action.payload;
         },
 
         chatAddMembersAsync: (state, action: PayloadAction<ChatsAddMembersInputType>) => state,

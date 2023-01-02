@@ -20,7 +20,7 @@ import s from './ChatsCreateGroup.module.css';
 
 type FormValues = {
     name: string;
-    username: string;
+    identifier: string;
 };
 
 const schema: Yup.SchemaOf<FormValues> = Yup.object({
@@ -28,7 +28,7 @@ const schema: Yup.SchemaOf<FormValues> = Yup.object({
         .max(100, 'Must be 100 characters or less')
         .required('Required'),
 
-    username: Yup.string()
+    identifier: Yup.string()
         .max(100, 'Must be 100 characters or less')
         .required('Required'),
 });
@@ -44,15 +44,15 @@ export const ChatsCreateGroup: FC = () => {
     const formik = useFormik<FormValues>({
         initialValues: {
             name: '',
-            username: '',
+            identifier: '',
         },
         validationSchema: schema,
-        onSubmit: ({ name, username }) => {
+        onSubmit: ({ name, identifier }) => {
             console.log('submit');
 
             dispatch(chatActions.createGroupChatAsync({
                 name,
-                username,
+                identifier,
                 usersId: selectedUsers.map(u => u.id),
                 image,
             }));
@@ -140,13 +140,13 @@ export const ChatsCreateGroup: FC = () => {
                               errors={formik.errors.name}
                             />
                             <Input
-                              placeholder="Username"
-                              name={nameof<FormValues>('username')}
-                              value={formik.values.username}
+                              placeholder="Identifier"
+                              name={nameof<FormValues>('identifier')}
+                              value={formik.values.identifier}
                               onChange={formik.handleChange}
                               onBlur={formik.handleBlur}
-                              touched={formik.touched.username}
-                              errors={formik.errors.username}
+                              touched={formik.touched.identifier}
+                              errors={formik.errors.identifier}
                             />
                             <LeftSidebarSmallPrimaryButton>
                                 <SmallPrimaryButton

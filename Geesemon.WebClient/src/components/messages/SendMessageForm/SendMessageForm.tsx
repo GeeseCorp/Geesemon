@@ -104,7 +104,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
         dispatch(chatActions.messageSendAsync({
             chatId: selectedChat.id,
             sentMessageInput: {
-                chatUsername: selectedChat.username,
+                identifier: selectedChat.identifier,
                 text: messageText,
                 replyMessageId,
                 files,
@@ -213,23 +213,34 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                     messageText || files.length || forwardMessageIds.length
                         ? (
                             <motion.img
-                                key={'send'}
-                                initial={{ scale: 0, opacity: 0 }}
-                                animate={{ scale: 1, opacity: 1 }}
-                                src={sendSvg}
-                                className={'primaryTextSvg'}
+                              key={'send'}
+                              initial={{ scale: 0, opacity: 0 }}
+                              animate={{ scale: 1, opacity: 1 }}
+                              src={sendSvg}
+                              className={'primaryTextSvg'}
                             />
                         )
                         : (
                             <motion.img
-                                key={'microphone'}
-                                initial={{ scale: 0, opacity: 0 }}
-                                animate={{ scale: 1, opacity: 1 }}
-                                src={microphoneSvg}
-                                width={25}
-                                className={'primaryTextSvg'}
+                              key={'microphone'}
+                              initial={{ scale: 0, opacity: 0 }}
+                              animate={{ scale: 1, opacity: 1 }}
+                              src={microphoneSvg}
+                              width={25}
+                              className={'primaryTextSvg'}
                             />
                         )
+                );
+            case Mode.Updating:
+                return (
+                    <motion.img
+                      key={'update'}
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      src={checkSvg}
+                      width={25}
+                      className={'primaryTextSvg'}
+                    />
                 );
         }
     };
@@ -273,13 +284,13 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                             <img src={smileSvg} width={20} className={'secondaryTextSvg'} alt={'smileSvg'} />
                         </div>
                         <textarea
-                            value={messageText}
-                            placeholder={'Message'}
-                            ref={inputTextRef}
-                            onChange={e => setNewMessageText(e.target.value)}
-                            className={s.inputText}
-                            onKeyUp={onKeyUpInputText}
-                            onKeyDown={onKeyDownInputText}
+                          value={messageText}
+                          placeholder={'Message'}
+                          ref={inputTextRef}
+                          onChange={e => setNewMessageText(e.target.value)}
+                          className={s.inputText}
+                          onKeyUp={onKeyUpInputText}
+                          onKeyDown={onKeyDownInputText}
                         />
                         <InputFile multiple onChange={newFiles => setFiles(newFiles ? [...files, ...newFiles] : [])}>
                             <div className={s.inputTextButton}>

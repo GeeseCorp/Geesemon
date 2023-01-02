@@ -83,7 +83,7 @@ export const AuthedApp: FC = () => {
             <Routes>
                 <Route path={'/'} element={<LeftSidebar />} />
                 <Route
-                  path={'/:chatUsername'}
+                  path={'/:chatIdentifier'}
                   element={isRightSidebarVisible ? <RightSidebar /> : <ContentBar />}
                 />
                 <Route path={'/auth/*'} element={<Navigate to={'/'} />} />
@@ -93,16 +93,16 @@ export const AuthedApp: FC = () => {
             <>
                 <Routes>
                     <Route path={'/'} element={<LeftSidebar />} />
-                    <Route path={'/:chatUsername'} element={<LeftSidebar />} />
+                    <Route path={'/:chatIdentifier'} element={<LeftSidebar />} />
                     <Route path={'/auth'} element={<Navigate to={'/'} />} />
                     <Route path={'/auth/*'} element={<Navigate to={'/'} />} />
                 </Routes>
                 <Routes>
                     <Route path={'/'} element={<ContentBar />} />
-                    <Route path={'/:chatUsername'} element={<ContentBar />} />
+                    <Route path={'/:chatIdentifier'} element={<ContentBar />} />
                 </Routes>
                 <Routes>
-                    <Route path={'/:chatUsername'} element={<RightSidebar />} />
+                    <Route path={'/:chatIdentifier'} element={<RightSidebar />} />
                     <Route path={'*'} element={<RightSidebar />} />
                 </Routes>
             </>

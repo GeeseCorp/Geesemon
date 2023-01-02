@@ -15,13 +15,13 @@ export const CHATS_GET_QUERY = gql`
     }
 `;
 
-export type ChatsGetByUsernameData = { chat: { getByUsername: Chat } };
-export type ChatsGetByUsernameVars = { username: string };
-export const CHATS_GET_BY_USERNAME_QUERY = gql`
+export type ChatsGetByIdentifierData = { chat: { getByIdentifier: Chat } };
+export type ChatsGetByIdentifierVars = { identifier: string };
+export const CHATS_GET_BY_IDENTIFIER_QUERY = gql`
     ${CHAT_FRAGMENT}
-    query ChatGetByUsername($username: String!) {
+    query ChatGetByIdentifier($identifier: String!) {
         chat {
-          getByUsername(username: $username) {
+          getByIdentifier(identifier: $identifier) {
             ...ChatFragment
           }
         }
