@@ -18,7 +18,7 @@ type Props = {
 };
 
 type FormValues = {
-    name: string | null | undefined;
+    name: string;
     identifier: string;
 };
 
@@ -47,7 +47,7 @@ export const ChatsUpdateGroup: FC<Props> = ({ chat }) => {
         onSubmit: ({ name, identifier }) => {
             dispatch(chatActions.updateChatAsync({
                 id: chat.id,
-                name: name ?? '',
+                name,
                 identifier,
                 image: newImage,
             }));

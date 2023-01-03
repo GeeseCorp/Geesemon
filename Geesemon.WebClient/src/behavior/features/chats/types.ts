@@ -37,7 +37,7 @@ export type ReadMessage = {
 };
 
 export type Chat = {
-    name?: string | null;
+    name: string;
     identifier: string;
     type: ChatKind;
     imageUrl?: string | null;
