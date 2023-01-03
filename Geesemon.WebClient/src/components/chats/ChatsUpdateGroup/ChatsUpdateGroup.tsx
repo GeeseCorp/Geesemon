@@ -11,8 +11,6 @@ import { nameof } from '../../../utils/typeUtils';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import { chatActions } from '../../../behavior/features/chats';
-import { LeftSidebarSmallPrimaryButton } from '../../common/LeftSidebarSmallPrimaryButton/LeftSidebarSmallPrimaryButton';
-import { SmallPrimaryButton } from '../../common/SmallPrimaryButton/SmallPrimaryButton';
 import { BigPrimaryButton } from '../../common/BigPrimaryButton/BigPrimaryButton';
 
 type Props = {
