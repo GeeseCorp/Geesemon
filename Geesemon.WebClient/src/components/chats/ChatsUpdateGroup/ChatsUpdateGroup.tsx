@@ -2,7 +2,7 @@ import { ChangeEvent, FC, useRef, useState } from 'react';
 import { Chat } from '../../../behavior/features/chats';
 import { HeaderButton } from '../../common/HeaderButton/HeaderButton';
 import s from './ChatsUpdateGroup.module.scss';
-import { useAppDispatch } from '../../../behavior/store';
+import { useAppDispatch, useAppSelector } from '../../../behavior/store';
 import { appActions, RightSidebarState } from '../../../behavior/features/app/slice';
 import backSvg from '../../../assets/svg/back.svg';
 import cameraSvg from '../../../assets/svg/camera.svg';
@@ -11,18 +11,21 @@ import { nameof } from '../../../utils/typeUtils';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import { chatActions } from '../../../behavior/features/chats';
+import { LeftSidebarSmallPrimaryButton } from '../../common/LeftSidebarSmallPrimaryButton/LeftSidebarSmallPrimaryButton';
+import { SmallPrimaryButton } from '../../common/SmallPrimaryButton/SmallPrimaryButton';
+import { BigPrimaryButton } from '../../common/BigPrimaryButton/BigPrimaryButton';
 
 type Props = {
     chat: Chat;
 };
 
 type FormValues = {
-    groupName: string | null | undefined;
+    name: string | null | undefined;
     identifier: string;
 };
 
 const schema: Yup.SchemaOf<FormValues> = Yup.object({
-    groupName: Yup.string()
+    name: Yup.string()
         .max(100, 'Must be 100 characters or less')
         .required('Required'),
         
@@ -33,21 +36,23 @@ const schema: Yup.SchemaOf<FormValues> = Yup.object({
 
 export const ChatsUpdateGroup: FC<Props> = ({ chat }) => {
     const dispatch = useAppDispatch();
+    const updateChatLoading = useAppSelector(s => s.chats.updateChatLoading);
     const inputFileRef = useRef<HTMLInputElement | null>(null);
     const [image] = useState<string | null | undefined>(chat.imageUrl);
     const [newImage, setNewImage] = useState<File | null>(null);
     const formik = useFormik<FormValues>({
         initialValues: {
-            groupName: chat.name,
+            name: chat.name,
             identifier: chat.identifier,
         },
         validationSchema: schema,
-        onSubmit: ({ groupName, identifier }) => {
-            // dispatch(chatActions.createGroupChatAsync({
-            //     groupName,
-            //     identifier,
-            //     image,
-            // }));
+        onSubmit: ({ name, identifier }) => {
+            dispatch(chatActions.updateChatAsync({
+                id: chat.id,
+                name: name ?? '',
+                identifier,
+                image: newImage,
+            }));
         },
     });
 
@@ -99,12 +104,12 @@ export const ChatsUpdateGroup: FC<Props> = ({ chat }) => {
                 </div>
                 <Input
                   placeholder="Group name"
-                  name={nameof<FormValues>('groupName')}
-                  value={formik.values.groupName ?? ''}
+                  name={nameof<FormValues>('name')}
+                  value={formik.values.name ?? ''}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  touched={formik.touched.groupName}
-                  errors={formik.errors.groupName}
+                  touched={formik.touched.name}
+                  errors={formik.errors.name}
                 />
 
                 <Input
@@ -117,11 +122,13 @@ export const ChatsUpdateGroup: FC<Props> = ({ chat }) => {
                   errors={formik.errors.identifier}
                 />
 
-                {/* <Input
-                    placeholder={'Description'}
-                    value={description}
-                    setValue={setDescription}
-                /> */}
+                <BigPrimaryButton
+                  onClick={formik.submitForm}
+                  loading={updateChatLoading}
+                  disabled={!(formik.isValid && formik.dirty)}
+                >
+                    Submit
+                </BigPrimaryButton>
             </form>
         </>
     );

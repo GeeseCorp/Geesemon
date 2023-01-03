@@ -144,3 +144,22 @@ export const CHAT_REMOVE_MEMBERS_MUTATION = gql`
         }
       }
 `;
+
+export type ChatUpdateData = { chat: { createGroup: Chat } };
+export type ChatUpdateVars = { input: UpdateChatInputType };
+export type UpdateChatInputType = {
+    id: string;
+    name: string;
+    identifier: string;
+    image?: File | null;
+};
+export const CHAT_UPDATE_GROUP_MUTATION = gql`
+    ${CHAT_FRAGMENT}
+    mutation ChatUpdateGroup($input: UpdateChatInputType!){
+        chat {
+            update(input: $input){
+                ...ChatFragment
+            }
+        }
+    }
+`;

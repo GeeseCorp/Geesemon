@@ -8,6 +8,7 @@ import {
     DeleteMessageInputType,
     MessageMakeReadVars,
     SentMessageInputType,
+    UpdateChatInputType,
     UpdateMessageInputType,
 } from './mutations';
 import { ChatsGetVars, MessageGetVars } from './queries';
@@ -36,6 +37,7 @@ type InitialState = {
     mode: Mode;
 
     createChatLoading: boolean;
+    updateChatLoading: boolean;
 
     messageIdsMakeReadLoading: string[];
     inViewMessageIdReadBy?: string | null;
@@ -60,6 +62,7 @@ const initialState: InitialState = {
     mode: Mode.Text,
 
     createChatLoading: false,
+    updateChatLoading: false,
 
     messageIdsMakeReadLoading: [],
     inViewMessageIdReadBy: null,
@@ -104,6 +107,12 @@ const slice = createSlice({
         },
         createPersonalChatAsync: (state, action: PayloadAction<CreatePersonalChatInputType>) => state,
         createGroupChatAsync: (state, action: PayloadAction<CreateGroupChatInputType>) => state,
+
+        updateChatAsync: (state, action: PayloadAction<UpdateChatInputType>) => state,
+
+        setUpdateChatLoading: (state, action: PayloadAction<boolean>) => {
+            state.updateChatLoading = action.payload;
+        },
 
         updateChat: (state, action: PayloadAction<Chat>) => {
             const newChats = state.chats.map(chat =>
