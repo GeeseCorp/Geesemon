@@ -19,7 +19,7 @@ export const processString = (options: ProcessStringOption[]) => {
 
     const processInputWithRegex = (option: ProcessStringOption, input: string | Array<string>): any => {
         if (!option.fn || !option.regex)
-         return input;
+            return input;
 
         if (Array.isArray(input)) {
             return input.map(chunk => {
@@ -44,11 +44,11 @@ export const processString = (options: ProcessStringOption[]) => {
 
             output.push(input);
             return output;
-        } 
+        }
     };
 
     return (input: string) => {
-        if (!options || !Array.isArray(options) || !options.length) 
+        if (!options || !Array.isArray(options) || !options.length)
             return input;
 
         options.forEach(option => {
@@ -61,7 +61,7 @@ export const processString = (options: ProcessStringOption[]) => {
 
 export const getFileName = (str: string): string => {
     const parts = str.split('/');
-    if(!parts.length)
+    if (!parts.length)
         return '';
     const lastPart = parts[parts.length - 1];
     return lastPart.substring(37);
@@ -69,7 +69,7 @@ export const getFileName = (str: string): string => {
 
 export const getFileExtension = (str: string): string => {
     const parts = str.split('.');
-    if(!parts.length)
+    if (!parts.length)
         return '';
     const lastPart = parts[parts.length - 1];
     return lastPart.substring(1);

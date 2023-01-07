@@ -1,5 +1,5 @@
 import s from './Message.module.scss';
-import { FC, useEffect, useRef } from 'react';
+import { FC, memo, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import deleteSvg from '../../../assets/svg/delete.svg';
 import pencilOutlinedSvg from '../../../assets/svg/pencilOutlined.svg';
@@ -28,7 +28,7 @@ type Props = {
     isFromVisible?: boolean;
 };
 
-export const Message: FC<Props> = ({ message, inputTextFocus, isFromVisible = false }) => {
+export const Message: FC<Props> = memo(({ message, inputTextFocus, isFromVisible = false }) => {
     const selectedMessageIds = useAppSelector(s => s.chats.selectedMessageIds);
     const messageIdsMakeReadLoading = useAppSelector(s => s.chats.messageIdsMakeReadLoading);
     const authedUser = useAppSelector(s => s.auth.authedUser);
@@ -379,12 +379,12 @@ export const Message: FC<Props> = ({ message, inputTextFocus, isFromVisible = fa
             <div className={s.wrapperMessage} onClick={() => selectedMessageIds.length && selectionChange()}>
                 {selectedMessageIds.length > 0 && (
                     <Checkbox
-                        checked={!!selectedMessageIds.find(id => message.id === id)}
-                        setChecked={checked => selectionChange(checked)}
+                      checked={!!selectedMessageIds.find(id => message.id === id)}
+                      setChecked={checked => selectionChange(checked)}
                     />
                 )}
                 <div className={s.messageContent}>{messageContent()}</div>
             </div>
         </ContextMenu>
     );
-};
+});
