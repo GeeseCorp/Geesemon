@@ -1,4 +1,4 @@
-import { AuthResponseType, Session } from './types';
+import { AuthResponseType, LoginQrCode, Session } from './types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AuthUpdateProfileType, LoginInputType, RegisterInputType } from './mutations';
 import { removeAuthToken, setAuthToken } from '../../../utils/localStorageUtils';
@@ -18,6 +18,10 @@ type InitialState = {
     terminateAllOtherSessionsLoading: boolean;
 
     updateProfileLoading: boolean;
+
+    loginQrCode: LoginQrCode | null;
+    generateLoginQrCodeLoading: boolean;
+    loginViaTokenLoading: boolean;
 };
 
 const initialState: InitialState = {
@@ -34,6 +38,10 @@ const initialState: InitialState = {
     terminateAllOtherSessionsLoading: false,
 
     updateProfileLoading: false,
+
+    loginQrCode: null,
+    generateLoginQrCodeLoading: false,
+    loginViaTokenLoading: false,
 };
 
 const slice = createSlice({
@@ -82,18 +90,31 @@ const slice = createSlice({
             state.sessionsGetLoading = action.payload;
         },
 
-        terminateSessionAsync: (state: InitialState, action: PayloadAction<{sessionId: string}>) => state,
+        terminateSessionAsync: (state: InitialState, action: PayloadAction<{ sessionId: string }>) => state,
         terminateAllOtherSessionsAsync: (state: InitialState, action: PayloadAction) => state,
         setTerminateAllOtherSessionsLoading: (state: InitialState, action: PayloadAction<boolean>) => {
             state.terminateAllOtherSessionsLoading = action.payload;
         },
-   
+
         updateAuthedUser: (state: InitialState, action: PayloadAction<User | null | undefined>) => {
             state.authedUser = action.payload;
         },
         updateProfileAsync: (state: InitialState, action: PayloadAction<AuthUpdateProfileType>) => state,
         setUpdateProfileLoading: (state: InitialState, action: PayloadAction<boolean>) => {
             state.updateProfileLoading = action.payload;
+        },
+
+        generateLoginQrCodeAsync: (state: InitialState) => state,
+        setGenerateLoginQrCodeLoading: (state: InitialState, action: PayloadAction<boolean>) => {
+            state.generateLoginQrCodeLoading = action.payload;
+        },
+        setLoginQrCode: (state: InitialState, action: PayloadAction<LoginQrCode>) => {
+            state.loginQrCode = action.payload;
+        },
+
+        loginViaTokenAsync: (state: InitialState, action: PayloadAction<string>) => state,
+        setLoginViaTokenLoading: (state: InitialState, action: PayloadAction<boolean>) => {
+            state.loginViaTokenLoading = action.payload;
         },
 
         toInitialState: (state, action: PayloadAction) => initialState,

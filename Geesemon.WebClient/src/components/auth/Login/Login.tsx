@@ -1,3 +1,4 @@
+import styles from './Login.module.scss';
 import { useFormik } from 'formik';
 import { Link } from 'react-router-dom';
 import * as Yup from 'yup';
@@ -6,7 +7,6 @@ import { useAppDispatch, useAppSelector } from '../../../behavior/store';
 import { nameof } from '../../../utils/typeUtils';
 import { BigPrimaryButton } from '../../common/BigPrimaryButton/BigPrimaryButton';
 import { Input } from '../../common/formControls/Input/Input';
-import s from './Login.module.scss';
 
 type FormValues = {
     identifier: string;
@@ -41,8 +41,8 @@ export const Login = () => {
     });
 
     return (
-        <div className={s.wrapper}>
-            <h1 className={s.title}>Login in Geesemon</h1>
+        <div className={styles.wrapper}>
+            <h1 className={styles.title}>Login in Geesemon</h1>
             <form onSubmit={formik.handleSubmit}>
                 <Input
                   placeholder="Identifier"
@@ -70,7 +70,10 @@ export const Login = () => {
                 >
                     Login
                 </BigPrimaryButton>
-                <Link to="/auth/register">Register</Link>
+                <div className={styles.links}>
+                    <Link to="/auth/register">Register</Link>
+                    <Link to="/auth/login/via-qr-code">Login via QR code</Link>
+                </div>
             </form>
         </div>
     );

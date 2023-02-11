@@ -1,18 +1,18 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-export enum LeftSidebarState{
+export enum LeftSidebarState {
     Chats = 0,
     CreateGroupChat = 1,
     CreatePersonalChat = 2,
     Settings = 3,
 }
 
-export enum SettingsCategory{
+export enum SettingsCategory {
     UpdateProfile = 0,
     Devices = 1,
 }
 
-export enum RightSidebarState{
+export enum RightSidebarState {
     Profile = 'Profile',
     UpdateGroup = 'UpdateGroup',
     GroupAddMembers = 'GroupAddMembers',
@@ -26,6 +26,8 @@ export type InitialState = {
 
     isRightSidebarVisible: boolean;
     rightSidebarState: RightSidebarState;
+
+    readQrCode: boolean;
 };
 
 const initialState: InitialState = {
@@ -36,6 +38,8 @@ const initialState: InitialState = {
 
     isRightSidebarVisible: false,
     rightSidebarState: RightSidebarState.Profile,
+
+    readQrCode: false,
 };
 
 export const appSlice = createSlice({
@@ -45,7 +49,7 @@ export const appSlice = createSlice({
         setInitialised: (state, action: PayloadAction<boolean>) => {
             state.initialised = action.payload;
         },
- 
+
         setLeftSidebarState: (state, action: PayloadAction<LeftSidebarState>) => {
             state.leftSidebarState = action.payload;
         },
@@ -58,6 +62,10 @@ export const appSlice = createSlice({
         },
         setRightSidebarState: (state, action: PayloadAction<RightSidebarState>) => {
             state.rightSidebarState = action.payload;
+        },
+
+        setReadQrCode: (state, action: PayloadAction<boolean>) => {
+            state.readQrCode = action.payload;
         },
     },
 });

@@ -4,7 +4,7 @@ import s from './Settings.module.scss';
 import backSvg from '../../../assets/svg/back.svg';
 import pencilOutlinedSvg from '../../../assets/svg/pencilOutlined.svg';
 import atSignSvg from '../../../assets/svg/atSign.svg';
-import threeDotsSvg from '../../../assets/svg/threeDots.svg';
+import qrCodeSvg from '../../../assets/svg/qrCode.svg';
 import computerSvg from '../../../assets/svg/computer.svg';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
 import { appActions, LeftSidebarState, SettingsCategory } from '../../../behavior/features/app/slice';
@@ -12,6 +12,7 @@ import { ProfileButton } from '../../common/ProfileButton/ProfileButton';
 import { SettingsDevices } from '../categories/SettingsDevices/SettingsDevices';
 import { UpdateProfile } from '../categories/UpdateProfile/UpdateProfile';
 import { AvatarWithoutImage } from '../../common/AvatarWithoutImage/AvatarWithoutImage';
+import { ReadQrCodeModal } from '../categories/ReadQrCodeModal/ReadQrCodeModal';
 
 export const Settings: FC = () => {
     const dispatch = useAppDispatch();
@@ -37,8 +38,14 @@ export const Settings: FC = () => {
                             <img src={backSvg} width={25} className={'secondaryTextSvg'} alt={'backSvg'} />
                         </HeaderButton>
                         <div className={'headerTitle'}>Settings</div>
-                        </div>
+                    </div>
                     <div>
+                        <HeaderButton
+                          keyName={'Settings/ReadQrCode'}
+                          onClick={() => dispatch(appActions.setReadQrCode(true))}
+                        >
+                            <img src={qrCodeSvg} width={20} className={'secondaryTextSvg'} alt={'qrCodeSvg'} />
+                        </HeaderButton>
                         <HeaderButton
                           keyName={'Settings/UpdateProfile'}
                           onClick={() => dispatch(appActions.setSettingsCategory(SettingsCategory.UpdateProfile))}
@@ -83,6 +90,7 @@ export const Settings: FC = () => {
                         />
                     </div>
                 </div>
+                <ReadQrCodeModal />
             </div>
         );
     }

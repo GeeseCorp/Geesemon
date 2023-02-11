@@ -15,3 +15,8 @@ export type Session = {
     location: string;
 } & Entity;
 
+export type LoginQrCode = {
+    qrCodeUrl: string;
+    token: string;
+};
+

@@ -6,6 +6,7 @@ using Geesemon.Web.Middlewares;
 using Geesemon.Web.Services;
 using Geesemon.Web.Services.ChatActionsSubscription;
 using Geesemon.Web.Services.ChatActivitySubscription;
+using Geesemon.Web.Services.LoginViaTokenSubscription;
 using Geesemon.Web.Services.MessageSubscription;
 using Geesemon.Web.Utils.SettingsAccess;
 using GraphQL;
@@ -69,6 +70,7 @@ namespace Geesemon.Web.Extensions
             services.AddSingleton<IChatActionSubscriptionService, ChatActionSubscriptionService>();
             services.AddSingleton<IChatActivitySubscriptionService, ChatActivitySubscriptionService>();
             services.AddSingleton<IChatMembersSubscriptionService, ChatMembersSubscriptionService>();
+            services.AddSingleton<ILoginViaTokenSubscriptionService, LoginViaTokenSubscriptionService>();
 
             return services;
         }

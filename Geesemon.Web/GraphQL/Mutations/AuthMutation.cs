@@ -7,18 +7,17 @@ using Geesemon.Web.GraphQL.Auth;
 using Geesemon.Web.GraphQL.Types;
 using Geesemon.Web.Services;
 using Geesemon.Web.Services.ChatActivitySubscription;
+using Geesemon.Web.Services.LoginViaTokenSubscription;
 using GraphQL;
 using GraphQL.Types;
 using Microsoft.Net.Http.Headers;
-using MyCSharp.HttpUserAgentParser;
 using Newtonsoft.Json;
+using System.Text;
 
 namespace Geesemon.Web.GraphQL.Mutations
 {
     public class AuthMutation : ObjectGraphType
     {
-        private readonly IHttpContextAccessor httpContextAccessor;
-
         public AuthMutation(
             AuthService authService,
             UserManager userManager,
@@ -28,11 +27,10 @@ namespace Geesemon.Web.GraphQL.Mutations
             IValidator<AuthLoginInput> authLoginInputValidator,
             IValidator<AuthRegisterInput> authRegisterInputValidator,
             IValidator<AuthUpdateProfile> authUpdateProfileValidator,
-            IChatActivitySubscriptionService chatActivitySubscriptionService
+            IChatActivitySubscriptionService chatActivitySubscriptionService,
+            ILoginViaTokenSubscriptionService loginViaTokenSubscriptionService
             )
         {
-            this.httpContextAccessor = httpContextAccessor;
-
             Field<NonNullGraphType<AuthResponseType>, AuthResponse>()
                 .Name("Register")
                 .Argument<NonNullGraphType<AuthRegisterInputType>, AuthRegisterInput>("input", "Argument to register new User")
@@ -68,7 +66,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                         Token = authService.GenerateAccessToken(newUser.Id, newUser.Identifier, newUser.Role),
                         UserId = newUser.Id,
                     };
-                    session = await FillSession(session, true);
+                    session = await authService.FillSession(session, true);
                     session = await sessionManager.CreateAsync(session);
 
                     return new AuthResponse()
@@ -99,7 +97,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                         Token = authService.GenerateAccessToken(user.Id, user.Identifier, user.Role),
                         UserId = user.Id,
                     };
-                    session = await FillSession(session, true);
+                    session = await authService.FillSession(session, true);
                     session = await sessionManager.CreateAsync(session);
 
                     return new AuthResponse()
@@ -130,14 +128,14 @@ namespace Geesemon.Web.GraphQL.Mutations
                     var userId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
 
                     var session = await sessionManager.GetByTokenAsync(token);
-                    session = await FillSession(session, isOnline);
+                    session = await authService.FillSession(session, isOnline);
                     await sessionManager.UpdateAsync(session);
-                    
+
                     await chatActivitySubscriptionService.Notify(userId);
                     return true;
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
-            
+
             Field<NonNullGraphType<SessionType>, Session>()
                 .Name("TerminateSession")
                 .Argument<NonNullGraphType<GuidGraphType>, Guid>("SessionId", "")
@@ -151,7 +149,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                     return await sessionManager.RemoveAsync(session);
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
-            
+
             Field<NonNullGraphType<ListGraphType<SessionType>>, IEnumerable<Session>>()
                 .Name("TerminateAllOtherSessions")
                 .ResolveAsync(async context =>
@@ -171,7 +169,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                     await authUpdateProfileValidator.ValidateAndThrowAsync(authUpdateProfile);
 
                     string imageUrl;
-                    if(authUpdateProfile.Image != null)
+                    if (authUpdateProfile.Image != null)
                         imageUrl = await fileManagerService.UploadFileAsync(FileManagerService.UsersAvatarsFolder, authUpdateProfile.Image);
                     else
                         imageUrl = authUpdateProfile.ImageUrl;
@@ -188,41 +186,68 @@ namespace Geesemon.Web.GraphQL.Mutations
                     return currentUser;
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
+
+            Field<NonNullGraphType<AuthGenerateLoginQrCodeType>, AuthGenerateLoginQrCode>()
+                .Name("GenerateLoginQrCode")
+                .ResolveAsync(async context =>
+                {
+                    var token = authService.GenerateLoginToken();
+                    var json = string.Format(
+                        @"{{""data"":""{0}"",""config"":{{""body"":""round"",""eye"":""frame13"",""eyeBall"":""ball15"",""erf1"":[],""erf2"":[],""erf3"":[],""brf1"":[],""brf2"":[],""brf3"":[],""bodyColor"":""#000000"",""bgColor"":""#FFFFFF"",""eye1Color"":""#000000"",""eye2Color"":""#000000"",""eye3Color"":""#000000"",""eyeBall1Color"":""#000000"",""eyeBall2Color"":""#000000"",""eyeBall3Color"":""#000000"",""gradientColor1"":"""",""gradientColor2"":"""",""gradientType"":""linear"",""gradientOnEyes"":""true"",""logo"":""940099f5a274eb8c265745d4d4afe9c74786e7b1.svg"",""logoMode"":""clean""}},""size"":1000,""download"":""imageUrl"",""file"":""svg""}}",
+                        token);
+                    var data = new StringContent(json, Encoding.UTF8, "application/json");
+                    var response = await new HttpClient().PostAsync("https://api.qrcode-monkey.com//qr/custom", data);
+                    var generateQrCodeResponse = JsonConvert.DeserializeObject<GenerateQrCodeResponse>(await response.Content.ReadAsStringAsync());
+                    return new AuthGenerateLoginQrCode
+                    {
+                        QrCodeUrl = "https://" + generateQrCodeResponse.ImageUrl.Substring(2),
+                        Token = token,
+                    };
+                });
+
+            Field<NonNullGraphType<AuthResponseType>, AuthResponse>()
+                .Name("LoginViaToken")
+                .Argument<NonNullGraphType<StringGraphType>>("token", "")
+                .ResolveAsync(async context =>
+                {
+                    var token = context.GetArgument<string>("token");
+                    var result = authService.ValidateLoginToken(token);
+
+                    if (result == null)
+                        throw new ExecutionError("Token is not valid");
+
+                    var identifier = httpContextAccessor.HttpContext.User.Claims.GetIdentifier();
+                    var user = await userManager.GetByIdentifierAsync(identifier);
+                    if (user == null)
+                        throw new Exception("User does not exists.");
+
+                    var session = new Session
+                    {
+                        Token = authService.GenerateAccessToken(user.Id, user.Identifier, user.Role),
+                        UserId = user.Id,
+                    };
+                    session = await authService.FillSession(session, true);
+                    session = await sessionManager.CreateAsync(session);
+
+                    var authResponse = new AuthResponse()
+                    {
+                        Token = session.Token,
+                        User = user,
+                    };
+                    loginViaTokenSubscriptionService.Notify(new LoginViaToken
+                    {
+                        Token = token,
+                        AuthResponse = authResponse,
+                    });
+
+                    return authResponse;
+                })
+                .AuthorizeWith(AuthPolicies.Authenticated);
         }
 
-
-        private async Task<Session> FillSession(Session session, bool isOnline)
+        class GenerateQrCodeResponse
         {
-            var ipAddress = httpContextAccessor.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-            string? location;
-            if (ipAddress == "127.0.0.1" || ipAddress == "0.0.0.1")
-            {
-                location = "-, -";
-            }
-            else
-            {
-                try
-                {
-                    using var client = new HttpClient();
-                    client.DefaultRequestHeaders.Add("apikey", "kKeJir32sWslTj4Oav624x0APp9avBRO");
-                    var result = await client.GetAsync($"https://api.apilayer.com/ip_to_location/{ipAddress}");
-                    dynamic response = JsonConvert.DeserializeObject(await result.Content.ReadAsStringAsync());
-                    location = $"{response.region_name}, {response.country_name}";
-                }
-                catch
-                {
-                    location = "-, -";
-                }
-            }
-            var userAgentString = httpContextAccessor.HttpContext.Request.Headers["User-Agent"].ToString();
-            var userAgent = HttpUserAgentParser.Parse(userAgentString);
-
-            session.LastTimeOnline = DateTime.UtcNow;
-            session.IsOnline = isOnline;
-            session.IpAddress = ipAddress;
-            session.UserAgent = $"{userAgent.Name}, {userAgent.Platform.Value.Name}";
-            session.Location = location;
-            return session;
+            public string ImageUrl { get; set; }
         }
     }
 }

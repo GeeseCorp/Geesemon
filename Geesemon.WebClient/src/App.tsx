@@ -7,6 +7,7 @@ import { appActions } from './behavior/features/app/slice';
 import { authActions } from './behavior/features/auth/slice';
 import { RootState, useAppDispatch, useAppSelector } from './behavior/store';
 import { Login } from './components/auth/Login/Login';
+import { LoginViaQrCode } from './components/auth/LoginViaQrCode/LoginViaQrCode';
 import { Register } from './components/auth/Register/Register';
 import { BigLoading } from './components/common/BigLoading/BigLoading';
 import { NavigateTo } from './components/navigate/NavigateTo';
@@ -37,6 +38,7 @@ export const App = () => {
                         {!isAuthorized
                             ? (
                                 <Routes>
+                                    <Route path="/auth/login/via-qr-code" element={<LoginViaQrCode />} />
                                     <Route path="/auth/login" element={<Login />} />
                                     <Route path="/auth/register" element={<Register />} />
                                     <Route path="*" element={<Navigate replace to="/auth/login" />} />
