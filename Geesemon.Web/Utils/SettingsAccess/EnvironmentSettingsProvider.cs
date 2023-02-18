@@ -1,6 +1,6 @@
 ﻿namespace Geesemon.Web.Utils.SettingsAccess
 {
-    public class SettingsProvider : ISettingsProvider
+    public class EnvironmentSettingsProvider : ISettingsProvider
     {
         public string GetConnectionString()
         {
