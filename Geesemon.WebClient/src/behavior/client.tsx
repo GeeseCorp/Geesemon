@@ -17,7 +17,7 @@ const wsLink = new WebSocketLink(
   new SubscriptionClient(
     !process.env.NODE_ENV || process.env.NODE_ENV === 'development'
       ? 'wss://localhost:7195/graphql'
-      : `${window.location.protocol === 'https' ? 'wss' : 'ws' }://${window.location.host}/graphql`,
+      : `${window.location.protocol === 'https:' ? 'wss' : 'ws' }://${window.location.host}/graphql`,
     {
       connectionParams: {
         Authorization: getAuthToken(),
