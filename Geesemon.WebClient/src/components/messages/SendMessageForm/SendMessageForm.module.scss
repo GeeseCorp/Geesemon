@@ -78,7 +78,7 @@
     }
 
     * {
-        font-size: 12px;
+        font-size: 5px;
     }
 
     .action {
@@ -164,6 +164,16 @@
 
 .forwardSvg {
     transform: scaleX(-1);
+}
+
+.wrapperEmojiPicker {
+    position: relative;
+}
+
+.emojiPicker {
+    position: absolute;
+    bottom: 50px;
+    left: -10px;
 }
 
 @media (max-width: 1200px) {

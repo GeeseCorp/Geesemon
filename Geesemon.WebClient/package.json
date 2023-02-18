@@ -9,6 +9,7 @@
         "antd": "^4.20.5",
         "apollo-upload-client": "^17.0.0",
         "css-modules": "^0.3.0",
+        "emoji-picker-react": "^4.4.7",
         "formik": "^2.2.9",
         "framer-motion": "^7.2.1",
         "graphql": "^16.5.0",

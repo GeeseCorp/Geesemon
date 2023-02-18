@@ -15,7 +15,7 @@ public static class ChatExtensions
         {
             case ChatKind.Personal:
                 var oppositeUser = await userManager.GetByIdAsync(chat.UserChats.FirstOrDefault(uc => uc.UserId != currentUserId).UserId);
-                chat.Name = oppositeUser.FirstName + " " + oppositeUser.LastName;
+                chat.Name = oppositeUser.FullName;
                 chat.Identifier = oppositeUser.Identifier;
                 chat.ImageColor = oppositeUser.AvatarColor;
                 chat.ImageUrl = oppositeUser.ImageUrl;
@@ -34,7 +34,7 @@ public static class ChatExtensions
     
     public static Chat MapWithUser(this Chat chat, User user, ChatKind chatKind)
     {
-        chat.Name = chatKind == ChatKind.Saved ? "Saved Messages" : user.FirstName + " " + user.LastName;
+        chat.Name = chatKind == ChatKind.Saved ? "Saved Messages" : user.FullName;
         chat.Identifier = user.Identifier;
         chat.ImageColor = user.AvatarColor;
         chat.ImageUrl = user.ImageUrl;

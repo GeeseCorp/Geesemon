@@ -1,9 +1,9 @@
 import { combineEpics, Epic, ofType } from 'redux-observable';
-import { catchError, endWith, from, iif, map, mergeMap, of, startWith } from 'rxjs';
+import { catchError, endWith, from, iif, map, mergeMap, of, startWith, tap } from 'rxjs';
 import { isGuidEmpty } from '../../../utils/stringUtils';
 import { client } from '../../client';
 import { RootState } from '../../store';
-import { appActions, LeftSidebarState } from '../app/slice';
+import { appActions, LeftSidebarState, RightSidebarState } from '../app/slice';
 import { navigateActions } from '../navigate/slice';
 import { notificationsActions } from '../notifications/slice';
 import {
@@ -12,7 +12,7 @@ import {
     ChatCreateGroupData,
     ChatCreateGroupVars, ChatCreatePersonalData,
     ChatCreatePersonalVars, ChatDeleteData,
-    ChatDeleteVars, ChatRemoveMembersData, ChatRemoveMembersVars, CHAT_ADD_MEMBERS_MUTATION, CHAT_CREATE_GROUP_MUTATION, CHAT_CREATE_PERSONAL_MUTATION, CHAT_DELETE_MUTATION, CHAT_REMOVE_MEMBERS_MUTATION, MessageDeleteData,
+    ChatDeleteVars, ChatRemoveMembersData, ChatRemoveMembersVars, ChatUpdateData, ChatUpdateVars, CHAT_ADD_MEMBERS_MUTATION, CHAT_CREATE_GROUP_MUTATION, CHAT_CREATE_PERSONAL_MUTATION, CHAT_DELETE_MUTATION, CHAT_REMOVE_MEMBERS_MUTATION, CHAT_UPDATE_GROUP_MUTATION, MessageDeleteData,
     MessageDeleteVars, MessageMakeReadData,
     MessageMakeReadVars, MessageSendData,
     MessageSendVars,
@@ -259,6 +259,24 @@ export const chatRemoveMembersAsyncEpic: Epic<ReturnType<typeof chatActions.chat
         ),
     );
 
+    export const updateChatAsyncEpic: Epic<ReturnType<typeof chatActions.updateChatAsync>, any, RootState> = (action$, state$) =>
+    action$.pipe(
+        ofType(chatActions.updateChatAsync.type),
+        mergeMap(action =>
+            from(client.mutate<ChatUpdateData, ChatUpdateVars>({
+                mutation: CHAT_UPDATE_GROUP_MUTATION,
+                variables: { input: action.payload },
+            })).pipe(
+                mergeMap(response => [
+                    appActions.setRightSidebarState(RightSidebarState.Profile),
+                ]),
+                catchError(error => of(notificationsActions.addError(error.message))),
+                startWith(chatActions.setUpdateChatLoading(true)),
+                endWith(chatActions.setUpdateChatLoading(false)),
+            ),
+        ),
+    );
+
 export const chatEpics = combineEpics(
     chatsGetAsyncEpic,
     // @ts-ignore
@@ -273,4 +291,5 @@ export const chatEpics = combineEpics(
     messageMakeReadAsyncEpic,
     chatAddMembersAsyncEpic,
     chatRemoveMembersAsyncEpic,
+    updateChatAsyncEpic,
 );
