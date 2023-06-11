@@ -1,5 +1,4 @@
-﻿using Geesemon.Model.Common;
-using Geesemon.Model.Models;
+﻿using Geesemon.Model.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Geesemon.DataAccess.Providers.MessageProvider
@@ -17,7 +16,7 @@ namespace Geesemon.DataAccess.Providers.MessageProvider
                 .Include(m => m.ReadBy)
                 .CountAsync(m => m.ChatId == chatId && m.FromId != currentUserId && !m.ReadBy.Any(rb => rb.ReadById == currentUserId));
         }
-        
+
         public async Task<List<Message>> GetByChatIdAsync(Guid chatId, int skipMessageCount, int getMessageCount = 30)
         {
             return await context.Messages
@@ -25,7 +24,7 @@ namespace Geesemon.DataAccess.Providers.MessageProvider
                 .OrderByDescending(m => m.CreatedAt)
                 .Skip(skipMessageCount)
                 .Take(getMessageCount)
-                //.OrderBy(m => m.CreatedAt)
+                .OrderBy(m => m.CreatedAt)
                 .ToListAsync();
         }
 
