@@ -188,3 +188,12 @@ body {
 .textCenter {
     text-align: center;
 }
+
+.infinite-scroll-component__outerdiv{
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: stretch;
+    align-items: stretch;
+}

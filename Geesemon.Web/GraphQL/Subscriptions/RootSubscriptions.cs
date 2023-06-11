@@ -1,12 +1,11 @@
-﻿using Geesemon.DataAccess.Managers;
-using Geesemon.Model.Enums;
-using Geesemon.Model.Models;
+﻿using Geesemon.Model.Models;
 using Geesemon.Web.Extensions;
 using Geesemon.Web.GraphQL.Auth;
 using Geesemon.Web.GraphQL.Types;
 using Geesemon.Web.Services;
 using Geesemon.Web.Services.ChatActionsSubscription;
 using Geesemon.Web.Services.ChatActivitySubscription;
+using Geesemon.Web.Services.LoginViaTokenSubscription;
 using Geesemon.Web.Services.MessageSubscription;
 using GraphQL;
 using GraphQL.Types;
@@ -23,9 +22,24 @@ namespace Geesemon.Web.GraphQL.Subscriptions
             IHttpContextAccessor httpContextAccessor,
             IServiceProvider serviceProvider,
             AuthService authService,
-            IChatMembersSubscriptionService chatMembersSubscriptionService
+            IChatMembersSubscriptionService chatMembersSubscriptionService,
+            ILoginViaTokenSubscriptionService loginViaTokenSubscriptionService
             )
         {
+            // Auth
+            Field<NonNullGraphType<LoginViaTokenType>, LoginViaToken>()
+                .Name("LoginViaToken")
+                .Argument<NonNullGraphType<StringGraphType>, string>("Token", "")
+                .Subscribe(context =>
+                {
+                    var token = context.GetArgument<string>("Token");
+                    return loginViaTokenSubscriptionService.Subscribe(token);
+                })
+                .Resolve(context =>
+                {
+                    return context.Source as LoginViaToken;
+                });
+
             // Messages
             Field<NonNullGraphType<MessageActionType>, MessageAction>()
                 .Name("MessageActions")
@@ -61,7 +75,7 @@ namespace Geesemon.Web.GraphQL.Subscriptions
                     return chatAction;
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
-            
+
             Field<NonNullGraphType<UserChatType>, UserChat>()
                 .Name("ChatActivity")
                 .Argument<NonNullGraphType<GuidGraphType>, Guid>("ChatId", "")
@@ -82,7 +96,7 @@ namespace Geesemon.Web.GraphQL.Subscriptions
                     return userChat;
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
-            
+
             Field<NonNullGraphType<ChatMembersType>, ChatMembers>()
                 .Name("ChatMembers")
                 .Argument<NonNullGraphType<GuidGraphType>, Guid>("ChatId", "")

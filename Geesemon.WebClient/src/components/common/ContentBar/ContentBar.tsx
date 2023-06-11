@@ -26,32 +26,32 @@ export const ContentBar: FC = () => {
         border: '1px solid green',
         margin: 6,
         padding: 8,
-      };
-    
+    };
+
     const fetchMoreData = () => {
-    if (items.length >= 100) {
-        setHasMore(false);
-        return;
-    }
-    setTimeout(() => {
-        setItems(items.concat(Array.from({ length: 20 })));
-    }, 500);
+        if (items.length >= 100) {
+            setHasMore(false);
+            return;
+        }
+        setTimeout(() => {
+            setItems(items.concat(Array.from({ length: 20 })));
+        }, 500);
     };
 
     useEffect(() => {
-        if(selectedChatIdentifier && !chat && !chatsGetLoading && !chatGetByIdentifierLoading){
+        if (selectedChatIdentifier && !chat && !chatsGetLoading && !chatGetByIdentifierLoading) {
             console.log('req');
             dispatch(chatActions.chatGetByIdentifierAsync(selectedChatIdentifier));
         }
     }, [selectedChatIdentifier]);
-   
+
     useEffect(() => {
-        if(chats.find(c => c.identifier === selectedChatIdentifier) && chatByIdentifier){
+        if (chats.find(c => c.identifier === selectedChatIdentifier) && chatByIdentifier) {
             dispatch(chatActions.updateChat(chatByIdentifier));
             dispatch(chatActions.setChatByIdentifier(null));
         }
     }, [chats]);
- 
+
     return (
         <div className={s.wrapper}>
             <ViewMessageReadByModal />
@@ -61,7 +61,7 @@ export const ContentBar: FC = () => {
                     <>
                         <ChatHeader />
                         <Messages />
-                       
+
                         {/* <InfiniteScroll
                           dataLength={items.length}
                           next={fetchMoreData}
@@ -82,7 +82,7 @@ export const ContentBar: FC = () => {
                             </div>
                         ))}
                         </InfiniteScroll> */}
-                     </>
+                    </>
                 )
                 : <div className={'center'}>Select a chat</div>}
         </div>

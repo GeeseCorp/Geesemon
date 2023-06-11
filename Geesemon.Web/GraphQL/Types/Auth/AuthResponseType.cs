@@ -15,7 +15,7 @@ namespace Geesemon.Web.GraphQL.Types
             Field<NonNullGraphType<StringGraphType>, string>()
                 .Name("Token")
                 .Resolve(context => context.Source.Token);
-            
+
             Field<NonNullGraphType<SessionType>, Session>()
                 .Name("Session")
                 .ResolveAsync(async context =>
@@ -28,5 +28,12 @@ namespace Geesemon.Web.GraphQL.Types
                     return await sessionManager.GetByTokenAsync(context.Source.Token);
                 });
         }
+    }
+
+    public class AuthResponse
+    {
+        public User User { get; set; }
+        public string Token { get; set; }
+        public Session Session { get; set; }
     }
 }

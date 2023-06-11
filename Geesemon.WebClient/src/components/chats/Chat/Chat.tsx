@@ -137,7 +137,7 @@ export const Chat: FC<Props> = ({ chat, withSelected = true, withMenu = true, on
                                     && lastMessage?.fromId !== authedUser?.id
                                     && <span>{lastMessage?.from?.firstName}: </span>
                                 }
-                                <span className="secondary">{lastMessage?.text}</span>
+                                <span className="secondary">{lastMessage?.forwardedMessage ? lastMessage.forwardedMessage.text : lastMessage?.text}</span>
                             </div>
                             {!!chat.notReadMessagesCount &&
                                 <div className={s.notReadMessagesCount}>{chat.notReadMessagesCount}</div>

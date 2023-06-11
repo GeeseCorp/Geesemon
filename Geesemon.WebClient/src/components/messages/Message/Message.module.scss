@@ -27,6 +27,19 @@
     z-index: 8;
 }
 
+.wrapperMessage {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    gap: 10px;
+}
+
+.messageContent{
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+}
+
 .message {
     align-self: start;
     background-color: $surface-color;

@@ -1,10 +1,10 @@
 import { combineEpics, Epic, ofType } from 'redux-observable';
 import { RootState } from '../../store';
-import { catchError, endWith, from, mergeMap, of, startWith } from 'rxjs';
+import { catchError, debounceTime, endWith, from, mergeMap, of, startWith } from 'rxjs';
 import { client } from '../../client';
 import { notificationsActions } from '../notifications/slice';
 import { authActions } from './slice';
-import { AUTH_ME_QUERY, AuthMeData, AuthMeVars, AuthGetSessionsData, AuthGetSessionsVars, AUTH_GET_SESSIONS_QUERY } from './queries';
+import { AUTH_ME_QUERY, AuthMeData, AuthMeVars, AuthGetSessionsData, AuthGetSessionsVars, AUTH_GET_SESSIONS_QUERY, AuthGenerateLoginQrCodeData, AuthGenerateLoginQrCodeVars, AUTH_GENERATE_LOGIN_QR_CODE_QUERY, AuthLoginViaTokenData, AUTH_LOGIN_VIA_TOKEN_QUERY, AuthLoginViaTokenVars } from './queries';
 import {
     AUTH_LOGIN_MUTATION,
     AUTH_REGISTER_MUTATION,
@@ -159,9 +159,9 @@ export const getSessionsAsyncEpic: Epic<ReturnType<typeof authActions.getSession
             })).pipe(
                 mergeMap(response => {
                     if (response.errors?.length)
-                      return response.errors.map(e => notificationsActions.addError(e.message));
+                        return response.errors.map(e => notificationsActions.addError(e.message));
                     if (!response.data)
-                     return [notificationsActions.addError('No response for get sessions')];
+                        return [notificationsActions.addError('No response for get sessions')];
                     return [
                         authActions.setSessions(response.data.auth.getSessions),
                     ];
@@ -183,7 +183,7 @@ export const terminateSessionAsyncEpic: Epic<ReturnType<typeof authActions.termi
             })).pipe(
                 mergeMap(response => {
                     if (response.errors?.length)
-                      return response.errors.map(e => notificationsActions.addError(e.message));
+                        return response.errors.map(e => notificationsActions.addError(e.message));
                     return [
                         authActions.setSessions(state$.value.auth.sessions.filter(s => s.id !== action.payload.sessionId)),
                     ];
@@ -203,7 +203,7 @@ export const terminateAllOtherSessionsAsyncEpic: Epic<ReturnType<typeof authActi
             })).pipe(
                 mergeMap(response => {
                     if (response.errors?.length)
-                      return response.errors.map(e => notificationsActions.addError(e.message));
+                        return response.errors.map(e => notificationsActions.addError(e.message));
                     return [
                         authActions.setSessions([]),
                     ];
@@ -225,7 +225,7 @@ export const updateProfileAsyncEpic: Epic<ReturnType<typeof authActions.updatePr
             })).pipe(
                 mergeMap(response => {
                     if (response.errors?.length)
-                      return response.errors.map(e => notificationsActions.addError(e.message));
+                        return response.errors.map(e => notificationsActions.addError(e.message));
                     return [
                         authActions.updateAuthedUser(response.data?.auth.updateProfile),
                         notificationsActions.addSuccess('Profile successfully updated'),
@@ -234,6 +234,49 @@ export const updateProfileAsyncEpic: Epic<ReturnType<typeof authActions.updatePr
                 catchError(error => of(notificationsActions.addError(error.message))),
                 startWith(authActions.setUpdateProfileLoading(true)),
                 endWith(authActions.setUpdateProfileLoading(false)),
+            ),
+        ),
+    );
+
+export const generateLoginQrCodeAsyncEpic: Epic<ReturnType<typeof authActions.generateLoginQrCodeAsync>, any, RootState> = (action$, _state$) =>
+    action$.pipe(
+        ofType(authActions.generateLoginQrCodeAsync.type),
+        mergeMap(() =>
+            from(client.mutate<AuthGenerateLoginQrCodeData, AuthGenerateLoginQrCodeVars>({
+                mutation: AUTH_GENERATE_LOGIN_QR_CODE_QUERY,
+            })).pipe(
+                mergeMap(response => {
+                    if (response.errors?.length)
+                        return response.errors.map(e => notificationsActions.addError(e.message));
+                    return [
+                        authActions.setLoginQrCode(response.data!.auth.generateLoginQrCode),
+                    ];
+                }),
+                catchError(error => of(notificationsActions.addError(error.message))),
+                startWith(authActions.setGenerateLoginQrCodeLoading(true)),
+                endWith(authActions.setGenerateLoginQrCodeLoading(false)),
+            ),
+        ),
+    );
+
+export const loginViaTokenAsyncEpic: Epic<ReturnType<typeof authActions.loginViaTokenAsync>, any, RootState> = (action$, _state$) =>
+    action$.pipe(
+        ofType(authActions.loginViaTokenAsync.type),
+        mergeMap(action =>
+            from(client.mutate<AuthLoginViaTokenData, AuthLoginViaTokenVars>({
+                mutation: AUTH_LOGIN_VIA_TOKEN_QUERY,
+                variables: { token: action.payload },
+            })).pipe(
+                mergeMap(response => {
+                    if (response.errors?.length)
+                        return response.errors.map(e => notificationsActions.addError(e.message));
+                    return [
+                        appActions.setReadQrCode(false),
+                    ];
+                }),
+                catchError(error => of(notificationsActions.addError(error.message))),
+                startWith(authActions.setLoginViaTokenLoading(true)),
+                endWith(authActions.setLoginViaTokenLoading(false)),
             ),
         ),
     );
@@ -249,4 +292,6 @@ export const authEpics = combineEpics(
     terminateSessionAsyncEpic,
     terminateAllOtherSessionsAsyncEpic,
     updateProfileAsyncEpic,
+    generateLoginQrCodeAsyncEpic,
+    loginViaTokenAsyncEpic,
 );

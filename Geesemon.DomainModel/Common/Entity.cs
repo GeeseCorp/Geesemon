@@ -1,8 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Reflection;
-
-namespace Geesemon.Model.Common
+﻿namespace Geesemon.Model.Common
 {
     public abstract class Entity
     {

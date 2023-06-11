@@ -39,7 +39,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
     const inUpdateMessage = messages.find(m => m.id === inUpdateMessageId);
     const replyMessage = messages.find(m => m.id === replyMessageId);
     const [files, setFiles] = useState<File[]>([]);
-    const forwardMessages = useAppSelector(s => s.chats.forwardMessages);
+    const forwardMessageIds = useAppSelector(s => s.chats.forwardMessageIds);
 
     useEffect(() => {
         if (inUpdateMessageId && inUpdateMessage) {
@@ -86,7 +86,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                 dispatch(chatActions.setMode(Mode.Text));
                 break;
             case Mode.Forward:
-                dispatch(chatActions.setForwardMessages([]));
+                dispatch(chatActions.setForwardMessageIds([]));
                 dispatch(chatActions.setMode(Mode.Text));
                 break;
         }
@@ -94,7 +94,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
     };
 
     const sendMessageHandler = () => {
-        if (!messageText && !files.length && !forwardMessages.length)
+        if (!messageText && !files.length && !forwardMessageIds.length)
             return;
 
         if (!selectedChat)
@@ -102,6 +102,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
 
         setMessageText('');
         setFiles([]);
+        dispatch(chatActions.setSelectedMessageIds([]));
         dispatch(chatActions.messageSendAsync({
             chatId: selectedChat.id,
             sentMessageInput: {
@@ -109,7 +110,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                 text: messageText,
                 replyMessageId,
                 files,
-                forwardedMessageIds: forwardMessages.map(m => m.id),
+                forwardedMessageIds: forwardMessageIds,
             },
         }));
         if (inputTextRef.current)
@@ -134,13 +135,11 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
 
     const primaryButtonClickHandler = () => {
         switch (mode) {
-            case Mode.Text:
-            case Mode.Reply:
-            case Mode.Forward:
-                sendMessageHandler();
-                break;
             case Mode.Updating:
                 updateMessageHandler();
+                break;
+            default:
+                sendMessageHandler();
                 break;
         }
     };
@@ -183,15 +182,16 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                 return renderExtraBlockRelatedMessage(replySvg, null, replyMessage?.from?.fullName, replyMessage?.text || getFileName(replyMessage?.fileUrl || ''), replyMessage?.fileUrl, fileType);
             }
             case Mode.Forward: {
-                switch (forwardMessages.length) {
+                const firstForwardMessageId = forwardMessageIds.length ? forwardMessageIds[0] : null;
+                const firstForwardMessage = selectedChat?.messages.find(m => m.id === firstForwardMessageId);
+                switch (forwardMessageIds.length) {
                     case 0:
                         return null;
                     case 1:
-                        const forwardMessage = forwardMessages[0];
-                        return renderExtraBlockRelatedMessage(replySvg, styles.forwardSvg, forwardMessage?.from?.fullName, forwardMessage?.text || getFileName(forwardMessage?.fileUrl || ''), forwardMessage?.fileUrl, null);
+                        return renderExtraBlockRelatedMessage(replySvg, s.forwardSvg, firstForwardMessage?.from?.fullName, firstForwardMessage?.text || getFileName(firstForwardMessage?.fileUrl || ''), firstForwardMessage?.fileUrl, null);
                     default:
-                        const action = forwardMessages[0]?.from?.fullName + ' and others';
-                        return renderExtraBlockRelatedMessage(replySvg, styles.forwardSvg, action, `${forwardMessages.length} forwarded messages`, null, null);
+                        const action = firstForwardMessage?.from?.fullName + ' and others';
+                        return renderExtraBlockRelatedMessage(replySvg, s.forwardSvg, action, `${forwardMessageIds.length} forwarded messages`, null, null);
                 }
             }
         }
@@ -199,11 +199,20 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
 
     const renderPrimaryButtonIcon = () => {
         switch (mode) {
-            case Mode.Text:
-            case Mode.Reply:
-            case Mode.Forward:
+            case Mode.Updating:
                 return (
-                    messageText || files.length || forwardMessages.length
+                    <motion.img
+                        key={'update'}
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        src={checkSvg}
+                        width={25}
+                        className={'primaryTextSvg'}
+                    />
+                );
+            default:
+                return (
+                    messageText || files.length || forwardMessageIds.length
                         ? (
                             <motion.img
                               key={'send'}
