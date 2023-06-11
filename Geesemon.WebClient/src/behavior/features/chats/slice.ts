@@ -131,7 +131,7 @@ const slice = createSlice({
             state.messageGetLoading = action.payload;
         },
         messageGetAsync: (state, action: PayloadAction<MessageGetVars>) => state,
-        addInEndMessages: (state, action: PayloadAction<{ chatId: string; messages: Message[] }>) => {
+        addInStartMessages: (state, action: PayloadAction<{ chatId: string; messages: Message[] }>) => {
             const newChats = state.chats.map(chat => {
                 if (chat.id === action.payload.chatId) {
                     let addMessages = [...action.payload.messages];
@@ -143,7 +143,7 @@ const slice = createSlice({
             });
             state.chats = sortChat(newChats);
         },
-        addInStartMessages: (state, action: PayloadAction<{ chatId: string; messages: Message[] }>) => {
+        addInEndMessages: (state, action: PayloadAction<{ chatId: string; messages: Message[] }>) => {
             const newChats = state.chats.map(chat => {
                 if (chat.id === action.payload.chatId) {
                     chat.messages = [...chat.messages, ...action.payload.messages];
