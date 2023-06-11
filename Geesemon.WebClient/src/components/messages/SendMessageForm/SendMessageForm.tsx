@@ -1,3 +1,4 @@
+import styles from './SendMessageForm.module.scss';
 import { AnimatePresence, motion } from 'framer-motion';
 import { FC, KeyboardEvent, MutableRefObject, useEffect, useState } from 'react';
 import checkSvg from '../../../assets/svg/check.svg';
@@ -14,10 +15,10 @@ import { Mode } from '../../../behavior/features/chats/slice';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
 import { useSelectedChat } from '../../../hooks/useSelectedChat';
 import { SmallPrimaryButton } from '../../common/SmallPrimaryButton/SmallPrimaryButton';
-import s from './SendMessageForm.module.scss';
 import { InputFile } from '../../common/formControls/InputFile/InputFile';
 import { FileType, getFileType } from '../../../utils/fileUtils';
 import { getFileName } from '../../../utils/stringUtils';
+import EmojiPicker, { Theme } from 'emoji-picker-react';
 
 const INPUT_TEXT_DEFAULT_HEIGHT = '25px';
 
@@ -31,6 +32,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
     const inUpdateMessageId = useAppSelector(s => s.chats.inUpdateMessageId);
     const replyMessageId = useAppSelector(s => s.chats.replyMessageId);
     const [messageText, setMessageText] = useState('');
+    const [isEmojiPickerVisible, setIsEmojiPickerVisible] = useState(false);
     const dispatch = useAppDispatch();
     const selectedChat = useSelectedChat();
     const messages = selectedChat?.messages || [];
@@ -111,10 +113,10 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                 forwardedMessageIds: forwardMessageIds,
             },
         }));
-
         if (inputTextRef.current)
             inputTextRef.current.style.height = INPUT_TEXT_DEFAULT_HEIGHT;
-
+            
+        setIsEmojiPickerVisible(false);
         scrollToBottom();
 
         if (mode === Mode.Reply || mode === Mode.Forward)
@@ -147,23 +149,23 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
             let file: JSX.Element | null = null;
             switch (fileType) {
                 case FileType.Image:
-                    file = <img src={fileUrl || ''} className={s.media} />;
+                    file = <img src={fileUrl || ''} className={styles.media} />;
                     break;
                 case FileType.Video:
-                    file = <video src={fileUrl || ''} className={s.media} />;
+                    file = <video src={fileUrl || ''} className={styles.media} />;
                     break;
             }
             switch (fileType) {
                 default:
                     return (
                         <>
-                            <div className={s.icon}>
+                            <div className={styles.icon}>
                                 <img src={svg} width={20} className={['primarySvg', iconClassName].join(' ')} alt={'pencilOutlinedSvg'} />
                             </div>
                             {file}
-                            <div className={s.actionAndText}>
-                                <div className={s.action}>{action}</div>
-                                <div className={s.text}>{messageText}</div>
+                            <div className={styles.actionAndText}>
+                                <div className={styles.action}>{action}</div>
+                                <div className={styles.text}>{messageText}</div>
                             </div>
                         </>
                     );
@@ -246,32 +248,32 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
     };
 
     return (
-        <div className={s.wrapper}>
-            <div className={s.inner}>
-                <div className={s.wrapperInputText}>
+        <div className={styles.wrapper}>
+            <div className={styles.inner}>
+                <div className={styles.wrapperInputText}>
                     {mode !== Mode.Text && mode !== Mode.ForwardSelectChat &&
-                        <div className={s.extraBlockWrapper}>
-                            <div className={s.extraBlockInner}>
+                        <div className={styles.extraBlockWrapper}>
+                            <div className={styles.extraBlockInner}>
                                 {renderExtraBlock()}
                             </div>
-                            <div onClick={closeExtraBlockHandler} className={s.close}>
+                            <div onClick={closeExtraBlockHandler} className={styles.close}>
                                 <img src={crossFilledSvg} width={15} className={'secondaryTextSvg'} alt={'crossFilledSvg'} />
                             </div>
                         </div>
                     }
                     {files.length > 0 && (
-                        <div className={s.files}>
+                        <div className={styles.files}>
                             {files.map(file => (
-                                <div className={s.file}>
-                                    <div className={s.icon}>
+                                <div className={styles.file}>
+                                    <div className={styles.icon}>
                                         <img src={fileSvg} width={20} className={'primarySvg'} alt={'pencilOutlinedSvg'} />
                                     </div>
-                                    <div className={s.info}>
-                                        <div className={s.infoInner}>
-                                            <div className={s.name}>{file.name}</div>
-                                            <div className={s.size}>{file.size} B</div>
+                                    <div className={styles.info}>
+                                        <div className={styles.infoInner}>
+                                            <div className={styles.name}>{file.name}</div>
+                                            <div className={styles.size}>{file.size} B</div>
                                         </div>
-                                        <div onClick={() => setFiles(files.filter(f => f !== file))} className={s.close}>
+                                        <div onClick={() => setFiles(files.filter(f => f !== file))} className={styles.close}>
                                             <img src={crossFilledSvg} width={15} className={'secondaryTextSvg'} alt={'crossFilledSvg'} />
                                         </div>
                                     </div>
@@ -279,27 +281,32 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                             ))}
                         </div>
                     )}
-                    <div className={s.innerInputText}>
-                        <div className={s.inputTextButton}>
-                            <img src={smileSvg} width={20} className={'secondaryTextSvg'} alt={'smileSvg'} />
+                    <div className={styles.innerInputText}> 
+                        <div className={`${styles.inputTextButton} ${styles.wrapperEmojiPicker}`}>
+                            <img src={smileSvg} width={20} className={'secondaryTextSvg'} alt={'smileSvg'} onClick={_ => setIsEmojiPickerVisible(!isEmojiPickerVisible)} />
+                            {isEmojiPickerVisible &&
+                                <div className={styles.emojiPicker}>        
+                                    <EmojiPicker theme={Theme.DARK} onEmojiClick={ed => setMessageText(messageText + ed.emoji)} />
+                                </div>
+                            } 
                         </div>
                         <textarea
                           value={messageText}
                           placeholder={'Message'}
                           ref={inputTextRef}
                           onChange={e => setNewMessageText(e.target.value)}
-                          className={s.inputText}
+                          className={styles.inputText}
                           onKeyUp={onKeyUpInputText}
                           onKeyDown={onKeyDownInputText}
                         />
                         <InputFile multiple onChange={newFiles => setFiles(newFiles ? [...files, ...newFiles] : [])}>
-                            <div className={s.inputTextButton}>
+                            <div className={styles.inputTextButton}>
                                 <img src={clipSvg} width={20} className={'secondaryTextSvg'} alt={'clipSvg'} />
                             </div>
                         </InputFile>
                     </div>
                 </div>
-                <div className={s.buttonSend}>
+                <div className={styles.buttonSend}>
                     <SmallPrimaryButton onClick={primaryButtonClickHandler}>
                         <AnimatePresence>
                             {renderPrimaryButtonIcon()}

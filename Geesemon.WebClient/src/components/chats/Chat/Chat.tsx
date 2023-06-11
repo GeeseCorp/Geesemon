@@ -1,6 +1,6 @@
 import { useSubscription } from '@apollo/client';
 import { FC, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import deleteSvg from '../../../assets/svg/delete.svg';
 import pinSvg from '../../../assets/svg/pin.svg';
 import notificationOutlinedSvg from '../../../assets/svg/notificationOutlined.svg';

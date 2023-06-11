@@ -61,7 +61,7 @@ namespace Geesemon.Web.Extensions
         {
             services.AddHostedService<MakeOfflineService>();
 
-            services.AddSingleton<ISettingsProvider, SettingsProvider>();
+            services.AddSingleton<ISettingsProvider, AppSettingsProvider>();
 
             services.AddSingleton<AuthService>();
             services.AddSingleton<FileManagerService>();

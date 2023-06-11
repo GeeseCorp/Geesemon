@@ -7,4 +7,5 @@
 **/obj/
 **/bin/
 **/.vscode/
-
+**/appsettings.json
+**/appsettings.Development.json
