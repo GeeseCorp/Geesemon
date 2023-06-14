@@ -6,7 +6,7 @@ import { Modal } from '../../common/Modal/Modal';
 import styles from './SelectChatForForwardMessagesModal.module.scss';
 import { navigateActions } from '../../../behavior/features/navigate/slice';
 import { Mode } from '../../../behavior/features/chats/slice';
-import { ChatList } from '../../chats/ChatList/ChatList';
+import { ChatList } from '../../chats/Chats/ChatList';
 
 export const SelectChatForForwardMessagesModal = () => {
     const forwardMessageIds = useAppSelector(s => s.chats.forwardMessageIds);
@@ -39,13 +39,12 @@ export const SelectChatForForwardMessagesModal = () => {
         <Modal opened={!!forwardMessageIds.length && mode === Mode.ForwardSelectChat}>
             <div className="modalHeader">
                 <HeaderButton
-                    keyName={'SelectChatForForwardMessagesModal/Back'}
-                    onClick={closeHanlder}
+                  keyName={'SelectChatForForwardMessagesModal/Back'}
+                  onClick={closeHanlder}
                 >
                     <img src={crossFilledSvg} width={20} className={'secondaryTextSvg'} alt={'crossFilledSvg'} />
                 </HeaderButton>
-                <div className={styles.readByCount}>
-                </div>
+                <div className={styles.readByCount} />
             </div>
             <div className={['modalContent', styles.content].join(' ')} onScroll={onScrollHandler}>
                 <ChatList withSelected={false} withMenu={false} onClickChat={onClickChat} />

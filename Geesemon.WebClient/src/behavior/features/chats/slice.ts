@@ -267,6 +267,8 @@ const slice = createSlice({
                 : c);
         },
 
+        leaveChatAsync: (state, action: PayloadAction<{ chatId: string }>) => state,
+
         toInitialState: (state, action: PayloadAction) => initialState,
     },
 });

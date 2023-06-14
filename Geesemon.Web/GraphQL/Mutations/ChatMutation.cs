@@ -79,6 +79,12 @@ namespace Geesemon.Web.GraphQL.Mutations
                 .ResolveAsync(ResolveRemoveMembers)
                 .AuthorizeWith(AuthPolicies.Authenticated);
 
+            Field<NonNullGraphType<BooleanGraphType>, bool>()
+                .Name("LeaveChat")
+                .Argument<NonNullGraphType<GuidGraphType>, Guid>("ChatId", "")
+                .ResolveAsync(ResolveLeaveChat)
+                .AuthorizeWith(AuthPolicies.Authenticated);
+
             this.httpContextAccessor = httpContextAccessor;
             this.fileManagerService = fileManagerService;
             this.chatActionSubscriptionService = chatActionSubscriptionService;
@@ -270,12 +276,8 @@ namespace Geesemon.Web.GraphQL.Mutations
             var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
             var currentIdentifier = httpContextAccessor.HttpContext.User.Claims.GetIdentifier();
 
-            Exception exception = new Exception("User can update only group chats he own.");
-            if (chat == null || !await chatManager.IsUserInChat(currentUserId, chat.Id))
-                throw exception;
-
-            if (chat.Type != ChatKind.Group || chat.CreatorId != currentUserId)
-                throw exception;
+            if (chat == null || !await chatManager.IsUserInChat(currentUserId, chat.Id) || chat.Type != ChatKind.Group || chat.CreatorId != currentUserId)
+                throw new Exception("User can update only group chats he own.");
 
             var removeUserChats = new List<UserChat>();
             foreach(var userId in chatsAddMembersInput.UserIds)
@@ -308,6 +310,35 @@ namespace Geesemon.Web.GraphQL.Mutations
                 chatMembersSubscriptionService.Notify(userChat.User, ChatMembersKind.Delete, chat.Id);
             }
             return removeUserChats.Select(uc => uc.User);
+        }
+
+        private async Task<bool> ResolveLeaveChat(IResolveFieldContext context)
+        {
+            var chatId = context.GetArgument<Guid>("ChatId");
+            var chat = await chatManager.GetByIdAsync(chatId);
+            var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
+            var currentIdentifier = httpContextAccessor.HttpContext.User.Claims.GetIdentifier();
+
+            if (chat == null || !await chatManager.IsUserInChat(currentUserId, chat.Id) || chat.Type != ChatKind.Group)
+                throw new Exception("User can leave only chats that he is in.");
+
+            chatActionSubscriptionService.Notify(chat, ChatActionKind.Delete, new List<Guid>{ currentUserId });
+
+            var userChat = new UserChat() { ChatId = chat.Id, UserId = currentUserId };
+
+            var uc = await userChatManager.RemoveAsync(userChat);
+
+            var newMessage = new Message
+            {
+                ChatId = chatId,
+                Text = $"@{currentIdentifier} left the chat.",
+                Type = MessageKind.System,
+            };
+            newMessage = await messageManager.CreateAsync(newMessage);
+            messageSubscriptionService.Notify(newMessage, MessageActionKind.Create);
+            chatMembersSubscriptionService.Notify(userChat.User, ChatMembersKind.Delete, chat.Id);
+
+            return true;
         }
     }
 }

@@ -18,7 +18,7 @@ import { LeftSidebarSmallPrimaryButton } from '../../common/LeftSidebarSmallPrim
 import { Menu, MenuItem } from '../../common/Menu/Menu';
 import { SmallLoading } from '../../common/SmallLoading/SmallLoading';
 import { SmallPrimaryButton } from '../../common/SmallPrimaryButton/SmallPrimaryButton';
-import { ChatList } from '../ChatList/ChatList';
+import { ChatList } from './ChatList';
 import s from './Chats.module.scss';
 
 export const Chats: FC = () => {
@@ -125,7 +125,6 @@ export const Chats: FC = () => {
                                     ? () => setIsCreateChatMenuVisible(false)
                                     : () => setIsCreateChatMenuVisible(true)
                                 }
-
                             >
                                 <SmallPrimaryButton>
                                     {isCreateChatMenuVisible

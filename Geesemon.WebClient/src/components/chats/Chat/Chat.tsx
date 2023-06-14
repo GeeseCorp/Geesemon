@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import deleteSvg from '../../../assets/svg/delete.svg';
 import pinSvg from '../../../assets/svg/pin.svg';
 import notificationOutlinedSvg from '../../../assets/svg/notificationOutlined.svg';
+import exitSvg from '../../../assets/svg/exit.svg';
 import { Chat as ChatType, chatActions } from '../../../behavior/features/chats';
 import { ChatActivityData, ChatActivityVars, ChatMembersData, ChatMembersVars, CHAT_ACTIVITY_SUBSCRIPTIONS, CHAT_MEMBERS_SUBSCRIPTIONS } from '../../../behavior/features/chats/subscriptions';
 import { ChatKind, ChatMembersKind } from '../../../behavior/features/chats/types';
@@ -84,6 +85,17 @@ export const Chat: FC<Props> = ({ chat, withSelected = true, withMenu = true, on
             type: 'default',
         });
 
+        items.push({
+            content: 'Leave chat',
+            icon: <img src={exitSvg} width={20} className={'primaryTextSvg'} alt={'exitSvg'} />,
+            onClick: () => {
+                dispatch(chatActions.leaveChatAsync({ chatId: chat.id }));
+                if(selectedChatIdentifier === chat.identifier)
+                    navigate('/');
+            },
+            type: 'default',
+        });
+
         if (chat.creatorId === authedUser?.id || chat.type === ChatKind.Personal)
             items.push({
                 content: 'Delete chat',
@@ -94,7 +106,8 @@ export const Chat: FC<Props> = ({ chat, withSelected = true, withMenu = true, on
                         navigate('/');
                 },
                 type: 'danger',
-            });
+            });  
+
         return items;
     };
 

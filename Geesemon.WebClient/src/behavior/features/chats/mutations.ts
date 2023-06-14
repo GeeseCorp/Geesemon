@@ -163,3 +163,13 @@ export const CHAT_UPDATE_GROUP_MUTATION = gql`
         }
     }
 `;
+
+export type LeaveChatData = { chat: { leaveChat: boolean } };
+export type LeaveChatVars = { chatId: string };
+export const LEAVE_CHAT_MUTATION = gql`
+    mutation LeaveChat($chatId: Guid!) {
+        chat {
+            leaveChat(chatId: $chatId)
+        }
+    }
+`;
