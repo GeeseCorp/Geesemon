@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from "react";
-import { chatActions } from "../../../behavior/features/chats";
-import { useAppDispatch, useAppSelector } from "../../../behavior/store";
-import { useOnScreen } from "../../../hooks/useOnScreen";
-import { Chat } from "../Chat/Chat";
+import { useEffect, useRef, useState } from 'react';
+import { chatActions } from '../../../behavior/features/chats';
+import { useAppDispatch, useAppSelector } from '../../../behavior/store';
+import { useOnScreen } from '../../../hooks/useOnScreen';
+import { Chat } from '../Chat/Chat';
 
 type Props = {
     withSelected?: boolean;
@@ -29,15 +29,15 @@ export const ChatList = ({ withSelected = true, withMenu = true, onClickChat }: 
         <div>
             {chats.map((chat, i) => (
                 <div
-                    key={chat.id}
-                    ref={el => {
+                  key={chat.id}
+                  ref={el => {
                         if (i === chats.length - 1)
                             lastChatRef.current = el;
                     }}
                 >
-                    <Chat chat={chat} withSelected={withSelected} withMenu={withMenu} onClickChat={onClickChat}/>
+                    <Chat chat={chat} withSelected={withSelected} withMenu={withMenu} onClickChat={onClickChat} />
                 </div>
             ))}
         </div>
-    )
-}
+    );
+};

@@ -188,10 +188,10 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                     case 0:
                         return null;
                     case 1:
-                        return renderExtraBlockRelatedMessage(replySvg, s.forwardSvg, firstForwardMessage?.from?.fullName, firstForwardMessage?.text || getFileName(firstForwardMessage?.fileUrl || ''), firstForwardMessage?.fileUrl, null);
+                        return renderExtraBlockRelatedMessage(replySvg, styles.forwardSvg, firstForwardMessage?.from?.fullName, firstForwardMessage?.text || getFileName(firstForwardMessage?.fileUrl || ''), firstForwardMessage?.fileUrl, null);
                     default:
                         const action = firstForwardMessage?.from?.fullName + ' and others';
-                        return renderExtraBlockRelatedMessage(replySvg, s.forwardSvg, action, `${forwardMessageIds.length} forwarded messages`, null, null);
+                        return renderExtraBlockRelatedMessage(replySvg, styles.forwardSvg, action, `${forwardMessageIds.length} forwarded messages`, null, null);
                 }
             }
         }
@@ -202,12 +202,12 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
             case Mode.Updating:
                 return (
                     <motion.img
-                        key={'update'}
-                        initial={{ scale: 0, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        src={checkSvg}
-                        width={25}
-                        className={'primaryTextSvg'}
+                      key={'update'}
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      src={checkSvg}
+                      width={25}
+                      className={'primaryTextSvg'}
                     />
                 );
             default:

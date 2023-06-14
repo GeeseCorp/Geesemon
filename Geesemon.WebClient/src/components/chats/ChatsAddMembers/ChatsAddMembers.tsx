@@ -23,8 +23,6 @@ export const ChatsAddMembers: FC = () => {
     const chatAddMembersLoading = useAppSelector(s => s.chats.chatAddMembersLoading);
 
     const onQChange = (value: string) => {
-        console.log(value);
-        
         dispatch(usersActions.setUsers([]));
         dispatch(usersActions.setSkip(0));
         dispatch(usersActions.setHasNext(true));

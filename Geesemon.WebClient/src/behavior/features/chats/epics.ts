@@ -19,6 +19,9 @@ import {
     MessageUpdateData,
     MessageUpdateVars, MESSAGE_DELETE_MUTATION, MESSAGE_MAKE_READ_MUTATION, MESSAGE_SEND_MUTATION,
     MESSAGE_UPDATE_MUTATION,
+    LEAVE_CHAT_MUTATION,
+    LeaveChatData,
+    LeaveChatVars,
 } from './mutations';
 import {
     ChatsGetByIdentifierData,
@@ -259,20 +262,34 @@ export const chatRemoveMembersAsyncEpic: Epic<ReturnType<typeof chatActions.chat
         ),
     );
 
-    export const updateChatAsyncEpic: Epic<ReturnType<typeof chatActions.updateChatAsync>, any, RootState> = (action$, state$) =>
+export const updateChatAsyncEpic: Epic<ReturnType<typeof chatActions.updateChatAsync>, any, RootState> = (action$, state$) =>
+action$.pipe(
+    ofType(chatActions.updateChatAsync.type),
+    mergeMap(action =>
+        from(client.mutate<ChatUpdateData, ChatUpdateVars>({
+            mutation: CHAT_UPDATE_GROUP_MUTATION,
+            variables: { input: action.payload },
+        })).pipe(
+            mergeMap(response => [
+                appActions.setRightSidebarState(RightSidebarState.Profile),
+            ]),
+            catchError(error => of(notificationsActions.addError(error.message))),
+            startWith(chatActions.setUpdateChatLoading(true)),
+            endWith(chatActions.setUpdateChatLoading(false)),
+        ),
+    ),
+);
+
+export const leaveAsyncEpic: Epic<ReturnType<typeof chatActions.leaveChatAsync>, any, RootState> = (action$, state$) =>
     action$.pipe(
-        ofType(chatActions.updateChatAsync.type),
+        ofType(chatActions.leaveChatAsync.type),
         mergeMap(action =>
-            from(client.mutate<ChatUpdateData, ChatUpdateVars>({
-                mutation: CHAT_UPDATE_GROUP_MUTATION,
-                variables: { input: action.payload },
+            from(client.mutate<LeaveChatData, LeaveChatVars>({
+                mutation: LEAVE_CHAT_MUTATION,
+                variables: { chatId: action.payload.chatId },
             })).pipe(
-                mergeMap(response => [
-                    appActions.setRightSidebarState(RightSidebarState.Profile),
-                ]),
+                mergeMap(response => []),
                 catchError(error => of(notificationsActions.addError(error.message))),
-                startWith(chatActions.setUpdateChatLoading(true)),
-                endWith(chatActions.setUpdateChatLoading(false)),
             ),
         ),
     );
@@ -292,4 +309,5 @@ export const chatEpics = combineEpics(
     chatAddMembersAsyncEpic,
     chatRemoveMembersAsyncEpic,
     updateChatAsyncEpic,
+    leaveAsyncEpic,
 );
