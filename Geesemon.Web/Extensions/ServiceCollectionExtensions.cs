@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Geesemon.Model.Enums;
+using Geesemon.Web.Geesetext;
 using Geesemon.Web.GraphQL;
 using Geesemon.Web.GraphQL.Auth;
 using Geesemon.Web.Middlewares;
@@ -71,6 +72,8 @@ namespace Geesemon.Web.Extensions
             services.AddSingleton<IChatActivitySubscriptionService, ChatActivitySubscriptionService>();
             services.AddSingleton<IChatMembersSubscriptionService, ChatMembersSubscriptionService>();
             services.AddSingleton<ILoginViaTokenSubscriptionService, LoginViaTokenSubscriptionService>();
+            
+            services.AddSingleton<GeeseTextsAccessor>();
 
             return services;
         }

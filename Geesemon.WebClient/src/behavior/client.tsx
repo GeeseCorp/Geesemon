@@ -11,6 +11,7 @@ const httpsLink = createUploadLink({
     !process.env.NODE_ENV || process.env.NODE_ENV === 'development'
       ? 'https://localhost:7195/graphql'
       : '/graphql',
+      credentials: 'include',
 });
 
 const wsLink = new WebSocketLink(

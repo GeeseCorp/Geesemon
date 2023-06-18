@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from '../../../behavior/store';
 import { nameof } from '../../../utils/typeUtils';
 import { BigPrimaryButton } from '../../common/BigPrimaryButton/BigPrimaryButton';
 import { Input } from '../../common/formControls/Input/Input';
+import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
 
 type FormValues = {
     identifier: string;
@@ -26,6 +27,7 @@ const schema: Yup.SchemaOf<FormValues> = Yup.object({
 export const Login = () => {
     const dispatch = useAppDispatch();
     const loginLoading = useAppSelector(s => s.auth.loginLoading);
+    const T = useGeeseTexts();
     const formik = useFormik<FormValues>({
         initialValues: {
             identifier: '',
@@ -42,10 +44,10 @@ export const Login = () => {
 
     return (
         <div className={styles.wrapper}>
-            <h1 className={styles.title}>Login in Geesemon</h1>
+            <h1 className={styles.title}>{T.LoginInGeesemon}</h1>
             <form onSubmit={formik.handleSubmit}>
                 <Input
-                  placeholder="Identifier"
+                  placeholder={T.Identifier}
                   name={nameof<FormValues>('identifier')}
                   value={formik.values.identifier}
                   onChange={formik.handleChange}
@@ -54,7 +56,7 @@ export const Login = () => {
                   errors={formik.errors.identifier}
                 />
                 <Input
-                  placeholder="Password"
+                  placeholder={T.Password}
                   name={nameof<FormValues>('password')}
                   type={'password'}
                   value={formik.values.password}
@@ -68,11 +70,11 @@ export const Login = () => {
                   loading={loginLoading}
                   type="submit"
                 >
-                    Login
+                    {T.Login}
                 </BigPrimaryButton>
                 <div className={styles.links}>
-                    <Link to="/auth/register">Register</Link>
-                    <Link to="/auth/login/via-qr-code">Login via QR code</Link>
+                    <Link to="/auth/register">{T.Register}</Link>
+                    <Link to="/auth/login/via-qr-code">{T.LoginViaQRCode}</Link>
                 </div>
             </form>
         </div>

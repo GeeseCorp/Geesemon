@@ -1,5 +1,6 @@
 using Geesemon.DataAccess.Extensions;
 using Geesemon.Web.Extensions;
+using Geesemon.Web.Geesetext;
 using Geesemon.Web.GraphQL;
 using Geesemon.Web.Utils.SettingsAccess;
 
@@ -21,7 +22,8 @@ builder.Services.AddCors(options =>
         {
             policy.WithOrigins("https://localhost:3000")
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .AllowAnyMethod()
+            .AllowCredentials();
         });
 });
 

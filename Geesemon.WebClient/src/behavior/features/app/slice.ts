@@ -10,6 +10,7 @@ export enum LeftSidebarState {
 export enum SettingsCategory {
     UpdateProfile = 0,
     Devices = 1,
+    Languages = 2,
 }
 
 export enum RightSidebarState {

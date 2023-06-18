@@ -7,6 +7,7 @@ import s from './Register.module.scss';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import { nameof } from '../../../utils/typeUtils';
+import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
 
 type FormValues = {
     firstName: string;
@@ -60,13 +61,14 @@ export const Register = () => {
             }));
         },
     });
+    const T = useGeeseTexts();
 
     return (
         <div className={s.wrapper}>
-            <h1 className={s.title}>Register in Geesemon</h1>
+            <h1 className={s.title}>{T.RegisterInGeesemon}</h1>
             <form onSubmit={formik.handleSubmit}>
                 <Input
-                  placeholder="FirstName"
+                  placeholder={T.Firstname}
                   name={nameof<FormValues>('firstName')}
                   value={formik.values.firstName}
                   onChange={formik.handleChange}
@@ -75,7 +77,7 @@ export const Register = () => {
                   errors={formik.errors.firstName}
                 />
                 <Input
-                  placeholder="LastName"
+                  placeholder={T.Lastname}
                   name={nameof<FormValues>('lastName')}
                   value={formik.values.lastName}
                   onChange={formik.handleChange}
@@ -84,7 +86,7 @@ export const Register = () => {
                   errors={formik.errors.lastName}
                 />
                 <Input
-                  placeholder="Email"
+                  placeholder={T.Email}
                   name={nameof<FormValues>('email')}
                   value={formik.values.email}
                   onChange={formik.handleChange}
@@ -93,7 +95,7 @@ export const Register = () => {
                   errors={formik.errors.email}
                 />
                 <Input
-                  placeholder="Identifier"
+                  placeholder={T.Identifier}
                   name={nameof<FormValues>('identifier')}
                   value={formik.values.identifier}
                   onChange={formik.handleChange}
@@ -102,7 +104,7 @@ export const Register = () => {
                   errors={formik.errors.identifier}
                 />
                 <Input
-                  placeholder="Password"
+                  placeholder={T.Password}
                   name={nameof<FormValues>('password')}
                   type={'password'}
                   value={formik.values.password}
@@ -116,9 +118,9 @@ export const Register = () => {
                   loading={registerLoading}
                   type="submit"
                 >
-                    Register
+                    {T.Register}
                 </BigPrimaryButton>
-                <Link to="/auth/login">Login</Link>
+                <Link to="/auth/login">{T.Login}</Link>
             </form>
         </div>
     );

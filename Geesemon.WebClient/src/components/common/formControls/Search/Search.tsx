@@ -1,6 +1,7 @@
 import React, { FC, useState } from 'react';
 import s from './Search.module.scss';
 import searchSvg from '../../../../assets/svg/search.svg';
+import { useGeeseTexts } from '../../../../hooks/useGeeseTexts';
 
 type Props = {
     onFocus?: () => void;
@@ -8,8 +9,9 @@ type Props = {
     value: string;
     setValue: (value: string) => void;
 };
-export const Search: FC<Props> = ({ onFocus, placeholder = 'Search', value, setValue }) => {
+export const Search: FC<Props> = ({ onFocus, placeholder, value, setValue }) => {
     const [inputSearchFocused, setInputSearchFocused] = useState(false);
+    const T = useGeeseTexts();
 
     const onInputSearchFocus = () => {
         setInputSearchFocused(true);
@@ -26,7 +28,7 @@ export const Search: FC<Props> = ({ onFocus, placeholder = 'Search', value, setV
             <input
               value={value}
               onChange={e => setValue(e.target.value)}
-              placeholder={placeholder}
+              placeholder={placeholder ?? T.Search}
               className={s.inputSearch}
               onFocus={onInputSearchFocus}
               onBlur={onInputSearchBlur}

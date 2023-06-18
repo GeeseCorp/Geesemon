@@ -10,6 +10,7 @@ import { ProfileButton } from '../../../common/ProfileButton/ProfileButton';
 import { authActions } from '../../../../behavior/features/auth/slice';
 import { ContextMenu } from '../../../common/ContextMenu/ContextMenu';
 import { SmallLoading } from '../../../common/SmallLoading/SmallLoading';
+import { useGeeseTexts } from '../../../../hooks/useGeeseTexts';
 
 type Props = {};
 export const SettingsDevices: FC<Props> = ({ }) => {
@@ -17,6 +18,7 @@ export const SettingsDevices: FC<Props> = ({ }) => {
     const terminateAllOtherSessionsLoading = useAppSelector(s => s.auth.terminateAllOtherSessionsLoading);
     const currentSession = useAppSelector(s => s.auth.currentSession);
     const sessions = useAppSelector(s => s.auth.sessions.filter(s => s.id !== currentSession?.id));
+    const T = useGeeseTexts();
 
     useEffect(() => {
         dispatch(authActions.getSessionsAsync());
@@ -31,11 +33,11 @@ export const SettingsDevices: FC<Props> = ({ }) => {
                 >
                     <img src={backSvg} width={25} className={'secondaryTextSvg'} alt={'backSvg'} />
                 </HeaderButton>
-                <div className={'headerTitle'}>Devices</div>
+                <div className={'headerTitle'}>{T.Devices}</div>
             </div>
             <div>
                 <div className={s.block}>
-                    <div className={`bold ${s.primaryTitle}`}>This device</div>
+                    <div className={`bold ${s.primaryTitle}`}>{T.ThisDevice}</div>
                         <div className={s.session}>
                             <div className={s.title}>
                                 <div className="bold">{currentSession?.userAgent}</div>
@@ -47,7 +49,7 @@ export const SettingsDevices: FC<Props> = ({ }) => {
                           icon={terminateAllOtherSessionsLoading 
                             ? <SmallLoading />
                             : <img src={stopSvg} width={25} className={'dangerSvg'} alt={'stopSvg'} />}
-                          text={'Terminate All Other Sessions'}
+                          text={T.TerminateAllOtherSessions}
                           type="danger"
                           onClick={() => dispatch(authActions.terminateAllOtherSessionsAsync())}
                         />
@@ -55,7 +57,7 @@ export const SettingsDevices: FC<Props> = ({ }) => {
                 </div>
                 <div className={'divider'} />
                 <div className={s.block}>
-                    <div className={`bold ${s.primaryTitle}`}>Active sessions</div>
+                    <div className={`bold ${s.primaryTitle}`}>{T.ActiveSessions}</div>
                         {sessions.map(session => (
                             <ContextMenu
                               items={[{

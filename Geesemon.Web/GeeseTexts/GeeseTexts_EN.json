@@ -1,0 +1,52 @@
+{
+  //menu
+  "Saved": "Saved",
+  "Settings": "Settings",
+  "Logout": "Logout",
+
+  //chat widow
+  "NoChatSelected": "Select a chat!",
+  "WriteAMessage": "Write a message...",
+  "MembersInChat": "{0} members",
+  "MembersOnlineInChat": "{0} online",
+  "MembersInChatAndOnline": "{0} members, {1} online",
+  "LeaveChat": "Leave chat",
+
+  //settings
+  "Devices": "Devices",
+  "ThisDevice": "This device",
+  "ActiveSessions": "Active sessions",
+  "TerminateAllOtherSessions": "Terminate All Other Sessions",
+  "Languages": "Languages",
+  "LanguageSelection": "Language selection",
+  "UpdateProfile": "Update Profile",
+  "Firstname": "Firstname",
+  "Lastname": "Lastname",
+  "Identifier": "Identifier",
+
+  //left bar
+  "NewGroup": "New group",
+  "NewPersonalChat": "New personal chat",
+  "Search": "Search",
+
+  //right bar
+  "Profile": "Profile",
+  "Notifications": "Notifications",
+  "OnlineStatus": "Online",
+  "LastSeen": "last seen {0}",
+  "Members": "Members",
+  "Files": "Files",
+  "Voice": "Voice",
+  "RemoveFromGroup": "Remove from group",
+
+  //login/register page
+  "Password": "Password",
+  "Login": "Login",
+  "LoginInGeesemon": "Login in Geesemon",
+  "Register": "Register",
+  "LoginViaQRCode": "Login via QR code",
+  "LoginViaCredentials": "Login via credentials",
+  "LoginInGeesemonViaQRCode": "Login via QR code in Geesemon",
+  "Email": "Email",
+  "RegisterInGeesemon": "Register in Geesemon"
+}

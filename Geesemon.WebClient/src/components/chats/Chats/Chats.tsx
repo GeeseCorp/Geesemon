@@ -20,6 +20,7 @@ import { SmallLoading } from '../../common/SmallLoading/SmallLoading';
 import { SmallPrimaryButton } from '../../common/SmallPrimaryButton/SmallPrimaryButton';
 import { ChatList } from './ChatList';
 import s from './Chats.module.scss';
+import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
 
 export const Chats: FC = () => {
     const dispatch = useAppDispatch();
@@ -30,23 +31,24 @@ export const Chats: FC = () => {
     const [isEnabledSearchMode, setIsEnabledSearchMode] = useState(false);
     const [searchValue, setSearchValue] = useState('');
     const [isCreateChatMenuVisible, setIsCreateChatMenuVisible] = useState(false);
+    const T = useGeeseTexts();
 
     const menuItems: MenuItem[] = [
         {
             icon: <img src={savedSvg} className={[s.menuItem, 'secondaryTextSvg'].join(' ')} alt={'savedSvg'} />,
-            content: 'Saved',
+            content: T.Saved,
             type: 'default',
             link: `/${authedUser?.identifier}`,
         },
         {
             icon: <img src={settingsSvg} className={[s.menuItem, 'secondaryTextSvg'].join(' ')} alt={'settingsSvg'} />,
-            content: 'Settings',
+            content: T.Settings,
             onClick: () => dispatch(appActions.setLeftSidebarState(LeftSidebarState.Settings)),
             type: 'default',
         },
         {
             icon: logoutLoading ? <SmallLoading /> : <img src={logoutSvg} className={[s.menuItem, 'secondaryTextSvg'].join(' ')} alt={'logoutSvg'} />,
-            content: 'Logout',
+            content: T.Logout,
             onClick: () => dispatch(authActions.logoutAsync()),
             type: 'default',
         },

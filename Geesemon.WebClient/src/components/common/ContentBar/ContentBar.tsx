@@ -8,6 +8,7 @@ import { Messages } from '../../messages/Messages/Messages';
 import { ViewMessageReadByModal } from '../../messages/ViewMessageReadByModal/ViewMessageReadByModal';
 import { SelectChatForForwardMessagesModal } from '../../messages/SelectChatForForwardMessagesModal/SelectChatForForwardMessagesModal';
 import s from './ContentBar.module.scss';
+import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
 
 export const ContentBar: FC = () => {
     const selectedChatIdentifier = useSelectedChatIdentifier();
@@ -17,6 +18,7 @@ export const ContentBar: FC = () => {
     const chatsGetLoading = useAppSelector(c => c.chats.chatsGetLoading);
     const chatByIdentifier = useAppSelector(c => c.chats.chatByIdentifier);
     const chatGetByIdentifierLoading = useAppSelector(c => c.chats.chatGetByIdentifierLoading);
+    const T = useGeeseTexts();
 
     const [items, setItems] = useState(Array.from({ length: 20 }));
     const [hasMore, setHasMore] = useState(true);
@@ -84,7 +86,7 @@ export const ContentBar: FC = () => {
                         </InfiniteScroll> */}
                     </>
                 )
-                : <div className={'center'}>Select a chat</div>}
+                : <div className={'center'}>{T.NoChatSelected}</div>}
         </div>
     );
 };

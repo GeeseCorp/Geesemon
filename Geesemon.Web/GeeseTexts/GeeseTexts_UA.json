@@ -1,0 +1,53 @@
+﻿{
+  //menu
+  "Saved": "Збережені",
+  "Settings": "Налаштування",
+  "Logout": "Вийти",
+
+  //chat widow
+  "NoChatSelected": "Оберіть чат!",
+  "WriteAMessage": "Напишіть повідомлення...",
+  "MembersInChat": "{0} учасников",
+  "MembersOnlineInChat": "{0} онлайн",
+  "MembersInChatAndOnline": "{0} учасников, {1} онлайн",
+  "LeaveChat": "Покинути чат",
+
+  //settings
+  "Devices": "Пристрої",
+  "ThisDevice": "Поточний пристрій",
+  "ActiveSessions": "Активні сесії",
+  "TerminateAllOtherSessions": "Завершити всі сесії",
+  "Languages": "Мови",
+  "LanguageSelection": "Вибір мови",
+  "UpdateProfile": "Редагувати профіль",
+  "Firstname": "Им'я",
+  "Lastname": "Прізвище",
+  "Identifier": "Ідентификатор",
+
+  //left bar
+  "NewGroup": "Нова група",
+  "NewPersonalChat": "Новий чат",
+  "Search": "Пошук",
+  "SearchMembers": "Пошук участников",
+
+  //right bar
+  "Profile": "Профіль",
+  "Notifications": "Оповіщення",
+  "OnlineStatus": "Онлайн",
+  "LastSeen": "був онлайн {0}",
+  "Members": "Учасники",
+  "Files": "Файли",
+  "Voice": "Голосові",
+  "RemoveFromGroup": "Вигнати із групи",
+
+  //login/register page
+  "Password": "Пароль",
+  "Login": "Увійти",
+  "LoginInGeesemon": "Вхід у Geesemon",
+  "Register": "Зерегиструватися",
+  "LoginViaQRCode": "Увійти у Geesemon через QR код",
+  "LoginViaCredentials": "Увійти з реквезитмами",
+  "LoginInGeesemonViaQRCode": "Вхід у Geesemon через QR код",
+  "Email": "Пошта",
+  "RegisterInGeesemon": "Зерегиструватися у Geesemon"
+}

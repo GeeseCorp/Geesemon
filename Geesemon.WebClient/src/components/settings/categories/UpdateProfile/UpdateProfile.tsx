@@ -13,6 +13,7 @@ import { nameof } from '../../../../utils/typeUtils';
 import { SmallPrimaryButton } from '../../../common/SmallPrimaryButton/SmallPrimaryButton';
 import { authActions } from '../../../../behavior/features/auth/slice';
 import { SmallLoading } from '../../../common/SmallLoading/SmallLoading';
+import { useGeeseTexts } from '../../../../hooks/useGeeseTexts';
 
 type Props = {};
 
@@ -37,6 +38,8 @@ export const UpdateProfile: FC<Props> = ({ }) => {
     const dispatch = useAppDispatch();
     const updateProfileLoading = useAppSelector(s => s.auth.updateProfileLoading);
     const authedUser = useAppSelector(s => s.auth.authedUser);
+    const T = useGeeseTexts();
+
     const formik = useFormik<FormValues>({
         initialValues: {
             firstname: authedUser?.firstName || '',
@@ -66,7 +69,7 @@ export const UpdateProfile: FC<Props> = ({ }) => {
                 >
                     <img src={backSvg} width={25} className={'secondaryTextSvg'} alt={'backSvg'} />
                 </HeaderButton>
-                <div className={'headerTitle'}>Update Profile</div>
+                <div className={'headerTitle'}>{T.UpdateProfile}</div>
             </div>
             <form onSubmit={formik.handleSubmit} className={s.form}>
                 <InputPhoto
@@ -77,7 +80,7 @@ export const UpdateProfile: FC<Props> = ({ }) => {
                   }}
                 />
                 <Input
-                  placeholder="Firstname"
+                  placeholder={T.Firstname}
                   name={nameof<FormValues>('firstname')}
                   value={formik.values.firstname}
                   onChange={formik.handleChange}
@@ -86,7 +89,7 @@ export const UpdateProfile: FC<Props> = ({ }) => {
                   errors={formik.errors.firstname}
                 />
                 <Input
-                  placeholder="Lastname"
+                  placeholder={T.Lastname}
                   name={nameof<FormValues>('lastname')}
                   value={formik.values.lastname}
                   onChange={formik.handleChange}
@@ -95,7 +98,7 @@ export const UpdateProfile: FC<Props> = ({ }) => {
                   errors={formik.errors.lastname}
                 />
                 <Input
-                  placeholder="Identifier"
+                  placeholder={T.Identifier}
                   name={nameof<FormValues>('identifier')}
                   value={formik.values.identifier}
                   onChange={formik.handleChange}

@@ -13,6 +13,8 @@ import { BigLoading } from './components/common/BigLoading/BigLoading';
 import { NavigateTo } from './components/navigate/NavigateTo';
 import { Notifications } from './components/notifications/Notifications';
 import { getAuthToken } from './utils/localStorageUtils';
+import { useCookies } from 'react-cookie';
+import { settingsActions } from './behavior/features/settings/slice';
 
 export const App = () => {
     const initialised = useAppSelector(s => s.app.initialised);
@@ -20,11 +22,18 @@ export const App = () => {
     const meLoading = useSelector((state: RootState) => state.auth.meLoading);
     const dispatch = useAppDispatch();
 
+    const [LangCookie, setCookie] = useCookies(['lang']);
+
+    if(!LangCookie || !LangCookie.lang)
+        setCookie('lang', 'EN', { path: '/' });
+
     useEffect(() => {
         if (getAuthToken())
             dispatch(authActions.meAsync());
         else
             dispatch(appActions.setInitialised(true));
+
+        dispatch(settingsActions.getGeeseTextsAsync());
     }, [dispatch]);
 
     return (

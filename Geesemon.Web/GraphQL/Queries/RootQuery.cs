@@ -21,6 +21,10 @@ namespace Geesemon.Web.GraphQL.Queries
             Field<MessageQuery>()
                 .Name("Message")
                 .Resolve(_ => new { });
+            
+            Field<GeeseTextsQuery>()
+                .Name("GeeseTexts")
+                .Resolve(_ => new { });
         }
 
     }

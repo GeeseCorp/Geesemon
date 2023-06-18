@@ -1,0 +1,53 @@
+﻿{
+  //menu
+  "Saved": "Сохраненные",
+  "Settings": "Настройки",
+  "Logout": "Выйти",
+
+  //chat widow
+  "NoChatSelected": "Выберите чат!",
+  "WriteAMessage": "Напишите сообщение...",
+  "MembersInChat": "{0} учасников",
+  "MembersOnlineInChat": "{0} онлайн",
+  "MembersInChatAndOnline": "{0} учасников, {1} онлайн",
+  "LeaveChat": "Покинуть чат",
+
+  //settings
+  "Devices": "Устройства",
+  "ThisDevice": "Текущее устройство",
+  "ActiveSessions": "Активные сессии",
+  "TerminateAllOtherSessions": "Прекратить Все Сессии",
+  "Languages": "Языки",
+  "LanguageSelection": "Выбор языка",
+  "UpdateProfile": "Изменить профиль",
+  "Firstname": "Имя",
+  "Lastname": "Фамилия",
+  "Identifier": "Идентификатор",
+
+  //left bar
+  "NewGroup": "Новая группа",
+  "NewPersonalChat": "Новый чат",
+  "Search": "Поиск",
+  "SearchMembers": "Поиск участников",
+
+  //right bar
+  "Profile": "Профиль",
+  "Notifications": "Оповещения",
+  "OnlineStatus": "Онлайн",
+  "LastSeen": "был онлайн {0}",
+  "Members": "Учасники",
+  "Files": "Файлы",
+  "Voice": "Голосовые",
+  "RemoveFromGroup": "Выгнать из группы",
+
+  //login/register page
+  "Password": "Пароль",
+  "Login": "Войти",
+  "LoginInGeesemon": "Вход в Geesemon",
+  "Register": "Зарегистрироваться",
+  "LoginViaQRCode": "Войти в Geesemon через QR код",
+  "LoginViaCredentials": "Войти с реквезитмами",
+  "LoginInGeesemonViaQRCode": "Вход в Geesemon через QR код",
+  "Email": "Почта",
+  "RegisterInGeesemon": "Зарегистрироваться в Geesemon"
+}

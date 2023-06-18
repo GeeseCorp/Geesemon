@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, ReactNode, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import addUserFilledSvg from '../../../assets/svg/addUserFilled.svg';
 import atSignSvg from '../../../assets/svg/atSign.svg';
@@ -22,6 +22,7 @@ import { MenuItem } from '../../common/Menu/Menu';
 import { chatActions } from '../../../behavior/features/chats/slice';
 import { useSelectedChat } from '../../../hooks/useSelectedChat';
 import { notificationsActions } from '../../../behavior/features/notifications/slice';
+import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
 
 export enum Tab {
     Members = 'Members',
@@ -41,6 +42,7 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
     const navigate = useNavigate();
     const authedUser = useAppSelector(s => s.auth.authedUser);
     const selectedChat = useSelectedChat();
+    const T = useGeeseTexts();
 
     useEffect(() => {
         if (selectedTab === Tab.Members && (chat.type === ChatKind.Personal || chat.type === ChatKind.Saved))
@@ -59,7 +61,7 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
         const items: MenuItem[] = [];
         if(user.id !== authedUser?.id && selectedChat?.creatorId === authedUser?.id)
             items.push({
-                content: 'Remove from group',
+                content: T.RemoveFromGroup,
                 icon: <img src={deleteSvg} width={20} className={'dangerSvg'} alt={'deleteSvg'} />,
                 onClick: () => {
                     if(!selectedChat){
@@ -103,7 +105,7 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
                     >
                         <img src={crossFilledSvg} width={15} className={'secondaryTextSvg'} alt={'crossFilledSvg'} />
                     </HeaderButton>
-                    <div className={'headerTitle'}>Profile</div>
+                    <div className={'headerTitle'}>{T.Profile}</div>
                 </div>
                 {chat.type === ChatKind.Group &&
                     <HeaderButton
@@ -140,13 +142,13 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
                     <ProfileButton 
                       icon={<img src={atSignSvg} width={25} className={'secondaryTextSvg'} alt={'atSignSvg'} />}
                       text={chat.identifier}
-                      label={'Identifier'}
+                      label={T.Identifier}
                     />
                     <ProfileButton 
                       icon={<img src={notificationOutlinedSvg} width={25} className={'secondaryTextSvg'} alt={'notificationOutlinedSvg'} />}
                       text={(
                         <div className={s.notifications}>
-                            <div className={s.chatInfoButtonText}>Notifications</div>
+                            <div className={s.chatInfoButtonText}>{T.Notifications}</div>
                             <Switch
                               checked={isEnabledNotifications}
                               setChecked={setIsEnabledNotifications}

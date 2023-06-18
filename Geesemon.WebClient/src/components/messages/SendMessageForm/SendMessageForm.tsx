@@ -19,6 +19,7 @@ import { InputFile } from '../../common/formControls/InputFile/InputFile';
 import { FileType, getFileType } from '../../../utils/fileUtils';
 import { getFileName } from '../../../utils/stringUtils';
 import EmojiPicker, { Theme } from 'emoji-picker-react';
+import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
 
 const INPUT_TEXT_DEFAULT_HEIGHT = '25px';
 
@@ -40,6 +41,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
     const replyMessage = messages.find(m => m.id === replyMessageId);
     const [files, setFiles] = useState<File[]>([]);
     const forwardMessageIds = useAppSelector(s => s.chats.forwardMessageIds);
+    const T = useGeeseTexts();
 
     useEffect(() => {
         if (inUpdateMessageId && inUpdateMessage) {
@@ -292,7 +294,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                         </div>
                         <textarea
                           value={messageText}
-                          placeholder={'Message'}
+                          placeholder={T.WriteAMessage}
                           ref={inputTextRef}
                           onChange={e => setNewMessageText(e.target.value)}
                           className={styles.inputText}
