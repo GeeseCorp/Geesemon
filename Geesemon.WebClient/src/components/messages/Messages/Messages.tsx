@@ -1,7 +1,5 @@
 import styles from './Messages.module.scss';
-import stylesMessage from '../Message/Message.module.scss';
 import React, { FC, useEffect, useRef, useState } from 'react';
-// import InfiniteScroll from 'react-infinite-scroll-component';
 import { Link } from 'react-router-dom';
 import { chatActions } from '../../../behavior/features/chats';
 import { ChatKind, Message as MessageType } from '../../../behavior/features/chats/types';
@@ -12,7 +10,6 @@ import { Avatar } from '../../common/Avatar/Avatar';
 import { AvatarWithoutImage } from '../../common/AvatarWithoutImage/AvatarWithoutImage';
 import { Message } from '../Message/Message';
 import { SendMessageForm } from '../SendMessageForm/SendMessageForm';
-
 import { InfinityScroll } from '../../common/InfinityScroll/InfinityScroll';
 import { useOnUpdate } from '../../../hooks/useOnUpdate';
 
@@ -58,20 +55,6 @@ export const Messages: FC = () => {
         }
     }, [messageBlocks]);
 
-    // useEffect(() => {
-    //     if (isAutoScroll) {
-    //         console.log(isAutoScroll, 'scrollToBottom');
-    //         scrollToBottom();
-    //     }
-
-    //     if (messageBlocks.length) {
-    //         if (!isFirstTimeMessagesRendered) {
-    //             setIsFirstTimeMessagesRendered(true);
-    //             bottomOfMessagesRef.current?.scrollIntoView();
-    //         }
-    //     }
-    // }, [messageBlocks]);
-
     useOnUpdate(() => {
         scrollToBottom();
     }, [selectedChatIdentifier]);
@@ -89,7 +72,6 @@ export const Messages: FC = () => {
     };
 
     const onReachTopHanlder = () => {
-        console.log(selectedChat);
         if (selectedChat && !isGuidEmpty(selectedChat?.id)) {
             dispatch(chatActions.messageGetAsync({
                 chatId: selectedChat?.id,
@@ -109,13 +91,13 @@ export const Messages: FC = () => {
             {messageBlocks.length > 0 &&
                 <div className={styles.wrapperMessagesBlocks} ref={messageBlocksRef} onScroll={onScroll}>
                     <InfinityScroll
-                        className={styles.messagesBlocks}
-                        items={messageBlocks}
-                        onReachTop={onReachTopHanlder}
-                        hasTopNext={messagesGetHasNext}
-                        topLoading={messageGetLoading}
-                        inverse
-                        onItemRender={block => {
+                      className={styles.messagesBlocks}
+                      items={messageBlocks}
+                      onReachTop={onReachTopHanlder}
+                      hasTopNext={messagesGetHasNext}
+                      topLoading={messageGetLoading}
+                      inverse
+                      onItemRender={block => {
                             const blockFirstElement = block[0];
                             return (
                                 <div key={blockFirstElement.id} className={styles.messagesBlock}>
@@ -124,17 +106,17 @@ export const Messages: FC = () => {
                                             {blockFirstElement?.from?.imageUrl
                                                 ? (
                                                     <Avatar
-                                                        width={42}
-                                                        height={42}
-                                                        imageUrl={blockFirstElement?.from?.imageUrl}
+                                                      width={42}
+                                                      height={42}
+                                                      imageUrl={blockFirstElement?.from?.imageUrl}
                                                     />
                                                 )
                                                 : (
                                                     <AvatarWithoutImage
-                                                        name={blockFirstElement?.from?.firstName + ' ' + blockFirstElement.from?.lastName}
-                                                        backgroundColor={blockFirstElement.from?.avatarColor}
-                                                        width={42}
-                                                        height={42}
+                                                      name={blockFirstElement?.from?.firstName + ' ' + blockFirstElement.from?.lastName}
+                                                      backgroundColor={blockFirstElement.from?.avatarColor}
+                                                      width={42}
+                                                      height={42}
                                                     />
                                                 )}
                                         </Link>
@@ -142,10 +124,10 @@ export const Messages: FC = () => {
                                     <div className={styles.innerMessagesBlock}>
                                         {block.map((message, j) => (
                                             <Message
-                                                key={message.id}
-                                                isFromVisible={j === block.length - 1 && selectedChat?.type === ChatKind.Group && message.fromId !== authedUser?.id}
-                                                message={message}
-                                                inputTextFocus={inputTextFocus}
+                                              key={message.id}
+                                              isFromVisible={j === block.length - 1 && selectedChat?.type === ChatKind.Group && message.fromId !== authedUser?.id}
+                                              message={message}
+                                              inputTextFocus={inputTextFocus}
                                             />
                                         ))}
                                     </div>
