@@ -1,0 +1,24 @@
+.infinityScroll {
+    position: relative;
+}
+
+.innerInfinityScroll {
+    display: flex;
+}
+
+.topLoader {
+    top: 0;
+}
+
+.bottomLoader {
+    bottom: 0;
+}
+
+.loader {
+    position: absolute;
+    height: 100%;
+    max-height: 200px;
+    border: 1px solid white;
+    width: 100%;
+    z-index: -1;
+}
