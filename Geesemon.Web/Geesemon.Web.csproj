@@ -50,12 +50,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\dynamic\Files\" />
-    <Folder Include="wwwroot\dynamic\Images\GroupImages\" />
-    <Folder Include="wwwroot\dynamic\Images\UserAvatars\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Update="GeeseTexts\GeeseTexts_EN.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
