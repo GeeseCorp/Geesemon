@@ -22,11 +22,13 @@ export type Message = {
     readByCount: number;
     fileUrl?: string;
     forwardedMessage?: ForwardedMessage | null;
+    geeseTextArguments: string[];
 } & Entity;
 
 export enum MessageKind {
     Regular = 'REGULAR',
     System = 'SYSTEM',
+    SystemGeeseText = 'SYSTEM_GEESE_TEXT',
 }
 
 export type ReadMessage = {

@@ -44,6 +44,11 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
     const selectedChat = useSelectedChat();
     const T = useGeeseTexts();
 
+    const TabTexts = new Map();
+    TabTexts.set(Tab.Members, T.Members);
+    TabTexts.set(Tab.Files, T.Files);
+    TabTexts.set(Tab.Voice, T.Voice);
+
     useEffect(() => {
         if (selectedTab === Tab.Members && (chat.type === ChatKind.Personal || chat.type === ChatKind.Saved))
             setSelectedTab(Tab.Files);
@@ -169,7 +174,7 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
                                   className={[s.tab, tab === selectedTab && s.tabSelected].join(' ')}
                                   onClick={() => setSelectedTab(tab)}
                                 >
-                                    {tab}
+                                    {TabTexts.get(tab)}
                                 </div>
                             ),
                     )}

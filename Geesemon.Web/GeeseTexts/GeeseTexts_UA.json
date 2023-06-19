@@ -3,13 +3,15 @@
   "Saved": "Збережені",
   "Settings": "Налаштування",
   "Logout": "Вийти",
+  "Unmute": "Увімкнути повідомлення",
+  "Mute": "Вимкнути повідомлення",
 
   //chat widow
   "NoChatSelected": "Оберіть чат!",
   "WriteAMessage": "Напишіть повідомлення...",
-  "MembersInChat": "{0} учасников",
+  "MembersInChat": "{0} учасника",
   "MembersOnlineInChat": "{0} онлайн",
-  "MembersInChatAndOnline": "{0} учасников, {1} онлайн",
+  "MembersInChatAndOnline": "{0} учасника, {1} онлайн",
   "LeaveChat": "Покинути чат",
 
   //settings
@@ -29,12 +31,14 @@
   "NewPersonalChat": "Новий чат",
   "Search": "Пошук",
   "SearchMembers": "Пошук участников",
+  "SearchUsers": "Пошук користувачів",
+  "DeleteChat": "Видалити чат",
 
   //right bar
   "Profile": "Профіль",
   "Notifications": "Оповіщення",
   "OnlineStatus": "Онлайн",
-  "LastSeen": "був онлайн {0}",
+  "LastSeen": "Був онлайн {0}",
   "Members": "Учасники",
   "Files": "Файли",
   "Voice": "Голосові",
@@ -49,5 +53,11 @@
   "LoginViaCredentials": "Увійти з реквезитмами",
   "LoginInGeesemonViaQRCode": "Вхід у Geesemon через QR код",
   "Email": "Пошта",
-  "RegisterInGeesemon": "Зерегиструватися у Geesemon"
+  "RegisterInGeesemon": "Зерегиструватися у Geesemon",
+
+  //system massage texts
+  "RemovedFromChatMessage": "{0} вигнав {1} з чату",
+  "AddedToChatMessage": "{0} додав {1} до чату",
+  "UserLeftFromChatMessage": "{0} вийшов із чату",
+  "ChatCreatedMessage": "{0} створив групу \"{1}\""
 }

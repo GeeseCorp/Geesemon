@@ -3,6 +3,9 @@
   "Saved": "Saved",
   "Settings": "Settings",
   "Logout": "Logout",
+  "Pin": "Pin",
+  "Unmute": "Unmute",
+  "Mute": "Mute",
 
   //chat widow
   "NoChatSelected": "Select a chat!",
@@ -28,12 +31,15 @@
   "NewGroup": "New group",
   "NewPersonalChat": "New personal chat",
   "Search": "Search",
+  "SearchMembers": "Search members",
+  "SearchUsers": "Search users",
+  "DeleteChat": "Delete chat",
 
   //right bar
   "Profile": "Profile",
   "Notifications": "Notifications",
   "OnlineStatus": "Online",
-  "LastSeen": "last seen {0}",
+  "LastSeen": "Last seen {0}",
   "Members": "Members",
   "Files": "Files",
   "Voice": "Voice",
@@ -48,5 +54,11 @@
   "LoginViaCredentials": "Login via credentials",
   "LoginInGeesemonViaQRCode": "Login via QR code in Geesemon",
   "Email": "Email",
-  "RegisterInGeesemon": "Register in Geesemon"
+  "RegisterInGeesemon": "Register in Geesemon",
+
+  //system massage texts
+  "RemovedFromChatMessage": "{0} removed {1} from chat",
+  "AddedToChatMessage": "{0} added {1} to chat",
+  "UserLeftFromChatMessage": "{0} left the chat",
+  "ChatCreatedMessage": "{0} created the group \"{1}\""
 }

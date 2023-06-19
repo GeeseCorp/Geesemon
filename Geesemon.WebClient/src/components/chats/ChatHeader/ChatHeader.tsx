@@ -16,6 +16,7 @@ import { HeaderButton } from '../../common/HeaderButton/HeaderButton';
 import s from './ChatHeader.module.scss';
 import { Menu, MenuItem } from '../../common/Menu/Menu';
 import { chatActions } from '../../../behavior/features/chats';
+import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
 
 export const ChatHeader: FC = () => {
     const isMobile = useIsMobile();
@@ -29,13 +30,18 @@ export const ChatHeader: FC = () => {
     const oppositeUser = selectedChat?.type === ChatKind.Personal ? selectedChat.users.filter(u => u.id !== authedUser?.id)[0] : null;
     const isOnline = selectedChat?.type === ChatKind.Personal && oppositeUser?.isOnline;
     const lastTimeOnline = selectedChat?.type === ChatKind.Personal && oppositeUser?.lastTimeOnline;
+    const T = useGeeseTexts();
 
     const renderActivity = () => {
         switch (selectedChat?.type) {
             case ChatKind.Personal:
-                return <div className={'subText'}>{isOnline ? 'Online' : lastTimeOnline && getLastTimeActivity(new Date(lastTimeOnline))}</div>;
+                return <div className={'subText'}>{isOnline ? T.Online : lastTimeOnline && getLastTimeActivity(new Date(lastTimeOnline))}</div>;
             case ChatKind.Group:
-                return <div className={'subText'}>{selectedChat.membersTotal} members{selectedChat.membersOnline > 1 ? `, ${selectedChat.membersOnline} online` : ''}</div>;
+            {
+                if(selectedChat.membersOnline > 1)
+                    return <div className={'subText'}>{T.MembersInChatAndOnline.format(selectedChat.membersTotal.toString(), selectedChat.membersOnline.toString())}</div>;
+                return <div className={'subText'}>{T.MembersInChat.format(selectedChat.membersTotal.toString())}</div>;
+            }
             default:
                 return null;
         }
@@ -43,7 +49,7 @@ export const ChatHeader: FC = () => {
 
     const menuItems: MenuItem[] = [
         {
-            content: 'Leave chat',
+            content: T.LeaveChat,
             icon: <img src={exitSvg} width={20} className={'primaryTextSvg'} alt={'exitSvg'} />,
             onClick: () => {
                 dispatch(chatActions.leaveChatAsync({ chatId: selectedChat?.id! }));

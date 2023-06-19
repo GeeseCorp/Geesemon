@@ -9,5 +9,7 @@ namespace Geesemon.Web.Services.MessageSubscription
         Task<IObservable<MessageAction>> Subscribe(Guid user);
 
         Task<Message> SentSystemMessageAsync(string text, Guid chatId);
+        
+        Task<Message> SentSystemGeeseMessageAsync(string text, Guid chatId, string[] arguments);
     }
 }

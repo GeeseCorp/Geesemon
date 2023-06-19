@@ -10,6 +10,7 @@ using Geesemon.Web.Services.ChatActionsSubscription;
 using Geesemon.Web.Services.MessageSubscription;
 using GraphQL;
 using GraphQL.Types;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Geesemon.Web.GraphQL.Mutations
 {
@@ -164,7 +165,7 @@ namespace Geesemon.Web.GraphQL.Mutations
 
             chatActionSubscriptionService.Notify(chat, ChatActionKind.Add, userChat.Select(uc => uc.UserId));
 
-            await messageSubscriptionService.SentSystemMessageAsync($"@{currentUserIdentifier} created the group \"{chat.Name}\"", chat.Id);
+            await messageSubscriptionService.SentSystemGeeseMessageAsync("ChatCreatedMessage", chat.Id, new string[] { "@" + currentUserIdentifier, chat.Name });
             return chat;
         }
 
@@ -259,8 +260,9 @@ namespace Geesemon.Web.GraphQL.Mutations
                 var newMessage = new Message
                 {
                     ChatId = chatsAddMembersInput.ChatId,
-                    Text = $"@{currentIdentifier} added @{userChat.User.Identifier}",
-                    Type = MessageKind.System,
+                    Text = "AddedToChatMessage",
+                    Type = MessageKind.SystemGeeseText,
+                    GeeseTextArguments = new[] { "@" + currentIdentifier, "@" + userChat.User.Identifier }
                 };
                 newMessage = await messageManager.CreateAsync(newMessage);
                 messageSubscriptionService.Notify(newMessage, MessageActionKind.Create);
@@ -302,8 +304,9 @@ namespace Geesemon.Web.GraphQL.Mutations
                 var newMessage = new Message
                 {
                     ChatId = chatsAddMembersInput.ChatId,
-                    Text = $"@{currentIdentifier} removed @{userChat.User.Identifier}",
-                    Type = MessageKind.System,
+                    Text = "RemovedFromChatMessage",
+                    Type = MessageKind.SystemGeeseText,
+                    GeeseTextArguments = new[] { "@" + currentIdentifier, "@" + userChat.User.Identifier}
                 };
                 newMessage = await messageManager.CreateAsync(newMessage);
                 messageSubscriptionService.Notify(newMessage, MessageActionKind.Create);
@@ -331,8 +334,9 @@ namespace Geesemon.Web.GraphQL.Mutations
             var newMessage = new Message
             {
                 ChatId = chatId,
-                Text = $"@{currentIdentifier} left the chat.",
-                Type = MessageKind.System,
+                Text = "UserLeftFromChatMessage",
+                Type = MessageKind.SystemGeeseText,
+                GeeseTextArguments = new[] { "@" + currentIdentifier }
             };
             newMessage = await messageManager.CreateAsync(newMessage);
             messageSubscriptionService.Notify(newMessage, MessageActionKind.Create);

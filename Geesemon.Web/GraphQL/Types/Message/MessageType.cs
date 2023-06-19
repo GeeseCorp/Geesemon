@@ -88,6 +88,10 @@ namespace Geesemon.Web.GraphQL.Types
             Field<ForwardedMessageType, ForwardedMessage?>()
                 .Name("ForwardedMessage")
                 .Resolve(ctx => ctx.Source.ForwardedMessage);
+            
+            Field<ListGraphType<StringGraphType>, string[]?>()
+                .Name("GeeseTextArguments")
+                .Resolve(ctx => ctx.Source.GeeseTextArguments);
         }
     }
 }

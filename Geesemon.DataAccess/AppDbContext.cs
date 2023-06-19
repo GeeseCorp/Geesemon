@@ -1,6 +1,7 @@
 ﻿using Geesemon.Model.Common;
 using Geesemon.Model.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Newtonsoft.Json;
 
 namespace Geesemon.DataAccess
@@ -96,6 +97,12 @@ namespace Geesemon.DataAccess
                 .Property(e => e.ForwardedMessage).HasConversion(
                     v => JsonConvert.SerializeObject(v, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }),
                     v => JsonConvert.DeserializeObject<ForwardedMessage>(v, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }));
+
+            modelBuilder.Entity<Message>()
+                .Property(x => x.GeeseTextArguments)
+                .HasConversion(new ValueConverter<string[], string>(
+                    v => JsonConvert.SerializeObject(v),
+                    v => JsonConvert.DeserializeObject<string[]>(v) ?? new string[0]));
 
             modelBuilder.Entity<Chat>()
                 .HasOne(c => c.Creator)

@@ -42,6 +42,7 @@ export const MESSAGE_FRAGMENT = gql`
             }
             fileUrl
         }
+        geeseTextArguments
     }
 `;
 

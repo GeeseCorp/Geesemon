@@ -14,6 +14,7 @@ import { SmallLoading } from '../../common/SmallLoading/SmallLoading';
 import { SmallPrimaryButton } from '../../common/SmallPrimaryButton/SmallPrimaryButton';
 import { Users } from '../../users/Users/Users';
 import s from './ChatsAddMembers.module.scss';
+import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
 
 export const ChatsAddMembers: FC = () => {
     const dispatch = useAppDispatch();
@@ -21,6 +22,7 @@ export const ChatsAddMembers: FC = () => {
     const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
     const selectedChat = useSelectedChat();
     const chatAddMembersLoading = useAppSelector(s => s.chats.chatAddMembersLoading);
+    const T = useGeeseTexts();
 
     const onQChange = (value: string) => {
         dispatch(usersActions.setUsers([]));
@@ -53,7 +55,7 @@ export const ChatsAddMembers: FC = () => {
                 <Search
                   value={q}
                   setValue={onQChange}
-                  placeholder={'Search members'}
+                  placeholder={T.SearchMembers}
                 // onFocus={() => setIsEnabledSearchMode(true)}
                 />
             </div>

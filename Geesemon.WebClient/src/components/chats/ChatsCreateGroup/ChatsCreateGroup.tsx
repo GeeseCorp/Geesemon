@@ -17,6 +17,7 @@ import { LeftSidebarSmallPrimaryButton } from '../../common/LeftSidebarSmallPrim
 import { SmallPrimaryButton } from '../../common/SmallPrimaryButton/SmallPrimaryButton';
 import { Users } from '../../users/Users/Users';
 import s from './ChatsCreateGroup.module.css';
+import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
 
 type FormValues = {
     name: string;
@@ -58,6 +59,7 @@ export const ChatsCreateGroup: FC = () => {
             }));
         },
     });
+    const T = useGeeseTexts();
 
     const changeInputFileHandler = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.files)
@@ -86,7 +88,7 @@ export const ChatsCreateGroup: FC = () => {
                             <Search
                               value={q}
                               setValue={onQChange}
-                              placeholder={'Search members'}
+                              placeholder={T.SearchMembers}
                             // onFocus={() => setIsEnabledSearchMode(true)}
                             />
                         </div>

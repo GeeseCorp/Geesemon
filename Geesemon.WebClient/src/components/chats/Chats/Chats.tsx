@@ -57,13 +57,13 @@ export const Chats: FC = () => {
     const createChatMenuItems: MenuItem[] = [
         {
             icon: <img src={personSvg} className={[s.menuItem, 'secondaryTextSvg'].join(' ')} alt={'personSvg'} />,
-            content: 'New group',
+            content: T.NewGroup,
             type: 'default',
             onClick: () => dispatch(appActions.setLeftSidebarState(LeftSidebarState.CreateGroupChat)),
         },
         {
             icon: <img src={personSvg} className={[s.menuItem, 'secondaryTextSvg'].join(' ')} alt={'personSvg'} />,
-            content: 'New personal chat',
+            content: T.NewPersonalChat,
             type: 'default',
             onClick: () => dispatch(appActions.setLeftSidebarState(LeftSidebarState.CreatePersonalChat)),
         },

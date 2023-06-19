@@ -1,5 +1,5 @@
 import { useSubscription } from '@apollo/client';
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import deleteSvg from '../../../assets/svg/delete.svg';
 import pinSvg from '../../../assets/svg/pin.svg';
@@ -7,7 +7,7 @@ import notificationOutlinedSvg from '../../../assets/svg/notificationOutlined.sv
 import exitSvg from '../../../assets/svg/exit.svg';
 import { Chat as ChatType, chatActions } from '../../../behavior/features/chats';
 import { ChatActivityData, ChatActivityVars, ChatMembersData, ChatMembersVars, CHAT_ACTIVITY_SUBSCRIPTIONS, CHAT_MEMBERS_SUBSCRIPTIONS } from '../../../behavior/features/chats/subscriptions';
-import { ChatKind, ChatMembersKind } from '../../../behavior/features/chats/types';
+import { ChatKind, ChatMembersKind, MessageKind } from '../../../behavior/features/chats/types';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
 import { useSelectedChatIdentifier } from '../../../hooks/useSelectedChat';
 import { getTimeWithoutSeconds } from '../../../utils/dateUtils';
@@ -19,6 +19,7 @@ import { MenuItem } from '../../common/Menu/Menu';
 import { OnlineIndicator } from '../../common/OnlineIndicator/OnlineIndicator';
 import s from './Chat.module.scss';
 import { Checks } from '../../messages/Checks/Checks';
+import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
 
 type Props = {
     chat: ChatType;
@@ -38,11 +39,21 @@ export const Chat: FC<Props> = ({ chat, withSelected = true, withMenu = true, on
         variables: { chatId: chat.id, token: getAuthToken() || '' },
     });
     const navigate = useNavigate();
+    const T = useGeeseTexts();
 
     const oppositeUser = chat.type === ChatKind.Personal ? chat.users.filter(u => u.id !== authedUser?.id)[0] : null;
     const isOnline = chat.type === ChatKind.Personal && oppositeUser?.isOnline;
     // const lastTimeOnline = chat.type === ChatKind.Personal && oppositeUser?.lastTimeOnline
     const lastMessage = chat.messages?.length ? chat.messages?.reduce((a, b) => a.createdAt > b.createdAt ? a : b, chat.messages[0]) : null;
+
+    const [lastMessageText, setLastMessageText] = useState<string | undefined | null>(lastMessage?.text);
+
+    useEffect(() => {
+        if(lastMessage && lastMessage.type === MessageKind.SystemGeeseText && lastMessage.text && T[lastMessage.text])
+        {
+            setLastMessageText(T[lastMessage.text!]!.format(...lastMessage.geeseTextArguments));
+        }
+    }, [T]);
 
     useEffect(() => {
         const userChat = chatActivity.data?.chatActivity;
@@ -72,21 +83,21 @@ export const Chat: FC<Props> = ({ chat, withSelected = true, withMenu = true, on
         const items: MenuItem[] = [];
 
         items.push({
-            content: 'Pin',
+            content: T.Pin,
             icon: <img src={pinSvg} width={20} className={'primaryTextSvg'} alt={'pinSvg'} />,
             onClick: () => { },
             type: 'default',
         });
 
         items.push({
-            content: 'Unmute',
+            content: T.Unmute,
             icon: <img src={notificationOutlinedSvg} width={20} className={'primaryTextSvg'} alt={'notificationOutlinedSvg'} />,
             onClick: () => { },
             type: 'default',
         });
 
         items.push({
-            content: 'Leave chat',
+            content: T.LeaveChat,
             icon: <img src={exitSvg} width={20} className={'primaryTextSvg'} alt={'exitSvg'} />,
             onClick: () => {
                 dispatch(chatActions.leaveChatAsync({ chatId: chat.id }));
@@ -98,7 +109,7 @@ export const Chat: FC<Props> = ({ chat, withSelected = true, withMenu = true, on
 
         if (chat.creatorId === authedUser?.id || chat.type === ChatKind.Personal)
             items.push({
-                content: 'Delete chat',
+                content: T.DeleteChat,
                 icon: <img src={deleteSvg} width={20} className={'dangerSvg'} alt={'deleteSvg'} />,
                 onClick: () => {
                     dispatch(chatActions.chatDeleteAsync(chat.id));
@@ -150,7 +161,7 @@ export const Chat: FC<Props> = ({ chat, withSelected = true, withMenu = true, on
                                     && lastMessage?.fromId !== authedUser?.id
                                     && <span>{lastMessage?.from?.firstName}: </span>
                                 }
-                                <span className="secondary">{lastMessage?.forwardedMessage ? lastMessage.forwardedMessage.text : lastMessage?.text}</span>
+                                <span className="secondary">{lastMessage?.forwardedMessage ? lastMessage.forwardedMessage.text : lastMessageText}</span>
                             </div>
                             {!!chat.notReadMessagesCount &&
                                 <div className={s.notReadMessagesCount}>{chat.notReadMessagesCount}</div>

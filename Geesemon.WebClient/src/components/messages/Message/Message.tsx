@@ -1,5 +1,5 @@
 import s from './Message.module.scss';
-import { FC, memo, useEffect, useRef } from 'react';
+import { FC, memo, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import deleteSvg from '../../../assets/svg/delete.svg';
 import pencilOutlinedSvg from '../../../assets/svg/pencilOutlined.svg';
@@ -21,6 +21,7 @@ import { Mode } from '../../../behavior/features/chats/slice';
 import { getFileName, processString, ProcessStringOption } from '../../../utils/stringUtils';
 import { FileType, getFileType } from '../../../utils/fileUtils';
 import { Checkbox } from '../../common/formControls/Checkbox/Checkbox';
+import { useGeeseTexts, useGetGeeseTexts } from '../../../hooks/useGeeseTexts';
 
 type Props = {
     message: MessageType;
@@ -36,9 +37,19 @@ export const Message: FC<Props> = memo(({ message, inputTextFocus, isFromVisible
     const ref = useRef<HTMLDivElement | null>(null);
     const isVisible = useOnScreen(ref);
     const selectedChat = useSelectedChat();
+    const [text, setText] = useState<string | undefined | null>('');
 
     const isMessageMy = message.fromId === authedUser?.id;
     const isReadByMe = message.readBy.find(u => u.id === authedUser?.id);
+
+    const T = useGeeseTexts();
+    
+    useEffect(() => {
+        if(message.type === MessageKind.SystemGeeseText && message.text && T[message.text])
+        {
+            setText(T[message.text!]!.format(...message.geeseTextArguments));
+        }
+    }, [T]);
 
     useEffect(() => {
         if (!messageIdsMakeReadLoading.find(mId => mId === message.id) && isVisible && !isReadByMe && !isMessageMy) {
@@ -89,10 +100,11 @@ export const Message: FC<Props> = memo(({ message, inputTextFocus, isFromVisible
             },
         ];
 
-        const messageText = processString(config)(message.text || '');
+        const messageText = processString(config)(text ? text : message.text || '');
         const fileType = message.fileUrl ? getFileType(message.fileUrl) : null;
 
         switch (message.type) {
+            case MessageKind.SystemGeeseText:
             case MessageKind.System:
                 return (
                     <div

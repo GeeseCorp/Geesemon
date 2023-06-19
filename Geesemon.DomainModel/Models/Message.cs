@@ -27,4 +27,6 @@ public class Message : Entity
     public List<ReadMessage>? ReadBy { get; set; }
 
     public ForwardedMessage? ForwardedMessage { get; set; }
+
+    public string[] GeeseTextArguments { get; set; } = Array.Empty<string>();
 }

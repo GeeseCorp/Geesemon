@@ -32,7 +32,27 @@ namespace Geesemon.Web.Services.MessageSubscription
                 ChatId = chatId,
                 Text = text,
                 FromId = null,
-                Type = MessageKind.System
+                Type = MessageKind.System,
+            };
+
+            message = await messageManager.CreateAsync(message);
+
+            messageActionStream.OnNext(new MessageAction { Message = message, Type = MessageActionKind.Create });
+            return message;
+        }
+
+        public async Task<Message> SentSystemGeeseMessageAsync(string text, Guid chatId, string[] arguments)
+        {
+            using var scope = serviceProvider.CreateScope();
+            var messageManager = scope.ServiceProvider.GetRequiredService<MessageManager>();
+
+            Message message = new Message()
+            {
+                ChatId = chatId,
+                Text = text,
+                FromId = null,
+                Type = MessageKind.SystemGeeseText,
+                GeeseTextArguments = arguments
             };
 
             message = await messageManager.CreateAsync(message);

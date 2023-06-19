@@ -10,6 +10,7 @@ import { Search } from '../../common/formControls/Search/Search';
 import { HeaderButton } from '../../common/HeaderButton/HeaderButton';
 import { Users } from '../../users/Users/Users';
 import s from './ChatsCreatePersonalChat.module.scss';
+import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
 
 type Props = {};
 export const ChatsCreatePersonalChat: FC<Props> = () => {
@@ -18,6 +19,7 @@ export const ChatsCreatePersonalChat: FC<Props> = () => {
     const users = useAppSelector(s => s.users.users);
     const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
     const navigate = useNavigate();
+    const T = useGeeseTexts();
 
     const onSelectedUsersChange = (selectedUsers: User[]) => {
         setSelectedUsers(selectedUsers);
@@ -50,7 +52,7 @@ export const ChatsCreatePersonalChat: FC<Props> = () => {
                 <Search
                   value={q}
                   setValue={onQChange}
-                  placeholder={'Search users'}
+                  placeholder={T.SearchUsers}
                 // onFocus={() => setIsEnabledSearchMode(true)}
                 />
             </div>

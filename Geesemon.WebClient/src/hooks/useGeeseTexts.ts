@@ -11,3 +11,14 @@ export function useGeeseTexts() {
 
     return result;
 }
+
+export function useGetGeeseTexts(...args: (string | undefined | null)[]) {  
+    const texts = useAppSelector(state => state.settings.geeseTexts.filter(gs => args.includes(gs.key)));    
+    const result : (string | undefined)[] = [];
+
+    for (let i = 0; i < texts.length; i++) {
+        result.push(texts[i].value as GeeseText);
+    }
+
+    return result;
+}
