@@ -8,6 +8,7 @@ using Geesemon.Web.GraphQL.Auth;
 using Geesemon.Web.GraphQL.Types;
 using Geesemon.Web.Services;
 using Geesemon.Web.Services.ChatActivitySubscription;
+using Geesemon.Web.Services.FileManagers;
 using Geesemon.Web.Services.LoginViaTokenSubscription;
 using GraphQL;
 using GraphQL.Types;
@@ -23,7 +24,7 @@ namespace Geesemon.Web.GraphQL.Mutations
             AuthService authService,
             UserManager userManager,
             SessionManager sessionManager,
-            FileManagerService fileManagerService,
+            IFileManagerService fileManagerService,
             IHttpContextAccessor httpContextAccessor,
             IValidator<AuthLoginInput> authLoginInputValidator,
             IValidator<AuthRegisterInput> authRegisterInputValidator,
@@ -171,7 +172,7 @@ namespace Geesemon.Web.GraphQL.Mutations
 
                     string imageUrl;
                     if (authUpdateProfile.Image != null)
-                        imageUrl = await fileManagerService.UploadFileAsync(FileManagerService.UsersAvatarsFolder, authUpdateProfile.Image);
+                        imageUrl = await fileManagerService.UploadFileAsync(FileManagerConstants.UsersAvatarsFolder, authUpdateProfile.Image);
                     else
                         imageUrl = authUpdateProfile.ImageUrl;
 

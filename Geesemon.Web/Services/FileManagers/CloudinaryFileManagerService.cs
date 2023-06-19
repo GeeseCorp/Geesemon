@@ -3,19 +3,13 @@ using CloudinaryDotNet.Actions;
 using Geesemon.Web.Utils.SettingsAccess;
 using System.Text.RegularExpressions;
 
-namespace Geesemon.Web.Services;
+namespace Geesemon.Web.Services.FileManagers;
 
-public class FileManagerService
+public class CloudinaryFileManagerService : IFileManagerService
 {
-    public const string UsersAvatarsFolder = "Images/UsersAvatars";
-
-    public const string GroupImagesFolder = "Images/GroupImages";
-    
-    public const string FilesFolder = "Files";
-
     private readonly Cloudinary cloudinary;
 
-    public FileManagerService(ISettingsProvider settingsProvider)
+    public CloudinaryFileManagerService(ISettingsProvider settingsProvider)
     {
         cloudinary = new Cloudinary(settingsProvider.GetCloudinaryConnectionString());
     }
@@ -33,7 +27,7 @@ public class FileManagerService
         var publicId = string.IsNullOrEmpty(folderPath) ? fileNameWithoutExtention : $"{folderPath}/{fileNameWithoutExtention}";
         var filePath = string.IsNullOrEmpty(folderPath) ? file.FileName : $"{folderPath}/{file.FileName}";
 
-        Stream stream = file.OpenReadStream();
+        var stream = file.OpenReadStream();
 
         var uploadParams = new RawUploadParams
         {
@@ -51,8 +45,8 @@ public class FileManagerService
 
     public async Task RemoveFileAsync(string path)
     {
-        string resourceTypeString = GetResourseTypeFromPath(path);
-        string fileName = GetFileNameFromPath(path);
+        var resourceTypeString = GetResourseTypeFromPath(path);
+        var fileName = GetFileNameFromPath(path);
 
         ResourceType resourceType;
         string publicId;

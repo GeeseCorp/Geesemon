@@ -5,8 +5,8 @@ using Geesemon.Model.Models;
 using Geesemon.Web.Extensions;
 using Geesemon.Web.GraphQL.Auth;
 using Geesemon.Web.GraphQL.Types;
-using Geesemon.Web.Services;
 using Geesemon.Web.Services.ChatActionsSubscription;
+using Geesemon.Web.Services.FileManagers;
 using Geesemon.Web.Services.MessageSubscription;
 using GraphQL;
 using GraphQL.Types;
@@ -17,7 +17,7 @@ namespace Geesemon.Web.GraphQL.Mutations
     public class ChatMutation : ObjectGraphType
     {
         private readonly IHttpContextAccessor httpContextAccessor;
-        private readonly FileManagerService fileManagerService;
+        private readonly IFileManagerService fileManagerService;
         private readonly IChatActionSubscriptionService chatActionSubscriptionService;
         private readonly IMessageActionSubscriptionService messageSubscriptionService;
         private readonly IChatMembersSubscriptionService chatMembersSubscriptionService;
@@ -31,7 +31,7 @@ namespace Geesemon.Web.GraphQL.Mutations
 
         public ChatMutation(
             IHttpContextAccessor httpContextAccessor,
-            FileManagerService fileManagerService,
+            IFileManagerService fileManagerService,
             IChatActionSubscriptionService chatActionSubscriptionService,
             IMessageActionSubscriptionService messageSubscriptionService,
             IChatMembersSubscriptionService chatMembersSubscriptionService,
@@ -143,7 +143,7 @@ namespace Geesemon.Web.GraphQL.Mutations
 
             string imageUrl = null;
             if (chatInput.Image != null)
-                imageUrl = await fileManagerService.UploadFileAsync(FileManagerService.GroupImagesFolder, chatInput.Image);
+                imageUrl = await fileManagerService.UploadFileAsync(FileManagerConstants.GroupImagesFolder, chatInput.Image);
 
             var chat = new Chat
             {
@@ -210,7 +210,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                 throw exception;
 
             if (chatUpdateInput.Image != null)
-                chat.ImageUrl = await fileManagerService.UploadFileAsync(FileManagerService.GroupImagesFolder, chatUpdateInput.Image);
+                chat.ImageUrl = await fileManagerService.UploadFileAsync(FileManagerConstants.GroupImagesFolder, chatUpdateInput.Image);
 
             chat.Name = chatUpdateInput.Name;
             chat.Identifier = chatUpdateInput.Identifier ;

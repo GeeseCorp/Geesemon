@@ -7,6 +7,7 @@ using Geesemon.Web.Middlewares;
 using Geesemon.Web.Services;
 using Geesemon.Web.Services.ChatActionsSubscription;
 using Geesemon.Web.Services.ChatActivitySubscription;
+using Geesemon.Web.Services.FileManagers;
 using Geesemon.Web.Services.LoginViaTokenSubscription;
 using Geesemon.Web.Services.MessageSubscription;
 using Geesemon.Web.Utils.SettingsAccess;
@@ -65,7 +66,13 @@ namespace Geesemon.Web.Extensions
             services.AddSingleton<ISettingsProvider, AppSettingsProvider>();
 
             services.AddSingleton<AuthService>();
-            services.AddSingleton<FileManagerService>();
+
+            var settingsProvider = services.BuildServiceProvider().GetService<ISettingsProvider>();
+
+            if (string.IsNullOrEmpty(settingsProvider.GetCloudinaryConnectionString()))
+                services.AddSingleton<IFileManagerService, LocalFileManagerService>();
+            else
+                services.AddSingleton<IFileManagerService, CloudinaryFileManagerService>();
 
             services.AddSingleton<IMessageActionSubscriptionService, MessageActionSubscriptionService>();
             services.AddSingleton<IChatActionSubscriptionService, ChatActionSubscriptionService>();

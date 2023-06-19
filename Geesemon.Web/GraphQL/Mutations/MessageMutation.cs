@@ -4,7 +4,7 @@ using Geesemon.Model.Common;
 using Geesemon.Model.Models;
 using Geesemon.Web.GraphQL.Auth;
 using Geesemon.Web.GraphQL.Types;
-using Geesemon.Web.Services;
+using Geesemon.Web.Services.FileManagers;
 using Geesemon.Web.Services.MessageSubscription;
 using GraphQL;
 using GraphQL.Types;
@@ -21,7 +21,7 @@ namespace Geesemon.Web.GraphQL.Mutations
             ReadMessagesManager readMessagesManager,
             IValidator<SentMessageInput> sentMessageInputValidator,
             IValidator<DeleteMessageInput> deleteMessageInputValidator,
-            FileManagerService fileManagerService
+            IFileManagerService fileManagerService
             )
         {
             Field<NonNullGraphType<ListGraphType<MessageType>>, IEnumerable<Message>>()
@@ -51,7 +51,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                     {
                         await Parallel.ForEachAsync(sentMessageInput.Files, async (file, token) =>
                         {
-                            var fileUrl = await fileManagerService.UploadFileAsync(FileManagerService.FilesFolder, file);
+                            var fileUrl = await fileManagerService.UploadFileAsync(FileManagerConstants.FilesFolder, file);
                             var newMessage = new Message()
                             {
                                 ChatId = chat.Id,
