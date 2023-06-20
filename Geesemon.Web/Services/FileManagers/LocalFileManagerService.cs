@@ -23,11 +23,12 @@ public class LocalFileManagerService : IFileManagerService
 
     public async Task<string> UploadFileAsync(string folderPath, IFormFile file, bool withHash = true)
     {
-        var fileNameWithoutExtention = Path.GetFileNameWithoutExtension(file.FileName);
+        var filePath = string.IsNullOrEmpty(folderPath) ? file.FileName : @$"{folderPath}\";
+
         if (withHash)
-            fileNameWithoutExtention = $"{Guid.NewGuid()}_{fileNameWithoutExtention}";
-        var publicId = string.IsNullOrEmpty(folderPath) ? fileNameWithoutExtention : @$"{folderPath}\{fileNameWithoutExtention}";
-        var filePath = string.IsNullOrEmpty(folderPath) ? file.FileName : @$"{folderPath}\{file.FileName}";
+            filePath += $"{Guid.NewGuid()}_{file.FileName}";
+        else
+            filePath += $"{file.FileName}";
 
         var stream = file.OpenReadStream();
 

@@ -15,6 +15,7 @@ using GraphQL;
 using GraphQL.Server;
 using GraphQL.Server.Transports.Subscriptions.Abstractions;
 using GraphQL.SystemTextJson;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using System.Reflection;
 using System.Security.Claims;
 
@@ -81,6 +82,11 @@ namespace Geesemon.Web.Extensions
             services.AddSingleton<ILoginViaTokenSubscriptionService, LoginViaTokenSubscriptionService>();
             
             services.AddSingleton<GeeseTextsAccessor>();
+
+            services.Configure<KestrelServerOptions>(options =>
+            {
+                options.Limits.MaxRequestBodySize = int.MaxValue;
+            });
 
             return services;
         }
