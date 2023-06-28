@@ -2,13 +2,13 @@ import styles from './Messages.module.scss';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { chatActions } from '../../../behavior/features/chats';
-import { ChatKind, Message as MessageType } from '../../../behavior/features/chats/types';
+import { ChatKind, Message } from '../../../behavior/features/chats/types';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
 import { useSelectedChat, useSelectedChatIdentifier } from '../../../hooks/useSelectedChat';
 import { isGuidEmpty } from '../../../utils/stringUtils';
 import { Avatar } from '../../common/Avatar/Avatar';
 import { AvatarWithoutImage } from '../../common/AvatarWithoutImage/AvatarWithoutImage';
-import { Message } from '../Message/Message';
+import { MessageItem } from '../Message/Message';
 import { SendMessageForm } from '../SendMessageForm/SendMessageForm';
 import { InfinityScroll } from '../../common/InfinityScroll/InfinityScroll';
 import { useOnUpdate } from '../../../hooks/useOnUpdate';
@@ -20,14 +20,14 @@ export const Messages: FC = () => {
     const selectedChat = useSelectedChat();
     const dispatch = useAppDispatch();
     const inputTextRef = useRef<HTMLTextAreaElement | null>(null);
-    const [messageBlocks, setMessageBlocks] = useState<MessageType[][]>([]);
+    const [messageBlocks, setMessageBlocks] = useState<Message[][]>([]);
     const authedUser = useAppSelector(s => s.auth.authedUser);
     const messageBlocksRef = useRef<HTMLDivElement | null>(null);
     const scrollFromBottomPosition = useRef<number | null>(null);
 
     useEffect(() => {
-        const blocks: MessageType[][] = [];
-        let block: MessageType[] = [];
+        const blocks: Message[][] = [];
+        let block: Message[] = [];
         selectedChat?.messages.forEach((message, i) => {
             if (i === selectedChat?.messages.length - 1) {
                 if (i !== 0 && message.fromId !== selectedChat?.messages[i - 1].fromId) {
@@ -123,7 +123,7 @@ export const Messages: FC = () => {
                                     )}
                                     <div className={styles.innerMessagesBlock}>
                                         {block.map((message, j) => (
-                                            <Message
+                                            <MessageItem
                                               key={message.id}
                                               isFromVisible={j === block.length - 1 && selectedChat?.type === ChatKind.Group && message.fromId !== authedUser?.id}
                                               message={message}

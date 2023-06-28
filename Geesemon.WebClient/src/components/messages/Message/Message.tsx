@@ -3,7 +3,7 @@ import { FC, memo, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import fileSvg from '../../../assets/svg/file.svg';
 import { chatActions } from '../../../behavior/features/chats';
-import { ChatKind, Message as MessageType, MessageKind, MediaKind, ForwardedMessage } from '../../../behavior/features/chats/types';
+import { ChatKind, Message, MessageKind, MediaKind, ForwardedMessage } from '../../../behavior/features/chats/types';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
 import { useOnScreen } from '../../../hooks/useOnScreen';
 import { getTimeWithoutSeconds } from '../../../utils/dateUtils';
@@ -18,12 +18,12 @@ import { ProcessStringOption, identifierProcessStringOption, linkProcessStringOp
 import { MessageContextMenu } from './MessageContextMenu';
 
 type Props = {
-    message: MessageType;
+    message: Message;
     inputTextFocus?: () => void;
     isFromVisible?: boolean;
 };
 
-export const Message: FC<Props> = memo(({ message, inputTextFocus, isFromVisible = false }) => {
+export const MessageItem: FC<Props> = memo(({ message, inputTextFocus, isFromVisible = false }) => {
     const selectedMessageIds = useAppSelector(s => s.chats.selectedMessageIds);
     const messageIdsMakeReadLoading = useAppSelector(s => s.chats.messageIdsMakeReadLoading);
     const authedUser = useAppSelector(s => s.auth.authedUser);
@@ -162,7 +162,7 @@ export const Message: FC<Props> = memo(({ message, inputTextFocus, isFromVisible
         );
     };
 
-    const renderFile = (message: MessageType | ForwardedMessage, date: string | null = null) => {
+    const renderFile = (message: Message | ForwardedMessage, date: string | null = null) => {
         const url = message.fileUrl;
         if (!url)
             return null;

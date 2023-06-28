@@ -13,6 +13,7 @@ import { useAppDispatch, useAppSelector } from '../../../behavior/store';
 import { ChatKind, Message } from '../../../behavior/features/chats/types';
 import { useSelectedChat } from '../../../hooks/useSelectedChat';
 import { Checks } from '../Checks/Checks';
+import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
 
 type Props = {
     children: ReactNode;
@@ -25,27 +26,28 @@ export const MessageContextMenu = ({ children, message, inputTextFocus }: Props)
     const authedUser = useAppSelector(s => s.auth.authedUser);
     const selectedChat = useSelectedChat();
     const dispatch = useAppDispatch();
+    const T = useGeeseTexts();
 
     const getContextMenuItems = (): MenuItem[] => {
         const items: MenuItem[] = [];
 
         if (selectedMessageIds.length) {
             items.push({
-                content: 'Forward Selected',
+                content: T.ForwardSelected,
                 icon: <img src={replySvg} width={17} className={['primaryTextSvg', styles.forwardSvg].join(' ')} alt={'forwardSvg'} />,
                 onClick: () => setForwardMessageIdsHanlder(selectedMessageIds),
                 type: 'default',
             });
 
             items.push({
-                content: 'Delete Selected',
+                content: T.DeleteSelected,
                 icon: <img src={deleteSvg} width={20} className={'dangerSvg'} alt={'deleteSvg'} />,
                 onClick: () => dispatch(chatActions.messageDeleteAsync({ messageIds: selectedMessageIds })),
                 type: 'danger',
             });
 
             items.push({
-                content: 'Clear Selection',
+                content: T.ClearSelection,
                 icon: <img src={selectSvg} width={15} className={'primaryTextSvg'} alt={'selectSvg'} />,
                 onClick: () => {
                     dispatch(chatActions.setSelectedMessageIds([]));
@@ -56,7 +58,7 @@ export const MessageContextMenu = ({ children, message, inputTextFocus }: Props)
         }
         else {
             items.push({
-                content: 'Reply',
+                content: T.Reply,
                 icon: <img src={replySvg} width={17} className={'primaryTextSvg'} alt={'replySvg'} />,
                 onClick: () => setReplyMessageHanlder(message.id),
                 type: 'default',
@@ -64,7 +66,7 @@ export const MessageContextMenu = ({ children, message, inputTextFocus }: Props)
 
             if (message.fromId === authedUser?.id && !message.forwardedMessage)
                 items.push({
-                    content: 'Update',
+                    content: T.Update,
                     icon: <img src={pencilOutlinedSvg} width={15} className={'primaryTextSvg'} alt={'pencilOutlinedSvg'} />,
                     onClick: () => setInUpdateMessageHanlder(message.id),
                     type: 'default',
@@ -72,23 +74,23 @@ export const MessageContextMenu = ({ children, message, inputTextFocus }: Props)
 
             items.push(
                 {
-                    content: 'Copy',
+                    content: T.Copy,
                     // icon: <img src={pencilOutlinedSvg} width={15} className={'primaryTextSvg'} alt={'pencilOutlinedSvg'} />,
                     type: 'default',
                 },
                 {
-                    content: 'Pin',
+                    content: T.Pin,
                     // icon: <img src={pencilOutlinedSvg} width={15} className={'primaryTextSvg'} alt={'pencilOutlinedSvg'} />,
                     type: 'default',
                 },
                 {
-                    content: 'Forward',
+                    content: T.Forward,
                     icon: <img src={replySvg} width={17} className={['primaryTextSvg', styles.forwardSvg].join(' ')} alt={'forwardSvg'} />,
                     onClick: () => setForwardMessageIdsHanlder([message.id]),
                     type: 'default',
                 },
                 {
-                    content: 'Select',
+                    content: T.Select,
                     icon: <img src={selectSvg} width={15} className={'primaryTextSvg'} alt={'selectSvg'} />,
                     onClick: () => dispatch(chatActions.setSelectedMessageIds([message.id])),
                     type: 'default',
@@ -98,7 +100,7 @@ export const MessageContextMenu = ({ children, message, inputTextFocus }: Props)
             if (selectedChat?.type !== ChatKind.Saved)
                 items.push({
                     content: <div className={styles.readBy}>
-                        <div>{message.readByCount} seen</div>
+                        <div>{message.readByCount} {T.Seen}</div>
                         <div className={styles.last3ReadBy}>
                             {message.readBy.slice(0, 3).map(user => user.imageUrl
                                 ? (
@@ -129,7 +131,7 @@ export const MessageContextMenu = ({ children, message, inputTextFocus }: Props)
 
             if (message.fromId === authedUser?.id || selectedChat?.type === ChatKind.Personal)
                 items.push({
-                    content: 'Delete',
+                    content: T.Delete,
                     icon: <img src={deleteSvg} width={20} className={'dangerSvg'} alt={'deleteSvg'} />,
                     onClick: () => dispatch(chatActions.messageDeleteAsync({ messageIds: [message.id] })),
                     type: 'danger',
