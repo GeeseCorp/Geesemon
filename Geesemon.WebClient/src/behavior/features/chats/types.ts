@@ -2,26 +2,30 @@ import { Entity } from '../../common';
 import { User } from '../users/types';
 
 export type ForwardedMessage = {
-    text?: string | null;
+    text: string | null;
     type: MessageKind;
     fromId?: string | null;
-    from?: User | null;
-    fileUrl?: string | null;
+    from: User | null;
+    fileUrl: string | null;
+    mediaKind: MediaKind | null;
+    mimeType: string | null;
 };
 
 export type Message = {
-    text?: string | null;
+    text: string | null;
     type: MessageKind;
     isEdited: boolean;
-    fromId?: string | null;
-    from?: User | null;
+    fromId: string | null;
+    from: User | null;
     chatId: string;
     replyMessageId?: string | null;
     replyMessage?: Message | null;
     readBy: User[];
     readByCount: number;
-    fileUrl?: string;
-    forwardedMessage?: ForwardedMessage | null;
+    fileUrl: string | null;
+    mediaKind: MediaKind | null;
+    mimeType: string | null;
+    forwardedMessage: ForwardedMessage | null;
     geeseTextArguments: string[];
 } & Entity;
 
@@ -29,6 +33,11 @@ export enum MessageKind {
     Regular = 'REGULAR',
     System = 'SYSTEM',
     SystemGeeseText = 'SYSTEM_GEESE_TEXT',
+}
+
+export enum MediaKind {
+    Voice = 'VOICE',
+    Video = 'VIDEO',
 }
 
 export type ReadMessage = {

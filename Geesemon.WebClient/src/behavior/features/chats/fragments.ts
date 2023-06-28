@@ -19,6 +19,8 @@ export const MESSAGE_WITHOUT_REPLY_MESSAGE_FRAGMENT = gql`
         }
         readByCount
         fileUrl
+        mediaKind
+        mimeType
         createdAt
         updatedAt
     }

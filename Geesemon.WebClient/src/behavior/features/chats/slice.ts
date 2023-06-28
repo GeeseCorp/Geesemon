@@ -16,7 +16,7 @@ import { Chat, Message, UserChat } from './types';
 
 export enum Mode {
     Text = 0,
-    Audio = 1,
+    Voice = 1,
     Updating = 2,
     Reply = 3,
     ForwardSelectChat = 4,

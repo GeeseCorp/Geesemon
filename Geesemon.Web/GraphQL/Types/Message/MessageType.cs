@@ -70,7 +70,7 @@ namespace Geesemon.Web.GraphQL.Types
 
                     return await userManager.GetReadByAsync(messageId, skip, take ?? 30);
                 });
-            
+
             Field<NonNullGraphType<IntGraphType>, int>()
                 .Name("ReadByCount")
                 .ResolveAsync(async context =>
@@ -83,12 +83,30 @@ namespace Geesemon.Web.GraphQL.Types
 
             Field<StringGraphType, string?>()
                 .Name("FileUrl")
-                .Resolve(ctx => ctx.Source.FileUrl);
-            
+                .Resolve(ctx =>
+                {
+                    if (string.IsNullOrEmpty(ctx.Source.FileUrl))
+                        return null;
+
+                    using var scope = serviceProvider.CreateScope();
+                    var request = scope.ServiceProvider.GetRequiredService<IHttpContextAccessor>().HttpContext.Request;
+
+                    var protocol = request.IsHttps ? "https" : "http";
+                    return $"{protocol}://{request.Host}{ctx.Source.FileUrl}";
+                });
+
+            Field<MediaKindType, MediaKind?>()
+                .Name("MediaKind")
+                .Resolve(ctx => ctx.Source.MediaKind);
+
+            Field<StringGraphType, string?>()
+                .Name("MimeType")
+                .Resolve(ctx => ctx.Source.MimeType);
+
             Field<ForwardedMessageType, ForwardedMessage?>()
                 .Name("ForwardedMessage")
                 .Resolve(ctx => ctx.Source.ForwardedMessage);
-            
+
             Field<ListGraphType<StringGraphType>, string[]?>()
                 .Name("GeeseTextArguments")
                 .Resolve(ctx => ctx.Source.GeeseTextArguments);

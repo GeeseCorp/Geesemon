@@ -74,3 +74,7 @@ export const getFileExtension = (str: string): string => {
     const lastPart = parts[parts.length - 1];
     return lastPart.substring(1);
 };
+
+export const format = (text: string, ...args: (string | null | undefined)[]) => {
+    return text.replace(/{(\d+)}/g, (match, number) => args[number] || match);
+};

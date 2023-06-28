@@ -1,8 +1,4 @@
-﻿using CloudinaryDotNet.Actions;
-using CloudinaryDotNet;
-using System.Text.RegularExpressions;
-
-namespace Geesemon.Web.Services.FileManagers;
+﻿namespace Geesemon.Web.Services.FileManagers;
 
 public class LocalFileManagerService : IFileManagerService
 {
@@ -23,7 +19,7 @@ public class LocalFileManagerService : IFileManagerService
 
     public async Task<string> UploadFileAsync(string folderPath, IFormFile file, bool withHash = true)
     {
-        var filePath = string.IsNullOrEmpty(folderPath) ? file.FileName : @$"{folderPath}\";
+        var filePath = $"{folderPath}/";
 
         if (withHash)
             filePath += $"{Guid.NewGuid()}_{file.FileName}";
@@ -32,11 +28,11 @@ public class LocalFileManagerService : IFileManagerService
 
         var stream = file.OpenReadStream();
 
-        using (var fileStream = File.Create(Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\dynamic\" + filePath)))
+        using (var fileStream = File.Create(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/dynamic/" + filePath)))
         {
             stream.CopyTo(fileStream);
         }
 
-        return  await Task.Run(() => @"\dynamic\" + filePath);
+        return await Task.Run(() => "/dynamic/" + filePath);
     }
 }

@@ -7,7 +7,7 @@ import replySvg from '../../../assets/svg/reply.svg';
 import fileSvg from '../../../assets/svg/file.svg';
 import selectSvg from '../../../assets/svg/select.svg';
 import { chatActions } from '../../../behavior/features/chats';
-import { ChatKind, Message as MessageType, MessageKind } from '../../../behavior/features/chats/types';
+import { ChatKind, Message as MessageType, MessageKind, MediaKind, ForwardedMessage } from '../../../behavior/features/chats/types';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
 import { useOnScreen } from '../../../hooks/useOnScreen';
 import { getTimeWithoutSeconds } from '../../../utils/dateUtils';
@@ -18,10 +18,11 @@ import { MenuItem } from '../../common/Menu/Menu';
 import { Checks } from '../Checks/Checks';
 import { useSelectedChat } from '../../../hooks/useSelectedChat';
 import { Mode } from '../../../behavior/features/chats/slice';
-import { getFileName, processString, ProcessStringOption } from '../../../utils/stringUtils';
+import { format, getFileName, processString, ProcessStringOption } from '../../../utils/stringUtils';
 import { FileType, getFileType } from '../../../utils/fileUtils';
 import { Checkbox } from '../../common/formControls/Checkbox/Checkbox';
-import { useGeeseTexts, useGetGeeseTexts } from '../../../hooks/useGeeseTexts';
+import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
+import { VoiceMessage } from './VoiceMessage';
 
 type Props = {
     message: MessageType;
@@ -43,10 +44,9 @@ export const Message: FC<Props> = memo(({ message, inputTextFocus, isFromVisible
     const isReadByMe = message.readBy.find(u => u.id === authedUser?.id);
 
     const T = useGeeseTexts();
-    
+
     useEffect(() => {
-        if(message.type === MessageKind.SystemGeeseText && message.text && T[message.text])
-        {
+        if (message.type === MessageKind.SystemGeeseText && message.text && T[message.text]) {
             setText(T[message.text!]!.format(...message.geeseTextArguments));
         }
     }, [T]);
@@ -65,10 +65,10 @@ export const Message: FC<Props> = memo(({ message, inputTextFocus, isFromVisible
                 fn: (key, result) => (
                     <span key={key}>
                         <a
-                          style={{ textDecoration: 'underline' }}
-                          target="_blank"
-                          href={`${result[1]}://${result[2]}.${result[3]}${result[4]}`}
-                          rel="noreferrer"
+                            style={{ textDecoration: 'underline' }}
+                            target="_blank"
+                            href={`${result[1]}://${result[2]}.${result[3]}${result[4]}`}
+                            rel="noreferrer"
                         >
                             {result[2]}.{result[3]}{result[4]}
                         </a>
@@ -81,10 +81,10 @@ export const Message: FC<Props> = memo(({ message, inputTextFocus, isFromVisible
                 fn: (key, result) => (
                     <span key={key}>
                         <a
-                          style={{ textDecoration: 'underline' }}
-                          target="_blank"
-                          href={`http://${result[1]}.${result[2]}${result[3]}`}
-                          rel="noreferrer"
+                            style={{ textDecoration: 'underline' }}
+                            target="_blank"
+                            href={`http://${result[1]}.${result[2]}${result[3]}`}
+                            rel="noreferrer"
                         >
                             {result[1]}.{result[2]}{result[3]}
                         </a>
@@ -108,11 +108,11 @@ export const Message: FC<Props> = memo(({ message, inputTextFocus, isFromVisible
             case MessageKind.System:
                 return (
                     <div
-                      ref={el => {
+                        ref={el => {
                             if (!isReadByMe)
                                 ref.current = el;
                         }}
-                      className={[s.message, s.messageSystem].join(' ')}
+                        className={[s.message, s.messageSystem].join(' ')}
                     >
                         <div className={`${s.messageText} textCenter`}>{messageText}</div>
                     </div>
@@ -123,20 +123,20 @@ export const Message: FC<Props> = memo(({ message, inputTextFocus, isFromVisible
                     const forwardedMessageFileType = message.forwardedMessage.fileUrl ? getFileType(message.forwardedMessage.fileUrl) : null;
                     return (
                         <div
-                          ref={el => {
+                            ref={el => {
                                 if (!isReadByMe)
                                     ref.current = el;
                             }}
-                          className={[s.message, isMessageMy ? s.messageMy : null, message.forwardedMessage.text || fileType === FileType.File ? s.messagePadding : null].join(' ')}
+                            className={[s.message, isMessageMy ? s.messageMy : null, message.forwardedMessage.text || fileType === FileType.File ? s.messagePadding : null].join(' ')}
                         >
                             <Link
-                              to={`/${message.from?.identifier}`}
-                              className={[s.from, 'bold', message.forwardedMessage && message.forwardedMessage.fileUrl && s.messagePadding].join(' ')}
-                              style={{ color: message.from?.avatarColor }}
+                                to={`/${message.from?.identifier}`}
+                                className={[s.from, 'bold', message.forwardedMessage && message.forwardedMessage.fileUrl && s.messagePadding].join(' ')}
+                                style={{ color: message.from?.avatarColor }}
                             >
-                                Forwarded from {message.forwardedMessage.from?.fullName}
+                                {format(T.ForwardedFrom, message.forwardedMessage.from?.fullName)}
                             </Link>
-                            {message.forwardedMessage?.fileUrl && renderFile(message.forwardedMessage.fileUrl, message.forwardedMessage.text ? null : message.createdAt)}
+                            {renderFile(message.forwardedMessage, message.forwardedMessage.text ? null : message.createdAt)}
                             {message.forwardedMessage.text && <span className={s.messageText}>{forwardedMessageText}</span>}
                             {(message.forwardedMessage.text || forwardedMessageFileType === FileType.File) && (
                                 <span className={s.messageInfo}>
@@ -149,36 +149,36 @@ export const Message: FC<Props> = memo(({ message, inputTextFocus, isFromVisible
                 else {
                     return (
                         <div
-                          ref={el => {
+                            ref={el => {
                                 if (!isReadByMe)
                                     ref.current = el;
                             }}
-                          className={[s.message, isMessageMy ? s.messageMy : null, message.text || fileType === FileType.File ? s.messagePadding : null].join(' ')}
+                            className={[s.message, isMessageMy ? s.messageMy : null, message.text || fileType === FileType.File ? s.messagePadding : null].join(' ')}
                         >
                             {isFromVisible && (
                                 <Link
-                                  to={`/${message.from?.identifier}`}
-                                  className={[s.from, 'bold'].join(' ')}
-                                  style={{ color: message.from?.avatarColor }}
+                                    to={`/${message.from?.identifier}`}
+                                    className={[s.from, 'bold'].join(' ')}
+                                    style={{ color: message.from?.avatarColor }}
                                 >
                                     {message.from?.fullName}
                                 </Link>
                             )}
                             {message.replyMessage && (
                                 <div
-                                  style={{ borderColor: selectedChat?.type === ChatKind.Group ? message.replyMessage.from?.avatarColor : '' }}
-                                  className={s.replyMessage}
+                                    style={{ borderColor: selectedChat?.type === ChatKind.Group ? message.replyMessage.from?.avatarColor : '' }}
+                                    className={s.replyMessage}
                                 >
                                     <div
-                                      style={{ color: selectedChat?.type === ChatKind.Group ? message.replyMessage.from?.avatarColor : '' }}
-                                      className={'small bold primary'}
+                                        style={{ color: selectedChat?.type === ChatKind.Group ? message.replyMessage.from?.avatarColor : '' }}
+                                        className={'small bold primary'}
                                     >
                                         {message.replyMessage?.from?.fullName}
                                     </div>
                                     <div className={['small primary', s.replyMessageText].join(' ')}>{message.replyMessage?.text}</div>
                                 </div>
                             )}
-                            {message.fileUrl && renderFile(message.fileUrl, message.text ? null : message.createdAt)}
+                            {renderFile(message, message.text ? null : message.createdAt)}
                             {message.text && <span className={s.messageText}>{messageText}</span>}
                             {(message.text || fileType === FileType.File) && (
                                 <span className={s.messageInfo}>
@@ -206,13 +206,22 @@ export const Message: FC<Props> = memo(({ message, inputTextFocus, isFromVisible
         );
     };
 
-    const renderFile = (fileUrl: string, date: string | null = null) => {
-        const fileType = getFileType(fileUrl);
+    const renderFile = (message: MessageType | ForwardedMessage, date: string | null = null) => {
+        const url = message.fileUrl;
+        if (!url)
+            return null;
+
+        switch (message.mediaKind) {
+            case MediaKind.Voice:
+                return <VoiceMessage url={url} />;
+        }
+
+        const fileType = getFileType(url);
         switch (fileType) {
             case FileType.Image:
                 return (
                     <div className={s.mediaWrapper}>
-                        <img src={fileUrl} alt={fileUrl} className={s.media} />
+                        <img src={url} alt={url} className={s.media} />
                         {date && (
                             <div className={s.fileMessageInfo}>{renderMessageInfo()}</div>
                         )}
@@ -221,7 +230,7 @@ export const Message: FC<Props> = memo(({ message, inputTextFocus, isFromVisible
             case FileType.Video:
                 return (
                     <div className={s.mediaWrapper}>
-                        <video controls src={fileUrl} className={s.media} />
+                        <video controls src={url} className={s.media} />
                         {date && (
                             <div className={s.fileMessageInfo}>{renderMessageInfo()}</div>
                         )}
@@ -229,10 +238,10 @@ export const Message: FC<Props> = memo(({ message, inputTextFocus, isFromVisible
                 );
             default:
                 return (
-                    <a href={message.fileUrl} target="_blank" rel="noreferrer">
+                    <a href={url} target="_blank" rel="noreferrer">
                         <div className={s.file}>
                             <img src={fileSvg} width={25} className={'primaryTextSvg'} alt={'fileSvg'} />
-                            <div>{message.fileUrl && getFileName(message.fileUrl)}</div>
+                            <div>{getFileName(url)}</div>
                         </div>
                     </a>
                 );
@@ -325,37 +334,37 @@ export const Message: FC<Props> = memo(({ message, inputTextFocus, isFromVisible
                 },
             );
 
-        if (selectedChat?.type !== ChatKind.Saved)
-            items.push({
-                content: <div className={s.readBy}>
-                    <div>{message.readByCount} seen</div>
-                    <div className={s.last3ReadBy}>
-                        {message.readBy.slice(0, 3).map(user => user.imageUrl
-                            ? (
-                                <Avatar
-                                  key={user.id}
-                                  width={22}
-                                  height={22}
-                                  imageUrl={user.imageUrl}
-                                />
-                            )
-                            : (
-                                <AvatarWithoutImage
-                                  key={user.id}
-                                  width={22}
-                                  height={22}
-                                  fontSize={8}
-                                  backgroundColor={user.avatarColor}
-                                  name={user.fullName}
-                                />
-                            ),
-                        )}
-                    </div>
-                </div>,
-                icon: <Checks double />,
-                onClick: () => dispatch(chatActions.setInViewMessageIdReadBy(message.id)),
-                type: 'default',
-            });
+            if (selectedChat?.type !== ChatKind.Saved)
+                items.push({
+                    content: <div className={s.readBy}>
+                        <div>{message.readByCount} seen</div>
+                        <div className={s.last3ReadBy}>
+                            {message.readBy.slice(0, 3).map(user => user.imageUrl
+                                ? (
+                                    <Avatar
+                                        key={user.id}
+                                        width={22}
+                                        height={22}
+                                        imageUrl={user.imageUrl}
+                                    />
+                                )
+                                : (
+                                    <AvatarWithoutImage
+                                        key={user.id}
+                                        width={22}
+                                        height={22}
+                                        fontSize={8}
+                                        backgroundColor={user.avatarColor}
+                                        name={user.fullName}
+                                    />
+                                ),
+                            )}
+                        </div>
+                    </div>,
+                    icon: <Checks double />,
+                    onClick: () => dispatch(chatActions.setInViewMessageIdReadBy(message.id)),
+                    type: 'default',
+                });
 
             if (message.fromId === authedUser?.id || selectedChat?.type === ChatKind.Personal)
                 items.push({
@@ -391,8 +400,8 @@ export const Message: FC<Props> = memo(({ message, inputTextFocus, isFromVisible
             <div className={s.wrapperMessage} onClick={() => selectedMessageIds.length && selectionChange()}>
                 {selectedMessageIds.length > 0 && (
                     <Checkbox
-                      checked={!!selectedMessageIds.find(id => message.id === id)}
-                      setChecked={checked => selectionChange(checked)}
+                        checked={!!selectedMessageIds.find(id => message.id === id)}
+                        setChecked={checked => selectionChange(checked)}
                     />
                 )}
                 <div className={s.messageContent}>{messageContent()}</div>

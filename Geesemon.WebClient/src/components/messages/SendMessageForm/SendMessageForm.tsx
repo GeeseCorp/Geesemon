@@ -10,6 +10,7 @@ import sendSvg from '../../../assets/svg/send.svg';
 import smileSvg from '../../../assets/svg/smile.svg';
 import replySvg from '../../../assets/svg/reply.svg';
 import fileSvg from '../../../assets/svg/file.svg';
+import deleteSvg from '../../../assets/svg/delete.svg';
 import { chatActions } from '../../../behavior/features/chats';
 import { Mode } from '../../../behavior/features/chats/slice';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
@@ -20,6 +21,9 @@ import { FileType, getFileType } from '../../../utils/fileUtils';
 import { getFileName } from '../../../utils/stringUtils';
 import EmojiPicker, { Theme } from 'emoji-picker-react';
 import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
+import { AudioRecorder, useAudioRecorder } from 'react-audio-voice-recorder';
+import moment from 'moment';
+import { MediaKind } from '../../../behavior/features/chats/types';
 
 const INPUT_TEXT_DEFAULT_HEIGHT = '25px';
 
@@ -42,12 +46,36 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
     const [files, setFiles] = useState<File[]>([]);
     const forwardMessageIds = useAppSelector(s => s.chats.forwardMessageIds);
     const T = useGeeseTexts();
+    const {
+        startRecording,
+        stopRecording,
+        togglePauseResume,
+        recordingBlob: recordingVoiceBlob,
+        isRecording,
+        isPaused,
+        recordingTime,
+        mediaRecorder
+    } = useAudioRecorder();
 
     useEffect(() => {
         if (inUpdateMessageId && inUpdateMessage) {
             setNewMessageText(inUpdateMessage.text || '');
         }
     }, [inUpdateMessageId]);
+
+    useEffect(() => {
+        if (!recordingVoiceBlob)
+            return;
+
+        const file = new File([recordingVoiceBlob], `voice_${moment().format('YYYY-MM-DD_hh-mm-ss')}.mp3`);
+        setFiles([file]);
+    }, [recordingVoiceBlob]);
+
+    useEffect(() => {
+        if (files.length && mode === Mode.Voice) {
+            sendMessageHandler();
+        }
+    }, [files.length]);
 
     const setNewMessageText = (newMessageText: string): void => {
         if (inputTextRef.current) {
@@ -81,18 +109,23 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
             case Mode.Updating:
                 setNewMessageText('');
                 dispatch(chatActions.setInUpdateMessageId(null));
-                dispatch(chatActions.setMode(Mode.Text));
                 break;
             case Mode.Reply:
                 dispatch(chatActions.setReplyMessageId(null));
-                dispatch(chatActions.setMode(Mode.Text));
                 break;
             case Mode.Forward:
                 dispatch(chatActions.setForwardMessageIds([]));
-                dispatch(chatActions.setMode(Mode.Text));
                 break;
         }
+    };
 
+    const getMediaKind = (): MediaKind | null => {
+        switch (mode) {
+            case Mode.Voice:
+                return MediaKind.Voice;
+            default:
+                return null;
+        }
     };
 
     const sendMessageHandler = () => {
@@ -113,16 +146,20 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                 replyMessageId,
                 files,
                 forwardedMessageIds: forwardMessageIds,
+                mediaKind: getMediaKind(),
             },
         }));
+
         if (inputTextRef.current)
             inputTextRef.current.style.height = INPUT_TEXT_DEFAULT_HEIGHT;
-            
+
         setIsEmojiPickerVisible(false);
         scrollToBottom();
 
         if (mode === Mode.Reply || mode === Mode.Forward)
             closeExtraBlockHandler();
+
+        dispatch(chatActions.setMode(Mode.Text));
     };
 
     const updateMessageHandler = () => {
@@ -135,13 +172,27 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
         }
     };
 
+    const recordAudioHandler = () => {
+        startRecording();
+        dispatch(chatActions.setMode(Mode.Voice));
+    };
+
+    const stopRecordingHandler = () => {
+        stopRecording();
+    };
+
     const primaryButtonClickHandler = () => {
         switch (mode) {
             case Mode.Updating:
                 updateMessageHandler();
                 break;
             default:
-                sendMessageHandler();
+                if (messageText || files.length || forwardMessageIds.length) {
+                    sendMessageHandler();
+                }
+                else {
+                    recordAudioHandler();
+                }
                 break;
         }
     };
@@ -204,12 +255,12 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
             case Mode.Updating:
                 return (
                     <motion.img
-                      key={'update'}
-                      initial={{ scale: 0, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      src={checkSvg}
-                      width={25}
-                      className={'primaryTextSvg'}
+                        key={'update'}
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        src={checkSvg}
+                        width={25}
+                        className={'primaryTextSvg'}
                     />
                 );
             default:
@@ -217,34 +268,23 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                     messageText || files.length || forwardMessageIds.length
                         ? (
                             <motion.img
-                              key={'send'}
-                              initial={{ scale: 0, opacity: 0 }}
-                              animate={{ scale: 1, opacity: 1 }}
-                              src={sendSvg}
-                              className={'primaryTextSvg'}
+                                key={'send'}
+                                initial={{ scale: 0, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                src={sendSvg}
+                                className={'primaryTextSvg'}
                             />
                         )
                         : (
                             <motion.img
-                              key={'microphone'}
-                              initial={{ scale: 0, opacity: 0 }}
-                              animate={{ scale: 1, opacity: 1 }}
-                              src={microphoneSvg}
-                              width={25}
-                              className={'primaryTextSvg'}
+                                key={'microphone'}
+                                initial={{ scale: 0, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                src={microphoneSvg}
+                                width={25}
+                                className={'primaryTextSvg'}
                             />
                         )
-                );
-            case Mode.Updating:
-                return (
-                    <motion.img
-                      key={'update'}
-                      initial={{ scale: 0, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      src={checkSvg}
-                      width={25}
-                      className={'primaryTextSvg'}
-                    />
                 );
         }
     };
@@ -283,23 +323,23 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                             ))}
                         </div>
                     )}
-                    <div className={styles.innerInputText}> 
+                    <div className={styles.innerInputText}>
                         <div className={`${styles.inputTextButton} ${styles.wrapperEmojiPicker}`}>
                             <img src={smileSvg} width={20} className={'secondaryTextSvg'} alt={'smileSvg'} onClick={_ => setIsEmojiPickerVisible(!isEmojiPickerVisible)} />
                             {isEmojiPickerVisible &&
-                                <div className={styles.emojiPicker}>        
+                                <div className={styles.emojiPicker}>
                                     <EmojiPicker theme={Theme.DARK} onEmojiClick={ed => setMessageText(messageText + ed.emoji)} />
                                 </div>
-                            } 
+                            }
                         </div>
                         <textarea
-                          value={messageText}
-                          placeholder={T.WriteAMessage}
-                          ref={inputTextRef}
-                          onChange={e => setNewMessageText(e.target.value)}
-                          className={styles.inputText}
-                          onKeyUp={onKeyUpInputText}
-                          onKeyDown={onKeyDownInputText}
+                            value={messageText}
+                            placeholder={T.WriteAMessage}
+                            ref={inputTextRef}
+                            onChange={e => setNewMessageText(e.target.value)}
+                            className={styles.inputText}
+                            onKeyUp={onKeyUpInputText}
+                            onKeyDown={onKeyDownInputText}
                         />
                         <InputFile multiple onChange={newFiles => setFiles(newFiles ? [...files, ...newFiles] : [])}>
                             <div className={styles.inputTextButton}>
@@ -309,6 +349,13 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                     </div>
                 </div>
                 <div className={styles.buttonSend}>
+                    {isRecording && (
+                        <SmallPrimaryButton onClick={stopRecordingHandler}>
+                            <AnimatePresence>
+                                <img src={deleteSvg} width={25} className={'secondaryTextSvg'} />
+                            </AnimatePresence>
+                        </SmallPrimaryButton>
+                    )}
                     <SmallPrimaryButton onClick={primaryButtonClickHandler}>
                         <AnimatePresence>
                             {renderPrimaryButtonIcon()}

@@ -2,7 +2,7 @@ import { gql } from '@apollo/client';
 import { USER_FRAGMENT } from '../users/fragments';
 import { User } from '../users/types';
 import { CHAT_FRAGMENT, MESSAGE_FRAGMENT } from './fragments';
-import { Chat, Message } from './types';
+import { Chat, MediaKind, Message } from './types';
 
 export type ChatCreateGroupData = { chat: { createGroup: Chat } };
 export type ChatCreateGroupVars = { input: CreateGroupChatInputType };
@@ -57,6 +57,7 @@ export type SentMessageInputType = {
     replyMessageId?: string | null;
     files?: File[];
     forwardedMessageIds?: string[];
+    mediaKind?: MediaKind | null;
 };
 export const MESSAGE_SEND_MUTATION = gql`
     ${MESSAGE_FRAGMENT}

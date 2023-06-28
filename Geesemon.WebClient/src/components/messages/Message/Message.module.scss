@@ -34,7 +34,7 @@
     gap: 10px;
 }
 
-.messageContent{
+.messageContent {
     display: flex;
     flex: 1;
     flex-direction: column;
@@ -151,4 +151,24 @@
 
 .forwardSvg {
     transform: scaleX(-1);
+}
+
+.voiceMessage {
+    width: 250px;
+    display: flex;
+    gap: 5px;
+
+    .waveAndTime {
+        flex: 1;
+    }
+}
+
+.playPauseButton {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    background-color: $primary-text-color;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

@@ -21,8 +21,7 @@ namespace Geesemon.DataAccess
         public DbSet<UserChat> UserChats { get; set; }
         public DbSet<Session> Sessions { get; set; }
 
-
-        public const string DefaultConnectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=GeesemonDB_dev;Integrated Security=True;Connect Timeout=60;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False;";
+        public const string DefaultConnectionString = "Data Source=localhost;Initial Catalog=GeesemonDB_dev;Integrated Security=True;Connect Timeout=60;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False;";
 
         public override int SaveChanges()
         {

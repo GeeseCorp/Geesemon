@@ -13,9 +13,13 @@ public class ForwardedMessage
 
     public string? FileUrl { get; set; }
 
+    public MediaKind? MediaKind { get; set; }
+
+    public string? MimeType { get; set; }
+
     public static ForwardedMessage GetForwardedMessage(Message message)
     {
-        if(message.ForwardedMessage != null)
+        if (message.ForwardedMessage != null)
             return message.ForwardedMessage;
 
         return new ForwardedMessage
@@ -24,6 +28,8 @@ public class ForwardedMessage
             Type = message.Type,
             FromId = message.FromId,
             FileUrl = message.FileUrl,
+            MediaKind = message.MediaKind,
+            MimeType = message.MimeType,
         };
     }
 }
