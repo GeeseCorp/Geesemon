@@ -26,7 +26,7 @@ export const store = configureStore({
     settings: settingsReducer,
   },
   middleware: getDefaultMiddleware =>
-    getDefaultMiddleware({ thunk: true }).concat(epicMiddleware),
+    getDefaultMiddleware({ thunk: true, serializableCheck: false }).concat(epicMiddleware),
   devTools: true,
 });
 

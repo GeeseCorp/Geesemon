@@ -1,6 +1,6 @@
 import styles from './SendMessageForm.module.scss';
 import { AnimatePresence, motion } from 'framer-motion';
-import { FC, KeyboardEvent, MutableRefObject, useEffect, useRef, useState } from 'react';
+import { FC, KeyboardEvent, MutableRefObject, useEffect, useState } from 'react';
 import checkSvg from '../../../assets/svg/check.svg';
 import clipSvg from '../../../assets/svg/clip.svg';
 import crossFilledSvg from '../../../assets/svg/crossFilled.svg';
@@ -21,10 +21,10 @@ import { FileType, getFileType } from '../../../utils/fileUtils';
 import { getFileName } from '../../../utils/stringUtils';
 import EmojiPicker, { Theme } from 'emoji-picker-react';
 import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
-import { useAudioRecorder } from 'react-audio-voice-recorder';
 import moment from 'moment';
 import { MediaKind } from '../../../behavior/features/chats/types';
 import { fancyTimeFormat } from '../../../utils/dateUtils';
+import { RecordingState, useAudioRecorder } from '../../../hooks/useAudioRecorder';
 
 const INPUT_TEXT_DEFAULT_HEIGHT = '25px';
 
@@ -32,13 +32,6 @@ type Props = {
     scrollToBottom: () => void;
     inputTextRef: MutableRefObject<HTMLTextAreaElement | null>;
 };
-
-enum StateRecording {
-    Recording = 'Recording',
-    Recorded = 'Recorded',
-    Discard = 'Discard',
-    None = 'None',
-}
 
 export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => {
     const mode = useAppSelector(s => s.chats.mode);
@@ -54,14 +47,22 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
     const [files, setFiles] = useState<File[]>([]);
     const forwardMessageIds = useAppSelector(s => s.chats.forwardMessageIds);
     const T = useGeeseTexts();
-    const stateRecording = useRef<StateRecording>(StateRecording.None);
+
+    const onGetRecord = (blob: Blob) => {
+        const type = 'audio/mp3';
+        const fileName = `voice_${moment().format('YYYY-MM-DD_hh-mm-ss')}.mp3`;
+        const file = new File([blob], fileName, { type });
+        setFiles([file]);
+    };
+
     const {
         startRecording,
         stopRecording,
-        recordingBlob,
-        isRecording,
+        discardRecording,
+        recordingState,
         recordingTime,
-    } = useAudioRecorder();
+        volume,
+    } = useAudioRecorder(onGetRecord, true);
 
     useEffect(() => {
         if (inUpdateMessageId && inUpdateMessage) {
@@ -70,19 +71,8 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
     }, [inUpdateMessageId]);
 
     useEffect(() => {
-        if (!recordingBlob || stateRecording.current === StateRecording.Discard) {
-            stateRecording.current = StateRecording.None;
-            return;
-        }
-
-        const file = new File([recordingBlob], `voice_${moment().format('YYYY-MM-DD_hh-mm-ss')}.mp3`);
-        setFiles([file]);
-    }, [recordingBlob]);
-
-    useEffect(() => {
         if (files.length && mode === Mode.Voice) {
             sendMessageHandler();
-            stateRecording.current = StateRecording.None;
         }
     }, [files.length]);
 
@@ -183,15 +173,13 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
     };
 
     const startVoiceRecordingHandler = () => {
-        stateRecording.current = StateRecording.Recording;
         dispatch(chatActions.setMode(Mode.Voice));
         startRecording();
     };
 
     const discardVoiceRecordingHandler = () => {
-        stateRecording.current = StateRecording.Discard;
         dispatch(chatActions.setMode(Mode.Text));
-        stopRecording();
+        discardRecording();
     };
 
     const renderExtraBlock = () => {
@@ -257,12 +245,11 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                     sendMessageHandler();
                 }
                 else {
-                    switch (stateRecording.current) {
-                        case StateRecording.None:
+                    switch (recordingState) {
+                        case RecordingState.Default:
                             startVoiceRecordingHandler();
                             break;
-                        case StateRecording.Recording:
-                            stateRecording.current = StateRecording.Recorded;
+                        case RecordingState.Recording:
                             stopRecording();
                             break;
                     }
@@ -286,7 +273,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                 );
             default:
                 return (
-                    messageText || files.length || forwardMessageIds.length || stateRecording.current === StateRecording.Recording
+                    messageText || files.length || forwardMessageIds.length || recordingState === RecordingState.Recording
                         ? (
                             <motion.img
                                 key={'send'}
@@ -329,7 +316,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                             </div>
                         </div>
                     }
-                    {stateRecording.current === StateRecording.None && files.length > 0 && (
+                    {recordingState === RecordingState.Default && files.length > 0 && (
                         <div className={styles.files}>
                             {files.map(file => (
                                 <div className={styles.file}>
@@ -367,7 +354,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                             onKeyUp={onKeyUpInputText}
                             onKeyDown={onKeyDownInputText}
                         />
-                        {stateRecording.current === StateRecording.Recording
+                        {recordingState === RecordingState.Recording
                             ? (
                                 <div className={styles.timeAndIndicator}>
                                     <div>{fancyTimeFormat(recordingTime)}</div>
@@ -383,12 +370,17 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                             )}
                     </div>
                 </div>
-                {isRecording && (
+                {recordingState === RecordingState.Recording && (
                     <SmallPrimaryButton onClick={discardVoiceRecordingHandler} className={styles.buttonDiscardVoiceRecording}>
                         <AnimatePresence>
                             <img src={deleteSvg} width={25} className={'dangerSvg'} />
                         </AnimatePresence>
                     </SmallPrimaryButton>
+                )}
+                {recordingState === RecordingState.Recording && (
+                    <div className={styles.volumeIndicator}>
+                        <div className={styles.volumeIndicatorInner} style={{ width: 60 + volume * 2, height: 60 + volume * 2 }} />
+                    </div>
                 )}
                 <SmallPrimaryButton onClick={primaryButtonClickHandler} className={styles.buttonSend}>
                     <AnimatePresence>

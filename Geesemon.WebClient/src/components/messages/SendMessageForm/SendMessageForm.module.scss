@@ -162,6 +162,21 @@
     right: -55px;
 }
 
+.volumeIndicator {
+    right: -30px;
+    position: absolute;
+    top: 50%;
+    width: 0;
+    height: 0;
+
+    .volumeIndicatorInner {
+        background-color: $primary-color;
+        opacity: 50%;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+    }
+}
+
 .buttonDiscardVoiceRecording {
     background-color: $surface-color !important;
 }

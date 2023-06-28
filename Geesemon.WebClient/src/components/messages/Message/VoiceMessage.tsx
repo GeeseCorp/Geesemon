@@ -45,7 +45,7 @@ export const VoiceMessage = ({ url }: { url: string }) => {
     wavesurfer.current.on('play', () => {
       if (wavesurfer.current) {
         document.querySelectorAll(`.${AudioWaveClassName}`).forEach(audioWave => {
-        
+
         });
       }
     });
@@ -91,7 +91,7 @@ export const VoiceMessage = ({ url }: { url: string }) => {
         <img src={playing ? pauseSvg : playSvg} width={playing ? 18 : 25} className={'primarySvg'} />
       </div>
       <div className={styles.waveAndTime}>
-        <div className={AudioWaveClassName} ref={audioWaveRef} />
+        <div className={styles[AudioWaveClassName]} ref={audioWaveRef} />
         <div className={'small primary bold'}>{time}</div>
       </div>
       {/* <div className="controls">
