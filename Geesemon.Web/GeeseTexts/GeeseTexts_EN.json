@@ -15,6 +15,7 @@
   "MembersInChatAndOnline": "{0} members, {1} online",
   "LeaveChat": "Leave chat",
   "ForwardedFrom": "Forwarded from {0}",
+  "Edited": "edited",
 
   //settings
   "Devices": "Devices",
