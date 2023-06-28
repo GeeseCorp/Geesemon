@@ -155,7 +155,7 @@ export const MessageContextMenu = ({ children, message, inputTextFocus }: Props)
 
     const setForwardMessageIdsHanlder = (messageIds: string[]) => {
         dispatch(chatActions.setForwardMessageIds(messageIds));
-        dispatch(chatActions.setMode(Mode.ForwardSelectChat));
+        dispatch(chatActions.setMode(Mode.Forward_SelectChat));
     };
 
     return (

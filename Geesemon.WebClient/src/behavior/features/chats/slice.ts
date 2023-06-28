@@ -15,12 +15,12 @@ import { ChatsGetVars, MessageGetVars } from './queries';
 import { Chat, Message, UserChat } from './types';
 
 export enum Mode {
-    Text = 0,
-    Voice = 1,
-    Updating = 2,
-    Reply = 3,
-    ForwardSelectChat = 4,
-    Forward = 5,
+    Text = 'Text',
+    Voice = 'Voice',
+    Updating = 'Updating',
+    Reply = 'Reply',
+    Forward_SelectChat = 'Forward_SelectChat',
+    Forward = 'Forward',
 }
 
 type InitialState = {

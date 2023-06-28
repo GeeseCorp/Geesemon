@@ -8,15 +8,16 @@ type Props = {
     loading?: boolean;
     type?: 'submit' | 'reset' | 'button';
     disabled?: boolean;
+    className?: string;
 };
 
-export const SmallPrimaryButton: FC<Props> = ({ children, onClick, loading = false, type = 'button', disabled = false }) => {
+export const SmallPrimaryButton: FC<Props> = ({ children, onClick, loading = false, type = 'button', disabled = false, className }) => {
     return (
         <button
-          disabled={loading || disabled}
-          type={type}
-          className={[s.smallButton, loading || disabled ? s.disabled : ''].join(' ')}
-          onClick={onClick}
+            disabled={loading || disabled}
+            type={type}
+            className={[s.smallButton, loading || disabled ? s.disabled : '', className].join(' ')}
+            onClick={onClick}
         >
             {loading
                 ? <SmallLoading />

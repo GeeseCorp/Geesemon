@@ -94,7 +94,7 @@
         white-space: nowrap;
     }
 
-    .media{
+    .media {
         width: 30px;
         height: 30px;
         object-fit: cover;
@@ -162,6 +162,10 @@
     right: -55px;
 }
 
+.buttonDiscardVoiceRecording {
+    background-color: $surface-color !important;
+}
+
 .forwardSvg {
     transform: scaleX(-1);
 }
@@ -174,6 +178,38 @@
     position: absolute;
     bottom: 50px;
     left: -10px;
+}
+
+.glowing {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #2ba805;
+    animation: glowing 1300ms infinite;
+}
+
+.timeAndIndicator {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    height: 30px;
+}
+
+@keyframes glowing {
+    0% {
+        background-color: #c0392b;
+        box-shadow: 0 0 3px #c0392b;
+    }
+
+    50% {
+        background-color: red;
+        box-shadow: 0 0 10px red;
+    }
+
+    100% {
+        background-color: #c0392b;
+        box-shadow: 0 0 3px #c0392b;
+    }
 }
 
 @media (max-width: 1200px) {

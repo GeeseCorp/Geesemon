@@ -1,6 +1,6 @@
 import styles from './SendMessageForm.module.scss';
 import { AnimatePresence, motion } from 'framer-motion';
-import { FC, KeyboardEvent, MutableRefObject, useEffect, useState } from 'react';
+import { FC, KeyboardEvent, MutableRefObject, useEffect, useRef, useState } from 'react';
 import checkSvg from '../../../assets/svg/check.svg';
 import clipSvg from '../../../assets/svg/clip.svg';
 import crossFilledSvg from '../../../assets/svg/crossFilled.svg';
@@ -21,9 +21,10 @@ import { FileType, getFileType } from '../../../utils/fileUtils';
 import { getFileName } from '../../../utils/stringUtils';
 import EmojiPicker, { Theme } from 'emoji-picker-react';
 import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
-import { AudioRecorder, useAudioRecorder } from 'react-audio-voice-recorder';
+import { useAudioRecorder } from 'react-audio-voice-recorder';
 import moment from 'moment';
 import { MediaKind } from '../../../behavior/features/chats/types';
+import { fancyTimeFormat } from '../../../utils/dateUtils';
 
 const INPUT_TEXT_DEFAULT_HEIGHT = '25px';
 
@@ -31,6 +32,13 @@ type Props = {
     scrollToBottom: () => void;
     inputTextRef: MutableRefObject<HTMLTextAreaElement | null>;
 };
+
+enum StateRecording {
+    Recording = 'Recording',
+    Recorded = 'Recorded',
+    Discard = 'Discard',
+    None = 'None',
+}
 
 export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => {
     const mode = useAppSelector(s => s.chats.mode);
@@ -46,15 +54,13 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
     const [files, setFiles] = useState<File[]>([]);
     const forwardMessageIds = useAppSelector(s => s.chats.forwardMessageIds);
     const T = useGeeseTexts();
+    const stateRecording = useRef<StateRecording>(StateRecording.None);
     const {
         startRecording,
         stopRecording,
-        togglePauseResume,
-        recordingBlob: recordingVoiceBlob,
+        recordingBlob,
         isRecording,
-        isPaused,
         recordingTime,
-        mediaRecorder
     } = useAudioRecorder();
 
     useEffect(() => {
@@ -64,16 +70,19 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
     }, [inUpdateMessageId]);
 
     useEffect(() => {
-        if (!recordingVoiceBlob)
+        if (!recordingBlob || stateRecording.current === StateRecording.Discard) {
+            stateRecording.current = StateRecording.None;
             return;
+        }
 
-        const file = new File([recordingVoiceBlob], `voice_${moment().format('YYYY-MM-DD_hh-mm-ss')}.mp3`);
+        const file = new File([recordingBlob], `voice_${moment().format('YYYY-MM-DD_hh-mm-ss')}.mp3`);
         setFiles([file]);
-    }, [recordingVoiceBlob]);
+    }, [recordingBlob]);
 
     useEffect(() => {
         if (files.length && mode === Mode.Voice) {
             sendMessageHandler();
+            stateRecording.current = StateRecording.None;
         }
     }, [files.length]);
 
@@ -85,6 +94,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                 inputTextRef.current.style.height = INPUT_TEXT_DEFAULT_HEIGHT;
                 return;
             }
+
             if (inputTextRef.current.scrollHeight > 300 || inputTextRef.current.scrollHeight < 25)
                 return;
 
@@ -172,29 +182,16 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
         }
     };
 
-    const recordAudioHandler = () => {
-        startRecording();
+    const startVoiceRecordingHandler = () => {
+        stateRecording.current = StateRecording.Recording;
         dispatch(chatActions.setMode(Mode.Voice));
+        startRecording();
     };
 
-    const stopRecordingHandler = () => {
+    const discardVoiceRecordingHandler = () => {
+        stateRecording.current = StateRecording.Discard;
+        dispatch(chatActions.setMode(Mode.Text));
         stopRecording();
-    };
-
-    const primaryButtonClickHandler = () => {
-        switch (mode) {
-            case Mode.Updating:
-                updateMessageHandler();
-                break;
-            default:
-                if (messageText || files.length || forwardMessageIds.length) {
-                    sendMessageHandler();
-                }
-                else {
-                    recordAudioHandler();
-                }
-                break;
-        }
     };
 
     const renderExtraBlock = () => {
@@ -250,6 +247,30 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
         }
     };
 
+    const primaryButtonClickHandler = () => {
+        switch (mode) {
+            case Mode.Updating:
+                updateMessageHandler();
+                break;
+            default:
+                if (messageText || files.length || forwardMessageIds.length) {
+                    sendMessageHandler();
+                }
+                else {
+                    switch (stateRecording.current) {
+                        case StateRecording.None:
+                            startVoiceRecordingHandler();
+                            break;
+                        case StateRecording.Recording:
+                            stateRecording.current = StateRecording.Recorded;
+                            stopRecording();
+                            break;
+                    }
+                }
+                break;
+        }
+    };
+
     const renderPrimaryButtonIcon = () => {
         switch (mode) {
             case Mode.Updating:
@@ -265,7 +286,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                 );
             default:
                 return (
-                    messageText || files.length || forwardMessageIds.length
+                    messageText || files.length || forwardMessageIds.length || stateRecording.current === StateRecording.Recording
                         ? (
                             <motion.img
                                 key={'send'}
@@ -289,11 +310,16 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
         }
     };
 
+    const isRenderExtraBlock = () => {
+        const renderExtraBlockForModes = [Mode.Updating, Mode.Reply, Mode.Forward];
+        return renderExtraBlockForModes.includes(mode);
+    };
+
     return (
         <div className={styles.wrapper}>
             <div className={styles.inner}>
                 <div className={styles.wrapperInputText}>
-                    {mode !== Mode.Text && mode !== Mode.ForwardSelectChat &&
+                    {isRenderExtraBlock() &&
                         <div className={styles.extraBlockWrapper}>
                             <div className={styles.extraBlockInner}>
                                 {renderExtraBlock()}
@@ -303,7 +329,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                             </div>
                         </div>
                     }
-                    {files.length > 0 && (
+                    {stateRecording.current === StateRecording.None && files.length > 0 && (
                         <div className={styles.files}>
                             {files.map(file => (
                                 <div className={styles.file}>
@@ -341,27 +367,34 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                             onKeyUp={onKeyUpInputText}
                             onKeyDown={onKeyDownInputText}
                         />
-                        <InputFile multiple onChange={newFiles => setFiles(newFiles ? [...files, ...newFiles] : [])}>
-                            <div className={styles.inputTextButton}>
-                                <img src={clipSvg} width={20} className={'secondaryTextSvg'} alt={'clipSvg'} />
-                            </div>
-                        </InputFile>
+                        {stateRecording.current === StateRecording.Recording
+                            ? (
+                                <div className={styles.timeAndIndicator}>
+                                    <div>{fancyTimeFormat(recordingTime)}</div>
+                                    <div className={styles.glowing} />
+                                </div>
+                            )
+                            : (
+                                <InputFile multiple onChange={newFiles => setFiles(newFiles ? [...files, ...newFiles] : [])}>
+                                    <div className={styles.inputTextButton}>
+                                        <img src={clipSvg} width={20} className={'secondaryTextSvg'} alt={'clipSvg'} />
+                                    </div>
+                                </InputFile>
+                            )}
                     </div>
                 </div>
-                <div className={styles.buttonSend}>
-                    {isRecording && (
-                        <SmallPrimaryButton onClick={stopRecordingHandler}>
-                            <AnimatePresence>
-                                <img src={deleteSvg} width={25} className={'secondaryTextSvg'} />
-                            </AnimatePresence>
-                        </SmallPrimaryButton>
-                    )}
-                    <SmallPrimaryButton onClick={primaryButtonClickHandler}>
+                {isRecording && (
+                    <SmallPrimaryButton onClick={discardVoiceRecordingHandler} className={styles.buttonDiscardVoiceRecording}>
                         <AnimatePresence>
-                            {renderPrimaryButtonIcon()}
+                            <img src={deleteSvg} width={25} className={'dangerSvg'} />
                         </AnimatePresence>
                     </SmallPrimaryButton>
-                </div>
+                )}
+                <SmallPrimaryButton onClick={primaryButtonClickHandler} className={styles.buttonSend}>
+                    <AnimatePresence>
+                        {renderPrimaryButtonIcon()}
+                    </AnimatePresence>
+                </SmallPrimaryButton>
             </div>
         </div>
     );

@@ -189,11 +189,15 @@ body {
     text-align: center;
 }
 
-.infinite-scroll-component__outerdiv{
+.infinite-scroll-component__outerdiv {
     flex: 1;
     min-height: 0;
     display: flex;
     flex-direction: column-reverse;
     justify-content: stretch;
     align-items: stretch;
+}
+
+.disabled {
+    pointer-events: none;
 }
