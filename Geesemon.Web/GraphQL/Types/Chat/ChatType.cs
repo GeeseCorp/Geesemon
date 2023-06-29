@@ -24,7 +24,17 @@ namespace Geesemon.Web.GraphQL.Types
 
             Field<StringGraphType, string?>()
                 .Name("ImageUrl")
-                .Resolve(context => context.Source.ImageUrl);
+                .Resolve(context =>
+                {
+                    if (string.IsNullOrEmpty(context.Source.ImageUrl))
+                        return null;
+
+                    using var scope = serviceProvider.CreateScope();
+                    var request = scope.ServiceProvider.GetRequiredService<IHttpContextAccessor>().HttpContext.Request;
+
+                    var protocol = request.IsHttps ? "https" : "http";
+                    return $"{protocol}://{request.Host}{context.Source.ImageUrl}";
+                });
 
             Field<GuidGraphType, Guid?>()
                 .Name("CreatorId")

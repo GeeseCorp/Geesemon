@@ -9,8 +9,7 @@ import { useOnScreen } from '../../../hooks/useOnScreen';
 import { getTimeWithoutSeconds } from '../../../utils/dateUtils';
 import { Checks } from '../Checks/Checks';
 import { useSelectedChat } from '../../../hooks/useSelectedChat';
-import { Mode } from '../../../behavior/features/chats/slice';
-import { format, getFileName, processString, ProcessStringOption } from '../../../utils/stringUtils';
+import { format, getFileName } from '../../../utils/stringUtils';
 import { FileType, getFileType } from '../../../utils/fileUtils';
 import { Checkbox } from '../../common/formControls/Checkbox/Checkbox';
 import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
@@ -67,11 +66,11 @@ export const MessageItem: FC<Props> = memo(({ message, inputTextFocus, isFromVis
             case MessageKind.System:
                 return (
                     <div
-                        ref={el => {
+                      ref={el => {
                             if (!isReadByMe)
                                 ref.current = el;
                         }}
-                        className={[s.message, s.messageSystem].join(' ')}
+                      className={[s.message, s.messageSystem].join(' ')}
                     >
                         <div className={`${s.messageText} textCenter`}>{messageText}</div>
                     </div>
@@ -82,16 +81,16 @@ export const MessageItem: FC<Props> = memo(({ message, inputTextFocus, isFromVis
                     const forwardedMessageFileType = message.forwardedMessage.fileUrl ? getFileType(message.forwardedMessage.fileUrl) : null;
                     return (
                         <div
-                            ref={el => {
+                          ref={el => {
                                 if (!isReadByMe)
                                     ref.current = el;
                             }}
-                            className={[s.message, isMessageMy ? s.messageMy : null, message.forwardedMessage.text || fileType === FileType.File ? s.messagePadding : null].join(' ')}
+                          className={[s.message, isMessageMy ? s.messageMy : null, message.forwardedMessage.text || fileType === FileType.File ? s.messagePadding : null].join(' ')}
                         >
                             <Link
-                                to={`/${message.from?.identifier}`}
-                                className={[s.from, 'bold', message.forwardedMessage && message.forwardedMessage.fileUrl && s.messagePadding].join(' ')}
-                                style={{ color: message.from?.avatarColor }}
+                              to={`/${message.from?.identifier}`}
+                              className={[s.from, 'bold', message.forwardedMessage && message.forwardedMessage.fileUrl && s.messagePadding].join(' ')}
+                              style={{ color: message.from?.avatarColor }}
                             >
                                 {format(T.ForwardedFrom, message.forwardedMessage.from?.fullName)}
                             </Link>
@@ -108,29 +107,29 @@ export const MessageItem: FC<Props> = memo(({ message, inputTextFocus, isFromVis
                 else {
                     return (
                         <div
-                            ref={el => {
+                          ref={el => {
                                 if (!isReadByMe)
                                     ref.current = el;
                             }}
-                            className={[s.message, isMessageMy ? s.messageMy : null, message.text || fileType === FileType.File ? s.messagePadding : null].join(' ')}
+                          className={[s.message, isMessageMy ? s.messageMy : null, message.text || fileType === FileType.File ? s.messagePadding : null].join(' ')}
                         >
                             {isFromVisible && (
                                 <Link
-                                    to={`/${message.from?.identifier}`}
-                                    className={[s.from, 'bold'].join(' ')}
-                                    style={{ color: message.from?.avatarColor }}
+                                  to={`/${message.from?.identifier}`}
+                                  className={[s.from, 'bold'].join(' ')}
+                                  style={{ color: message.from?.avatarColor }}
                                 >
                                     {message.from?.fullName}
                                 </Link>
                             )}
                             {message.replyMessage && (
                                 <div
-                                    style={{ borderColor: selectedChat?.type === ChatKind.Group ? message.replyMessage.from?.avatarColor : '' }}
-                                    className={s.replyMessage}
+                                  style={{ borderColor: selectedChat?.type === ChatKind.Group ? message.replyMessage.from?.avatarColor : '' }}
+                                  className={s.replyMessage}
                                 >
                                     <div
-                                        style={{ color: selectedChat?.type === ChatKind.Group ? message.replyMessage.from?.avatarColor : '' }}
-                                        className={'small bold primary'}
+                                      style={{ color: selectedChat?.type === ChatKind.Group ? message.replyMessage.from?.avatarColor : '' }}
+                                      className={'small bold primary'}
                                     >
                                         {message.replyMessage?.from?.fullName}
                                     </div>
@@ -228,8 +227,8 @@ export const MessageItem: FC<Props> = memo(({ message, inputTextFocus, isFromVis
             <div className={s.wrapperMessage} onClick={() => selectedMessageIds.length && selectionChange()}>
                 {selectedMessageIds.length > 0 && (
                     <Checkbox
-                        checked={!!selectedMessageIds.find(id => message.id === id)}
-                        setChecked={checked => selectionChange(checked)}
+                      checked={!!selectedMessageIds.find(id => message.id === id)}
+                      setChecked={checked => selectionChange(checked)}
                     />
                 )}
                 <div className={s.messageContent}>{messageContent()}</div>
