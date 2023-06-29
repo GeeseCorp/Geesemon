@@ -8,7 +8,7 @@ import { Checkbox } from '../../common/formControls/Checkbox/Checkbox';
 import { MenuItem } from '../../common/Menu/Menu';
 import { ContextMenu } from '../../common/ContextMenu/ContextMenu';
 import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
-import { } from '../../../utils/textUtils';
+import { format } from '../../../utils/stringUtils';
 
 type Props = {
     user: UserType;
@@ -59,7 +59,7 @@ export const User: FC<Props> = ({ user, selectMultiple = false, selectedUsers, o
                     }
                     <div className={s.userInfo}>
                         <div className={'bold'}>{user.firstName} {user.lastName}</div>
-                        <div className={'subText'}>{user.isOnline ? T.OnlineStatus : T.LastSeen.format(getLastTimeActivity(new Date(user.lastTimeOnline)))}</div>
+                        <div className={'subText'}>{user.isOnline ? T.OnlineStatus : format(T.LastSeen, getLastTimeActivity(new Date(user.lastTimeOnline)))}</div>
                     </div>
                 </div>
             </div>

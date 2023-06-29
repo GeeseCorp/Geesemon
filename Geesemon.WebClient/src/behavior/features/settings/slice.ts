@@ -1,11 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { LanguageGetData} from './queries';
-import { GeeseTextType } from './types';
-import { GeeseText } from '../../../utils/textUtils';
+import { GeeseText } from './types';
 
 type InitialState = {
-    languages: GeeseTextType[];
-    geeseTexts: Record<string, GeeseText>;
+    languages: GeeseText[];
+    geeseTexts: Record<string, string>;
 };
 
 const initialState: InitialState = {
@@ -18,14 +17,14 @@ const slice = createSlice({
     initialState,
     reducers: {
         getLanguagesAsync: (state) => state,
-        receiveLanguages: (state, action: PayloadAction<GeeseTextType[]>) => {
+        receiveLanguages: (state, action: PayloadAction<GeeseText[]>) => {
             state.languages = action.payload;
         },
         getGeeseTextsAsync: (state) => state,
-        receiveGeeseTexts: (state, action: PayloadAction<GeeseTextType[]>) => {
-            const result: Record<string, GeeseText>  = {};
+        receiveGeeseTexts: (state, action: PayloadAction<GeeseText[]>) => {
+            const result: Record<string, string>  = {};
             for (let i = 0; i < action.payload.length; i++) {
-                result[action.payload[i].key] = action.payload[i].value as GeeseText;
+                result[action.payload[i].key] = action.payload[i].value;
             }
 
             state.geeseTexts = result;

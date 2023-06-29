@@ -74,3 +74,15 @@ export const getFileExtension = (str: string): string => {
     const lastPart = parts[parts.length - 1];
     return lastPart.substring(1);
 };
+
+export const toCamel = (text : string) => {
+    return text.replace(/([-_][a-z])/ig, $1 => {
+        return $1.toUpperCase()
+        .replace('-', '')
+        .replace('_', '');
+    });
+};
+
+export const format = (text: string, ...args: (string | number | null | undefined)[]) => {
+    return text.replace(/{(\d+)}/g, (match, number) => args[number]?.toString() || match);
+};

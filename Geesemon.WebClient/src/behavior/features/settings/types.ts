@@ -1,4 +1,4 @@
-export type GeeseTextType = {
+export type GeeseText = {
   key: string;
   value: string;
 };

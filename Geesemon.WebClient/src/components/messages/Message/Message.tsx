@@ -18,7 +18,7 @@ import { MenuItem } from '../../common/Menu/Menu';
 import { Checks } from '../Checks/Checks';
 import { useSelectedChat } from '../../../hooks/useSelectedChat';
 import { Mode } from '../../../behavior/features/chats/slice';
-import { getFileName, processString, ProcessStringOption } from '../../../utils/stringUtils';
+import { format, getFileName, processString, ProcessStringOption } from '../../../utils/stringUtils';
 import { FileType, getFileType } from '../../../utils/fileUtils';
 import { Checkbox } from '../../common/formControls/Checkbox/Checkbox';
 import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
@@ -47,7 +47,7 @@ export const Message: FC<Props> = memo(({ message, inputTextFocus, isFromVisible
     useEffect(() => {
         if(message.type === MessageKind.SystemGeeseText && message.text && T[message.text])
         {
-            setText(T[message.text!]!.format(...message.geeseTextArguments));
+            setText(format(T[message.text!], ...message.geeseTextArguments));
         }
     }, [T]);
 
