@@ -6,6 +6,7 @@ import pinSvg from '../../../assets/svg/pin.svg';
 import notificationOutlinedSvg from '../../../assets/svg/notificationOutlined.svg';
 import exitSvg from '../../../assets/svg/exit.svg';
 import { Chat as ChatType, chatActions } from '../../../behavior/features/chats';
+import { notificationsActions } from '../../../behavior/features/notifications/slice';
 import { ChatActivityData, ChatActivityVars, ChatMembersData, ChatMembersVars, CHAT_ACTIVITY_SUBSCRIPTIONS, CHAT_MEMBERS_SUBSCRIPTIONS } from '../../../behavior/features/chats/subscriptions';
 import { ChatKind, ChatMembersKind, MessageKind } from '../../../behavior/features/chats/types';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
@@ -20,6 +21,7 @@ import { OnlineIndicator } from '../../common/OnlineIndicator/OnlineIndicator';
 import s from './Chat.module.scss';
 import { Checks } from '../../messages/Checks/Checks';
 import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
+import { format } from '../../../utils/stringUtils';
 
 type Props = {
     chat: ChatType;
@@ -40,7 +42,7 @@ export const Chat: FC<Props> = ({ chat, withSelected = true, withMenu = true, on
     });
     const navigate = useNavigate();
     const T = useGeeseTexts();
-
+    
     const oppositeUser = chat.type === ChatKind.Personal ? chat.users.filter(u => u.id !== authedUser?.id)[0] : null;
     const isOnline = chat.type === ChatKind.Personal && oppositeUser?.isOnline;
     // const lastTimeOnline = chat.type === ChatKind.Personal && oppositeUser?.lastTimeOnline
@@ -51,7 +53,7 @@ export const Chat: FC<Props> = ({ chat, withSelected = true, withMenu = true, on
     useEffect(() => {
         if(lastMessage && lastMessage.type === MessageKind.SystemGeeseText && lastMessage.text && T[lastMessage.text])
         {
-            setLastMessageText(T[lastMessage.text!]!.format(...lastMessage.geeseTextArguments));
+            setLastMessageText(format(T[lastMessage.text!], ...lastMessage.geeseTextArguments));
         }
     }, [T]);
 

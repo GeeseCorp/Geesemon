@@ -4,27 +4,32 @@ import { GeeseText } from './types';
 
 type InitialState = {
     languages: GeeseText[];
-    geeseTexts: GeeseText[];
+    geeseTexts: Record<string, string>;
 };
 
 const initialState: InitialState = {
     languages: [],
-    geeseTexts: [],
+    geeseTexts: {},
 };
 
 const slice = createSlice({
     name: 'users',
     initialState,
     reducers: {
-        getLanguagesAsync: (state, action: PayloadAction) => state,
+        getLanguagesAsync: (state) => state,
         receiveLanguages: (state, action: PayloadAction<GeeseText[]>) => {
             state.languages = action.payload;
         },
-        getGeeseTextsAsync: (state, action: PayloadAction) => state,
+        getGeeseTextsAsync: (state) => state,
         receiveGeeseTexts: (state, action: PayloadAction<GeeseText[]>) => {
-            state.geeseTexts = action.payload;
+            const result: Record<string, string>  = {};
+            for (let i = 0; i < action.payload.length; i++) {
+                result[action.payload[i].key] = action.payload[i].value;
+            }
+
+            state.geeseTexts = result;
         },
-        toInitialState: (state, action: PayloadAction) => initialState,
+        toInitialState: _ => initialState,
     },
 });
 

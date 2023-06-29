@@ -9,7 +9,8 @@ import { useOnScreen } from '../../../hooks/useOnScreen';
 import { getTimeWithoutSeconds } from '../../../utils/dateUtils';
 import { Checks } from '../Checks/Checks';
 import { useSelectedChat } from '../../../hooks/useSelectedChat';
-import { format, getFileName } from '../../../utils/stringUtils';
+import { Mode } from '../../../behavior/features/chats/slice';
+import { format, getFileName, processString, ProcessStringOption } from '../../../utils/stringUtils';
 import { FileType, getFileType } from '../../../utils/fileUtils';
 import { Checkbox } from '../../common/formControls/Checkbox/Checkbox';
 import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
@@ -39,8 +40,9 @@ export const MessageItem: FC<Props> = memo(({ message, inputTextFocus, isFromVis
     const T = useGeeseTexts();
 
     useEffect(() => {
-        if (message.type === MessageKind.SystemGeeseText && message.text && T[message.text]) {
-            setText(T[message.text!]!.format(...message.geeseTextArguments));
+        if(message.type === MessageKind.SystemGeeseText && message.text && T[message.text])
+        {
+            setText(format(T[message.text!], ...message.geeseTextArguments));
         }
     }, [T]);
 
