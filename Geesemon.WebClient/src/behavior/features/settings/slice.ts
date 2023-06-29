@@ -1,30 +1,36 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { LanguageGetData} from './queries';
-import { GeeseText } from './types';
+import { GeeseTextType } from './types';
+import { GeeseText } from '../../../utils/textUtils';
 
 type InitialState = {
-    languages: GeeseText[];
-    geeseTexts: GeeseText[];
+    languages: GeeseTextType[];
+    geeseTexts: Record<string, GeeseText>;
 };
 
 const initialState: InitialState = {
     languages: [],
-    geeseTexts: [],
+    geeseTexts: {},
 };
 
 const slice = createSlice({
     name: 'users',
     initialState,
     reducers: {
-        getLanguagesAsync: (state, action: PayloadAction) => state,
-        receiveLanguages: (state, action: PayloadAction<GeeseText[]>) => {
+        getLanguagesAsync: (state) => state,
+        receiveLanguages: (state, action: PayloadAction<GeeseTextType[]>) => {
             state.languages = action.payload;
         },
-        getGeeseTextsAsync: (state, action: PayloadAction) => state,
-        receiveGeeseTexts: (state, action: PayloadAction<GeeseText[]>) => {
-            state.geeseTexts = action.payload;
+        getGeeseTextsAsync: (state) => state,
+        receiveGeeseTexts: (state, action: PayloadAction<GeeseTextType[]>) => {
+            const result: Record<string, GeeseText>  = {};
+            for (let i = 0; i < action.payload.length; i++) {
+                result[action.payload[i].key] = action.payload[i].value as GeeseText;
+            }
+
+            state.geeseTexts = result;
         },
-        toInitialState: (state, action: PayloadAction) => initialState,
+        toInitialState: _ => initialState,
     },
 });
 

@@ -21,7 +21,7 @@ import { Mode } from '../../../behavior/features/chats/slice';
 import { getFileName, processString, ProcessStringOption } from '../../../utils/stringUtils';
 import { FileType, getFileType } from '../../../utils/fileUtils';
 import { Checkbox } from '../../common/formControls/Checkbox/Checkbox';
-import { useGeeseTexts, useGetGeeseTexts } from '../../../hooks/useGeeseTexts';
+import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
 
 type Props = {
     message: MessageType;

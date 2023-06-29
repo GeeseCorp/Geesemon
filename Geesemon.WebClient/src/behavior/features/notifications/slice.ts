@@ -29,11 +29,14 @@ export const slice = createSlice({
         addWarning: (state, action: PayloadAction<string>) => {
             state.notifications = [...state.notifications, {text: action.payload, type: "Warning"}]
         },
-        removeNotification: (state) => {
+        removeNotification: state => {
             state.notifications = [];
+        },
+        messageReceived: _ => {
+            new Audio("../../../assets/sounds/newMesage.mp3").play();
         },
     },
 })
 
-export const notificationsActions = slice.actions
-export const notificationsReducer = slice.reducer
+export const notificationsActions = slice.actions;
+export const notificationsReducer = slice.reducer;

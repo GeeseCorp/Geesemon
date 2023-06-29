@@ -32,9 +32,15 @@ namespace Geesemon.Web.GraphQL.Queries
                     if (!await chatManager.IsUserInChat(currentUserId, chat.Id))
                         throw new Exception("User not in this chat.");
 
+                    var messages = await messageManager.GetByChatIdAsync(chat.Id, skip, take ?? 30);
 
+                    foreach(var message in messages)
+                    {
+                        if (!string.IsNullOrEmpty(message.FileUrl))
+                            message.FileUrl = httpContextAccessor.HttpContext.Request.Host + message.FileUrl;
+                    }
 
-                    return await messageManager.GetByChatIdAsync(chat.Id, skip, take ?? 30);
+                    return messages;
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
         }
