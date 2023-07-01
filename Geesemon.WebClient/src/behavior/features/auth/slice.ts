@@ -1,8 +1,8 @@
 import { AuthResponseType, LoginQrCode, Session } from './types';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AuthUpdateProfileType, LoginInputType, RegisterInputType } from './mutations';
-import { removeAuthToken, setAuthToken } from '../../../utils/localStorageUtils';
 import { User } from '../users/types';
+import { localStorageRemoveItem, localStorageSetItem } from '../../../utils/localStorageUtils';
 
 type InitialState = {
     authedUser?: User | null;
@@ -57,7 +57,7 @@ const slice = createSlice({
         login: (state: InitialState, action: PayloadAction<AuthResponseType>) => {
             state.isAuthorized = true;
             state.authedUser = action.payload.user;
-            setAuthToken(action.payload.token);
+            localStorageSetItem('AuthToken', action.payload.token);
             state.currentSession = action.payload.session;
         },
         setLoginLoading: (state: InitialState, action: PayloadAction<boolean>) => {
@@ -77,7 +77,7 @@ const slice = createSlice({
             state.isAuthorized = false;
             state.authedUser = null;
             state.currentSession = null;
-            removeAuthToken();
+            localStorageRemoveItem('AuthToken');
         },
 
         toggleOnlineAsync: (state: InitialState, action: PayloadAction<boolean>) => state,

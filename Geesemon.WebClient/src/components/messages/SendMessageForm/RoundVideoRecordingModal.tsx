@@ -11,6 +11,7 @@ import { SmallPrimaryButton } from '../../common/SmallPrimaryButton/SmallPrimary
 import { AnimatePresence, motion } from 'framer-motion';
 import { VolumeIndicator } from './VolumeIndicator';
 import { TimeAndIndicator } from './TimeAndIndicator';
+import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
 
 type Props = {
     mediaStream: MediaStream | null;
@@ -32,6 +33,7 @@ export const RoundVideoRecordingModal = ({
     discardRecording,
 }: Props) => {
     const videoRef = useRef<HTMLVideoElement | null>(null);
+    const T = useGeeseTexts();
 
     useEffect(() => {
         console.log('effect', mediaStream);
@@ -53,25 +55,25 @@ export const RoundVideoRecordingModal = ({
                 >
                     <img src={backSvg} width={25} className={'secondaryTextSvg'} alt={'backSvg'} />
                 </HeaderButton>
-                <div className={'headerTitle'}>Record round video</div>
+                <div className={'headerTitle'}>{T.RecordingVideo}</div>
             </div>
             <div className={'modalContent'}>
                 <video ref={videoRef} muted autoPlay />
                 <div className={styles.controls}>
-                    <SmallPrimaryButton onClick={discardRecording} className={styles.buttonDiscardRecording}>
-                        <AnimatePresence>
-                            <motion.img
-                                key={'discard'}
-                                width={25}
-                                initial={{ scale: 0, opacity: 0 }}
-                                animate={{ scale: 1, opacity: 1 }}
-                                src={deleteSvg}
-                                className={'dangerSvg'}
-                            />
-                        </AnimatePresence>
-                    </SmallPrimaryButton>
+                    <TimeAndIndicator recordingTime={recordingTime} />
                     <div className={styles.right}>
-                        <TimeAndIndicator recordingTime={recordingTime} />
+                        <SmallPrimaryButton onClick={discardRecording} className={styles.buttonDiscardRecording}>
+                            <AnimatePresence>
+                                <motion.img
+                                    key={'discard'}
+                                    width={25}
+                                    initial={{ scale: 0, opacity: 0 }}
+                                    animate={{ scale: 1, opacity: 1 }}
+                                    src={deleteSvg}
+                                    className={'dangerSvg'}
+                                />
+                            </AnimatePresence>
+                        </SmallPrimaryButton>
                         <div className={styles.send}>
                             <VolumeIndicator volume={volume} right="25px" />
                             <SmallPrimaryButton onClick={stopRecording}>

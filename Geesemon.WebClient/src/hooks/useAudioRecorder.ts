@@ -32,6 +32,7 @@ export const useAudioRecorder = (video: boolean, onGetRecord: (blob: Blob) => vo
 
     useEffect(() => {
         return () => {
+            clearStream();
         };
     }, []);
 
@@ -75,13 +76,16 @@ export const useAudioRecorder = (video: boolean, onGetRecord: (blob: Blob) => vo
     const stopRecording = () => {
         setState(RecordingState.Recorded);
         mediaRecorder.current?.stop();
-        stream.current?.getTracks().forEach(track => track.stop());
-        setStream(null);
+        clearStream();
     };
 
     const discardRecording = () => {
         setState(RecordingState.Default);
         mediaRecorder.current?.stop();
+        clearStream();
+    };
+
+    const clearStream = () => {
         stream.current?.getTracks().forEach(track => track.stop());
         setStream(null);
     };

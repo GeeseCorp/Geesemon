@@ -6,13 +6,11 @@ import pinSvg from '../../../assets/svg/pin.svg';
 import notificationOutlinedSvg from '../../../assets/svg/notificationOutlined.svg';
 import exitSvg from '../../../assets/svg/exit.svg';
 import { Chat as ChatType, chatActions } from '../../../behavior/features/chats';
-import { notificationsActions } from '../../../behavior/features/notifications/slice';
 import { ChatActivityData, ChatActivityVars, ChatMembersData, ChatMembersVars, CHAT_ACTIVITY_SUBSCRIPTIONS, CHAT_MEMBERS_SUBSCRIPTIONS } from '../../../behavior/features/chats/subscriptions';
 import { ChatKind, ChatMembersKind, MessageKind } from '../../../behavior/features/chats/types';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
 import { useSelectedChatIdentifier } from '../../../hooks/useSelectedChat';
 import { getTimeWithoutSeconds } from '../../../utils/dateUtils';
-import { getAuthToken } from '../../../utils/localStorageUtils';
 import { Avatar } from '../../common/Avatar/Avatar';
 import { AvatarWithoutImage } from '../../common/AvatarWithoutImage/AvatarWithoutImage';
 import { ContextMenu } from '../../common/ContextMenu/ContextMenu';
@@ -22,6 +20,7 @@ import s from './Chat.module.scss';
 import { Checks } from '../../messages/Checks/Checks';
 import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
 import { format } from '../../../utils/stringUtils';
+import { localStorageGetItem } from '../../../utils/localStorageUtils';
 
 type Props = {
     chat: ChatType;
@@ -35,14 +34,14 @@ export const Chat: FC<Props> = ({ chat, withSelected = true, withMenu = true, on
     const dispatch = useAppDispatch();
     const authedUser = useAppSelector(s => s.auth.authedUser);
     const chatActivity = useSubscription<ChatActivityData, ChatActivityVars>(CHAT_ACTIVITY_SUBSCRIPTIONS, {
-        variables: { chatId: chat.id, token: getAuthToken() || '' },
+        variables: { chatId: chat.id, token: localStorageGetItem('AuthToken') || '' },
     });
     const chatMembers = useSubscription<ChatMembersData, ChatMembersVars>(CHAT_MEMBERS_SUBSCRIPTIONS, {
-        variables: { chatId: chat.id, token: getAuthToken() || '' },
+        variables: { chatId: chat.id, token: localStorageGetItem('AuthToken') || '' },
     });
     const navigate = useNavigate();
     const T = useGeeseTexts();
-    
+
     const oppositeUser = chat.type === ChatKind.Personal ? chat.users.filter(u => u.id !== authedUser?.id)[0] : null;
     const isOnline = chat.type === ChatKind.Personal && oppositeUser?.isOnline;
     // const lastTimeOnline = chat.type === ChatKind.Personal && oppositeUser?.lastTimeOnline
@@ -51,8 +50,7 @@ export const Chat: FC<Props> = ({ chat, withSelected = true, withMenu = true, on
     const [lastMessageText, setLastMessageText] = useState<string | undefined | null>(lastMessage?.text);
 
     useEffect(() => {
-        if(lastMessage && lastMessage.type === MessageKind.SystemGeeseText && lastMessage.text && T[lastMessage.text])
-        {
+        if (lastMessage && lastMessage.type === MessageKind.SystemGeeseText && lastMessage.text && T[lastMessage.text]) {
             setLastMessageText(format(T[lastMessage.text!], ...lastMessage.geeseTextArguments));
         }
     }, [T]);
@@ -103,7 +101,7 @@ export const Chat: FC<Props> = ({ chat, withSelected = true, withMenu = true, on
             icon: <img src={exitSvg} width={20} className={'primaryTextSvg'} alt={'exitSvg'} />,
             onClick: () => {
                 dispatch(chatActions.leaveChatAsync({ chatId: chat.id }));
-                if(selectedChatIdentifier === chat.identifier)
+                if (selectedChatIdentifier === chat.identifier)
                     navigate('/');
             },
             type: 'default',
@@ -115,23 +113,23 @@ export const Chat: FC<Props> = ({ chat, withSelected = true, withMenu = true, on
                 icon: <img src={deleteSvg} width={20} className={'dangerSvg'} alt={'deleteSvg'} />,
                 onClick: () => {
                     dispatch(chatActions.chatDeleteAsync(chat.id));
-                    if(selectedChatIdentifier === chat.identifier)
+                    if (selectedChatIdentifier === chat.identifier)
                         navigate('/');
                 },
                 type: 'danger',
-            });  
+            });
 
         return items;
     };
 
     return (
         <ContextMenu
-          key={chat.id}
-          items={getContextMenuItems()}
+            key={chat.id}
+            items={getContextMenuItems()}
         >
             <div
-              className={[s.chat, chat.identifier === selectedChatIdentifier && withSelected ? s.chatSelected : null].join(' ')}
-              onClick={() => onClickChat(chat.identifier)}
+                className={[s.chat, chat.identifier === selectedChatIdentifier && withSelected ? s.chatSelected : null].join(' ')}
+                onClick={() => onClickChat(chat.identifier)}
             >
                 <div className={s.chatInner}>
                     <div className={s.avatar}>
@@ -139,10 +137,10 @@ export const Chat: FC<Props> = ({ chat, withSelected = true, withMenu = true, on
                             ? <Avatar imageUrl={chat.imageUrl} width={54} height={54} />
                             : (
                                 <AvatarWithoutImage
-                                  name={chat.name || ''}
-                                  backgroundColor={chat.imageColor}
-                                  width={54}
-                                  height={54}
+                                    name={chat.name || ''}
+                                    backgroundColor={chat.imageColor}
+                                    width={54}
+                                    height={54}
                                 />
                             )
                         }

@@ -211,8 +211,10 @@
 }
 
 .roundedVideoRecording {
+    max-width: 500px;
+
     video {
-        width: 500px;
+        width: 100%;
         aspect-ratio: 1 / 1;
         object-fit: cover;
         border-radius: 50%;
@@ -226,7 +228,7 @@
         .right {
             display: flex;
             align-items: center;
-            gap: 25px;
+            gap: 10px;
 
             .send {
                 position: relative;

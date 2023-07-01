@@ -4,24 +4,23 @@ import { getMainDefinition } from '@apollo/client/utilities';
 import { WebSocketLink } from '@apollo/client/link/ws';
 import { SubscriptionClient } from 'subscriptions-transport-ws';
 import { createUploadLink } from 'apollo-upload-client';
-import { getAuthToken } from '../utils/localStorageUtils';
+import { localStorageGetItem } from '../utils/localStorageUtils';
 
 const httpsLink = createUploadLink({
-  uri:
-    !process.env.NODE_ENV || process.env.NODE_ENV === 'development'
-      ? 'https://localhost:7195/graphql'
-      : '/graphql',
-      credentials: 'include',
+  uri: !process.env.NODE_ENV || process.env.NODE_ENV === 'development'
+    ? 'https://localhost:7195/graphql'
+    : '/graphql',
+  credentials: 'include',
 });
 
 const wsLink = new WebSocketLink(
   new SubscriptionClient(
     !process.env.NODE_ENV || process.env.NODE_ENV === 'development'
       ? 'wss://localhost:7195/graphql'
-      : `${window.location.protocol === 'https:' ? 'wss' : 'ws' }://${window.location.host}/graphql`,
+      : `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/graphql`,
     {
       connectionParams: {
-        Authorization: getAuthToken(),
+        Authorization: localStorageGetItem('AuthToken'),
       },
     },
   ),
@@ -42,7 +41,7 @@ const splitLink = split(
 const authLink = setContext((_, { headers }) => ({
   headers: {
     ...headers,
-    authorization: getAuthToken(),
+    authorization: localStorageGetItem('AuthToken'),
     'Access-Control-Allow-Origin': '',
   },
   link: httpsLink,

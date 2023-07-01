@@ -28,6 +28,7 @@ import { RecordingState, useAudioRecorder } from '../../../hooks/useAudioRecorde
 import { RoundVideoRecordingModal } from './RoundVideoRecordingModal';
 import { VolumeIndicator } from './VolumeIndicator';
 import { TimeAndIndicator } from './TimeAndIndicator';
+import { localStorageGetItem, localStorageSetItem } from '../../../utils/localStorageUtils';
 
 const INPUT_TEXT_DEFAULT_HEIGHT = '25px';
 
@@ -52,7 +53,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
     const [files, setFiles] = useState<File[]>([]);
     const forwardMessageIds = useAppSelector(s => s.chats.forwardMessageIds);
     const T = useGeeseTexts();
-    const [recordingType, setRecordingType] = useState<RecordingType>('Voice');
+    const [recordingType, setRecordingType] = useState<RecordingType>(localStorageGetItem('RecordingType') as RecordingType || 'Voice');
 
     const onGetRecord = (blob: Blob) => {
         const type = recordingType === 'Voice' ? 'audio/mp3' : 'video/webm';
@@ -269,7 +270,9 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
 
     const onRightClickHandler = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
-        setRecordingType(prev => prev === 'Voice' ? 'RoundVideo' : 'Voice');
+        const newValue = recordingType === 'Voice' ? 'RoundVideo' : 'Voice';
+        setRecordingType(newValue);
+        localStorageSetItem('RecordingType', newValue);
     };
 
     const renderPrimaryButtonIcon = () => {
