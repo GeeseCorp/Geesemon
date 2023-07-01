@@ -159,7 +159,7 @@ export const MessageItem: FC<Props> = memo(({ message, inputTextFocus, isFromVis
 
         switch (m.mediaKind) {
             case MediaKind.Voice:
-                return <VoiceMessage url={url} />;
+                return <VoiceMessage message={message} />;
             case MediaKind.Video:
                 return <RoundVideoMessage message={message} isMessageMy={isMessageMy} />;
         }

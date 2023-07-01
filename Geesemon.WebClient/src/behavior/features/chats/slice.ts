@@ -47,6 +47,8 @@ type InitialState = {
     chatGetByIdentifierLoading: boolean;
 
     chatAddMembersLoading: boolean;
+
+    repproducingMediaMessageId: string | null;
 };
 
 const initialState: InitialState = {
@@ -73,6 +75,8 @@ const initialState: InitialState = {
     chatGetByIdentifierLoading: false,
 
     chatAddMembersLoading: false,
+
+    repproducingMediaMessageId: null,
 };
 
 const slice = createSlice({
@@ -268,6 +272,10 @@ const slice = createSlice({
         },
 
         leaveChatAsync: (state, action: PayloadAction<{ chatId: string }>) => state,
+
+        setRepproducingMediaMessageId: (state, action: PayloadAction<string | null>) => {
+            state.repproducingMediaMessageId = action.payload;
+        },
 
         toInitialState: (state, action: PayloadAction) => initialState,
     },

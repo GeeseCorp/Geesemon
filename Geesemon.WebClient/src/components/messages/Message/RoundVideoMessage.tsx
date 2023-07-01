@@ -3,6 +3,8 @@ import { SyntheticEvent, useEffect, useRef, useState } from 'react';
 import { fancyTimeFormat } from '../../../utils/dateUtils';
 import { MessageAdditionalInfo } from './MessageAdditionalInfo';
 import { Message } from '../../../behavior/features/chats/types';
+import { useAppDispatch, useAppSelector } from '../../../behavior/store';
+import { chatActions } from '../../../behavior/features/chats';
 
 type Props = {
   message: Message;
@@ -14,20 +16,36 @@ export const RoundVideoMessage = ({ message, isMessageMy }: Props) => {
   const [volume, setVolume] = useState(0.5);
   const [time, setTime] = useState('');
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const repproducingMediaMessageId = useAppSelector(s => s.chats.repproducingMediaMessageId);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     setTime(getTime(videoRef.current!));
   }, []);
 
+  useEffect(() => {
+    if (message.id !== repproducingMediaMessageId && playing) {
+      pause();
+    }
+  }, [repproducingMediaMessageId]);
+
+  const pause = () => {
+    setPlaying(false);
+    videoRef.current!.pause();
+  };
+
   const onClick = () => {
     if (playing) {
-      setPlaying(false);
-      videoRef.current!.pause();
+      pause();
     }
     else {
       setPlaying(true);
       videoRef.current!.play();
     }
+  };
+
+  const onPlay = () => {
+    dispatch(chatActions.setRepproducingMediaMessageId(message.id));
   };
 
   const onEnded = () => {
@@ -43,8 +61,19 @@ export const RoundVideoMessage = ({ message, isMessageMy }: Props) => {
 
   return (
     <div className={styles.roundVideoMessage} onClick={onClick}>
-      <video src={message.fileUrl || ''} ref={videoRef} onEnded={onEnded} onTimeUpdate={onTimeUpdate} />
-      <MessageAdditionalInfo message={message} isMessageMy={isMessageMy} className={styles.info} primary />
+      <video
+        src={message.fileUrl || ''}
+        ref={videoRef}
+        onEnded={onEnded}
+        onTimeUpdate={onTimeUpdate}
+        onPlay={onPlay}
+      />
+      <MessageAdditionalInfo
+        message={message}
+        isMessageMy={isMessageMy}
+        className={styles.info}
+        primary
+      />
       <div className={`${styles.time} small primary`}>{time}</div>
       {/* {videoRef.current?.currentTime > 0 && (
         <img src={fileSvg} width={25} className={'primaryTextSvg'} alt={'fileSvg'} />

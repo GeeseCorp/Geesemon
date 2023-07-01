@@ -4,15 +4,18 @@ import WaveSurfer from 'wavesurfer.js';
 import playSvg from '../../../assets/svg/play.svg';
 import pauseSvg from '../../../assets/svg/pause.svg';
 import { fancyTimeFormat } from '../../../utils/dateUtils';
+import { Message } from '../../../behavior/features/chats/types';
+import { useAppDispatch, useAppSelector } from '../../../behavior/store';
+import { chatActions } from '../../../behavior/features/chats';
 
-const AudioWaveClassName = 'audioWave';
-
-export const VoiceMessage = ({ url }: { url: string }) => {
+export const VoiceMessage = ({ message }: { message: Message }) => {
   const audioWaveRef = useRef<HTMLDivElement>(null);
   const wavesurfer = useRef<WaveSurfer | null>(null);
   const [playing, setPlaying] = useState(false);
   const [volume, setVolume] = useState(0.5);
   const [time, setTime] = useState('');
+  const repproducingMediaMessageId = useAppSelector(s => s.chats.repproducingMediaMessageId);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     setPlaying(false);
@@ -32,7 +35,7 @@ export const VoiceMessage = ({ url }: { url: string }) => {
       partialRender: true,
     });
 
-    wavesurfer.current.load(url);
+    wavesurfer.current.load(message.fileUrl || '');
 
     wavesurfer.current.on('ready', () => {
       if (wavesurfer.current) {
@@ -44,9 +47,7 @@ export const VoiceMessage = ({ url }: { url: string }) => {
 
     wavesurfer.current.on('play', () => {
       if (wavesurfer.current) {
-        document.querySelectorAll(`.${AudioWaveClassName}`).forEach(audioWave => {
-
-        });
+        dispatch(chatActions.setRepproducingMediaMessageId(message.id));
       }
     });
 
@@ -61,7 +62,13 @@ export const VoiceMessage = ({ url }: { url: string }) => {
     });
 
     return () => wavesurfer.current!.destroy();
-  }, [url]);
+  }, [message.fileUrl]);
+
+  useEffect(() => {
+    if (message.id !== repproducingMediaMessageId && playing) {
+      handlePlayPause();
+    }
+  }, [repproducingMediaMessageId]);
 
   const getTime = () => {
     if (!wavesurfer.current)
@@ -91,7 +98,7 @@ export const VoiceMessage = ({ url }: { url: string }) => {
         <img src={playing ? pauseSvg : playSvg} width={playing ? 18 : 25} className={'primarySvg'} />
       </div>
       <div className={styles.waveAndTime}>
-        <div className={styles[AudioWaveClassName]} ref={audioWaveRef} />
+        <div ref={audioWaveRef} />
         <div className={'small primary bold'}>{time}</div>
       </div>
       {/* <div className="controls">
