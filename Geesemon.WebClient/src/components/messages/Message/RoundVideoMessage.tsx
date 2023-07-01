@@ -1,17 +1,22 @@
 import styles from './Message.module.scss';
-import { useEffect, useRef, useState } from 'react';
-import playSvg from '../../../assets/svg/play.svg';
-import pauseSvg from '../../../assets/svg/pause.svg';
+import { SyntheticEvent, useEffect, useRef, useState } from 'react';
 import { fancyTimeFormat } from '../../../utils/dateUtils';
-import fileSvg from '../../../assets/svg/.svg';
+import { MessageAdditionalInfo } from './MessageAdditionalInfo';
+import { Message } from '../../../behavior/features/chats/types';
 
-export const RoundVideoMessage = ({ url }: { url: string }) => {
+type Props = {
+  message: Message;
+  isMessageMy: boolean;
+};
+
+export const RoundVideoMessage = ({ message, isMessageMy }: Props) => {
   const [playing, setPlaying] = useState(false);
   const [volume, setVolume] = useState(0.5);
   const [time, setTime] = useState('');
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
+    setTime(getTime(videoRef.current!));
   }, []);
 
   const onClick = () => {
@@ -29,9 +34,18 @@ export const RoundVideoMessage = ({ url }: { url: string }) => {
     setPlaying(false);
   };
 
+  const onTimeUpdate = (e: SyntheticEvent<HTMLVideoElement>) => {
+    const target = (e.target as HTMLVideoElement);
+    setTime(getTime(target));
+  };
+
+  const getTime = (target: HTMLVideoElement) => fancyTimeFormat(target.currentTime) + ' / ' + fancyTimeFormat(target.duration);
+
   return (
     <div className={styles.roundVideoMessage} onClick={onClick}>
-      <video src={url} ref={videoRef} onEnded={onEnded} />
+      <video src={message.fileUrl || ''} ref={videoRef} onEnded={onEnded} onTimeUpdate={onTimeUpdate} />
+      <MessageAdditionalInfo message={message} isMessageMy={isMessageMy} className={styles.info} primary />
+      <div className={`${styles.time} small primary`}>{time}</div>
       {/* {videoRef.current?.currentTime > 0 && (
         <img src={fileSvg} width={25} className={'primaryTextSvg'} alt={'fileSvg'} />
       )} */}
