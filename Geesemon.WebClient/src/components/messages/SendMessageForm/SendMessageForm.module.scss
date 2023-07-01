@@ -163,7 +163,6 @@
 }
 
 .volumeIndicator {
-    right: -30px;
     position: absolute;
     top: 50%;
     width: 0;
@@ -174,10 +173,11 @@
         opacity: 50%;
         border-radius: 50%;
         transform: translate(-50%, -50%);
+        transition: all .02s linear;
     }
 }
 
-.buttonDiscardVoiceRecording {
+.buttonDiscardRecording {
     background-color: $surface-color !important;
 }
 
@@ -209,6 +209,34 @@
     gap: 15px;
     height: 30px;
 }
+
+.roundedVideoRecording {
+    video {
+        width: 500px;
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+
+    .controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .right {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+
+            .send {
+                position: relative;
+            }
+        }
+    }
+
+
+}
+
 
 @keyframes glowing {
     0% {

@@ -24,8 +24,10 @@ import EmojiPicker, { Theme } from 'emoji-picker-react';
 import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
 import moment from 'moment';
 import { MediaKind } from '../../../behavior/features/chats/types';
-import { fancyTimeFormat } from '../../../utils/dateUtils';
 import { RecordingState, useAudioRecorder } from '../../../hooks/useAudioRecorder';
+import { RoundVideoRecordingModal } from './RoundVideoRecordingModal';
+import { VolumeIndicator } from './VolumeIndicator';
+import { TimeAndIndicator } from './TimeAndIndicator';
 
 const INPUT_TEXT_DEFAULT_HEIGHT = '25px';
 
@@ -33,6 +35,8 @@ type Props = {
     scrollToBottom: () => void;
     inputTextRef: MutableRefObject<HTMLTextAreaElement | null>;
 };
+
+export type RecordingType = 'Voice' | 'RoundVideo';
 
 export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => {
     const mode = useAppSelector(s => s.chats.mode);
@@ -48,7 +52,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
     const [files, setFiles] = useState<File[]>([]);
     const forwardMessageIds = useAppSelector(s => s.chats.forwardMessageIds);
     const T = useGeeseTexts();
-    const [recordingType, setRecordingType] = useState<'Voice' | 'RoundVideo'>('Voice');
+    const [recordingType, setRecordingType] = useState<RecordingType>('Voice');
 
     const onGetRecord = (blob: Blob) => {
         const type = recordingType === 'Voice' ? 'audio/mp3' : 'video/webm';
@@ -66,7 +70,8 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
         recordingState,
         recordingTime,
         volume,
-    } = useAudioRecorder(recordingType === 'RoundVideo', onGetRecord, true);
+        mediaStream,
+    } = useAudioRecorder(recordingType === 'RoundVideo', onGetRecord);
 
     useEffect(() => {
         if (inUpdateMessageId && inUpdateMessage) {
@@ -263,7 +268,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
     };
 
     const onRightClickHandler = (e: React.MouseEvent<HTMLElement>) => {
-        e?.preventDefault();
+        e.preventDefault();
         setRecordingType(prev => prev === 'Voice' ? 'RoundVideo' : 'Voice');
     };
 
@@ -282,7 +287,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                 );
             default:
                 return (
-                    messageText || files.length || forwardMessageIds.length || recordingState === RecordingState.Recording
+                    messageText || files.length || forwardMessageIds.length || (recordingState === RecordingState.Recording && recordingType === 'Voice')
                         ? (
                             <motion.img
                                 key={'send'}
@@ -323,91 +328,100 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
     };
 
     return (
-        <div className={styles.wrapper}>
-            <div className={styles.inner}>
-                <div className={styles.wrapperInputText}>
-                    {isRenderExtraBlock() &&
-                        <div className={styles.extraBlockWrapper}>
-                            <div className={styles.extraBlockInner}>
-                                {renderExtraBlock()}
+        <>
+            <div className={styles.wrapper}>
+                <div className={styles.inner}>
+                    <div className={styles.wrapperInputText}>
+                        {isRenderExtraBlock() &&
+                            <div className={styles.extraBlockWrapper}>
+                                <div className={styles.extraBlockInner}>
+                                    {renderExtraBlock()}
+                                </div>
+                                <div onClick={closeExtraBlockHandler} className={styles.close}>
+                                    <img src={crossFilledSvg} width={15} className={'secondaryTextSvg'} alt={'crossFilledSvg'} />
+                                </div>
                             </div>
-                            <div onClick={closeExtraBlockHandler} className={styles.close}>
-                                <img src={crossFilledSvg} width={15} className={'secondaryTextSvg'} alt={'crossFilledSvg'} />
+                        }
+                        {recordingState === RecordingState.Default && files.length > 0 && (
+                            <div className={styles.files}>
+                                {files.map(file => (
+                                    <div className={styles.file}>
+                                        <div className={styles.icon}>
+                                            <img src={fileSvg} width={20} className={'primarySvg'} alt={'pencilOutlinedSvg'} />
+                                        </div>
+                                        <div className={styles.info}>
+                                            <div className={styles.infoInner}>
+                                                <div className={styles.name}>{file.name}</div>
+                                                <div className={styles.size}>{file.size} B</div>
+                                            </div>
+                                            <div onClick={() => setFiles(files.filter(f => f !== file))} className={styles.close}>
+                                                <img src={crossFilledSvg} width={15} className={'secondaryTextSvg'} alt={'crossFilledSvg'} />
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
-                        </div>
-                    }
-                    {recordingState === RecordingState.Default && files.length > 0 && (
-                        <div className={styles.files}>
-                            {files.map(file => (
-                                <div className={styles.file}>
-                                    <div className={styles.icon}>
-                                        <img src={fileSvg} width={20} className={'primarySvg'} alt={'pencilOutlinedSvg'} />
+                        )}
+                        <div className={styles.innerInputText}>
+                            <div className={`${styles.inputTextButton} ${styles.wrapperEmojiPicker}`}>
+                                <img src={smileSvg} width={20} className={'secondaryTextSvg'} alt={'smileSvg'} onClick={_ => setIsEmojiPickerVisible(!isEmojiPickerVisible)} />
+                                {isEmojiPickerVisible &&
+                                    <div className={styles.emojiPicker}>
+                                        <EmojiPicker theme={Theme.DARK} onEmojiClick={ed => setMessageText(messageText + ed.emoji)} />
                                     </div>
-                                    <div className={styles.info}>
-                                        <div className={styles.infoInner}>
-                                            <div className={styles.name}>{file.name}</div>
-                                            <div className={styles.size}>{file.size} B</div>
+                                }
+                            </div>
+                            <textarea
+                                value={messageText}
+                                placeholder={T.WriteAMessage}
+                                ref={inputTextRef}
+                                onChange={e => setNewMessageText(e.target.value)}
+                                className={styles.inputText}
+                                onKeyUp={onKeyUpInputText}
+                                onKeyDown={onKeyDownInputText}
+                            />
+                            {recordingState === RecordingState.Recording && recordingType === 'Voice'
+                                ? <TimeAndIndicator recordingTime={recordingTime} />
+                                : (
+                                    <InputFile multiple onChange={newFiles => setFiles(newFiles ? [...files, ...newFiles] : [])}>
+                                        <div className={styles.inputTextButton}>
+                                            <img src={clipSvg} width={20} className={'secondaryTextSvg'} alt={'clipSvg'} />
                                         </div>
-                                        <div onClick={() => setFiles(files.filter(f => f !== file))} className={styles.close}>
-                                            <img src={crossFilledSvg} width={15} className={'secondaryTextSvg'} alt={'crossFilledSvg'} />
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
+                                    </InputFile>
+                                )}
                         </div>
-                    )}
-                    <div className={styles.innerInputText}>
-                        <div className={`${styles.inputTextButton} ${styles.wrapperEmojiPicker}`}>
-                            <img src={smileSvg} width={20} className={'secondaryTextSvg'} alt={'smileSvg'} onClick={_ => setIsEmojiPickerVisible(!isEmojiPickerVisible)} />
-                            {isEmojiPickerVisible &&
-                                <div className={styles.emojiPicker}>
-                                    <EmojiPicker theme={Theme.DARK} onEmojiClick={ed => setMessageText(messageText + ed.emoji)} />
-                                </div>
-                            }
-                        </div>
-                        <textarea
-                            value={messageText}
-                            placeholder={T.WriteAMessage}
-                            ref={inputTextRef}
-                            onChange={e => setNewMessageText(e.target.value)}
-                            className={styles.inputText}
-                            onKeyUp={onKeyUpInputText}
-                            onKeyDown={onKeyDownInputText}
-                        />
-                        {recordingState === RecordingState.Recording
-                            ? (
-                                <div className={styles.timeAndIndicator}>
-                                    <div>{fancyTimeFormat(recordingTime)}</div>
-                                    <div className={styles.glowing} />
-                                </div>
-                            )
-                            : (
-                                <InputFile multiple onChange={newFiles => setFiles(newFiles ? [...files, ...newFiles] : [])}>
-                                    <div className={styles.inputTextButton}>
-                                        <img src={clipSvg} width={20} className={'secondaryTextSvg'} alt={'clipSvg'} />
-                                    </div>
-                                </InputFile>
-                            )}
                     </div>
-                </div>
-                {recordingState === RecordingState.Recording && (
-                    <SmallPrimaryButton onClick={discardRecordingHandler} className={styles.buttonDiscardVoiceRecording}>
+                    {recordingState === RecordingState.Recording && recordingType === 'Voice' && (
+                        <SmallPrimaryButton onClick={discardRecordingHandler} className={styles.buttonDiscardRecording}>
+                            <AnimatePresence>
+                                <motion.img
+                                    key={'discard'}
+                                    initial={{ scale: 0, opacity: 0 }}
+                                    animate={{ scale: 1, opacity: 1 }}
+                                    src={deleteSvg}
+                                    width={25}
+                                    className={'dangerSvg'}
+                                />
+                            </AnimatePresence>
+                        </SmallPrimaryButton>
+                    )}
+                    {recordingState === RecordingState.Recording && recordingType === 'Voice' && <VolumeIndicator volume={volume} right="-30px" />}
+                    <SmallPrimaryButton onClick={primaryButtonClickHandler} className={styles.buttonSend} onRightClick={onRightClickHandler}>
                         <AnimatePresence>
-                            <img src={deleteSvg} width={25} className={'dangerSvg'} />
+                            {renderPrimaryButtonIcon()}
                         </AnimatePresence>
                     </SmallPrimaryButton>
-                )}
-                {recordingState === RecordingState.Recording && (
-                    <div className={styles.volumeIndicator}>
-                        <div className={styles.volumeIndicatorInner} style={{ width: 60 + volume * 2, height: 60 + volume * 2 }} />
-                    </div>
-                )}
-                <SmallPrimaryButton onClick={primaryButtonClickHandler} className={styles.buttonSend} onRightClick={onRightClickHandler}>
-                    <AnimatePresence>
-                        {renderPrimaryButtonIcon()}
-                    </AnimatePresence>
-                </SmallPrimaryButton>
+                </div>
             </div>
-        </div>
+            <RoundVideoRecordingModal
+                mediaStream={mediaStream}
+                recordingState={recordingState}
+                recordingType={recordingType}
+                volume={volume}
+                recordingTime={recordingTime}
+                stopRecording={stopRecording}
+                discardRecording={discardRecordingHandler}
+            />
+        </>
     );
 };

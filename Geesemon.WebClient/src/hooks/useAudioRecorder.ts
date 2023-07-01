@@ -6,8 +6,14 @@ export enum RecordingState {
     Default = 'Default',
 }
 
-export const useAudioRecorder = (video: boolean, onGetRecord: (blob: Blob) => void, calculateVolume?: boolean) => {
-    const mediaStream = useRef<MediaStream | null>(null);
+export const useAudioRecorder = (video: boolean, onGetRecord: (blob: Blob) => void) => {
+    const stream = useRef<MediaStream | null>(null);
+    const [mediaStream, setMediaStream] = useState<MediaStream | null>(null);
+    const setStream = (s: MediaStream | null) => {
+        stream.current = s;
+        setMediaStream(s);
+    };
+
     const mediaRecorder = useRef<MediaRecorder | null>(null);
     const audioContext = useRef<AudioContext | null>(null);
     const analyser = useRef<AnalyserNode | null>(null);
@@ -37,7 +43,7 @@ export const useAudioRecorder = (video: boolean, onGetRecord: (blob: Blob) => vo
             audio: true,
             video,
         });
-        mediaStream.current = stream;
+        setStream(stream);
 
         mediaRecorder.current = new MediaRecorder(stream);
         mediaRecorder.current.start();
@@ -48,18 +54,16 @@ export const useAudioRecorder = (video: boolean, onGetRecord: (blob: Blob) => vo
             }
         };
 
-        if (calculateVolume) {
-            audioContext.current = new AudioContext();
-            analyser.current = audioContext.current.createAnalyser();
-            source.current = audioContext.current.createMediaStreamSource(stream);
-            dataArray.current = new Uint8Array(analyser.current.frequencyBinCount);
-            source.current.connect(analyser.current);
-            requestAnimationFrame(tick);
-        }
+        audioContext.current = new AudioContext();
+        analyser.current = audioContext.current.createAnalyser();
+        source.current = audioContext.current.createMediaStreamSource(stream);
+        dataArray.current = new Uint8Array(analyser.current.frequencyBinCount);
+        source.current.connect(analyser.current);
+        requestAnimationFrame(tick);
     };
 
     const tick = () => {
-        if (!mediaStream.current)
+        if (!stream.current)
             return;
 
         analyser.current?.getByteTimeDomainData(dataArray.current);
@@ -71,15 +75,15 @@ export const useAudioRecorder = (video: boolean, onGetRecord: (blob: Blob) => vo
     const stopRecording = () => {
         setState(RecordingState.Recorded);
         mediaRecorder.current?.stop();
-        mediaStream.current?.getTracks().forEach(track => track.stop());
-        mediaStream.current = null;
+        stream.current?.getTracks().forEach(track => track.stop());
+        setStream(null);
     };
 
     const discardRecording = () => {
         setState(RecordingState.Default);
         mediaRecorder.current?.stop();
-        mediaStream.current?.getTracks().forEach(track => track.stop());
-        mediaStream.current = null;
+        stream.current?.getTracks().forEach(track => track.stop());
+        setStream(null);
     };
 
     return {
@@ -89,5 +93,6 @@ export const useAudioRecorder = (video: boolean, onGetRecord: (blob: Blob) => vo
         volume,
         recordingState,
         recordingTime,
+        mediaStream,
     };
 };
