@@ -1,13 +1,13 @@
-export const AUTH_TOKEN_KEY = 'AUTH_TOKEN';
+export type Key = 'AuthToken' | 'RecordingType';
 
-export const getAuthToken = (): string | null => {
-    return localStorage.getItem(AUTH_TOKEN_KEY);
+export const localStorageGetItem = (key: Key): string | null => {
+    return localStorage.getItem(key);
 };
 
-export const setAuthToken = (token: string) => {
-    localStorage.setItem(AUTH_TOKEN_KEY, token);
+export const localStorageSetItem = (key: Key, value: string) => {
+    localStorage.setItem(key, value);
 };
 
-export const removeAuthToken = () => {
-    localStorage.removeItem(AUTH_TOKEN_KEY);
+export const localStorageRemoveItem = (key: Key) => {
+    localStorage.removeItem(key);
 };

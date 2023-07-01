@@ -49,7 +49,7 @@ namespace Geesemon.Web.GraphQL.Mutations
 
                     if (sentMessageInput.Files != null && sentMessageInput.Files.Count() > 0)
                     {
-                        await Parallel.ForEachAsync(sentMessageInput.Files, async (file, token) =>
+                        foreach (var file in sentMessageInput.Files)
                         {
                             var fileUrl = await fileManagerService.UploadFileAsync(FileManagerConstants.FilesFolder, file);
                             var newMessage = new Message()
@@ -59,14 +59,16 @@ namespace Geesemon.Web.GraphQL.Mutations
                                 FromId = currentUserId,
                                 ReplyMessageId = replyMessage?.Id,
                                 FileUrl = fileUrl,
+                                MediaKind = sentMessageInput.MediaKind,
+                                MimeType = file.ContentType,
                             };
                             newMessages.Add(newMessage);
-                        });
+                        }
                     }
 
-                    if(sentMessageInput.ForwardedMessageIds != null && sentMessageInput.ForwardedMessageIds.Count() > 0)
+                    if (sentMessageInput.ForwardedMessageIds != null && sentMessageInput.ForwardedMessageIds.Count() > 0)
                     {
-                        if(newMessages.Count == 0 && !string.IsNullOrEmpty(sentMessageInput.Text))
+                        if (newMessages.Count == 0 && !string.IsNullOrEmpty(sentMessageInput.Text))
                         {
                             var newMessage = new Message()
                             {
@@ -77,8 +79,8 @@ namespace Geesemon.Web.GraphQL.Mutations
                             };
                             newMessages.Add(newMessage);
                         }
-                        
-                        foreach(var forwardedMessageId in sentMessageInput.ForwardedMessageIds)
+
+                        foreach (var forwardedMessageId in sentMessageInput.ForwardedMessageIds)
                         {
                             var message = await messageManager.GetByIdAsync(forwardedMessageId);
                             var newMessage = new Message()
@@ -92,7 +94,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                         }
                     }
 
-                    if(newMessages.Count == 0)
+                    if (newMessages.Count == 0)
                     {
                         if (string.IsNullOrEmpty(sentMessageInput.Text))
                             throw new ExecutionError("Message text can not be empty");
@@ -108,7 +110,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                     }
 
                     var createdMessages = new List<Message>();
-                    foreach(var newMessage in newMessages)
+                    foreach (var newMessage in newMessages)
                     {
                         var createdMessage = await messageManager.CreateAsync(newMessage);
                         messageActionSubscriptionService.Notify(createdMessage, MessageActionKind.Create);
@@ -136,7 +138,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                         deletedMessages.Add(deletedMessage);
                     }
 
-                    foreach(var deletedMessage in deletedMessages)
+                    foreach (var deletedMessage in deletedMessages)
                     {
                         messageActionSubscriptionService.Notify(deletedMessage, MessageActionKind.Delete);
                     }
@@ -160,7 +162,7 @@ namespace Geesemon.Web.GraphQL.Mutations
 
                     if (message.FromId != currentUserId)
                         throw new Exception("User can't update other user's messages.");
-                    
+
                     if (message.ForwardedMessage != null)
                         throw new Exception("You can not update forwarded messages.");
 

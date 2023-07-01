@@ -1,9 +1,12 @@
 {
+  // Common
+  "Pin": "Pin",
+  "Delete": "Delete",
+
   //menu
   "Saved": "Saved",
   "Settings": "Settings",
   "Logout": "Logout",
-  "Pin": "Pin",
   "Unmute": "Unmute",
   "Mute": "Mute",
 
@@ -14,6 +17,9 @@
   "MembersOnlineInChat": "{0} online",
   "MembersInChatAndOnline": "{0} members, {1} online",
   "LeaveChat": "Leave chat",
+  "ForwardedFrom": "Forwarded from {0}",
+  "Edited": "edited",
+  "RecordingVideo": "Recording video",
 
   //settings
   "Devices": "Devices",
@@ -60,5 +66,16 @@
   "RemovedFromChatMessage": "{0} removed {1} from chat",
   "AddedToChatMessage": "{0} added {1} to chat",
   "UserLeftFromChatMessage": "{0} left the chat",
-  "ChatCreatedMessage": "{0} created the group \"{1}\""
+  "ChatCreatedMessage": "{0} created the group \"{1}\"",
+
+  // Message context menu
+  "ForwardSelected": "Forward Selected",
+  "DeleteSelected": "Delete Selected",
+  "ClearSelection": "Clear Selection",
+  "Reply": "Reply",
+  "Update": "Update",
+  "Copy": "Copy",
+  "Forward": "Forward",
+  "Select": "Select",
+  "Seen": "seen"
 }

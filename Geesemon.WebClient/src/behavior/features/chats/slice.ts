@@ -15,12 +15,12 @@ import { ChatsGetVars, MessageGetVars } from './queries';
 import { Chat, Message, UserChat } from './types';
 
 export enum Mode {
-    Text = 0,
-    Audio = 1,
-    Updating = 2,
-    Reply = 3,
-    ForwardSelectChat = 4,
-    Forward = 5,
+    Text = 'Text',
+    Recording = 'Recording',
+    Updating = 'Updating',
+    Reply = 'Reply',
+    Forward_SelectChat = 'Forward_SelectChat',
+    Forward = 'Forward',
 }
 
 type InitialState = {
@@ -47,6 +47,8 @@ type InitialState = {
     chatGetByIdentifierLoading: boolean;
 
     chatAddMembersLoading: boolean;
+
+    repproducingMediaMessageId: string | null;
 };
 
 const initialState: InitialState = {
@@ -73,6 +75,8 @@ const initialState: InitialState = {
     chatGetByIdentifierLoading: false,
 
     chatAddMembersLoading: false,
+
+    repproducingMediaMessageId: null,
 };
 
 const slice = createSlice({
@@ -268,6 +272,10 @@ const slice = createSlice({
         },
 
         leaveChatAsync: (state, action: PayloadAction<{ chatId: string }>) => state,
+
+        setRepproducingMediaMessageId: (state, action: PayloadAction<string | null>) => {
+            state.repproducingMediaMessageId = action.payload;
+        },
 
         toInitialState: (state, action: PayloadAction) => initialState,
     },

@@ -34,7 +34,7 @@
     gap: 10px;
 }
 
-.messageContent{
+.messageContent {
     display: flex;
     flex: 1;
     flex-direction: column;
@@ -48,19 +48,7 @@
     min-width: 0;
     overflow-wrap: break-word;
     line-height: 1.3125;
-}
 
-.messagePadding {
-    padding: 6px 10px;
-}
-
-.file {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
-
-.message {
     a {
         color: $primary-color;
     }
@@ -84,10 +72,24 @@
     }
 }
 
+.messagePadding {
+    padding: 6px 10px;
+}
+
+.file {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
 .messageMy {
     align-self: end;
     background-color: #766AC8;
     border-radius: 7px 7px 0 7px;
+}
+
+.noBackground {
+    background-color: inherit;
 }
 
 .messageSystem {
@@ -151,4 +153,60 @@
 
 .forwardSvg {
     transform: scaleX(-1);
+}
+
+.voiceMessage {
+    width: 250px;
+    display: flex;
+    gap: 5px;
+
+    .waveAndTime {
+        flex: 1;
+    }
+
+    .playPauseButton {
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        background-color: $primary-text-color;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .audioWave {
+        cursor: pointer;
+    }
+}
+
+.roundVideoMessage {
+    width: 250px;
+    height: 250px;
+    position: relative;
+
+    video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+
+    .info {
+        position: absolute;
+        right: 20px;
+        bottom: 5px;
+        background-color: $message-addtitional-info-color;
+        border-radius: 10px;
+        padding: 0 7px;
+    }
+
+    .time{
+        position: absolute;
+        left: 5px;
+        top: 15px;
+        background-color: $message-addtitional-info-color;
+        border-radius: 10px;
+        padding: 0 7px;
+    }
 }

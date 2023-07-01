@@ -1,8 +1,8 @@
+import s from './User.module.scss';
 import { FC } from 'react';
 import { User as UserType } from '../../../behavior/features/users/types';
 import { Avatar } from '../../common/Avatar/Avatar';
 import { AvatarWithoutImage } from '../../common/AvatarWithoutImage/AvatarWithoutImage';
-import s from './User.module.scss';
 import { getLastTimeActivity } from '../../../utils/dateUtils';
 import { Checkbox } from '../../common/formControls/Checkbox/Checkbox';
 import { MenuItem } from '../../common/Menu/Menu';

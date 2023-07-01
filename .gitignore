@@ -9,3 +9,4 @@
 **/.vscode/
 **/appsettings.json
 **/appsettings.Development.json
+/Geesemon.Web/wwwroot/dynamic

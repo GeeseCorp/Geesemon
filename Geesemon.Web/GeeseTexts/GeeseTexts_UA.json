@@ -1,4 +1,8 @@
 ﻿{
+  // Common
+  "Pin": "Закріпити",
+  "Delete": "Видалити",
+
   //menu
   "Saved": "Збережені",
   "Settings": "Налаштування",
@@ -13,6 +17,9 @@
   "MembersOnlineInChat": "{0} онлайн",
   "MembersInChatAndOnline": "{0} учасника, {1} онлайн",
   "LeaveChat": "Покинути чат",
+  "ForwardedFrom": "Переслано від {0}",
+  "Edited": "ред.",
+  "RecordingVideo": "Записуваня відео",
 
   //settings
   "Devices": "Пристрої",
@@ -59,5 +66,16 @@
   "RemovedFromChatMessage": "{0} вигнав {1} з чату",
   "AddedToChatMessage": "{0} додав {1} до чату",
   "UserLeftFromChatMessage": "{0} вийшов із чату",
-  "ChatCreatedMessage": "{0} створив групу \"{1}\""
+  "ChatCreatedMessage": "{0} створив групу \"{1}\"",
+
+  // Message context menu
+  "ForwardSelected": "Переслати Вибрані",
+  "DeleteSelected": "Видалити Вибрані",
+  "ClearSelection": "Зняти Виділення",
+  "Reply": "Відповісти",
+  "Update": "Редагувати",
+  "Copy": "Копіювати",
+  "Forward": "Переслати",
+  "Select": "Вибрати",
+  "Seen": "бачили"
 }

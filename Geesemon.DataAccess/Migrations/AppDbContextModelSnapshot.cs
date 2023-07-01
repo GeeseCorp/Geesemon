@@ -88,6 +88,12 @@ namespace Geesemon.DataAccess.Migrations
                     b.Property<bool>("IsEdited")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("MediaKind")
+                        .HasColumnType("int");
+
+                    b.Property<string>("MimeType")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid?>("ReplyMessageId")
                         .HasColumnType("uniqueidentifier");
 

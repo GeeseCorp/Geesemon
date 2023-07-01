@@ -36,7 +36,7 @@ export const SelectChatForForwardMessagesModal = () => {
     };
 
     return (
-        <Modal opened={!!forwardMessageIds.length && mode === Mode.ForwardSelectChat}>
+        <Modal opened={!!forwardMessageIds.length && mode === Mode.Forward_SelectChat}>
             <div className="modalHeader">
                 <HeaderButton
                   keyName={'SelectChatForForwardMessagesModal/Back'}

@@ -25,6 +25,8 @@ $border-color: #0f0f0f;
 
 $message-time-background: rgb(0, 0, 0, 0.35) !default;
 
+$message-addtitional-info-color: rgba(55, 21, 55, 0.8) !default;
+
 *:not(path, svg) {
     margin: 0;
     padding: 0;
@@ -189,11 +191,15 @@ body {
     text-align: center;
 }
 
-.infinite-scroll-component__outerdiv{
+.infinite-scroll-component__outerdiv {
     flex: 1;
     min-height: 0;
     display: flex;
     flex-direction: column-reverse;
     justify-content: stretch;
     align-items: stretch;
+}
+
+.disabled {
+    pointer-events: none;
 }

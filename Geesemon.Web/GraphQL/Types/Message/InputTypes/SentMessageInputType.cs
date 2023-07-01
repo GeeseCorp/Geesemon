@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Geesemon.DataAccess.Managers;
+using Geesemon.Model.Enums;
 using GraphQL.Types;
 using GraphQL.Upload.AspNetCore;
 
@@ -12,19 +13,23 @@ public class SentMessageInputType : InputObjectGraphType<SentMessageInput>
         Field<NonNullGraphType<StringGraphType>, string>()
             .Name("Identifier")
             .Resolve(context => context.Source.Identifier);
-        
+
         Field<StringGraphType, string?>()
             .Name("Text")
             .Resolve(context => context.Source.Text);
-        
+
         Field<GuidGraphType, Guid?>()
             .Name("ReplyMessageId")
             .Resolve(context => context.Source.ReplyMessageId);
-        
+
         Field<ListGraphType<UploadGraphType>, IEnumerable<IFormFile>>()
             .Name("Files")
             .Resolve(context => context.Source.Files);
-        
+
+        Field<MediaKindType, MediaKind?>()
+            .Name("MediaKind")
+            .Resolve(context => context.Source.MediaKind);
+
         Field<ListGraphType<GuidGraphType>, IEnumerable<Guid>>()
             .Name("ForwardedMessageIds")
             .Resolve(context => context.Source.ForwardedMessageIds);
@@ -38,6 +43,7 @@ public class SentMessageInput
     public Guid? ReplyMessageId { get; set; }
     public IEnumerable<IFormFile> Files { get; set; } = new List<IFormFile>();
     public IEnumerable<Guid> ForwardedMessageIds { get; set; } = new List<Guid>();
+    public MediaKind? MediaKind { get; set; }
 }
 
 public class SentMessageInputValidator : AbstractValidator<SentMessageInput>
@@ -77,7 +83,7 @@ public class SentMessageInputValidator : AbstractValidator<SentMessageInput>
                 if (forwardedMessageIds == null || forwardedMessageIds.Count() == 0)
                     return true;
 
-                foreach(var forwardedMessageId in forwardedMessageIds)
+                foreach (var forwardedMessageId in forwardedMessageIds)
                 {
                     var forwardedMessage = await messageManager.GetByIdAsync(forwardedMessageId);
                     if (forwardedMessage == null)

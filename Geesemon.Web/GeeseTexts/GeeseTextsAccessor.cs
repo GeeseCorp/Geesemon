@@ -1,5 +1,4 @@
 ﻿using Geesemon.Web.GeeseTexts;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Newtonsoft.Json;
 
 namespace Geesemon.Web.Geesetext;
@@ -60,7 +59,7 @@ public class GeeseTextsAccessor
         }
     }
 
-    public static List<GeeseText> LanguagesTexts = new List<GeeseText> 
+    public static List<GeeseText> LanguagesTexts = new List<GeeseText>
     {
        new GeeseText(Language.EN.ToString(), "English" ),
        new GeeseText(Language.RU.ToString(), "Русский" ),

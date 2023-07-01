@@ -94,7 +94,7 @@
         white-space: nowrap;
     }
 
-    .media{
+    .media {
         width: 30px;
         height: 30px;
         object-fit: cover;
@@ -162,6 +162,25 @@
     right: -55px;
 }
 
+.volumeIndicator {
+    position: absolute;
+    top: 50%;
+    width: 0;
+    height: 0;
+
+    .volumeIndicatorInner {
+        background-color: $primary-color;
+        opacity: 50%;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: all .02s linear;
+    }
+}
+
+.buttonDiscardRecording {
+    background-color: $surface-color !important;
+}
+
 .forwardSvg {
     transform: scaleX(-1);
 }
@@ -174,6 +193,68 @@
     position: absolute;
     bottom: 50px;
     left: -10px;
+}
+
+.glowing {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #2ba805;
+    animation: glowing 1300ms infinite;
+}
+
+.timeAndIndicator {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    height: 30px;
+}
+
+.roundedVideoRecording {
+    max-width: 500px;
+
+    video {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+
+    .controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            .send {
+                position: relative;
+            }
+        }
+    }
+
+
+}
+
+
+@keyframes glowing {
+    0% {
+        background-color: #c0392b;
+        box-shadow: 0 0 3px #c0392b;
+    }
+
+    50% {
+        background-color: red;
+        box-shadow: 0 0 10px red;
+    }
+
+    100% {
+        background-color: #c0392b;
+        box-shadow: 0 0 3px #c0392b;
+    }
 }
 
 @media (max-width: 1200px) {

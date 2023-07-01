@@ -16,7 +16,7 @@ import { ContentBar } from './components/common/ContentBar/ContentBar';
 import { LeftSidebar } from './components/common/LeftSidebar/LeftSidebar';
 import { RightSidebar } from './components/common/RightSidebar/RightSidebar';
 import { useIsMobile } from './hooks/useIsMobile';
-import { getAuthToken } from './utils/localStorageUtils';
+import { localStorageGetItem } from './utils/localStorageUtils';
 
 export const AuthedApp: FC = () => {
     const isMobile = useIsMobile();
@@ -24,7 +24,7 @@ export const AuthedApp: FC = () => {
     const isRightSidebarVisible = useAppSelector(s => s.app.isRightSidebarVisible);
     const messageActionSubscription = useSubscription<MessageActionsData, MessageActionsVars>(MESSAGE_ACTIONS_SUBSCRIPTIONS);
     const chatActionSubscription = useSubscription<ChatActionsData, ChatActionsVars>(CHAT_ACTIONS_SUBSCRIPTIONS, {
-        variables: { token: getAuthToken() || '' },
+        variables: { token: localStorageGetItem('AuthToken') || '' },
     });
 
     const makeOfflineAsync = () => {
@@ -78,35 +78,35 @@ export const AuthedApp: FC = () => {
 
     return (
         <div className={'authedRoutes'}>
-        {isMobile 
-        ? (
-            <Routes>
-                <Route path={'/'} element={<LeftSidebar />} />
-                <Route
-                  path={'/:chatIdentifier'}
-                  element={isRightSidebarVisible ? <RightSidebar /> : <ContentBar />}
-                />
-                <Route path={'/auth/*'} element={<Navigate to={'/'} />} />
-            </Routes>
-        ) 
-        : (
-            <>
-                <Routes>
-                    <Route path={'/'} element={<LeftSidebar />} />
-                    <Route path={'/:chatIdentifier'} element={<LeftSidebar />} />
-                    <Route path={'/auth'} element={<Navigate to={'/'} />} />
-                    <Route path={'/auth/*'} element={<Navigate to={'/'} />} />
-                </Routes>
-                <Routes>
-                    <Route path={'/'} element={<ContentBar />} />
-                    <Route path={'/:chatIdentifier'} element={<ContentBar />} />
-                </Routes>
-                <Routes>
-                    <Route path={'/:chatIdentifier'} element={<RightSidebar />} />
-                    <Route path={'*'} element={<RightSidebar />} />
-                </Routes>
-            </>
-        )}
+            {isMobile
+                ? (
+                    <Routes>
+                        <Route path={'/'} element={<LeftSidebar />} />
+                        <Route
+                            path={'/:chatIdentifier'}
+                            element={isRightSidebarVisible ? <RightSidebar /> : <ContentBar />}
+                        />
+                        <Route path={'/auth/*'} element={<Navigate to={'/'} />} />
+                    </Routes>
+                )
+                : (
+                    <>
+                        <Routes>
+                            <Route path={'/'} element={<LeftSidebar />} />
+                            <Route path={'/:chatIdentifier'} element={<LeftSidebar />} />
+                            <Route path={'/auth'} element={<Navigate to={'/'} />} />
+                            <Route path={'/auth/*'} element={<Navigate to={'/'} />} />
+                        </Routes>
+                        <Routes>
+                            <Route path={'/'} element={<ContentBar />} />
+                            <Route path={'/:chatIdentifier'} element={<ContentBar />} />
+                        </Routes>
+                        <Routes>
+                            <Route path={'/:chatIdentifier'} element={<RightSidebar />} />
+                            <Route path={'*'} element={<RightSidebar />} />
+                        </Routes>
+                    </>
+                )}
         </div>
     );
 };
