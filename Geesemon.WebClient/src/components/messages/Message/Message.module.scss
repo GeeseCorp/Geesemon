@@ -161,19 +161,31 @@
     .waveAndTime {
         flex: 1;
     }
+
+    .playPauseButton {
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        background-color: $primary-text-color;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .audioWave {
+        cursor: pointer;
+    }
 }
 
-.playPauseButton {
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    background-color: $primary-text-color;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-}
+.roundVideoMessage {
+    width: 250px;
+    height: 250px;
 
-.audioWave {
-    cursor: pointer;
+    video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+    }
 }

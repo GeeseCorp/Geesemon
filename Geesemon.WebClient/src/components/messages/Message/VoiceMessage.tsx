@@ -67,7 +67,7 @@ export const VoiceMessage = ({ url }: { url: string }) => {
     if (!wavesurfer.current)
       return '';
 
-    return fancyTimeFormat(wavesurfer.current.getCurrentTime()) + ' ' + fancyTimeFormat(wavesurfer.current.getDuration());
+    return fancyTimeFormat(wavesurfer.current.getCurrentTime()) + ' / ' + fancyTimeFormat(wavesurfer.current.getDuration());
   };
 
   const handlePlayPause = () => {

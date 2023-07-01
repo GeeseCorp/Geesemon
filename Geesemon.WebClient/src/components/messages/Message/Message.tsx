@@ -16,6 +16,7 @@ import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
 import { VoiceMessage } from './VoiceMessage';
 import { ProcessStringOption, identifierProcessStringOption, linkProcessStringOption, processString } from '../../../utils/processString';
 import { MessageContextMenu } from './MessageContextMenu';
+import { RoundVideoMessage } from './RoundVideoMessage';
 
 type Props = {
     message: Message;
@@ -39,8 +40,7 @@ export const MessageItem: FC<Props> = memo(({ message, inputTextFocus, isFromVis
     const T = useGeeseTexts();
 
     useEffect(() => {
-        if(message.type === MessageKind.SystemGeeseText && message.text && T[message.text])
-        {
+        if (message.type === MessageKind.SystemGeeseText && message.text && T[message.text]) {
             setText(format(T[message.text!], ...message.geeseTextArguments));
         }
     }, [T]);
@@ -66,11 +66,11 @@ export const MessageItem: FC<Props> = memo(({ message, inputTextFocus, isFromVis
             case MessageKind.System:
                 return (
                     <div
-                      ref={el => {
+                        ref={el => {
                             if (!isReadByMe)
                                 ref.current = el;
                         }}
-                      className={[s.message, s.messageSystem].join(' ')}
+                        className={[s.message, s.messageSystem].join(' ')}
                     >
                         <div className={`${s.messageText} textCenter`}>{messageText}</div>
                     </div>
@@ -81,16 +81,16 @@ export const MessageItem: FC<Props> = memo(({ message, inputTextFocus, isFromVis
                     const forwardedMessageFileType = message.forwardedMessage.fileUrl ? getFileType(message.forwardedMessage.fileUrl) : null;
                     return (
                         <div
-                          ref={el => {
+                            ref={el => {
                                 if (!isReadByMe)
                                     ref.current = el;
                             }}
-                          className={[s.message, isMessageMy ? s.messageMy : null, message.forwardedMessage.text || fileType === FileType.File ? s.messagePadding : null].join(' ')}
+                            className={[s.message, isMessageMy ? s.messageMy : null, message.forwardedMessage.text || fileType === FileType.File ? s.messagePadding : null].join(' ')}
                         >
                             <Link
-                              to={`/${message.from?.identifier}`}
-                              className={[s.from, 'bold', message.forwardedMessage && message.forwardedMessage.fileUrl && s.messagePadding].join(' ')}
-                              style={{ color: message.from?.avatarColor }}
+                                to={`/${message.from?.identifier}`}
+                                className={[s.from, 'bold', message.forwardedMessage && message.forwardedMessage.fileUrl && s.messagePadding].join(' ')}
+                                style={{ color: message.from?.avatarColor }}
                             >
                                 {format(T.ForwardedFrom, message.forwardedMessage.from?.fullName)}
                             </Link>
@@ -107,29 +107,29 @@ export const MessageItem: FC<Props> = memo(({ message, inputTextFocus, isFromVis
                 else {
                     return (
                         <div
-                          ref={el => {
+                            ref={el => {
                                 if (!isReadByMe)
                                     ref.current = el;
                             }}
-                          className={[s.message, isMessageMy ? s.messageMy : null, message.text || fileType === FileType.File ? s.messagePadding : null].join(' ')}
+                            className={[s.message, isMessageMy ? s.messageMy : null, message.text || fileType === FileType.File ? s.messagePadding : null].join(' ')}
                         >
                             {isFromVisible && (
                                 <Link
-                                  to={`/${message.from?.identifier}`}
-                                  className={[s.from, 'bold'].join(' ')}
-                                  style={{ color: message.from?.avatarColor }}
+                                    to={`/${message.from?.identifier}`}
+                                    className={[s.from, 'bold'].join(' ')}
+                                    style={{ color: message.from?.avatarColor }}
                                 >
                                     {message.from?.fullName}
                                 </Link>
                             )}
                             {message.replyMessage && (
                                 <div
-                                  style={{ borderColor: selectedChat?.type === ChatKind.Group ? message.replyMessage.from?.avatarColor : '' }}
-                                  className={s.replyMessage}
+                                    style={{ borderColor: selectedChat?.type === ChatKind.Group ? message.replyMessage.from?.avatarColor : '' }}
+                                    className={s.replyMessage}
                                 >
                                     <div
-                                      style={{ color: selectedChat?.type === ChatKind.Group ? message.replyMessage.from?.avatarColor : '' }}
-                                      className={'small bold primary'}
+                                        style={{ color: selectedChat?.type === ChatKind.Group ? message.replyMessage.from?.avatarColor : '' }}
+                                        className={'small bold primary'}
                                     >
                                         {message.replyMessage?.from?.fullName}
                                     </div>
@@ -171,6 +171,8 @@ export const MessageItem: FC<Props> = memo(({ message, inputTextFocus, isFromVis
         switch (message.mediaKind) {
             case MediaKind.Voice:
                 return <VoiceMessage url={url} />;
+            case MediaKind.Video:
+                return <RoundVideoMessage url={url} />;
         }
 
         const fileType = getFileType(url);
@@ -227,8 +229,8 @@ export const MessageItem: FC<Props> = memo(({ message, inputTextFocus, isFromVis
             <div className={s.wrapperMessage} onClick={() => selectedMessageIds.length && selectionChange()}>
                 {selectedMessageIds.length > 0 && (
                     <Checkbox
-                      checked={!!selectedMessageIds.find(id => message.id === id)}
-                      setChecked={checked => selectionChange(checked)}
+                        checked={!!selectedMessageIds.find(id => message.id === id)}
+                        setChecked={checked => selectionChange(checked)}
                     />
                 )}
                 <div className={s.messageContent}>{messageContent()}</div>

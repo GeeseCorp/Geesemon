@@ -11,6 +11,7 @@ import smileSvg from '../../../assets/svg/smile.svg';
 import replySvg from '../../../assets/svg/reply.svg';
 import fileSvg from '../../../assets/svg/file.svg';
 import deleteSvg from '../../../assets/svg/delete.svg';
+import cameraSvg from '../../../assets/svg/camera.svg';
 import { chatActions } from '../../../behavior/features/chats';
 import { Mode } from '../../../behavior/features/chats/slice';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
@@ -47,10 +48,13 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
     const [files, setFiles] = useState<File[]>([]);
     const forwardMessageIds = useAppSelector(s => s.chats.forwardMessageIds);
     const T = useGeeseTexts();
+    const [recordingType, setRecordingType] = useState<'Voice' | 'RoundVideo'>('Voice');
 
     const onGetRecord = (blob: Blob) => {
-        const type = 'audio/mp3';
-        const fileName = `voice_${moment().format('YYYY-MM-DD_hh-mm-ss')}.mp3`;
+        const type = recordingType === 'Voice' ? 'audio/mp3' : 'video/webm';
+        const fileName = recordingType === 'Voice'
+            ? `voice_${moment().format('YYYY-MM-DD_hh-mm-ss')}.mp3`
+            : `round_video_${moment().format('YYYY-MM-DD_hh-mm-ss')}.webm`;
         const file = new File([blob], fileName, { type });
         setFiles([file]);
     };
@@ -62,7 +66,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
         recordingState,
         recordingTime,
         volume,
-    } = useAudioRecorder(onGetRecord, true);
+    } = useAudioRecorder(recordingType === 'RoundVideo', onGetRecord, true);
 
     useEffect(() => {
         if (inUpdateMessageId && inUpdateMessage) {
@@ -71,7 +75,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
     }, [inUpdateMessageId]);
 
     useEffect(() => {
-        if (files.length && mode === Mode.Voice) {
+        if (files.length && mode === Mode.Recording) {
             sendMessageHandler();
         }
     }, [files.length]);
@@ -121,8 +125,8 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
 
     const getMediaKind = (): MediaKind | null => {
         switch (mode) {
-            case Mode.Voice:
-                return MediaKind.Voice;
+            case Mode.Recording:
+                return recordingType === 'Voice' ? MediaKind.Voice : MediaKind.Video;
             default:
                 return null;
         }
@@ -172,12 +176,12 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
         }
     };
 
-    const startVoiceRecordingHandler = () => {
-        dispatch(chatActions.setMode(Mode.Voice));
+    const startRecordingHandler = () => {
+        dispatch(chatActions.setMode(Mode.Recording));
         startRecording();
     };
 
-    const discardVoiceRecordingHandler = () => {
+    const discardRecordingHandler = () => {
         dispatch(chatActions.setMode(Mode.Text));
         discardRecording();
     };
@@ -247,7 +251,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                 else {
                     switch (recordingState) {
                         case RecordingState.Default:
-                            startVoiceRecordingHandler();
+                            startRecordingHandler();
                             break;
                         case RecordingState.Recording:
                             stopRecording();
@@ -256,6 +260,11 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                 }
                 break;
         }
+    };
+
+    const onRightClickHandler = (e: React.MouseEvent<HTMLElement>) => {
+        e?.preventDefault();
+        setRecordingType(prev => prev === 'Voice' ? 'RoundVideo' : 'Voice');
     };
 
     const renderPrimaryButtonIcon = () => {
@@ -283,16 +292,27 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                                 className={'primaryTextSvg'}
                             />
                         )
-                        : (
-                            <motion.img
-                                key={'microphone'}
-                                initial={{ scale: 0, opacity: 0 }}
-                                animate={{ scale: 1, opacity: 1 }}
-                                src={microphoneSvg}
-                                width={25}
-                                className={'primaryTextSvg'}
-                            />
-                        )
+                        : recordingType === 'Voice'
+                            ? (
+                                <motion.img
+                                    key={'microphone'}
+                                    initial={{ scale: 0, opacity: 0 }}
+                                    animate={{ scale: 1, opacity: 1 }}
+                                    src={microphoneSvg}
+                                    width={25}
+                                    className={'primaryTextSvg'}
+                                />
+                            )
+                            : (
+                                <motion.img
+                                    key={'cameraSvg'}
+                                    initial={{ scale: 0, opacity: 0 }}
+                                    animate={{ scale: 1, opacity: 1 }}
+                                    src={cameraSvg}
+                                    width={25}
+                                    className={'primaryTextSvg'}
+                                />
+                            )
                 );
         }
     };
@@ -371,7 +391,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                     </div>
                 </div>
                 {recordingState === RecordingState.Recording && (
-                    <SmallPrimaryButton onClick={discardVoiceRecordingHandler} className={styles.buttonDiscardVoiceRecording}>
+                    <SmallPrimaryButton onClick={discardRecordingHandler} className={styles.buttonDiscardVoiceRecording}>
                         <AnimatePresence>
                             <img src={deleteSvg} width={25} className={'dangerSvg'} />
                         </AnimatePresence>
@@ -382,7 +402,7 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
                         <div className={styles.volumeIndicatorInner} style={{ width: 60 + volume * 2, height: 60 + volume * 2 }} />
                     </div>
                 )}
-                <SmallPrimaryButton onClick={primaryButtonClickHandler} className={styles.buttonSend}>
+                <SmallPrimaryButton onClick={primaryButtonClickHandler} className={styles.buttonSend} onRightClick={onRightClickHandler}>
                     <AnimatePresence>
                         {renderPrimaryButtonIcon()}
                     </AnimatePresence>

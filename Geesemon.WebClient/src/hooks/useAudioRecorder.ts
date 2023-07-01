@@ -6,7 +6,7 @@ export enum RecordingState {
     Default = 'Default',
 }
 
-export const useAudioRecorder = (onGetRecord: (blob: Blob) => void, calculateVolume?: boolean) => {
+export const useAudioRecorder = (video: boolean, onGetRecord: (blob: Blob) => void, calculateVolume?: boolean) => {
     const mediaStream = useRef<MediaStream | null>(null);
     const mediaRecorder = useRef<MediaRecorder | null>(null);
     const audioContext = useRef<AudioContext | null>(null);
@@ -35,7 +35,7 @@ export const useAudioRecorder = (onGetRecord: (blob: Blob) => void, calculateVol
         startTime.current = performance.now();
         const stream = await navigator.mediaDevices.getUserMedia({
             audio: true,
-            video: false,
+            video,
         });
         mediaStream.current = stream;
 
