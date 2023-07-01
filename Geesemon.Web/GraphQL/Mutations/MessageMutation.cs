@@ -49,7 +49,7 @@ namespace Geesemon.Web.GraphQL.Mutations
 
                     if (sentMessageInput.Files != null && sentMessageInput.Files.Count() > 0)
                     {
-                        await Parallel.ForEachAsync(sentMessageInput.Files, async (file, token) =>
+                        foreach (var file in sentMessageInput.Files)
                         {
                             var fileUrl = await fileManagerService.UploadFileAsync(FileManagerConstants.FilesFolder, file);
                             var newMessage = new Message()
@@ -63,7 +63,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                                 MimeType = file.ContentType,
                             };
                             newMessages.Add(newMessage);
-                        });
+                        }
                     }
 
                     if (sentMessageInput.ForwardedMessageIds != null && sentMessageInput.ForwardedMessageIds.Count() > 0)

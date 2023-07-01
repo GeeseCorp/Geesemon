@@ -36,12 +36,8 @@ export const RoundVideoRecordingModal = ({
     const T = useGeeseTexts();
 
     useEffect(() => {
-        console.log('effect', mediaStream);
-
-        if (recordingType === 'RoundVideo' && recordingState === RecordingState.Recording && videoRef.current && mediaStream) {
-            console.log('set mediaStream', mediaStream);
+        if (recordingType === 'RoundVideo' && recordingState === RecordingState.Recording && videoRef.current && mediaStream)
             videoRef.current.srcObject = mediaStream;
-        }
     }, [recordingType, recordingState, mediaStream]);
 
     const oppened = recordingType === 'RoundVideo' && recordingState === RecordingState.Recording;
