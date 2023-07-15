@@ -1,0 +1,53 @@
+﻿@page "/fetchdata"
+
+@using Fluxor.Blazor.Web.Components;
+@using Geesemon.Client.Data
+@using Geesemon.Model.Models;
+@inherits FluxorComponent
+@inject WeatherForecastService ForecastService
+
+<h1>Weather forecast</h1>
+
+<p>This component demonstrates fetching data from a service.</p>
+
+@if (forecasts == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Temp. (C)</th>
+                <th>Temp. (F)</th>
+                <th>Summary</th>
+            </tr>
+        </thead>
+        <tbody>
+            @*@foreach (var user in users)
+            {
+                <tr>
+                    <td>@user.FullName</td>
+                    <td>@user.Identifier</td>
+                    <td>@user.Identifier</td>
+                    <td>@user.Password</td>
+                </tr>
+            }*@
+        </tbody>
+    </table>
+}
+
+@code {
+    private WeatherForecast[] forecasts;
+
+    private List<User> users;
+
+    protected override async Task OnInitializedAsync()
+    {
+        forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+
+        ForecastService.GetUsers();
+    }
+}

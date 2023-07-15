@@ -1,0 +1,36 @@
+﻿@using Geesemon.Client.Store.Auth;
+@inherits LayoutComponentBase
+@inject IJSRuntime JsRuntime
+@inject IDispatcher Dispatcher
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <div class="top-row px-4">
+            <button onclick=@OnClick>Click me!</button>
+        </div>  
+
+        <div class="top-row px-4">
+            <button onclick=@OnUnloginClick>Unlogin</button>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
+@code{
+    public async void OnClick()
+    {
+        Dispatcher.Dispatch(new LoginAction("admin123", "admin123"));
+    } 
+    
+    public async void OnUnloginClick()
+    {
+        Dispatcher.Dispatch(new LogoutAction());
+    }
+}

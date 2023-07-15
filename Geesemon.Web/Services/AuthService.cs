@@ -140,7 +140,10 @@ public class AuthService
         session.LastTimeOnline = DateTime.UtcNow;
         session.IsOnline = isOnline;
         session.IpAddress = ipAddress;
-        session.UserAgent = $"{userAgent.Name}, {userAgent.Platform.Value.Name}";
+        if(userAgent.Name != null)
+            session.UserAgent = $"{userAgent.Name}, {userAgent.Platform.Value.Name}";
+        else
+            session.UserAgent = $"unknown, unknown";
         session.Location = location;
         return session;
     }

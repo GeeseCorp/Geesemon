@@ -1,0 +1,19 @@
+﻿@page "/counter"
+@using Fluxor.Blazor.Web.Components;
+@using Geesemon.Client.Store.Auth;
+@inherits FluxorComponent
+@inject IState<AuthState> AuthState
+
+<PageTitle>Counter</PageTitle>
+
+<h1>Counter</h1>
+
+<p>Current count: @CounterState.Value.ClickCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+<div>
+    @AuthState?.Value?.User?.FullName <br/>
+    @AuthState?.Value?.User?.Email<br />
+    @AuthState?.Value?.User?.CreatedAt<br />
+</div>

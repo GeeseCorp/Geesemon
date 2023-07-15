@@ -1,0 +1,36 @@
+﻿@page "/Login"
+@using Geesemon.Model.GrapghQL.Auth;
+
+@inject IDispatcher Dispatcher
+
+<h1>Login in Geesemon</h1>
+
+
+<EditForm Model="@loginInput" OnValidSubmit="@HandleSubmit">
+    <InputText @bind-Value="loginInput.Identifier" DisplayName="Idenifier" placeholder="Idenifier" />
+
+    <InputText @bind-Value="loginInput.Password" DisplayName="Password" placeholder="Password" />
+
+    <DataAnnotationsValidator />
+    <ValidationSummary  />
+   
+    <button type="submit">Submit</button>
+</EditForm>
+
+
+
+
+<NavLink class="nav-link" href="Count">
+    <span class="oi oi-plus" aria-hidden="true"></span> Login
+</NavLink>
+
+
+@code{
+    public AuthLoginInput loginInput = new();
+
+    public void HandleSubmit()
+    {
+       
+        Dispatcher.Dispatch(new LoginAction(loginInput.Identifier, loginInput.Password));
+    }
+}
