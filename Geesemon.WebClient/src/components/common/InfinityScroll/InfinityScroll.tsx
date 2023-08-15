@@ -15,50 +15,51 @@ type Props<T> = {
     innerRef?: React.LegacyRef<HTMLDivElement>;
 } & Omit<JSX.IntrinsicElements['div'], 'ref'>;
 
+// eslint-disable-next-line @typescript-eslint/comma-dangle
 export const InfinityScroll = <T,>({
-    items,
-    onItemRender,
-    topLoading,
-    hasTopNext,
-    onReachTop,
-    bottomLoading,
-    hasBottomNext,
-    onReachBottom,
-    inverse,
-    className,
-    innerRef,
-    ...rest
+  items,
+  onItemRender,
+  topLoading,
+  hasTopNext,
+  onReachTop,
+  bottomLoading,
+  hasBottomNext,
+  onReachBottom,
+  inverse,
+  className,
+  innerRef,
+  ...rest
 }: Props<T>) => {
-    const topLoaderRef = useRef<HTMLDivElement>(null);
-    const topLoaderOnScreen = useOnScreen(topLoaderRef);
+  const topLoaderRef = useRef<HTMLDivElement>(null);
+  const topLoaderOnScreen = useOnScreen(topLoaderRef);
 
-    const bottomLoaderRef = useRef<HTMLDivElement>(null);
-    const bottomLoaderOnScreen = useOnScreen(bottomLoaderRef);
+  const bottomLoaderRef = useRef<HTMLDivElement>(null);
+  const bottomLoaderOnScreen = useOnScreen(bottomLoaderRef);
 
-    useEffect(() => {
-        if (topLoaderOnScreen && hasTopNext && !!onReachTop && topLoading === false) {
-            onReachTop();
-        }
-    }, [topLoaderOnScreen]);
+  useEffect(() => {
+    if (topLoaderOnScreen && hasTopNext && !!onReachTop && topLoading === false) {
+      onReachTop();
+    }
+  }, [topLoaderOnScreen]);
 
-    useEffect(() => {
-        if (bottomLoaderOnScreen && hasBottomNext && !!onReachBottom && bottomLoading === false) {
-            onReachBottom();
-        }
-    }, [bottomLoaderOnScreen]);
+  useEffect(() => {
+    if (bottomLoaderOnScreen && hasBottomNext && !!onReachBottom && bottomLoading === false) {
+      onReachBottom();
+    }
+  }, [bottomLoaderOnScreen]);
 
-    return (
-        <div {...rest} ref={innerRef} className={`${className} ${styles.infinityScrollWrapper}`}>
-            <div className={styles.infinityScroll}>
-                {onReachTop && <div className={`${styles.loader} ${styles.topLoader}`} ref={topLoaderRef} />}
-                <div
-                    className={styles.innerInfinityScroll}
-                    style={{ flexDirection: inverse ? 'column-reverse' : 'column' }}
-                >
-                    {items.map((item, i) => onItemRender(item, i))}
-                </div>
-                {onReachBottom && <div className={`${styles.loader} ${styles.bottomLoader}`} ref={bottomLoaderRef} />}
-            </div>
+  return (
+    <div {...rest} ref={innerRef} className={`${className} ${styles.infinityScrollWrapper}`}>
+      <div className={styles.infinityScroll}>
+        {onReachTop && <div className={`${styles.loader} ${styles.topLoader}`} ref={topLoaderRef} />}
+        <div
+          className={styles.innerInfinityScroll}
+          style={{ flexDirection: inverse ? 'column-reverse' : 'column' }}
+        >
+          {items.map((item, i) => onItemRender(item, i))}
         </div>
-    );
+        {onReachBottom && <div className={`${styles.loader} ${styles.bottomLoader}`} ref={bottomLoaderRef} />}
+      </div>
+    </div>
+  );
 };

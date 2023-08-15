@@ -14,130 +14,130 @@ import { InfinityScroll } from '../../common/InfinityScroll/InfinityScroll';
 import { useOnUpdate } from '../../../hooks/useOnUpdate';
 
 export const Messages: FC = () => {
-    const selectedChatIdentifier = useSelectedChatIdentifier();
-    const messageGetLoading = useAppSelector(s => s.chats.messageGetLoading);
-    const messagesGetHasNext = useAppSelector(s => s.chats.messagesGetHasNext);
-    const selectedChat = useSelectedChat();
-    const dispatch = useAppDispatch();
-    const inputTextRef = useRef<HTMLTextAreaElement | null>(null);
-    const [messageBlocks, setMessageBlocks] = useState<Message[][]>([]);
-    const authedUser = useAppSelector(s => s.auth.authedUser);
-    const messageBlocksRef = useRef<HTMLDivElement | null>(null);
-    const scrollFromBottomPosition = useRef<number | null>(null);
+  const selectedChatIdentifier = useSelectedChatIdentifier();
+  const messageGetLoading = useAppSelector(s => s.chats.messageGetLoading);
+  const messagesGetHasNext = useAppSelector(s => s.chats.messagesGetHasNext);
+  const selectedChat = useSelectedChat();
+  const dispatch = useAppDispatch();
+  const inputTextRef = useRef<HTMLTextAreaElement | null>(null);
+  const [messageBlocks, setMessageBlocks] = useState<Message[][]>([]);
+  const authedUser = useAppSelector(s => s.auth.authedUser);
+  const messageBlocksRef = useRef<HTMLDivElement | null>(null);
+  const scrollFromBottomPosition = useRef<number | null>(null);
 
-    useEffect(() => {
-        const blocks: Message[][] = [];
-        let block: Message[] = [];
-        selectedChat?.messages.forEach((message, i) => {
-            if (i === selectedChat?.messages.length - 1) {
-                if (i !== 0 && message.fromId !== selectedChat?.messages[i - 1].fromId) {
-                    blocks.push(block);
-                    block = [];
-                }
-                block.push(message);
-                blocks.push(block);
-            }
-            else if (i === 0 || message.fromId === selectedChat?.messages[i - 1].fromId) {
-                block.push(message);
-            }
-            else {
-                blocks.push(block);
-                block = [];
-                block.push(message);
-            }
-        });
-        setMessageBlocks(blocks);
-    }, [selectedChat?.messages]);
-
-    useOnUpdate(() => {
-        if (scrollFromBottomPosition.current !== null && messageBlocksRef.current) {
-            messageBlocksRef.current.scrollTop = scrollFromBottomPosition.current;
+  useEffect(() => {
+    const blocks: Message[][] = [];
+    let block: Message[] = [];
+    selectedChat?.messages.forEach((message, i) => {
+      if (i === selectedChat?.messages.length - 1) {
+        if (i !== 0 && message.fromId !== selectedChat?.messages[i - 1].fromId) {
+          blocks.push(block);
+          block = [];
         }
-    }, [messageBlocks]);
+        block.push(message);
+        blocks.push(block);
+      }
+      else if (i === 0 || message.fromId === selectedChat?.messages[i - 1].fromId) {
+        block.push(message);
+      }
+      else {
+        blocks.push(block);
+        block = [];
+        block.push(message);
+      }
+    });
+    setMessageBlocks(blocks);
+  }, [selectedChat?.messages]);
 
-    useOnUpdate(() => {
-        scrollToBottom();
-    }, [selectedChatIdentifier]);
+  useOnUpdate(() => {
+    if (scrollFromBottomPosition.current !== null && messageBlocksRef.current) {
+      messageBlocksRef.current.scrollTop = scrollFromBottomPosition.current;
+    }
+  }, [messageBlocks]);
 
-    useEffect(() => {
-        dispatch(chatActions.setSelectedMessageIds([]));
-    }, [selectedChat]);
+  useOnUpdate(() => {
+    scrollToBottom();
+  }, [selectedChatIdentifier]);
 
-    const scrollToBottom = () => {
-        messageBlocksRef.current && (messageBlocksRef.current.scrollTop = 0);
-    };
+  useEffect(() => {
+    dispatch(chatActions.setSelectedMessageIds([]));
+  }, [selectedChat]);
 
-    const inputTextFocus = () => {
-        inputTextRef.current?.focus();
-    };
+  const scrollToBottom = () => {
+    messageBlocksRef.current && (messageBlocksRef.current.scrollTop = 0);
+  };
 
-    const onReachTopHanlder = () => {
-        if (selectedChat && !isGuidEmpty(selectedChat?.id)) {
-            dispatch(chatActions.messageGetAsync({
-                chatId: selectedChat?.id,
-                skip: selectedChat?.messages.length,
-                take: 30,
-            }));
-        }
-    };
+  const inputTextFocus = () => {
+    inputTextRef.current?.focus();
+  };
 
-    const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
-        const element = e.currentTarget;
-        scrollFromBottomPosition.current = element.scrollTop;
-    };
+  const onReachTopHanlder = () => {
+    if (selectedChat && !isGuidEmpty(selectedChat?.id)) {
+      dispatch(chatActions.messageGetAsync({
+        chatId: selectedChat?.id,
+        skip: selectedChat?.messages.length,
+        take: 30,
+      }));
+    }
+  };
 
-    return (
-        <div className={styles.wrapper}>
-            {messageBlocks.length > 0 &&
+  const onScroll = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
+    const element = e.currentTarget;
+    scrollFromBottomPosition.current = element.scrollTop;
+  };
+
+  return (
+    <div className={styles.wrapper}>
+      {messageBlocks.length > 0 &&
                 <div className={styles.wrapperMessagesBlocks} ref={messageBlocksRef} onScroll={onScroll}>
-                    <InfinityScroll
-                      className={styles.messagesBlocks}
-                      items={messageBlocks}
-                      onReachTop={onReachTopHanlder}
-                      hasTopNext={messagesGetHasNext}
-                      topLoading={messageGetLoading}
-                      inverse
-                      onItemRender={block => {
-                            const blockFirstElement = block[0];
-                            return (
-                                <div key={blockFirstElement.id} className={styles.messagesBlock}>
-                                    {blockFirstElement.fromId && blockFirstElement.fromId !== authedUser?.id && selectedChat?.type === ChatKind.Group && (
-                                        <Link to={`/${blockFirstElement.from?.identifier}`}>
-                                            {blockFirstElement?.from?.imageUrl
-                                                ? (
-                                                    <Avatar
-                                                      width={42}
-                                                      height={42}
-                                                      imageUrl={blockFirstElement?.from?.imageUrl}
-                                                    />
-                                                )
-                                                : (
-                                                    <AvatarWithoutImage
-                                                      name={blockFirstElement?.from?.firstName + ' ' + blockFirstElement.from?.lastName}
-                                                      backgroundColor={blockFirstElement.from?.avatarColor}
-                                                      width={42}
-                                                      height={42}
-                                                    />
-                                                )}
-                                        </Link>
-                                    )}
-                                    <div className={styles.innerMessagesBlock}>
-                                        {block.map((message, j) => (
-                                            <MessageItem
-                                              key={message.id}
-                                              isFromVisible={j === block.length - 1 && selectedChat?.type === ChatKind.Group && message.fromId !== authedUser?.id}
-                                              message={message}
-                                              inputTextFocus={inputTextFocus}
-                                            />
-                                        ))}
-                                    </div>
-                                </div>
-                            );
-                        }}
-                    />
+                  <InfinityScroll
+                    className={styles.messagesBlocks}
+                    items={messageBlocks}
+                    onReachTop={onReachTopHanlder}
+                    hasTopNext={messagesGetHasNext}
+                    topLoading={messageGetLoading}
+                    inverse
+                    onItemRender={block => {
+                      const blockFirstElement = block[0];
+                      return (
+                        <div key={blockFirstElement.id} className={styles.messagesBlock}>
+                          {blockFirstElement.fromId && blockFirstElement.fromId !== authedUser?.id && selectedChat?.type === ChatKind.Group && (
+                            <Link to={`/${blockFirstElement.from?.identifier}`}>
+                              {blockFirstElement?.from?.imageUrl
+                                ? (
+                                  <Avatar
+                                    width={42}
+                                    height={42}
+                                    imageUrl={blockFirstElement?.from?.imageUrl}
+                                  />
+                                )
+                                : (
+                                  <AvatarWithoutImage
+                                    name={blockFirstElement?.from?.firstName + ' ' + blockFirstElement.from?.lastName}
+                                    backgroundColor={blockFirstElement.from?.avatarColor}
+                                    width={42}
+                                    height={42}
+                                  />
+                                )}
+                            </Link>
+                          )}
+                          <div className={styles.innerMessagesBlock}>
+                            {block.map((message, j) => (
+                              <MessageItem
+                                key={message.id}
+                                isFromVisible={j === block.length - 1 && selectedChat?.type === ChatKind.Group && message.fromId !== authedUser?.id}
+                                message={message}
+                                inputTextFocus={inputTextFocus}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    }}
+                  />
                 </div>
-            }
-            <SendMessageForm scrollToBottom={scrollToBottom} inputTextRef={inputTextRef} />
-        </div>
-    );
+      }
+      <SendMessageForm scrollToBottom={scrollToBottom} inputTextRef={inputTextRef} />
+    </div>
+  );
 };

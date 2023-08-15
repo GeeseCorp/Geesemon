@@ -17,47 +17,47 @@ import { settingsActions } from './behavior/features/settings/slice';
 import { localStorageGetItem } from './utils/localStorageUtils';
 
 export const App = () => {
-    const initialised = useAppSelector(s => s.app.initialised);
-    const isAuthorized = useSelector((state: RootState) => state.auth.isAuthorized);
-    const meLoading = useSelector((state: RootState) => state.auth.meLoading);
-    const dispatch = useAppDispatch();
+  const initialised = useAppSelector(s => s.app.initialised);
+  const isAuthorized = useSelector((state: RootState) => state.auth.isAuthorized);
+  const meLoading = useSelector((state: RootState) => state.auth.meLoading);
+  const dispatch = useAppDispatch();
 
-    const [LangCookie, setCookie] = useCookies(['lang']);
+  const [LangCookie, setCookie] = useCookies(['lang']);
 
-    if (!LangCookie || !LangCookie.lang)
-        setCookie('lang', 'EN', { path: '/' });
+  if (!LangCookie || !LangCookie.lang)
+    setCookie('lang', 'EN', { path: '/' });
 
-    useEffect(() => {
-        if (localStorageGetItem('AuthToken'))
-            dispatch(authActions.meAsync());
-        else
-            dispatch(appActions.setInitialised(true));
+  useEffect(() => {
+    if (localStorageGetItem('AuthToken'))
+      dispatch(authActions.meAsync());
+    else
+      dispatch(appActions.setInitialised(true));
 
-        dispatch(settingsActions.getGeeseTextsAsync());
-    }, [dispatch]);
+    dispatch(settingsActions.getGeeseTextsAsync());
+  }, [dispatch]);
 
-    return (
-        <div className={'wrapperApp'}>
-            {meLoading || !initialised
-                ? <BigLoading />
-                : (
-                    <div className={'app'}>
-                        <Notifications />
-                        <NavigateTo />
-                        {!isAuthorized
-                            ? (
-                                <Routes>
-                                    <Route path="/auth/login/via-qr-code" element={<LoginViaQrCode />} />
-                                    <Route path="/auth/login" element={<Login />} />
-                                    <Route path="/auth/register" element={<Register />} />
-                                    <Route path="*" element={<Navigate replace to="/auth/login" />} />
-                                </Routes>
-                            )
-                            : <AuthedApp />
-                        }
-                    </div>
-                )
+  return (
+    <div className={'wrapperApp'}>
+      {meLoading || !initialised
+        ? <BigLoading />
+        : (
+          <div className={'app'}>
+            <Notifications />
+            <NavigateTo />
+            {!isAuthorized
+              ? (
+                <Routes>
+                  <Route path="/auth/login/via-qr-code" element={<LoginViaQrCode />} />
+                  <Route path="/auth/login" element={<Login />} />
+                  <Route path="/auth/register" element={<Register />} />
+                  <Route path="*" element={<Navigate replace to="/auth/login" />} />
+                </Routes>
+              )
+              : <AuthedApp />
             }
-        </div>
-    );
+          </div>
+        )
+      }
+    </div>
+  );
 };

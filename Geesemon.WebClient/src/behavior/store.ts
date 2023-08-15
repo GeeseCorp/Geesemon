@@ -35,7 +35,7 @@ const rootEpic = combineEpics(
   // @ts-ignore
   authEpics,
   userEpics,
-  settingsEpics
+  settingsEpics,
 );
 // @ts-ignore
 epicMiddleware.run(rootEpic);

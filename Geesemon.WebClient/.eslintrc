@@ -116,7 +116,8 @@
     "no-loop-func": "off",
     "@typescript-eslint/no-loop-func": "warn",
     "no-useless-constructor": "off",
-    "@typescript-eslint/no-useless-constructor": "warn"
+    "@typescript-eslint/no-useless-constructor": "warn",
+    "indent": ["warn", 2]
   },
   "overrides": [
     {

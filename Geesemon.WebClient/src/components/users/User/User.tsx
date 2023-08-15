@@ -19,50 +19,50 @@ type Props = {
 };
 
 export const User: FC<Props> = ({ user, selectMultiple = false, selectedUsers, onSelectedUsersChange, getContextMenuItems }) => {
-    const onChangeHanlder = (user: UserType) => {
-        let newSelectedUsers: UserType[];
-        if (selectMultiple) {
-            if (selectedUsers.some(u => u.id === user.id))
-                newSelectedUsers = selectedUsers.filter(u => u.id !== user.id);
-            else
-                newSelectedUsers = [...selectedUsers, user];
-        }
-        else {
-            newSelectedUsers = [user];
-        }
-        onSelectedUsersChange && onSelectedUsersChange(newSelectedUsers);
-    };
-    const T = useGeeseTexts();
+  const onChangeHanlder = (user: UserType) => {
+    let newSelectedUsers: UserType[];
+    if (selectMultiple) {
+      if (selectedUsers.some(u => u.id === user.id))
+        newSelectedUsers = selectedUsers.filter(u => u.id !== user.id);
+      else
+        newSelectedUsers = [...selectedUsers, user];
+    }
+    else {
+      newSelectedUsers = [user];
+    }
+    onSelectedUsersChange && onSelectedUsersChange(newSelectedUsers);
+  };
+  const T = useGeeseTexts();
 
-    const items = getContextMenuItems ? getContextMenuItems(user) : [];
+  const items = getContextMenuItems ? getContextMenuItems(user) : [];
 
-    return (
-        <ContextMenu items={items}>
-            <div key={user.id} className={s.user} onClick={() => onChangeHanlder(user)}>
-                {selectMultiple &&
+  return (
+    <ContextMenu items={items}>
+      <div key={user.id} className={s.user} onClick={() => onChangeHanlder(user)}>
+        {selectMultiple &&
                     <Checkbox  
                       checked={!!selectedUsers.some(u => u.id === user.id)}
                       setChecked={() => null}
                     />
-                }
-                <div className={s.userInner}>
-                    {user.imageUrl
-                        ? <Avatar imageUrl={user.imageUrl} width={54} height={54} />
-                        : (
-                            <AvatarWithoutImage
-                              name={user.fullName}
-                              backgroundColor={user.avatarColor}
-                              width={54}
-                              height={54}
-                            />
-                        )
-                    }
-                    <div className={s.userInfo}>
-                        <div className={'bold'}>{user.firstName} {user.lastName}</div>
-                        <div className={'subText'}>{user.isOnline ? T.OnlineStatus : format(T.LastSeen, getLastTimeActivity(new Date(user.lastTimeOnline)))}</div>
-                    </div>
-                </div>
-            </div>
-        </ContextMenu>
-    );
+        }
+        <div className={s.userInner}>
+          {user.imageUrl
+            ? <Avatar imageUrl={user.imageUrl} width={54} height={54} />
+            : (
+              <AvatarWithoutImage
+                name={user.fullName}
+                backgroundColor={user.avatarColor}
+                width={54}
+                height={54}
+              />
+            )
+          }
+          <div className={s.userInfo}>
+            <div className={'bold'}>{user.firstName} {user.lastName}</div>
+            <div className={'subText'}>{user.isOnline ? T.OnlineStatus : format(T.LastSeen, getLastTimeActivity(new Date(user.lastTimeOnline)))}</div>
+          </div>
+        </div>
+      </div>
+    </ContextMenu>
+  );
 };

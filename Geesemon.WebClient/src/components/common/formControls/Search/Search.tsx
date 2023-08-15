@@ -10,29 +10,29 @@ type Props = {
     setValue: (value: string) => void;
 };
 export const Search: FC<Props> = ({ onFocus, placeholder, value, setValue }) => {
-    const [inputSearchFocused, setInputSearchFocused] = useState(false);
-    const T = useGeeseTexts();
+  const [inputSearchFocused, setInputSearchFocused] = useState(false);
+  const T = useGeeseTexts();
 
-    const onInputSearchFocus = () => {
-        setInputSearchFocused(true);
-        onFocus && onFocus();
-    };
+  const onInputSearchFocus = () => {
+    setInputSearchFocused(true);
+    onFocus && onFocus();
+  };
 
-    const onInputSearchBlur = () => {
-        setInputSearchFocused(false);
-    };
+  const onInputSearchBlur = () => {
+    setInputSearchFocused(false);
+  };
 
-    return (
-        <div className={[s.wrapperInputSearch, inputSearchFocused && s.focused].join(' ')}>
-            <img src={searchSvg} width={20} className={inputSearchFocused ? 'primarySvg' : 'secondaryTextSvg'} alt={'searchSvg'} />
-            <input
-              value={value}
-              onChange={e => setValue(e.target.value)}
-              placeholder={placeholder ?? T.Search}
-              className={s.inputSearch}
-              onFocus={onInputSearchFocus}
-              onBlur={onInputSearchBlur}
-            />
-        </div>
-    );
+  return (
+    <div className={[s.wrapperInputSearch, inputSearchFocused && s.focused].join(' ')}>
+      <img src={searchSvg} width={20} className={inputSearchFocused ? 'primarySvg' : 'secondaryTextSvg'} alt={'searchSvg'} />
+      <input
+        value={value}
+        onChange={e => setValue(e.target.value)}
+        placeholder={placeholder ?? T.Search}
+        className={s.inputSearch}
+        onFocus={onInputSearchFocus}
+        onBlur={onInputSearchBlur}
+      />
+    </div>
+  );
 };

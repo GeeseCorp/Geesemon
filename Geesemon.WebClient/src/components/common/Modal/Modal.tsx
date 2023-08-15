@@ -11,24 +11,24 @@ const modalElement = document.getElementById('modal') as HTMLDivElement;
 const rootElement = document.getElementById('root') as HTMLDivElement;
 
 export const Modal: FC<Props> = ({ children, opened, className, ...rest }) => {
-    const modalRef = useRef(document.createElement('div'));
+  const modalRef = useRef(document.createElement('div'));
 
-    useEffect(() => {
-        modalElement?.appendChild(modalRef.current);
-        return () => {
-            modalElement?.removeChild(modalRef.current);
-            rootElement.className = '';
-        };
-    }, []);
+  useEffect(() => {
+    modalElement?.appendChild(modalRef.current);
+    return () => {
+      modalElement?.removeChild(modalRef.current);
+      rootElement.className = '';
+    };
+  }, []);
 
-    rootElement.className = opened ? s.modalOpened : '';
-    // rootElement.style.pointerEvents = opened ? 'none' : 'auto'
+  rootElement.className = opened ? s.modalOpened : '';
+  // rootElement.style.pointerEvents = opened ? 'none' : 'auto'
 
-    return opened
-        ? createPortal(
-            <div className={`${s.innerModel} ${className}`} {...rest}>
-                {children}
-            </div>,
-            modalRef.current)
-        : null;
+  return opened
+    ? createPortal(
+      <div className={`${s.innerModel} ${className}`} {...rest}>
+        {children}
+      </div>,
+      modalRef.current)
+    : null;
 };

@@ -11,31 +11,31 @@ type Props = {
     className?: string;
 };
 export const HeaderButton: FC<Props> = ({ children, onClick, keyName: key, borderRadius = '50px', className }) => {
-    const animate: AnimationControls | TargetAndTransition | VariantLabels = {
-        scale: [0.8, 1],
-        rotate: [180, 360],
-    };
+  const animate: AnimationControls | TargetAndTransition | VariantLabels = {
+    scale: [0.8, 1],
+    rotate: [180, 360],
+  };
 
-    const transition: Transition = {
-        duration: 0.3,
-        ease: 'easeInOut',
-    };
+  const transition: Transition = {
+    duration: 0.3,
+    ease: 'easeInOut',
+  };
 
-    const whileTap: VariantLabels | TargetAndTransition = { scale: 0.9 };
+  const whileTap: VariantLabels | TargetAndTransition = { scale: 0.9 };
 
-    return (
-        <motion.div
-          onClick={onClick}
-          className={[s.wrapperButton, className].join(' ')}
-          style={{ borderRadius }}
-          key={key}
-          animate={animate}
-          transition={transition}
-          whileTap={whileTap}
-        >
-            {children}
-        </motion.div>
-    );
+  return (
+    <motion.div
+      onClick={onClick}
+      className={[s.wrapperButton, className].join(' ')}
+      style={{ borderRadius }}
+      key={key}
+      animate={animate}
+      transition={transition}
+      whileTap={whileTap}
+    >
+      {children}
+    </motion.div>
+  );
 };
 
 type Props1 = {
@@ -45,14 +45,14 @@ type Props1 = {
 };
 
 export const FooterButton = ({ children, buttonText, type }: Props1) => {
-    const [isVisible, setIsVisible] = useState(true);
-    return (
-        <div>
-            <button onClick={() => setIsVisible(prev => !prev)}>{buttonText}</button>
-            {isVisible && (
-                children
-            )}
+  const [isVisible, setIsVisible] = useState(true);
+  return (
+    <div>
+      <button onClick={() => setIsVisible(prev => !prev)}>{buttonText}</button>
+      {isVisible && (
+        children
+      )}
 
-        </div>
-    );
+    </div>
+  );
 };

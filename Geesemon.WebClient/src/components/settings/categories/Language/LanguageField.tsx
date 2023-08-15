@@ -12,10 +12,10 @@ type Props = {
 };
 
 export const LanguageField = ({ language: { key, value }, selected, setSelected }: Props) => {
-    return (
-      <div className={s.languageField} onClick={_ => setSelected(key)}> 
-        <RadioButton name={key} key={key} checked={selected} setChecked={setSelected} />
-        {value}
-      </div>
-    );
+  return (
+    <div className={s.languageField} onClick={_ => setSelected(key)}> 
+      <RadioButton name={key} key={key} checked={selected} setChecked={setSelected} />
+      {value}
+    </div>
+  );
 };

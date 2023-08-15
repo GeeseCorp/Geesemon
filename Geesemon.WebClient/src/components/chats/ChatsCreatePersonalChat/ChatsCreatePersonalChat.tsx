@@ -14,52 +14,52 @@ import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
 
 type Props = {};
 export const ChatsCreatePersonalChat: FC<Props> = () => {
-    const dispatch = useAppDispatch();
-    const q = useAppSelector(s => s.users.q);
-    const users = useAppSelector(s => s.users.users);
-    const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
-    const navigate = useNavigate();
-    const T = useGeeseTexts();
+  const dispatch = useAppDispatch();
+  const q = useAppSelector(s => s.users.q);
+  const users = useAppSelector(s => s.users.users);
+  const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
+  const navigate = useNavigate();
+  const T = useGeeseTexts();
 
-    const onSelectedUsersChange = (selectedUsers: User[]) => {
-        setSelectedUsers(selectedUsers);
-        const user = users.find(u => u.id === selectedUsers[0].id);
-        if(!user){
-            dispatch(notificationsActions.addError('User not found ofr create personal chat'));
-            return;
-        }
+  const onSelectedUsersChange = (selectedUsers: User[]) => {
+    setSelectedUsers(selectedUsers);
+    const user = users.find(u => u.id === selectedUsers[0].id);
+    if(!user){
+      dispatch(notificationsActions.addError('User not found ofr create personal chat'));
+      return;
+    }
 
-        navigate(`/${user.identifier}`);
-        dispatch(appActions.setLeftSidebarState(LeftSidebarState.Chats));
-    };
+    navigate(`/${user.identifier}`);
+    dispatch(appActions.setLeftSidebarState(LeftSidebarState.Chats));
+  };
 
-    const onQChange = (value: string) => {
-        dispatch(usersActions.setUsers([]));
-        dispatch(usersActions.setSkip(0));
-        dispatch(usersActions.setHasNext(true));
-        dispatch(usersActions.setQ(value));
-    };
+  const onQChange = (value: string) => {
+    dispatch(usersActions.setUsers([]));
+    dispatch(usersActions.setSkip(0));
+    dispatch(usersActions.setHasNext(true));
+    dispatch(usersActions.setQ(value));
+  };
 
-    return (
-        <div className={s.wrapper}>
-            <div className={['header', s.header].join(' ')}>
-                <HeaderButton
-                  keyName={'back'}
-                  onClick={() => dispatch(appActions.setLeftSidebarState(LeftSidebarState.Chats))}
-                >
-                    <img src={backSvg} width={25} className={'secondaryTextSvg'} alt={'backSvg'} />
-                </HeaderButton>
-                <Search
-                  value={q}
-                  setValue={onQChange}
-                  placeholder={T.SearchUsers}
-                // onFocus={() => setIsEnabledSearchMode(true)}
-                />
-            </div>
-            <Users
-              selectedUsers={selectedUsers}
-              onSelectedUsersChange={onSelectedUsersChange}
-            />
-        </div>
-    );
+  return (
+    <div className={s.wrapper}>
+      <div className={['header', s.header].join(' ')}>
+        <HeaderButton
+          keyName={'back'}
+          onClick={() => dispatch(appActions.setLeftSidebarState(LeftSidebarState.Chats))}
+        >
+          <img src={backSvg} width={25} className={'secondaryTextSvg'} alt={'backSvg'} />
+        </HeaderButton>
+        <Search
+          value={q}
+          setValue={onQChange}
+          placeholder={T.SearchUsers}
+          // onFocus={() => setIsEnabledSearchMode(true)}
+        />
+      </div>
+      <Users
+        selectedUsers={selectedUsers}
+        onSelectedUsersChange={onSelectedUsersChange}
+      />
+    </div>
+  );
 };

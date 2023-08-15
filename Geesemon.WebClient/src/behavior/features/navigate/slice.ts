@@ -6,23 +6,23 @@ type InitialState = {
 };
 
 const initialState: InitialState = {
-    to: null,
+  to: null,
 };
 
 export const navigateSlice = createSlice({
-    name: 'navigate',
-    initialState,
-    reducers: {
-        navigate: (state, action: PayloadAction<To | number>) => {
-            state.to = action.payload;
-        },
-        navigateToChat: (state, action: PayloadAction<{identifier: string}>) => {
-            state.to = action.payload.identifier;
-        },
-        removeNavigate: (state, action: PayloadAction) => {
-            state.to = null;
-        },
+  name: 'navigate',
+  initialState,
+  reducers: {
+    navigate: (state, action: PayloadAction<To | number>) => {
+      state.to = action.payload;
     },
+    navigateToChat: (state, action: PayloadAction<{identifier: string}>) => {
+      state.to = action.payload.identifier;
+    },
+    removeNavigate: (state, action: PayloadAction) => {
+      state.to = null;
+    },
+  },
 });
 
 export const navigateActions = navigateSlice.actions;

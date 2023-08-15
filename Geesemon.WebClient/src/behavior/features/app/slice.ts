@@ -32,43 +32,43 @@ export type InitialState = {
 };
 
 const initialState: InitialState = {
-    initialised: false,
+  initialised: false,
 
-    leftSidebarState: LeftSidebarState.Chats,
-    settingsCategory: null,
+  leftSidebarState: LeftSidebarState.Chats,
+  settingsCategory: null,
 
-    isRightSidebarVisible: false,
-    rightSidebarState: RightSidebarState.Profile,
+  isRightSidebarVisible: false,
+  rightSidebarState: RightSidebarState.Profile,
 
-    readQrCode: false,
+  readQrCode: false,
 };
 
 export const appSlice = createSlice({
-    name: 'app',
-    initialState,
-    reducers: {
-        setInitialised: (state, action: PayloadAction<boolean>) => {
-            state.initialised = action.payload;
-        },
-
-        setLeftSidebarState: (state, action: PayloadAction<LeftSidebarState>) => {
-            state.leftSidebarState = action.payload;
-        },
-        setSettingsCategory: (state, action: PayloadAction<SettingsCategory | null | undefined>) => {
-            state.settingsCategory = action.payload;
-        },
-
-        setIsRightSidebarVisible: (state, action: PayloadAction<boolean>) => {
-            state.isRightSidebarVisible = action.payload;
-        },
-        setRightSidebarState: (state, action: PayloadAction<RightSidebarState>) => {
-            state.rightSidebarState = action.payload;
-        },
-
-        setReadQrCode: (state, action: PayloadAction<boolean>) => {
-            state.readQrCode = action.payload;
-        },
+  name: 'app',
+  initialState,
+  reducers: {
+    setInitialised: (state, action: PayloadAction<boolean>) => {
+      state.initialised = action.payload;
     },
+
+    setLeftSidebarState: (state, action: PayloadAction<LeftSidebarState>) => {
+      state.leftSidebarState = action.payload;
+    },
+    setSettingsCategory: (state, action: PayloadAction<SettingsCategory | null | undefined>) => {
+      state.settingsCategory = action.payload;
+    },
+
+    setIsRightSidebarVisible: (state, action: PayloadAction<boolean>) => {
+      state.isRightSidebarVisible = action.payload;
+    },
+    setRightSidebarState: (state, action: PayloadAction<RightSidebarState>) => {
+      state.rightSidebarState = action.payload;
+    },
+
+    setReadQrCode: (state, action: PayloadAction<boolean>) => {
+      state.readQrCode = action.payload;
+    },
+  },
 });
 
 export const appActions = appSlice.actions;

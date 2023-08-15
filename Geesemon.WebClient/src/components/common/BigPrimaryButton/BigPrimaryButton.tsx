@@ -11,19 +11,19 @@ type Props = {
 };
 
 export const BigPrimaryButton: FC<Props> = ({ children, onClick, loading = false, type = 'button', disabled = false }) => {
-    return (
-        <button
-          disabled={loading || disabled}
-          type={type}
-          className={[s.strongButton, loading || disabled ? s.disabled : ''].join(' ')}
-          onClick={onClick}
-        >
-            {children}
-            {loading &&
+  return (
+    <button
+      disabled={loading || disabled}
+      type={type}
+      className={[s.strongButton, loading || disabled ? s.disabled : ''].join(' ')}
+      onClick={onClick}
+    >
+      {children}
+      {loading &&
                 <div className={s.loading}>
-                    <SmallLoading />
+                  <SmallLoading />
                 </div>
-            }
-        </button>
-    );
+      }
+    </button>
+  );
 };

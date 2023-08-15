@@ -8,21 +8,21 @@ type Props = {
 };
 
 export const InputFile: FC<Props> = ({ onChange, children, multiple }) => {
-    const inputFileRef = useRef<HTMLInputElement | null>(null);
+  const inputFileRef = useRef<HTMLInputElement | null>(null);
 
-    return (
-        <div className={s.wrapperInputPhoto} onClick={() => inputFileRef.current?.click()}>
-            <input
-              multiple={multiple}
-              type="file"
-              className={s.inputFile}
-              ref={inputFileRef}
-              onChange={e => e.target.files
-                ? onChange(Array.from(e.target.files))
-                : []
-            }
-            />
-            {children}
-        </div>
-    );
+  return (
+    <div className={s.wrapperInputPhoto} onClick={() => inputFileRef.current?.click()}>
+      <input
+        multiple={multiple}
+        type="file"
+        className={s.inputFile}
+        ref={inputFileRef}
+        onChange={e => e.target.files
+          ? onChange(Array.from(e.target.files))
+          : []
+        }
+      />
+      {children}
+    </div>
+  );
 };

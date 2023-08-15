@@ -7,15 +7,15 @@ type Props = {
 };
 
 export const Checkbox: FC<Props> = ({ checked, setChecked }) => {
-    return (
-        <div>
-            <input 
-              type="checkbox"
-              className={s.checkbox}
-              checked={checked} 
-              onChange={e => setChecked(e.target.checked)}
-            />
-            {/* <label htmlFor="test1">Red</label> */}
-        </div>
-    );
+  return (
+    <div>
+      <input 
+        type="checkbox"
+        className={s.checkbox}
+        checked={checked} 
+        onChange={e => setChecked(e.target.checked)}
+      />
+      {/* <label htmlFor="test1">Red</label> */}
+    </div>
+  );
 };

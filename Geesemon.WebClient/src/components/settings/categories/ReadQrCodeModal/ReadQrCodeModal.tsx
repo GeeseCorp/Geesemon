@@ -9,44 +9,44 @@ import styles from './ReadQrCodeModal.module.scss';
 import { authActions } from '../../../../behavior/features/auth/slice';
 
 export const ReadQrCodeModal = () => {
-    const readQrCode = useAppSelector(s => s.app.readQrCode);
-    const loginViaTokenLoading = useAppSelector(s => s.auth.loginViaTokenLoading);
-    const dispatch = useAppDispatch();
+  const readQrCode = useAppSelector(s => s.app.readQrCode);
+  const loginViaTokenLoading = useAppSelector(s => s.auth.loginViaTokenLoading);
+  const dispatch = useAppDispatch();
 
-    useEffect(() => {
-        return () => {
-            closeModalHanlder();
-        };
-    }, []);
-
-    const closeModalHanlder = () => {
-        dispatch(appActions.setReadQrCode(false));
+  useEffect(() => {
+    return () => {
+      closeModalHanlder();
     };
+  }, []);
 
-    const onQrCodeResult = (text?: string, error?: string) => {
-        if(!error && text && !loginViaTokenLoading){
-            console.log(text);
-            dispatch(authActions.loginViaTokenAsync(text));
-        }
-    };
+  const closeModalHanlder = () => {
+    dispatch(appActions.setReadQrCode(false));
+  };
 
-    return (
-        <Modal opened={!!readQrCode}>
-            <div className={'modalHeader'}>
-                <HeaderButton
-                  keyName={'ViewMessageReadByModal/Back'}
-                  onClick={closeModalHanlder}
-                >
-                    <img src={backSvg} width={25} className={'secondaryTextSvg'} alt={'backSvg'} />
-                </HeaderButton>
-                <div className={'headerTitle'}>Scan QR code</div>
-            </div>
-            <div className={['modalContent', styles.content].join(' ')}>
-            <QrReader
-              onResult={(result, error) => onQrCodeResult(result?.getText(), error?.message)}
-              constraints={{ facingMode: 'user' }}
-            />
-            </div>
-        </Modal>
-    );
+  const onQrCodeResult = (text?: string, error?: string) => {
+    if(!error && text && !loginViaTokenLoading){
+      console.log(text);
+      dispatch(authActions.loginViaTokenAsync(text));
+    }
+  };
+
+  return (
+    <Modal opened={!!readQrCode}>
+      <div className={'modalHeader'}>
+        <HeaderButton
+          keyName={'ViewMessageReadByModal/Back'}
+          onClick={closeModalHanlder}
+        >
+          <img src={backSvg} width={25} className={'secondaryTextSvg'} alt={'backSvg'} />
+        </HeaderButton>
+        <div className={'headerTitle'}>Scan QR code</div>
+      </div>
+      <div className={['modalContent', styles.content].join(' ')}>
+        <QrReader
+          onResult={(result, error) => onQrCodeResult(result?.getText(), error?.message)}
+          constraints={{ facingMode: 'user' }}
+        />
+      </div>
+    </Modal>
+  );
 };

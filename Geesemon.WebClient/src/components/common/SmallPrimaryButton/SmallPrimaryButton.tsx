@@ -13,26 +13,26 @@ type Props = {
 };
 
 export const SmallPrimaryButton = ({
-    children,
-    onClick,
-    onRightClick,
-    loading = false,
-    type = 'button',
-    disabled = false,
-    className,
+  children,
+  onClick,
+  onRightClick,
+  loading = false,
+  type = 'button',
+  disabled = false,
+  className,
 }: Props) => {
-    return (
-        <button
-            disabled={loading || disabled}
-            type={type}
-            className={[s.smallButton, loading || disabled ? s.disabled : '', className].join(' ')}
-            onClick={onClick}
-            onContextMenu={onRightClick}
-        >
-            {loading
-                ? <SmallLoading />
-                : children
-            }
-        </button>
-    );
+  return (
+    <button
+      disabled={loading || disabled}
+      type={type}
+      className={[s.smallButton, loading || disabled ? s.disabled : '', className].join(' ')}
+      onClick={onClick}
+      onContextMenu={onRightClick}
+    >
+      {loading
+        ? <SmallLoading />
+        : children
+      }
+    </button>
+  );
 };

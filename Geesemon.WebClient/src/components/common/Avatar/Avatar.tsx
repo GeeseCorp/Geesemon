@@ -1,28 +1,28 @@
-import {FC, memo} from "react";
-import style from "./Avatar.module.scss";
+import { FC, memo } from 'react';
+import style from './Avatar.module.scss';
 
 type Props = {
-    width?: number
-    height?: number
-    borderRadius?: number,
-    imageUrl: string,
+    width?: number;
+    height?: number;
+    borderRadius?: number;
+    imageUrl: string;
 };
 
 export const Avatar: FC<Props> = memo(({
-                                           width = 50,
-                                           height = 50,
-                                           borderRadius = 100,
-                                           imageUrl,
-                                       }) => {
-    const avatarStyle = {
-        width,
-        height,
-        borderRadius,
-    };
+  width = 50,
+  height = 50,
+  borderRadius = 100,
+  imageUrl,
+}) => {
+  const avatarStyle = {
+    width,
+    height,
+    borderRadius,
+  };
 
-    return (
-        <div className={style.avatar} style={avatarStyle}>
-            <img src={imageUrl} width={width} height={height} style={{borderRadius, objectFit: 'cover'}}/>
-        </div>
-    );
+  return (
+    <div className={style.avatar} style={avatarStyle}>
+      <img src={imageUrl} width={width} height={height} style={{ borderRadius, objectFit: 'cover' }} />
+    </div>
+  );
 });

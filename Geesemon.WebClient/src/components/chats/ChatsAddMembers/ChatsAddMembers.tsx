@@ -17,61 +17,61 @@ import s from './ChatsAddMembers.module.scss';
 import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
 
 export const ChatsAddMembers: FC = () => {
-    const dispatch = useAppDispatch();
-    const q = useAppSelector(s => s.users.q);
-    const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
-    const selectedChat = useSelectedChat();
-    const chatAddMembersLoading = useAppSelector(s => s.chats.chatAddMembersLoading);
-    const T = useGeeseTexts();
+  const dispatch = useAppDispatch();
+  const q = useAppSelector(s => s.users.q);
+  const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
+  const selectedChat = useSelectedChat();
+  const chatAddMembersLoading = useAppSelector(s => s.chats.chatAddMembersLoading);
+  const T = useGeeseTexts();
 
-    const onQChange = (value: string) => {
-        dispatch(usersActions.setUsers([]));
-        dispatch(usersActions.setSkip(0));
-        dispatch(usersActions.setHasNext(true));
-        dispatch(usersActions.setQ(value));
-    };
+  const onQChange = (value: string) => {
+    dispatch(usersActions.setUsers([]));
+    dispatch(usersActions.setSkip(0));
+    dispatch(usersActions.setHasNext(true));
+    dispatch(usersActions.setQ(value));
+  };
 
-    const chatsAddMembersHanlder = () => {
-        if(!selectedChat){
-            dispatch(notificationsActions.addError('No selected chat'));            
-            return;
-        }
-        dispatch(chatActions.chatAddMembersAsync({
-            chatId: selectedChat?.id,
-            userIds: selectedUsers.map(u => u.id),
-        }));
-        dispatch(appActions.setRightSidebarState(RightSidebarState.Profile));
-    };
+  const chatsAddMembersHanlder = () => {
+    if(!selectedChat){
+      dispatch(notificationsActions.addError('No selected chat'));            
+      return;
+    }
+    dispatch(chatActions.chatAddMembersAsync({
+      chatId: selectedChat?.id,
+      userIds: selectedUsers.map(u => u.id),
+    }));
+    dispatch(appActions.setRightSidebarState(RightSidebarState.Profile));
+  };
 
-    return (
-        <div className={s.wrapper}>
-            <div className={['header', s.header].join(' ')}>
-                <HeaderButton
-                  keyName={'back'}
-                  onClick={() => dispatch(appActions.setRightSidebarState(RightSidebarState.Profile))}
-                >
-                    <img src={backSvg} width={25} className={'secondaryTextSvg'} alt={'backSvg'} />
-                </HeaderButton>
-                <Search
-                  value={q}
-                  setValue={onQChange}
-                  placeholder={T.SearchMembers}
-                // onFocus={() => setIsEnabledSearchMode(true)}
-                />
-            </div>
-            <Users
-              selectMultiple
-              selectedUsers={selectedUsers}
-              onSelectedUsersChange={setSelectedUsers}
-            />
-            <div className={s.buttonAddMembers}>
-                <SmallPrimaryButton disabled={!selectedUsers.length || chatAddMembersLoading} onClick={chatsAddMembersHanlder}>
-                      {chatAddMembersLoading 
-                        ? <SmallLoading />
-                        : <img src={addUserFilledSvg} width={20} className={'primaryTextSvg'} alt={'addUserFilledSvg'} />
-                    }
-                </SmallPrimaryButton>
-            </div>
+  return (
+    <div className={s.wrapper}>
+      <div className={['header', s.header].join(' ')}>
+        <HeaderButton
+          keyName={'back'}
+          onClick={() => dispatch(appActions.setRightSidebarState(RightSidebarState.Profile))}
+        >
+          <img src={backSvg} width={25} className={'secondaryTextSvg'} alt={'backSvg'} />
+        </HeaderButton>
+        <Search
+          value={q}
+          setValue={onQChange}
+          placeholder={T.SearchMembers}
+          // onFocus={() => setIsEnabledSearchMode(true)}
+        />
+      </div>
+      <Users
+        selectMultiple
+        selectedUsers={selectedUsers}
+        onSelectedUsersChange={setSelectedUsers}
+      />
+      <div className={s.buttonAddMembers}>
+        <SmallPrimaryButton disabled={!selectedUsers.length || chatAddMembersLoading} onClick={chatsAddMembersHanlder}>
+          {chatAddMembersLoading 
+            ? <SmallLoading />
+            : <img src={addUserFilledSvg} width={20} className={'primaryTextSvg'} alt={'addUserFilledSvg'} />
+          }
+        </SmallPrimaryButton>
+      </div>
     </div>
-    );
+  );
 };
