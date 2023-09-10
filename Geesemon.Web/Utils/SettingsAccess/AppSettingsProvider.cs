@@ -33,5 +33,15 @@
         {
             return configuration.GetValue<string>("Cloudinary");
         }
+
+        public string GetBlobConnectionString()
+        {
+            return configuration.GetValue<string>("Blob");
+        }
+
+        public FileProvider GetFileProvider()
+        {
+            return configuration.GetValue<FileProvider>("FileProvider");
+        }
     }
 }

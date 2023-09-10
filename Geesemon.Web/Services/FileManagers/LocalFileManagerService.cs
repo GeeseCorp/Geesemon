@@ -2,6 +2,13 @@
 
 public class LocalFileManagerService : IFileManagerService
 {
+    private readonly IHttpContextAccessor httpContextAccessor;
+
+    public LocalFileManagerService(IHttpContextAccessor httpContextAccessor)
+    {
+        this.httpContextAccessor = httpContextAccessor;
+    }
+
     public Task CreateFolderAsync(string folderPath)
     {
         var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\dynamic\" + folderPath);
@@ -38,6 +45,14 @@ public class LocalFileManagerService : IFileManagerService
             stream.CopyTo(fileStream);
         }
 
-        return await Task.Run(() => Path.Combine("/dynamic", folderPath, fileName));
+        return await Task.Run(() => Path.Combine("dynamic", folderPath, fileName));
+    }
+
+    public string FormatUrl(string url)
+    {
+        var request = httpContextAccessor.HttpContext.Request;
+
+        var protocol = request.IsHttps ? "https" : "http";
+        return $"{protocol}://{request.Host}/{url}";
     }
 }

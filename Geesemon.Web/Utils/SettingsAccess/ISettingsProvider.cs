@@ -1,6 +1,4 @@
-﻿using System.Data;
-
-namespace Geesemon.Web.Utils.SettingsAccess
+﻿namespace Geesemon.Web.Utils.SettingsAccess
 {
     public interface ISettingsProvider
     {
@@ -13,5 +11,9 @@ namespace Geesemon.Web.Utils.SettingsAccess
         string GetAuthIssuerSigningKey();
 
         string GetCloudinaryConnectionString();
+
+        string GetBlobConnectionString();
+
+        FileProvider GetFileProvider();
     }
 }

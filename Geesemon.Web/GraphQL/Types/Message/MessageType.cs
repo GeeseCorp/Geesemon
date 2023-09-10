@@ -2,6 +2,8 @@
 using Geesemon.Model.Common;
 using Geesemon.Model.Enums;
 using Geesemon.Model.Models;
+using Geesemon.Web.Services.FileManagers;
+
 using GraphQL;
 using GraphQL.Types;
 
@@ -9,7 +11,7 @@ namespace Geesemon.Web.GraphQL.Types
 {
     public class MessageType : EntityType<Message>
     {
-        public MessageType(IServiceProvider serviceProvider)
+        public MessageType(IServiceProvider serviceProvider, IFileManagerService fileManagerService)
         {
             Field<StringGraphType, string>()
                 .Name("Text")
@@ -88,11 +90,7 @@ namespace Geesemon.Web.GraphQL.Types
                     if (string.IsNullOrEmpty(ctx.Source.FileUrl))
                         return null;
 
-                    using var scope = serviceProvider.CreateScope();
-                    var request = scope.ServiceProvider.GetRequiredService<IHttpContextAccessor>().HttpContext.Request;
-
-                    var protocol = request.IsHttps ? "https" : "http";
-                    return $"{protocol}://{request.Host}{ctx.Source.FileUrl}";
+                    return fileManagerService.FormatUrl(ctx.Source.FileUrl);
                 });
 
             Field<MediaKindType, MediaKind?>()

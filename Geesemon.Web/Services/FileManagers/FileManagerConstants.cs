@@ -3,9 +3,9 @@
 public static class FileManagerConstants
 {
 
-    public const string UsersAvatarsFolder = "Images/UsersAvatars";
+    public const string UsersAvatarsFolder = "images/users-avatars";
 
-    public const string GroupImagesFolder = "Images/GroupImages";
+    public const string GroupImagesFolder = "images/group-images";
 
-    public const string FilesFolder = "Files";
+    public const string FilesFolder = "files";
 }
