@@ -44,7 +44,7 @@
 
   //right bar
   "Profile": "Профіль",
-  "Notifications": "Оповіщення",
+  "Notifications": "Сповіщення",
   "OnlineStatus": "Онлайн",
   "LastSeen": "Був онлайн {0}",
   "Members": "Учасники",
@@ -61,7 +61,7 @@
   "LoginViaCredentials": "Увійти з реквезитмами",
   "LoginInGeesemonViaQRCode": "Вхід у Geesemon через QR код",
   "Email": "Пошта",
-  "RegisterInGeesemon": "Зерегиструватися у Geesemon",
+  "RegisterInGeesemon": "Зарееструватися у Geesemon",
 
   //system massage texts
   "RemovedFromChatMessage": "{0} вигнав {1} з чату",

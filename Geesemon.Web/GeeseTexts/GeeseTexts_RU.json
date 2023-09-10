@@ -70,9 +70,9 @@
   "ChatCreatedMessage": "{0} создал группу \"{1}\"",
 
   // Message context menu
-  "ForwardSelected": "Переслать Выбираные",
-  "DeleteSelected": "Удалить Выбираные",
-  "ClearSelection": "Снять Выдиление",
+  "ForwardSelected": "Переслать Выбраные",
+  "DeleteSelected": "Удалить Выбраные",
+  "ClearSelection": "Снять Выбраные",
   "Reply": "Ответить",
   "Update": "Редактировать",
   "Copy": "Копировать",
