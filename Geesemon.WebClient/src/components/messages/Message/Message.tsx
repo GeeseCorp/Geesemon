@@ -7,7 +7,7 @@ import { ChatKind, Message, MessageKind, MediaKind, ForwardedMessage } from '../
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
 import { useOnScreen } from '../../../hooks/useOnScreen';
 import { useSelectedChat } from '../../../hooks/useSelectedChat';
-import { format, getFileName } from '../../../utils/stringUtils';
+import { formatGeesetext, getFileName } from '../../../utils/stringUtils';
 import { FileType, getFileType } from '../../../utils/fileUtils';
 import { Checkbox } from '../../common/formControls/Checkbox/Checkbox';
 import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
@@ -40,7 +40,7 @@ export const MessageItem: FC<Props> = memo(({ message, inputTextFocus, isFromVis
 
   useEffect(() => {
     if (message.type === MessageKind.SystemGeeseText && message.text && T[message.text]) {
-      setText(format(T[message.text!], ...message.geeseTextArguments));
+      setText(formatGeesetext(T[message.text!], ...message.geeseTextArguments));
     }
   }, [T]);
 
@@ -91,7 +91,7 @@ export const MessageItem: FC<Props> = memo(({ message, inputTextFocus, isFromVis
               className={[styles.from, 'bold', message.forwardedMessage && message.forwardedMessage.fileUrl && styles.messagePadding].join(' ')}
               style={{ color: message.from?.avatarColor }}
             >
-              {format(T.ForwardedFrom, message.forwardedMessage.from?.fullName)}
+              {formatGeesetext(T.ForwardedFrom, message.forwardedMessage.from?.fullName)}
             </Link>
             {renderFile(message.forwardedMessage, message.forwardedMessage.text ? null : message.createdAt)}
             {message.forwardedMessage.text && <span className={styles.messageText}>{forwardedMessageText}</span>}

@@ -1,5 +1,5 @@
 import { useFormik } from 'formik';
-import { ChangeEvent, FC, useRef, useState } from 'react';
+import { ChangeEvent, FC, useEffect, useRef, useState } from 'react';
 import * as Yup from 'yup';
 import backSvg from '../../../assets/svg/back.svg';
 import cameraSvg from '../../../assets/svg/camera.svg';
@@ -18,21 +18,12 @@ import { SmallPrimaryButton } from '../../common/SmallPrimaryButton/SmallPrimary
 import { Users } from '../../users/Users/Users';
 import s from './ChatsCreateGroup.module.css';
 import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
+import { formatGeesetext } from '../../../utils/stringUtils';
 
 type FormValues = {
     name: string;
     identifier: string;
 };
-
-const schema: Yup.SchemaOf<FormValues> = Yup.object({
-  name: Yup.string()
-    .max(100, 'Must be 100 characters or less')
-    .required('Required'),
-
-  identifier: Yup.string()
-    .max(100, 'Must be 100 characters or less')
-    .required('Required'),
-});
 
 export const ChatsCreateGroup: FC = () => {
   const createGroupLoading = useAppSelector(s => s.chats.createChatLoading);
@@ -42,6 +33,18 @@ export const ChatsCreateGroup: FC = () => {
   const dispatch = useAppDispatch();
   const q = useAppSelector(s => s.users.q);
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
+  const T = useGeeseTexts();
+
+  const schema: Yup.SchemaOf<FormValues> = Yup.object({
+    name: Yup.string()
+      .max(100, formatGeesetext(T.MaxMaxLengthValidation, 100))
+      .required(T.Required),
+  
+    identifier: Yup.string()
+      .max(100, formatGeesetext(T.MaxMaxLengthValidation, 100))
+      .required(T.Required),
+  });
+
   const formik = useFormik<FormValues>({
     initialValues: {
       name: '',
@@ -59,7 +62,10 @@ export const ChatsCreateGroup: FC = () => {
       }));
     },
   });
-  const T = useGeeseTexts();
+  
+  useEffect(() => {
+    formik.validateForm();
+  }, [T]);
 
   const changeInputFileHandler = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files)
@@ -113,7 +119,7 @@ export const ChatsCreateGroup: FC = () => {
               >
                 <img src={backSvg} width={25} className={'secondaryTextSvg'} alt={'backSvg'} />
               </HeaderButton>
-              <div className={'headerTitle'}>New Group</div>
+              <div className={'headerTitle'}>{T.NewGroup}</div>
             </div>
             <form className={s.wrapperFormItems} onSubmit={formik.handleSubmit}>
               <div className={s.wrapperInputPhoto} onClick={() => inputFileRef.current?.click()}>
@@ -133,7 +139,7 @@ export const ChatsCreateGroup: FC = () => {
                 />
               </div>
               <Input
-                placeholder="Name"
+                placeholder={T.GroupName}
                 name={nameof<FormValues>('name')}
                 value={formik.values.name}
                 onChange={formik.handleChange}
@@ -142,7 +148,7 @@ export const ChatsCreateGroup: FC = () => {
                 errors={formik.errors.name}
               />
               <Input
-                placeholder="Identifier"
+                placeholder={T.Identifier}
                 name={nameof<FormValues>('identifier')}
                 value={formik.values.identifier}
                 onChange={formik.handleChange}

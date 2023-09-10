@@ -19,7 +19,7 @@ import { OnlineIndicator } from '../../common/OnlineIndicator/OnlineIndicator';
 import s from './Chat.module.scss';
 import { Checks } from '../../messages/Checks/Checks';
 import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
-import { format } from '../../../utils/stringUtils';
+import { formatGeesetext } from '../../../utils/stringUtils';
 import { localStorageGetItem } from '../../../utils/localStorageUtils';
 
 type Props = {
@@ -51,7 +51,7 @@ export const Chat: FC<Props> = ({ chat, withSelected = true, withMenu = true, on
 
   useEffect(() => {
     if (lastMessage && lastMessage.type === MessageKind.SystemGeeseText && lastMessage.text && T[lastMessage.text]) {
-      setLastMessageText(format(T[lastMessage.text!], ...lastMessage.geeseTextArguments));
+      setLastMessageText(formatGeesetext(T[lastMessage.text!], ...lastMessage.geeseTextArguments));
     }
   }, [T]);
 

@@ -8,6 +8,8 @@ import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import { nameof } from '../../../utils/typeUtils';
 import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
+import { useEffect } from 'react';
+import { formatGeesetext } from '../../../utils/stringUtils';
 
 type FormValues = {
     firstName: string;
@@ -17,31 +19,33 @@ type FormValues = {
     password: string;
 };
 
-const schema: Yup.SchemaOf<FormValues> = Yup.object({
-  firstName: Yup.string()
-    .max(100, 'Must be 100 characters or less')
-    .required('Required'),
-
-  lastName: Yup.string()
-    .max(100, 'Must be 100 characters or less'),
-
-  email: Yup.string()
-    .email('Bad email')
-    .max(100, 'Must be 100 characters or less'),
-
-  identifier: Yup.string()
-    .max(100, 'Must be 100 characters or less')
-    .required('Required'),
-
-  password: Yup.string()
-    .min(3, 'Must be 3 characters or more')
-    .max(100, 'Must be 100 characters or less')
-    .required('Required'),
-});
-
 export const Register = () => {
   const dispatch = useAppDispatch();
   const registerLoading = useAppSelector(s => s.auth.registerLoading);
+  const T = useGeeseTexts();
+
+  const schema: Yup.SchemaOf<FormValues> = Yup.object({
+    firstName: Yup.string()
+      .max(100, formatGeesetext(T.MaxLengthValidation, 100))
+      .required(T.Required),
+  
+    lastName: Yup.string()
+      .max(100, formatGeesetext(T.MaxMaxLengthValidation, 100)),
+  
+    email: Yup.string()
+      .email(T.InvalidEmail)
+      .max(100, formatGeesetext(T.MaxMaxLengthValidation, 100)),
+  
+    identifier: Yup.string()
+      .max(100, formatGeesetext(T.MaxMaxLengthValidation, 100))
+      .required(T.Required),
+  
+    password: Yup.string()
+      .min(3, formatGeesetext(T.MinLengthValidation, 3))
+      .max(100, formatGeesetext(T.MaxMaxLengthValidation, 100))
+      .required(T.Required),
+  });
+
   const formik = useFormik<FormValues>({
     initialValues: {
       firstName: '',
@@ -61,7 +65,10 @@ export const Register = () => {
       }));
     },
   });
-  const T = useGeeseTexts();
+
+  useEffect(() => {
+    formik.validateForm();
+  }, [T]);
 
   return (
     <div className={s.wrapper}>

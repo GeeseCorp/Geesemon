@@ -33,6 +33,8 @@ export const toCamel = (text : string) => {
   });
 };
 
-export const format = (text: string, ...args: (string | number | null | undefined)[]) => {
+export const formatGeesetext = (text: string | undefined, ...args: (string | number | null | undefined)[]) => {
+  if(!text)
+    return '';
   return text.replace(/{(\d+)}/g, (match, number) => args[number]?.toString() || match);
 };

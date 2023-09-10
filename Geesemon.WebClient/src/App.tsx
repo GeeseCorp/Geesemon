@@ -15,6 +15,7 @@ import { Notifications } from './components/notifications/Notifications';
 import { useCookies } from 'react-cookie';
 import { settingsActions } from './behavior/features/settings/slice';
 import { localStorageGetItem } from './utils/localStorageUtils';
+import { UnauthedApp } from './UnauthedApp';
 
 export const App = () => {
   const initialised = useAppSelector(s => s.app.initialised);
@@ -44,17 +45,7 @@ export const App = () => {
           <div className={'app'}>
             <Notifications />
             <NavigateTo />
-            {!isAuthorized
-              ? (
-                <Routes>
-                  <Route path="/auth/login/via-qr-code" element={<LoginViaQrCode />} />
-                  <Route path="/auth/login" element={<Login />} />
-                  <Route path="/auth/register" element={<Register />} />
-                  <Route path="*" element={<Navigate replace to="/auth/login" />} />
-                </Routes>
-              )
-              : <AuthedApp />
-            }
+            {isAuthorized ? <AuthedApp /> : <UnauthedApp />}
           </div>
         )
       }

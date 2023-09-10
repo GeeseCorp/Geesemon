@@ -35,6 +35,7 @@
 
   //left bar
   "NewGroup": "New group",
+  "GroupName": "Group name",
   "NewPersonalChat": "New personal chat",
   "Search": "Search",
   "SearchMembers": "Search members",
@@ -77,5 +78,11 @@
   "Copy": "Copy",
   "Forward": "Forward",
   "Select": "Select",
-  "Seen": "seen"
+  "Seen": "seen",
+
+  // Validation
+  "Required": "Required",
+  "InvalidEmail": "Invalid email",
+  "MaxLengthValidation": "Must be {0} characters or less",
+  "MinLengthValidation": "Must be {0} characters or more"
 }

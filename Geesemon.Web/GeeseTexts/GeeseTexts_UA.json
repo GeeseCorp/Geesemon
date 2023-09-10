@@ -35,6 +35,7 @@
 
   //left bar
   "NewGroup": "Нова група",
+  "GroupName": "Назва групи",
   "NewPersonalChat": "Новий чат",
   "Search": "Пошук",
   "SearchMembers": "Пошук участников",
@@ -77,5 +78,11 @@
   "Copy": "Копіювати",
   "Forward": "Переслати",
   "Select": "Вибрати",
-  "Seen": "бачили"
+  "Seen": "бачили",
+
+  // Validation
+  "Required": "Обов`язкове",
+  "InvalidEmail": "Крива почка, хлопче...",
+  "MaxLengthValidation": "Повинен бути {0} символiв чи меньше",
+  "MinLengthValidation": "Повинен бути {0} символiв чи бiльше"
 }

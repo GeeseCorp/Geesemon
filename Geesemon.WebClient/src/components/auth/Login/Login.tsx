@@ -8,26 +8,29 @@ import { nameof } from '../../../utils/typeUtils';
 import { BigPrimaryButton } from '../../common/BigPrimaryButton/BigPrimaryButton';
 import { Input } from '../../common/formControls/Input/Input';
 import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
+import { useEffect } from 'react';
+import { formatGeesetext } from '../../../utils/stringUtils';
 
 type FormValues = {
     identifier: string;
     password: string;
 };
 
-const schema: Yup.SchemaOf<FormValues> = Yup.object({
-  identifier: Yup.string()
-    .max(100, 'Must be 100 characters or less')
-    .required('Required'),
-        
-  password: Yup.string()
-    .max(100, 'Must be 100 characters or less')
-    .required('Required'),
-});
-
 export const Login = () => {
   const dispatch = useAppDispatch();
   const loginLoading = useAppSelector(s => s.auth.loginLoading);
   const T = useGeeseTexts();
+
+  const schema: Yup.SchemaOf<FormValues> = Yup.object({
+    identifier: Yup.string()
+      .max(100, formatGeesetext(T.MaxLengthValidation, 100))
+      .required(T.Required),
+          
+    password: Yup.string()
+      .max(100, formatGeesetext(T.MaxLengthValidation, 100))
+      .required(T.Required),
+  });
+
   const formik = useFormik<FormValues>({
     initialValues: {
       identifier: '',
@@ -41,6 +44,10 @@ export const Login = () => {
       }));
     },
   });
+
+  useEffect(() => {
+    formik.validateForm();
+  }, [T]);
 
   return (
     <div className={styles.wrapper}>

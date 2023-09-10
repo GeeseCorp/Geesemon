@@ -17,7 +17,7 @@ import s from './ChatHeader.module.scss';
 import { Menu, MenuItem } from '../../common/Menu/Menu';
 import { chatActions } from '../../../behavior/features/chats';
 import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
-import { format } from '../../../utils/stringUtils';
+import { formatGeesetext } from '../../../utils/stringUtils';
 
 export const ChatHeader: FC = () => {
   const isMobile = useIsMobile();
@@ -40,8 +40,8 @@ export const ChatHeader: FC = () => {
     case ChatKind.Group:
     {
       if(selectedChat.membersOnline > 1)
-        return <div className={'subText'}>{format(T.MembersInChatAndOnline, selectedChat.membersTotal, selectedChat.membersOnline)}</div>;
-      return <div className={'subText'}>{format(T.MembersInChat, selectedChat.membersTotal)}</div>;
+        return <div className={'subText'}>{formatGeesetext(T.MembersInChatAndOnline, selectedChat.membersTotal, selectedChat.membersOnline)}</div>;
+      return <div className={'subText'}>{formatGeesetext(T.MembersInChat, selectedChat.membersTotal)}</div>;
     }
     default:
       return null;

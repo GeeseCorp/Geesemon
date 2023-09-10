@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, useRef, useState } from 'react';
+import { ChangeEvent, FC, useEffect, useRef, useState } from 'react';
 import { Chat } from '../../../behavior/features/chats';
 import { HeaderButton } from '../../common/HeaderButton/HeaderButton';
 import s from './ChatsUpdateGroup.module.scss';
@@ -12,6 +12,8 @@ import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import { chatActions } from '../../../behavior/features/chats';
 import { BigPrimaryButton } from '../../common/BigPrimaryButton/BigPrimaryButton';
+import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
+import { formatGeesetext } from '../../../utils/stringUtils';
 
 type Props = {
     chat: Chat;
@@ -22,22 +24,23 @@ type FormValues = {
     identifier: string;
 };
 
-const schema: Yup.SchemaOf<FormValues> = Yup.object({
-  name: Yup.string()
-    .max(100, 'Must be 100 characters or less')
-    .required('Required'),
-        
-  identifier: Yup.string()
-    .max(100, 'Must be 100 characters or less')
-    .required('Required'),
-});
-
 export const ChatsUpdateGroup: FC<Props> = ({ chat }) => {
   const dispatch = useAppDispatch();
   const updateChatLoading = useAppSelector(s => s.chats.updateChatLoading);
   const inputFileRef = useRef<HTMLInputElement | null>(null);
   const [image] = useState<string | null | undefined>(chat.imageUrl);
   const [newImage, setNewImage] = useState<File | null>(null);
+  const T = useGeeseTexts();
+  const schema: Yup.SchemaOf<FormValues> = Yup.object({
+    name: Yup.string()
+      .max(100, formatGeesetext(T.MaxMaxLengthValidation, 100))
+      .required(T.Required),
+          
+    identifier: Yup.string()
+      .max(100, formatGeesetext(T.MaxMaxLengthValidation, 100))
+      .required(T.Required),
+  });
+
   const formik = useFormik<FormValues>({
     initialValues: {
       name: chat.name,
@@ -53,6 +56,10 @@ export const ChatsUpdateGroup: FC<Props> = ({ chat }) => {
       }));
     },
   });
+
+  useEffect(() => {
+    formik.validateForm();
+  }, [T]);
 
   const changeInputFileHandler = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files)
@@ -101,7 +108,7 @@ export const ChatsUpdateGroup: FC<Props> = ({ chat }) => {
           }
         </div>
         <Input
-          placeholder="Group name"
+          placeholder={T.GroupName}
           name={nameof<FormValues>('name')}
           value={formik.values.name ?? ''}
           onChange={formik.handleChange}
@@ -111,7 +118,7 @@ export const ChatsUpdateGroup: FC<Props> = ({ chat }) => {
         />
 
         <Input
-          placeholder="Identifier"
+          placeholder={T.Identifier}
           name={nameof<FormValues>('identifier')}
           value={formik.values.identifier}
           onChange={formik.handleChange}

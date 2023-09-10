@@ -14,6 +14,7 @@ import { SmallPrimaryButton } from '../../../common/SmallPrimaryButton/SmallPrim
 import { authActions } from '../../../../behavior/features/auth/slice';
 import { SmallLoading } from '../../../common/SmallLoading/SmallLoading';
 import { useGeeseTexts } from '../../../../hooks/useGeeseTexts';
+import { format } from 'util';
 
 type Props = {};
 
@@ -23,22 +24,22 @@ type FormValues = {
     identifier: string;
 };
 
-const schema: Yup.SchemaOf<FormValues> = Yup.object({
-  firstname: Yup.string()
-    .max(100, 'Must be 100 characters or less')
-    .required('Required'),
-  lastname: Yup.string()
-    .max(100, 'Must be 100 characters or less'),
-  identifier: Yup.string()
-    .max(100, 'Must be 100 characters or less')
-    .required('Required'),
-});
-
 export const UpdateProfile: FC<Props> = ({ }) => {
   const dispatch = useAppDispatch();
   const updateProfileLoading = useAppSelector(s => s.auth.updateProfileLoading);
   const authedUser = useAppSelector(s => s.auth.authedUser);
   const T = useGeeseTexts();
+
+  const schema: Yup.SchemaOf<FormValues> = Yup.object({
+    firstname: Yup.string()
+      .max(100, format(T.MaxLengthValidation, 100))
+      .required(T.Required),
+    lastname: Yup.string()
+      .max(100, format(T.MaxLengthValidation, 100)),
+    identifier: Yup.string()
+      .max(100, format(T.MaxLengthValidation, 100))
+      .required(T.Required),
+  });
 
   const formik = useFormik<FormValues>({
     initialValues: {
