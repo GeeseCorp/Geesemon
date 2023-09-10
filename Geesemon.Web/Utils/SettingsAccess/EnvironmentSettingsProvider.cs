@@ -34,8 +34,7 @@
 
         public FileProvider GetFileProvider()
         {
-            var a = Environment.GetEnvironmentVariable("FileProvider");
-            return FileProvider.Cloudinary;
+            return Enum.Parse<FileProvider>(Environment.GetEnvironmentVariable("FileProvider"));
         }
     }
 }
