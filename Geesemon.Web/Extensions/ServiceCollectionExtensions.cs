@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+
 using Geesemon.Model.Enums;
 using Geesemon.Web.Geesetext;
 using Geesemon.Web.GraphQL;
@@ -11,11 +12,14 @@ using Geesemon.Web.Services.FileManagers;
 using Geesemon.Web.Services.LoginViaTokenSubscription;
 using Geesemon.Web.Services.MessageSubscription;
 using Geesemon.Web.Utils.SettingsAccess;
+
 using GraphQL;
 using GraphQL.Server;
 using GraphQL.Server.Transports.Subscriptions.Abstractions;
 using GraphQL.SystemTextJson;
+
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+
 using System.Reflection;
 using System.Security.Claims;
 
@@ -70,17 +74,26 @@ namespace Geesemon.Web.Extensions
 
             var settingsProvider = services.BuildServiceProvider().GetService<ISettingsProvider>();
 
-            if (string.IsNullOrEmpty(settingsProvider.GetCloudinaryConnectionString()))
-                services.AddSingleton<IFileManagerService, LocalFileManagerService>();
-            else
-                services.AddSingleton<IFileManagerService, CloudinaryFileManagerService>();
+            var fileProvider = settingsProvider.GetFileProvider();
+            switch (fileProvider)
+            {
+                case FileProvider.Local:
+                    services.AddSingleton<IFileManagerService, LocalFileManagerService>();
+                    break;
+                case FileProvider.Blob:
+                    services.AddSingleton<IFileManagerService, BlobFileManagerService>();
+                    break;
+                case FileProvider.Cloudinary:
+                    services.AddSingleton<IFileManagerService, CloudinaryFileManagerService>();
+                    break;
+            }
 
             services.AddSingleton<IMessageActionSubscriptionService, MessageActionSubscriptionService>();
             services.AddSingleton<IChatActionSubscriptionService, ChatActionSubscriptionService>();
             services.AddSingleton<IChatActivitySubscriptionService, ChatActivitySubscriptionService>();
             services.AddSingleton<IChatMembersSubscriptionService, ChatMembersSubscriptionService>();
             services.AddSingleton<ILoginViaTokenSubscriptionService, LoginViaTokenSubscriptionService>();
-            
+
             services.AddSingleton<GeeseTextsAccessor>();
 
             services.Configure<KestrelServerOptions>(options =>

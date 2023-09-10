@@ -26,5 +26,15 @@
         {
             return Environment.GetEnvironmentVariable("Cloudinary");
         }
+
+        public string GetBlobConnectionString()
+        {
+            return Environment.GetEnvironmentVariable("Blob");
+        }
+
+        public FileProvider GetFileProvider()
+        {
+            return Enum.Parse<FileProvider>(Environment.GetEnvironmentVariable("FileProvider"));
+        }
     }
 }

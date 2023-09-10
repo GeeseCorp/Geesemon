@@ -1,9 +1,4 @@
-﻿using CloudinaryDotNet.Actions;
-using CloudinaryDotNet;
-using Geesemon.Web.Utils.SettingsAccess;
-using System.Text.RegularExpressions;
-
-namespace Geesemon.Web.Services.FileManagers;
+﻿namespace Geesemon.Web.Services.FileManagers;
 
 public interface IFileManagerService
 {
@@ -12,5 +7,7 @@ public interface IFileManagerService
     Task<string> UploadFileAsync(string folderPath, IFormFile file, bool withHash = true);
 
     Task RemoveFileAsync(string path);
+
+    string FormatUrl(string url);
 
 }

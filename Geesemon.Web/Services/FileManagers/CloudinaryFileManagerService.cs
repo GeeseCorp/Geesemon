@@ -1,6 +1,8 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
+
 using Geesemon.Web.Utils.SettingsAccess;
+
 using System.Text.RegularExpressions;
 
 namespace Geesemon.Web.Services.FileManagers;
@@ -74,6 +76,9 @@ public class CloudinaryFileManagerService : IFileManagerService
         if (result.Error != null)
             throw new Exception(result.Error.Message);
     }
+
+    public string FormatUrl(string url)
+      => url;
 
     private string GetFileNameFromPath(string path)
     {
