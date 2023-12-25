@@ -3,8 +3,8 @@ import { createPortal } from 'react-dom';
 import s from './Modal.module.scss';
 
 type Props = {
-    children: ReactNode;
-    opened?: boolean;
+  children: ReactNode;
+  opened?: boolean;
 } & JSX.IntrinsicElements['div'];
 
 const modalElement = document.getElementById('modal') as HTMLDivElement;
@@ -21,7 +21,13 @@ export const Modal: FC<Props> = ({ children, opened, className, ...rest }) => {
     };
   }, []);
 
-  rootElement.className = opened ? s.modalOpened : '';
+  useEffect(() => {
+    if (opened)
+      rootElement.classList.add(s.modalOpened);
+    else
+      rootElement.classList.remove(s.modalOpened);
+  }, [opened]);
+
   // rootElement.style.pointerEvents = opened ? 'none' : 'auto'
 
   return opened

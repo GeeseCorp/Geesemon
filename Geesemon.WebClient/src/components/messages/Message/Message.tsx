@@ -18,9 +18,9 @@ import { RoundVideoMessage } from './RoundVideoMessage';
 import { MessageAdditionalInfo } from './MessageAdditionalInfo';
 
 type Props = {
-    message: Message;
-    inputTextFocus?: () => void;
-    isFromVisible?: boolean;
+  message: Message;
+  inputTextFocus?: () => void;
+  isFromVisible?: boolean;
 };
 
 export const MessageItem: FC<Props> = memo(({ message, inputTextFocus, isFromVisible = false }) => {
@@ -61,94 +61,94 @@ export const MessageItem: FC<Props> = memo(({ message, inputTextFocus, isFromVis
     const fileType = message.fileUrl ? getFileType(message.fileUrl) : null;
 
     switch (message.type) {
-    case MessageKind.SystemGeeseText:
-    case MessageKind.System:
-      return (
-        <div
-          ref={el => {
-            if (!isReadByMe)
-              ref.current = el;
-          }}
-          className={[styles.message, styles.messageSystem].join(' ')}
-        >
-          <div className={`${styles.messageText} textCenter`}>{messageText}</div>
-        </div>
-      );
-    default:
-      if (message.forwardedMessage) {
-        const forwardedMessageText = processString(config)(message.forwardedMessage?.text || '');
-        const forwardedMessageFileType = message.forwardedMessage.fileUrl ? getFileType(message.forwardedMessage.fileUrl) : null;
+      case MessageKind.SystemGeeseText:
+      case MessageKind.System:
         return (
           <div
             ref={el => {
               if (!isReadByMe)
                 ref.current = el;
             }}
-            className={[styles.message, isMessageMy ? styles.messageMy : '', message.forwardedMessage.text || fileType === FileType.File ? styles.messagePadding : ''].join(' ')}
+            className={[styles.message, styles.messageSystem].join(' ')}
           >
-            <Link
-              to={`/${message.from?.identifier}`}
-              className={[styles.from, 'bold', message.forwardedMessage && message.forwardedMessage.fileUrl && styles.messagePadding].join(' ')}
-              style={{ color: message.from?.avatarColor }}
-            >
-              {formatGeesetext(T.ForwardedFrom, message.forwardedMessage.from?.fullName)}
-            </Link>
-            {renderFile(message.forwardedMessage, message.forwardedMessage.text ? null : message.createdAt)}
-            {message.forwardedMessage.text && <span className={styles.messageText}>{forwardedMessageText}</span>}
-            {(message.forwardedMessage.text || forwardedMessageFileType === FileType.File) && (
-              <span className={styles.messageInfo}>
-                <MessageAdditionalInfo message={message} isMessageMy={isMessageMy} />
-              </span>
-            )}
+            <div className={`${styles.messageText} textCenter`}>{messageText}</div>
           </div>
         );
-      }
-      else {
-        return (
-          <div
-            ref={el => {
-              if (!isReadByMe)
-                ref.current = el;
-            }}
-            className={`
+      default:
+        if (message.forwardedMessage) {
+          const forwardedMessageText = processString(config)(message.forwardedMessage?.text || '');
+          const forwardedMessageFileType = message.forwardedMessage.fileUrl ? getFileType(message.forwardedMessage.fileUrl) : null;
+          return (
+            <div
+              ref={el => {
+                if (!isReadByMe)
+                  ref.current = el;
+              }}
+              className={[styles.message, isMessageMy ? styles.messageMy : '', message.forwardedMessage.text || fileType === FileType.File ? styles.messagePadding : ''].join(' ')}
+            >
+              <Link
+                to={`/${message.forwardedMessage.from?.identifier}`}
+                className={[styles.from, 'bold', message.forwardedMessage && message.forwardedMessage.fileUrl && styles.messagePadding].join(' ')}
+                style={{ color: message.from?.avatarColor }}
+              >
+                {formatGeesetext(T.ForwardedFrom, message.forwardedMessage.from?.fullName)}
+              </Link>
+              {renderFile(message.forwardedMessage, message.forwardedMessage.text ? null : message.createdAt)}
+              {message.forwardedMessage.text && <span className={styles.messageText}>{forwardedMessageText}</span>}
+              {(message.forwardedMessage.text || forwardedMessageFileType === FileType.File) && (
+                <span className={styles.messageInfo}>
+                  <MessageAdditionalInfo message={message} isMessageMy={isMessageMy} />
+                </span>
+              )}
+            </div>
+          );
+        }
+        else {
+          return (
+            <div
+              ref={el => {
+                if (!isReadByMe)
+                  ref.current = el;
+              }}
+              className={`
                                 ${styles.message} ${isMessageMy ? styles.messageMy : ''} 
                                 ${message.text || fileType === FileType.File ? styles.messagePadding : null} 
                                 ${message.mediaKind === MediaKind.Video ? styles.noBackground : ''}
                             `}
-          >
-            {isFromVisible && (
-              <Link
-                to={`/${message.from?.identifier}`}
-                className={[styles.from, 'bold'].join(' ')}
-                style={{ color: message.from?.avatarColor }}
-              >
-                {message.from?.fullName}
-              </Link>
-            )}
-            {message.replyMessage && (
-              <div
-                style={{ borderColor: selectedChat?.type === ChatKind.Group ? message.replyMessage.from?.avatarColor : '' }}
-                className={styles.replyMessage}
-              >
-                <div
-                  style={{ color: selectedChat?.type === ChatKind.Group ? message.replyMessage.from?.avatarColor : '' }}
-                  className={'small bold primary'}
+            >
+              {isFromVisible && (
+                <Link
+                  to={`/${message.from?.identifier}`}
+                  className={[styles.from, 'bold'].join(' ')}
+                  style={{ color: message.from?.avatarColor }}
                 >
-                  {message.replyMessage?.from?.fullName}
+                  {message.from?.fullName}
+                </Link>
+              )}
+              {message.replyMessage && (
+                <div
+                  style={{ borderColor: selectedChat?.type === ChatKind.Group ? message.replyMessage.from?.avatarColor : '' }}
+                  className={styles.replyMessage}
+                >
+                  <div
+                    style={{ color: selectedChat?.type === ChatKind.Group ? message.replyMessage.from?.avatarColor : '' }}
+                    className={'small bold primary'}
+                  >
+                    {message.replyMessage?.from?.fullName}
+                  </div>
+                  <div className={['small primary', styles.replyMessageText].join(' ')}>{message.replyMessage?.text}</div>
                 </div>
-                <div className={['small primary', styles.replyMessageText].join(' ')}>{message.replyMessage?.text}</div>
-              </div>
-            )}
-            {renderFile(message, message.text ? null : message.createdAt)}
-            {message.text && <span className={styles.messageText}>{messageText}</span>}
-            {(message.text || fileType === FileType.File) && message.mediaKind !== MediaKind.Video && (
-              <span className={styles.messageInfo}>
-                <MessageAdditionalInfo message={message} isMessageMy={isMessageMy} />
-              </span>
-            )}
-          </div>
-        );
-      }
+              )}
+              {renderFile(message, message.text ? null : message.createdAt)}
+              {message.text && <span className={styles.messageText}>{messageText}</span>}
+              {(message.text || fileType === FileType.File) && message.mediaKind !== MediaKind.Video && (
+                <span className={styles.messageInfo}>
+                  <MessageAdditionalInfo message={message} isMessageMy={isMessageMy} />
+                </span>
+              )}
+            </div>
+          );
+        }
     }
   };
 
@@ -158,45 +158,45 @@ export const MessageItem: FC<Props> = memo(({ message, inputTextFocus, isFromVis
       return null;
 
     switch (m.mediaKind) {
-    case MediaKind.Voice:
-      return <VoiceMessage message={message} />;
-    case MediaKind.Video:
-      return <RoundVideoMessage message={message} isMessageMy={isMessageMy} />;
+      case MediaKind.Voice:
+        return <VoiceMessage message={message} />;
+      case MediaKind.Video:
+        return <RoundVideoMessage message={message} isMessageMy={isMessageMy} />;
     }
 
     const fileType = getFileType(url);
     switch (fileType) {
-    case FileType.Image:
-      return (
-        <div className={styles.mediaWrapper}>
-          <img src={url} alt={url} className={styles.media} />
-          {date && (
-            <div className={styles.fileMessageInfo}>
-              <MessageAdditionalInfo message={message} isMessageMy={isMessageMy} />
-            </div>
-          )}
-        </div>
-      );
-    case FileType.Video:
-      return (
-        <div className={styles.mediaWrapper}>
-          <video controls src={url} className={styles.media} />
-          {date && (
-            <div className={styles.fileMessageInfo}>
-              <MessageAdditionalInfo message={message} isMessageMy={isMessageMy} />
-            </div>
-          )}
-        </div>
-      );
-    default:
-      return (
-        <a href={url} target="_blank" rel="noreferrer">
-          <div className={styles.file}>
-            <img src={fileSvg} width={25} className={'primaryTextSvg'} alt={'fileSvg'} />
-            <div>{getFileName(url)}</div>
+      case FileType.Image:
+        return (
+          <div className={styles.mediaWrapper}>
+            <img src={url} alt={url} className={styles.media} />
+            {date && (
+              <div className={styles.fileMessageInfo}>
+                <MessageAdditionalInfo message={message} isMessageMy={isMessageMy} />
+              </div>
+            )}
           </div>
-        </a>
-      );
+        );
+      case FileType.Video:
+        return (
+          <div className={styles.mediaWrapper}>
+            <video controls src={url} className={styles.media} />
+            {date && (
+              <div className={styles.fileMessageInfo}>
+                <MessageAdditionalInfo message={message} isMessageMy={isMessageMy} />
+              </div>
+            )}
+          </div>
+        );
+      default:
+        return (
+          <a href={url} target="_blank" rel="noreferrer">
+            <div className={styles.file}>
+              <img src={fileSvg} width={25} className={'primaryTextSvg'} alt={'fileSvg'} />
+              <div>{getFileName(url)}</div>
+            </div>
+          </a>
+        );
     }
   };
 

@@ -1,13 +1,14 @@
-﻿using Geesemon.DataAccess.Managers;
-using Geesemon.Model.Enums;
+﻿using Geesemon.Model.Enums;
 using Geesemon.Model.Models;
+using Geesemon.Web.GraphQL.DataLoaders;
+
 using GraphQL.Types;
 
 namespace Geesemon.Web.GraphQL.Types
 {
     public class UserType : EntityType<User>
     {
-        public UserType(IServiceProvider serviceProvider)
+        public UserType(SessionLoader sessionLoader)
             : base()
         {
             Field<NonNullGraphType<StringGraphType>, string>()
@@ -17,7 +18,7 @@ namespace Geesemon.Web.GraphQL.Types
             Field<StringGraphType, string?>()
                .Name("LastName")
                .Resolve(context => context.Source.LastName);
-            
+
             Field<NonNullGraphType<StringGraphType>, string>()
                .Name("FullName")
                .Resolve(context => context.Source.FullName);
@@ -49,29 +50,23 @@ namespace Geesemon.Web.GraphQL.Types
             Field<StringGraphType, string?>()
                .Name("ImageUrl")
                .Resolve(context => context.Source.ImageUrl);
-            
+
             Field<NonNullGraphType<StringGraphType>, string>()
                .Name("AvatarColor")
                .Resolve(context => context.Source.AvatarColor);
-            
-            Field<DateTimeGraphType, DateTime?>()
+
+            Field<DateTimeGraphType>()
                .Name("LastTimeOnline")
-               .ResolveAsync(async context =>
+               .Resolve(context =>
                {
-                   using var scope = serviceProvider.CreateScope();
-                   var sessionManager = scope.ServiceProvider.GetRequiredService<SessionManager>();
-                   var session = await sessionManager.GetLastActiveAsync(context.Source.Id);
-                   return session?.LastTimeOnline;
+                   return sessionLoader.ResolveLastActive<DateTime?>(s => s is null ? null : s.LastTimeOnline, context);
                });
-            
-            Field<BooleanGraphType, bool?>()
+
+            Field<BooleanGraphType>()
                .Name("IsOnline")
-               .ResolveAsync(async context =>
+               .Resolve(context =>
                {
-                   using var scope = serviceProvider.CreateScope();
-                   var sessionManager = scope.ServiceProvider.GetRequiredService<SessionManager>();
-                   var session = await sessionManager.GetLastActiveAsync(context.Source.Id);
-                   return session?.IsOnline;
+                   return sessionLoader.ResolveLastActive<bool?>(s => s is null ? null : s.IsOnline, context);
                });
         }
     }

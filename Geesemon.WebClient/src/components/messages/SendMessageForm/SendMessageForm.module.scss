@@ -71,14 +71,14 @@
 }
 
 .extraBlockWrapper {
+    * {
+        font-size: 12px;
+    }
+
     .icon {
         width: 35px;
         border-right: 2px solid $primary-color;
         padding-right: 10px;
-    }
-
-    * {
-        font-size: 5px;
     }
 
     .action {

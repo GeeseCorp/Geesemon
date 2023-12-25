@@ -92,13 +92,13 @@ export const Chats: FC = () => {
                   <HeaderButton keyName={'menu'} onClick={() => setIsMenuVisible(true)}>
                     <img src={menuSvg} width={20} className={'secondaryTextSvg'} alt={'menuSvg'} />
                   </HeaderButton>
-                  {isMenuVisible &&
-                                        <Menu
-                                          items={menuItems}
-                                          top={50}
-                                          setOpen={setIsMenuVisible}
-                                        />
-                  }
+                  {isMenuVisible && (
+                    <Menu
+                      items={menuItems}
+                      top={50}
+                      setOpen={setIsMenuVisible}
+                    />
+                  )}
                 </>
               )
             }
@@ -116,9 +116,9 @@ export const Chats: FC = () => {
           <div className={s.chats}>
             <ChatList onClickChat={onClickChat} />
             {chatsGetLoading &&
-                            <div className={s.loading}>
-                              <SmallLoading />
-                            </div>
+              <div className={s.loading}>
+                <SmallLoading />
+              </div>
             }
             <LeftSidebarSmallPrimaryButton>
               <div
@@ -134,12 +134,12 @@ export const Chats: FC = () => {
                     : <img src={pencilFilledSvg} width={25} className={'primaryTextSvg'} alt={'pencilFilledSvg'} />}
                 </SmallPrimaryButton>
                 {isCreateChatMenuVisible &&
-                                    <Menu
-                                      items={createChatMenuItems}
-                                      top={-90}
-                                      right={0}
-                                      setOpen={setIsCreateChatMenuVisible}
-                                    />
+                  <Menu
+                    items={createChatMenuItems}
+                    top={-90}
+                    right={0}
+                    setOpen={setIsCreateChatMenuVisible}
+                  />
                 }
               </div>
             </LeftSidebarSmallPrimaryButton>

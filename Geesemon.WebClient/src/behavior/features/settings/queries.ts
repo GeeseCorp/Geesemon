@@ -1,13 +1,14 @@
 import { gql } from '@apollo/client';
-import { GeeseText } from './types';
+import { GeeseText, Language } from './types';
 
-export type LanguageGetData = { geeseTexts: { getLanguages: GeeseText[] } };
+export type LanguageGetData = { geeseTexts: { getLanguages: Language[] } };
 export const LANGUAGES_GET_QUERY = gql`
     query GetLanguages {
         geeseTexts {
             getLanguages{
-                key,
-                value
+                code
+                name
+                flagUrl
             }
         }
     }  

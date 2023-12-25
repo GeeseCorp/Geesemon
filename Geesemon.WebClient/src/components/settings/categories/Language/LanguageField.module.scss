@@ -1,10 +1,13 @@
-.languageField{
-    margin: 10px;
-    padding: 0 10px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    font-size: large;
-    font-weight: bold;
+@import '../../../../App.scss';
+
+.languageField {
+    margin: 5px 10px;
+}
+
+.languageField.selected {
+    background-color: $secondary-button-hover-color;
+}
+
+.flag {
+    width: 25px;
 }

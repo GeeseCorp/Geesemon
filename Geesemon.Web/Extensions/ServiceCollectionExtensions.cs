@@ -4,6 +4,7 @@ using Geesemon.Model.Enums;
 using Geesemon.Web.Geesetext;
 using Geesemon.Web.GraphQL;
 using Geesemon.Web.GraphQL.Auth;
+using Geesemon.Web.GraphQL.DataLoaders;
 using Geesemon.Web.Middlewares;
 using Geesemon.Web.Services;
 using Geesemon.Web.Services.ChatActionsSubscription;
@@ -14,6 +15,7 @@ using Geesemon.Web.Services.MessageSubscription;
 using Geesemon.Web.Utils.SettingsAccess;
 
 using GraphQL;
+using GraphQL.DataLoader;
 using GraphQL.Server;
 using GraphQL.Server.Transports.Subscriptions.Abstractions;
 using GraphQL.SystemTextJson;
@@ -31,7 +33,13 @@ namespace Geesemon.Web.Extensions
         {
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             services.AddHttpContextAccessor();
+            services.AddSingleton<IDocumentExecuter, AppDocumentExecuter>();
             services.AddTransient<IOperationMessageListener, AuthenticationListener>();
+            services.AddSingleton<IDataLoaderContextAccessor, DataLoaderContextAccessor>();
+            services.AddSingleton<DataLoaderDocumentListener>();
+            services.AddScoped<UserLoader>();
+            services.AddScoped<MessageLoader>();
+            services.AddScoped<SessionLoader>();
             services.AddScoped<ApplicationSchema>();
             services.AddGraphQLUpload();
             services

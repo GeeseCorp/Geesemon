@@ -1,21 +1,24 @@
-import { RadioButton } from '../../../common/formControls/RadioButton/RadioButton';
+import { Language } from '../../../../behavior/features/settings/types';
+import { ProfileButton } from '../../../common/ProfileButton/ProfileButton';
 import s from './LanguageField.module.scss';
 
 type Props = {
-    id: string;
-    language: {
-        key: string;
-        value: string;
-    };
-    selected: boolean;
-    setSelected: (name: string) => void;
+  language: Language;
+  selected: boolean;
+  setSelected: (code: string) => void;
 };
 
-export const LanguageField = ({ language: { key, value }, selected, setSelected }: Props) => {
+export const LanguageField = ({
+  language: { code, name, flagUrl },
+  selected,
+  setSelected,
+}: Props) => {
   return (
-    <div className={s.languageField} onClick={_ => setSelected(key)}> 
-      <RadioButton name={key} key={key} checked={selected} setChecked={setSelected} />
-      {value}
-    </div>
+    <ProfileButton
+      icon={flagUrl ? <img src={flagUrl} className={s.flag} /> : undefined}
+      label={name}
+      onClick={() => setSelected(code)}
+      className={`${s.languageField} ${selected ? s.selected : ''}`}
+    />
   );
 };

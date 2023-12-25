@@ -1,0 +1,89 @@
+{
+  // Common
+  "Pin": "Pin",
+  "Delete": "Delete",
+
+  //menu
+  "Saved": "Saved",
+  "Settings": "Settings",
+  "Logout": "Logout",
+  "Unmute": "Unmute",
+  "Mute": "Mute",
+
+  //chat widow
+  "NoChatSelected": "Select a chat!",
+  "WriteAMessage": "Write a message...",
+  "MembersInChat": "{0} members",
+  "MembersOnlineInChat": "{0} online",
+  "MembersInChatAndOnline": "{0} members, {1} online",
+  "LeaveChat": "Leave chat",
+  "ForwardedFrom": "Forwarded from {0}",
+  "Edited": "edited",
+  "RecordingVideo": "Recording video",
+
+  //settings
+  "Devices": "Devices",
+  "ThisDevice": "This device",
+  "ActiveSessions": "Active sessions",
+  "TerminateAllOtherSessions": "Terminate All Other Sessions",
+  "Languages": "Languages",
+  "LanguageSelection": "Language selection",
+  "UpdateProfile": "Update Profile",
+  "Firstname": "Firstname",
+  "Lastname": "Lastname",
+  "Identifier": "Identifier",
+  "Username": "Username",
+
+  //left bar
+  "NewGroup": "New group",
+  "GroupName": "Group name",
+  "NewPersonalChat": "New personal chat",
+  "Search": "Search",
+  "SearchMembers": "Search members",
+  "SearchUsers": "Search users",
+  "DeleteChat": "Delete chat",
+
+  //right bar
+  "Profile": "Profile",
+  "Notifications": "Notifications",
+  "OnlineStatus": "Online",
+  "LastSeen": "Last seen {0}",
+  "Members": "Members",
+  "Files": "Files",
+  "Voice": "Voice",
+  "RemoveFromGroup": "Remove from group",
+
+  //login/register page
+  "Password": "Password",
+  "Login": "Login",
+  "LoginInGeesemon": "Login in Geesemon",
+  "Register": "Register",
+  "LoginViaQRCode": "Login via QR code",
+  "LoginViaCredentials": "Login via credentials",
+  "LoginInGeesemonViaQRCode": "Login via QR code in Geesemon",
+  "Email": "Email",
+  "RegisterInGeesemon": "Register in Geesemon",
+
+  //system massage texts
+  "RemovedFromChatMessage": "{0} removed {1} from chat",
+  "AddedToChatMessage": "{0} added {1} to chat",
+  "UserLeftFromChatMessage": "{0} left the chat",
+  "ChatCreatedMessage": "{0} created the group \"{1}\"",
+
+  // Message context menu
+  "ForwardSelected": "Forward Selected",
+  "DeleteSelected": "Delete Selected",
+  "ClearSelection": "Clear Selection",
+  "Reply": "Reply",
+  "Update": "Update",
+  "Copy": "Copy",
+  "Forward": "Forward",
+  "Select": "Select",
+  "Seen": "seen",
+
+  // Validation
+  "Required": "Required",
+  "InvalidEmail": "Invalid email",
+  "MaxLengthValidation": "Must be {0} characters or less",
+  "MinLengthValidation": "Must be {0} characters or more"
+}

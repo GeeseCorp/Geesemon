@@ -51,13 +51,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="GeeseTexts\GeeseTexts_EN.json">
+    <Content Update="GeeseTexts\LanguagePacks\GeeseTexts_EN.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Update="GeeseTexts\GeeseTexts_RU.json">
+    <Content Update="GeeseTexts\LanguagePacks\GeeseTexts_RU.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Update="GeeseTexts\GeeseTexts_UA.json">
+    <Content Update="GeeseTexts\LanguagePacks\GeeseTexts_UK.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

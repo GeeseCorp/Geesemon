@@ -54,7 +54,7 @@ export const Login = () => {
       <h1 className={styles.title}>{T.LoginInGeesemon}</h1>
       <form onSubmit={formik.handleSubmit}>
         <Input
-          placeholder={T.Identifier}
+          placeholder={T.Username}
           name={nameof<FormValues>('identifier')}
           value={formik.values.identifier}
           onChange={formik.handleChange}

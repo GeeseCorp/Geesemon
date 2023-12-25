@@ -2,6 +2,7 @@
 using Geesemon.Model.Common;
 using Geesemon.Model.Enums;
 using Geesemon.Model.Models;
+using Geesemon.Web.GraphQL.DataLoaders;
 using Geesemon.Web.Services.FileManagers;
 
 using GraphQL;
@@ -11,7 +12,11 @@ namespace Geesemon.Web.GraphQL.Types
 {
     public class MessageType : EntityType<Message>
     {
-        public MessageType(IServiceProvider serviceProvider, IFileManagerService fileManagerService)
+        public MessageType(
+            IServiceProvider serviceProvider,
+            IFileManagerService fileManagerService,
+            UserLoader userLoader,
+            MessageLoader messageLoader)
         {
             Field<StringGraphType, string>()
                 .Name("Text")
@@ -25,13 +30,14 @@ namespace Geesemon.Web.GraphQL.Types
                 .Name("FromId")
                 .Resolve(ctx => ctx.Source.FromId);
 
-            Field<UserType, User?>()
+            Field<UserType>()
                 .Name("From")
-                .ResolveAsync(async ctx =>
+                .Resolve(ctx =>
                 {
-                    using var scope = serviceProvider.CreateScope();
-                    var userManager = scope.ServiceProvider.GetRequiredService<UserManager>();
-                    return await userManager.GetByIdAsync(ctx.Source.FromId);
+                    if (!ctx.Source.FromId.HasValue)
+                        return null;
+
+                    return userLoader.Load(ctx.Source.FromId.Value);
                 });
 
             Field<GuidGraphType, Guid?>()
@@ -42,16 +48,14 @@ namespace Geesemon.Web.GraphQL.Types
                 .Name("ReplyMessageId")
                 .Resolve(ctx => ctx.Source.ReplyMessageId);
 
-            Field<MessageType, Message?>()
+            Field<MessageType>()
                 .Name("ReplyMessage")
-                .ResolveAsync(async ctx =>
+                .Resolve(ctx =>
                 {
                     if (ctx.Source.ReplyMessageId == null)
                         return null;
 
-                    using var scope = serviceProvider.CreateScope();
-                    var messageManager = scope.ServiceProvider.GetRequiredService<MessageManager>();
-                    return await messageManager.GetByIdAsync(ctx.Source.ReplyMessageId);
+                    return messageLoader.Load(ctx.Source.ReplyMessageId.Value);
                 });
 
             Field<BooleanGraphType, bool>()
@@ -70,7 +74,7 @@ namespace Geesemon.Web.GraphQL.Types
                     var take = context.GetArgument<int?>("Take");
                     var messageId = context.Source.Id;
 
-                    return await userManager.GetReadByAsync(messageId, skip, take ?? 30);
+                    return await userManager.GetReadByAsync(messageId, skip, take ?? 30); ;
                 });
 
             Field<NonNullGraphType<IntGraphType>, int>()

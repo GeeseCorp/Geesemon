@@ -33,8 +33,8 @@ import { localStorageGetItem, localStorageSetItem } from '../../../utils/localSt
 const INPUT_TEXT_DEFAULT_HEIGHT = '25px';
 
 type Props = {
-    scrollToBottom: () => void;
-    inputTextRef: MutableRefObject<HTMLTextAreaElement | null>;
+  scrollToBottom: () => void;
+  inputTextRef: MutableRefObject<HTMLTextAreaElement | null>;
 };
 
 export type RecordingType = 'Voice' | 'RoundVideo';
@@ -116,25 +116,26 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
 
   const closeExtraBlockHandler = () => {
     switch (mode) {
-    case Mode.Updating:
-      setNewMessageText('');
-      dispatch(chatActions.setInUpdateMessageId(null));
-      break;
-    case Mode.Reply:
-      dispatch(chatActions.setReplyMessageId(null));
-      break;
-    case Mode.Forward:
-      dispatch(chatActions.setForwardMessageIds([]));
-      break;
+      case Mode.Updating:
+        setNewMessageText('');
+        dispatch(chatActions.setInUpdateMessageId(null));
+        break;
+      case Mode.Reply:
+        dispatch(chatActions.setReplyMessageId(null));
+        break;
+      case Mode.Forward:
+        dispatch(chatActions.setForwardMessageIds([]));
+        break;
     }
+    dispatch(chatActions.setMode(Mode.Text));
   };
 
   const getMediaKind = (): MediaKind | null => {
     switch (mode) {
-    case Mode.Recording:
-      return recordingType === 'Voice' ? MediaKind.Voice : MediaKind.Video;
-    default:
-      return null;
+      case Mode.Recording:
+        return recordingType === 'Voice' ? MediaKind.Voice : MediaKind.Video;
+      default:
+        return null;
     }
   };
 
@@ -196,75 +197,73 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
     const renderExtraBlockRelatedMessage = (svg: string, iconClassName?: string | null, action?: string | null, messageText?: string | null, fileUrl?: string | null, fileType?: FileType | null) => {
       let file: JSX.Element | null = null;
       switch (fileType) {
-      case FileType.Image:
-        file = <img src={fileUrl || ''} className={styles.media} />;
-        break;
-      case FileType.Video:
-        file = <video src={fileUrl || ''} className={styles.media} />;
-        break;
+        case FileType.Image:
+          file = <img src={fileUrl || ''} className={styles.media} />;
+          break;
+        case FileType.Video:
+          file = <video src={fileUrl || ''} className={styles.media} />;
+          break;
       }
-      switch (fileType) {
-      default:
-        return (
-          <>
-            <div className={styles.icon}>
-              <img src={svg} width={20} className={['primarySvg', iconClassName].join(' ')} alt={'pencilOutlinedSvg'} />
-            </div>
-            {file}
-            <div className={styles.actionAndText}>
-              <div className={styles.action}>{action}</div>
-              <div className={styles.text}>{messageText}</div>
-            </div>
-          </>
-        );
-      }
+
+      return (
+        <>
+          <div className={styles.icon}>
+            <img src={svg} width={20} className={['primarySvg', iconClassName].join(' ')} alt={'pencilOutlinedSvg'} />
+          </div>
+          {file}
+          <div className={styles.actionAndText}>
+            <div className={styles.action}>{action}</div>
+            <div className={styles.text}>{messageText}</div>
+          </div>
+        </>
+      );
     };
 
     switch (mode) {
-    case Mode.Updating: {
-      const fileType = inUpdateMessage?.fileUrl ? getFileType(inUpdateMessage.fileUrl) : null;
-      return renderExtraBlockRelatedMessage(pencilOutlinedSvg, null, 'Updating', inUpdateMessage?.text || getFileName(inUpdateMessage?.fileUrl || ''), inUpdateMessage?.fileUrl, fileType);
-    }
-    case Mode.Reply: {
-      const fileType = replyMessage?.fileUrl ? getFileType(replyMessage.fileUrl) : null;
-      return renderExtraBlockRelatedMessage(replySvg, null, replyMessage?.from?.fullName, replyMessage?.text || getFileName(replyMessage?.fileUrl || ''), replyMessage?.fileUrl, fileType);
-    }
-    case Mode.Forward: {
-      const firstForwardMessageId = forwardMessageIds.length ? forwardMessageIds[0] : null;
-      const firstForwardMessage = selectedChat?.messages.find(m => m.id === firstForwardMessageId);
-      switch (forwardMessageIds.length) {
-      case 0:
-        return null;
-      case 1:
-        return renderExtraBlockRelatedMessage(replySvg, styles.forwardSvg, firstForwardMessage?.from?.fullName, firstForwardMessage?.text || getFileName(firstForwardMessage?.fileUrl || ''), firstForwardMessage?.fileUrl, null);
-      default:
-        const action = firstForwardMessage?.from?.fullName + ' and others';
-        return renderExtraBlockRelatedMessage(replySvg, styles.forwardSvg, action, `${forwardMessageIds.length} forwarded messages`, null, null);
+      case Mode.Updating: {
+        const fileType = inUpdateMessage?.fileUrl ? getFileType(inUpdateMessage.fileUrl) : null;
+        return renderExtraBlockRelatedMessage(pencilOutlinedSvg, null, 'Updating', inUpdateMessage?.text || getFileName(inUpdateMessage?.fileUrl || ''), inUpdateMessage?.fileUrl, fileType);
       }
-    }
+      case Mode.Reply: {
+        const fileType = replyMessage?.fileUrl ? getFileType(replyMessage.fileUrl) : null;
+        return renderExtraBlockRelatedMessage(replySvg, null, replyMessage?.from?.fullName, replyMessage?.text || getFileName(replyMessage?.fileUrl || ''), replyMessage?.fileUrl, fileType);
+      }
+      case Mode.Forward: {
+        const firstForwardMessageId = forwardMessageIds.length ? forwardMessageIds[0] : null;
+        const firstForwardMessage = selectedChat?.messages.find(m => m.id === firstForwardMessageId);
+        switch (forwardMessageIds.length) {
+          case 0:
+            return null;
+          case 1:
+            return renderExtraBlockRelatedMessage(replySvg, styles.forwardSvg, firstForwardMessage?.from?.fullName, firstForwardMessage?.text || getFileName(firstForwardMessage?.fileUrl || ''), firstForwardMessage?.fileUrl, null);
+          default:
+            const action = firstForwardMessage?.from?.fullName + ' and others';
+            return renderExtraBlockRelatedMessage(replySvg, styles.forwardSvg, action, `${forwardMessageIds.length} forwarded messages`, null, null);
+        }
+      }
     }
   };
 
   const primaryButtonClickHandler = () => {
     switch (mode) {
-    case Mode.Updating:
-      updateMessageHandler();
-      break;
-    default:
-      if (messageText || files.length || forwardMessageIds.length) {
-        sendMessageHandler();
-      }
-      else {
-        switch (recordingState) {
-        case RecordingState.Default:
-          startRecordingHandler();
-          break;
-        case RecordingState.Recording:
-          stopRecording();
-          break;
+      case Mode.Updating:
+        updateMessageHandler();
+        break;
+      default:
+        if (messageText || files.length || forwardMessageIds.length) {
+          sendMessageHandler();
         }
-      }
-      break;
+        else {
+          switch (recordingState) {
+            case RecordingState.Default:
+              startRecordingHandler();
+              break;
+            case RecordingState.Recording:
+              stopRecording();
+              break;
+          }
+        }
+        break;
     }
   };
 
@@ -277,51 +276,51 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
 
   const renderPrimaryButtonIcon = () => {
     switch (mode) {
-    case Mode.Updating:
-      return (
-        <motion.img
-          key={'update'}
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          src={checkSvg}
-          width={25}
-          className={'primaryTextSvg'}
-        />
-      );
-    default:
-      return (
-        messageText || files.length || forwardMessageIds.length || (recordingState === RecordingState.Recording && recordingType === 'Voice')
-          ? (
-            <motion.img
-              key={'send'}
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              src={sendSvg}
-              className={'primaryTextSvg'}
-            />
-          )
-          : recordingType === 'Voice'
+      case Mode.Updating:
+        return (
+          <motion.img
+            key={'update'}
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            src={checkSvg}
+            width={25}
+            className={'primaryTextSvg'}
+          />
+        );
+      default:
+        return (
+          messageText || files.length || forwardMessageIds.length || (recordingState === RecordingState.Recording && recordingType === 'Voice')
             ? (
               <motion.img
-                key={'microphone'}
+                key={'send'}
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                src={microphoneSvg}
-                width={25}
+                src={sendSvg}
                 className={'primaryTextSvg'}
               />
             )
-            : (
-              <motion.img
-                key={'cameraSvg'}
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                src={cameraSvg}
-                width={25}
-                className={'primaryTextSvg'}
-              />
-            )
-      );
+            : recordingType === 'Voice'
+              ? (
+                <motion.img
+                  key={'microphone'}
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  src={microphoneSvg}
+                  width={25}
+                  className={'primaryTextSvg'}
+                />
+              )
+              : (
+                <motion.img
+                  key={'cameraSvg'}
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  src={cameraSvg}
+                  width={25}
+                  className={'primaryTextSvg'}
+                />
+              )
+        );
     }
   };
 
@@ -336,14 +335,14 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
         <div className={styles.inner}>
           <div className={styles.wrapperInputText}>
             {isRenderExtraBlock() &&
-                            <div className={styles.extraBlockWrapper}>
-                              <div className={styles.extraBlockInner}>
-                                {renderExtraBlock()}
-                              </div>
-                              <div onClick={closeExtraBlockHandler} className={styles.close}>
-                                <img src={crossFilledSvg} width={15} className={'secondaryTextSvg'} alt={'crossFilledSvg'} />
-                              </div>
-                            </div>
+              <div className={styles.extraBlockWrapper}>
+                <div className={styles.extraBlockInner}>
+                  {renderExtraBlock()}
+                </div>
+                <div onClick={closeExtraBlockHandler} className={styles.close}>
+                  <img src={crossFilledSvg} width={15} className={'secondaryTextSvg'} alt={'crossFilledSvg'} />
+                </div>
+              </div>
             }
             {recordingState === RecordingState.Default && files.length > 0 && (
               <div className={styles.files}>
@@ -369,9 +368,9 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
               <div className={`${styles.inputTextButton} ${styles.wrapperEmojiPicker}`}>
                 <img src={smileSvg} width={20} className={'secondaryTextSvg'} alt={'smileSvg'} onClick={_ => setIsEmojiPickerVisible(!isEmojiPickerVisible)} />
                 {isEmojiPickerVisible &&
-                                    <div className={styles.emojiPicker}>
-                                      <EmojiPicker theme={Theme.DARK} onEmojiClick={ed => setMessageText(messageText + ed.emoji)} />
-                                    </div>
+                  <div className={styles.emojiPicker}>
+                    <EmojiPicker theme={Theme.DARK} onEmojiClick={ed => setMessageText(messageText + ed.emoji)} />
+                  </div>
                 }
               </div>
               <textarea

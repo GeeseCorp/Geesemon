@@ -19,11 +19,11 @@ export const LanguageSelector = () => {
     dispatch(settingsActions.getLanguagesAsync());
   }, [dispatch]);
 
-  const setSelectedLanguage = (name: string) =>{
-    setSelectedLangCookie('lang', name, { path: '/' });
+  const setSelectedLanguage = (code: string) => {
+    setSelectedLangCookie('lang', code, { path: '/' });
     dispatch(settingsActions.getGeeseTextsAsync());
-  };          
-                        
+  };
+
   return (
     <div className={s.wrapper}>
       <div className={['header', s.header].join(' ')}>
@@ -36,19 +36,16 @@ export const LanguageSelector = () => {
         <div className={'headerTitle'}>{T.LanguageSelection}</div>
       </div>
       <div>
-        {languages.map(lang =>
-          (
-            <div className={s.profileButtons} key={lang.key}>
-              <LanguageField
-                id={'language'}
-                key={lang.key}
-                language={lang}
-                selected={lang.key === selectedLangCookie.lang}
-                setSelected={name => setSelectedLanguage(name)}
-              />
-            </div>
-          ))}
-                
+        {languages.map(lang => (
+          <div className={s.profileButtons} key={lang.code}>
+            <LanguageField
+              language={lang}
+              selected={lang.code === selectedLangCookie.lang}
+              setSelected={code => setSelectedLanguage(code)}
+            />
+          </div>
+        ))}
+
       </div>
     </div>
   );

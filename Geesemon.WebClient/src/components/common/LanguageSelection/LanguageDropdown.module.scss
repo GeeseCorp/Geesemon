@@ -1,0 +1,20 @@
+@import '../../../App.scss';
+
+.languageDropdown {
+    background-color: $surface-color;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+}
+
+.menuItems {
+    right: 0;
+    width: 250px;
+}
+
+.flag {
+    width: 25px;
+}

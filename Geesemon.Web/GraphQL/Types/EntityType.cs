@@ -1,11 +1,12 @@
 ﻿using Geesemon.Model.Common;
+
 using GraphQL.Types;
 
 namespace Geesemon.Web.GraphQL.Types
 {
     public abstract class EntityType<T> : ObjectGraphType<T> where T : Entity
     {
-        public EntityType()
+        protected EntityType()
         {
             Field<NonNullGraphType<IdGraphType>, Guid>()
                .Name("Id")
