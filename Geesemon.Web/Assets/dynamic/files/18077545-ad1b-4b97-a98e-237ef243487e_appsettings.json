@@ -1,0 +1,16 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information"
+    }
+  },
+  "AllowedHosts": "*",
+  "AuthValidIssuer": "GessemonCorp",
+  "AuthValidAudience": "Gessemon",
+  "AuthIssuerSigningKey": "rsaojpigareopignapeorgairjgja[rjga[",
+  "ConnectionString": "Server=tcp:geesemon--server.database.windows.net,1433;Initial Catalog=Geesemondb;Persist Security Info=False;User ID=geesemonadmin;Password=admin123!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;",
+  "Blob": "DefaultEndpointsProtocol=https;AccountName=geesemon;AccountKey=6Sv7BQnY6DkPsE1JNr2FU6I7dZLLLby16kkmUuqrbgksJXuZ8zi5KPDS8ZS8aRA6PO0sSPGdew8n+AStRlkHyQ==;EndpointSuffix=core.windows.net",
+  "FileProvider": "Blob" // Blob, Local, Cloudinary
+}

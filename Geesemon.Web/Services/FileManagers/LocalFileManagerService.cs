@@ -11,11 +11,10 @@ public class LocalFileManagerService : IFileManagerService
 
     public Task CreateFolderAsync(string folderPath)
     {
-        var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"wwwroot\dynamic\" + folderPath);
+        var filePath = Path.Combine(Directory.GetCurrentDirectory(), @"Assets\dynamic\" + folderPath);
         if (!Directory.Exists(filePath))
-        {
             Directory.CreateDirectory(filePath);
-        }
+
         return Task.CompletedTask;
     }
 
@@ -26,7 +25,7 @@ public class LocalFileManagerService : IFileManagerService
 
     public async Task<string> UploadFileAsync(string folderPath, IFormFile file, bool withHash = true)
     {
-        var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "dynamic", folderPath);
+        var path = Path.Combine(Directory.GetCurrentDirectory(), "Assets", "dynamic", folderPath);
         if (!Directory.Exists(path))
             Directory.CreateDirectory(path);
 
@@ -45,7 +44,7 @@ public class LocalFileManagerService : IFileManagerService
             stream.CopyTo(fileStream);
         }
 
-        return await Task.Run(() => Path.Combine("dynamic", folderPath, fileName));
+        return await Task.Run(() => Path.Combine("Assets", folderPath, fileName));
     }
 
     public string FormatUrl(string url)
