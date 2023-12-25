@@ -1,7 +1,7 @@
 export type Language = {
   code: string;
   name: string;
-  flagUrl: string;
+  flagUrl: string | null;
 };
 
 export type GeeseText = {

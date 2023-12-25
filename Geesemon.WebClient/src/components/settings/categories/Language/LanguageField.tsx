@@ -15,7 +15,7 @@ export const LanguageField = ({
 }: Props) => {
   return (
     <ProfileButton
-      icon={<img src={flagUrl} className={s.flag} />}
+      icon={flagUrl ? <img src={flagUrl} className={s.flag} /> : undefined}
       label={name}
       onClick={() => setSelected(code)}
       className={`${s.languageField} ${selected ? s.selected : ''}`}

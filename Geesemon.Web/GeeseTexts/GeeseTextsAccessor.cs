@@ -18,8 +18,8 @@ public class GeeseTextsAccessor
     public static List<Language> Languages = new List<Language>
     {
        new Language(LanguageCode.EN, "English", "/images/flags/us.jpg"),
-       new Language(LanguageCode.RU, "Russian", "/images/flags/ru.png"),
-       new Language(LanguageCode.UK, "Ukrainian", "/images/flags/uk.jpg" ),
+       new Language(LanguageCode.RU, "Russian (Русский)", null),
+       new Language(LanguageCode.UK, "Ukrainian (Українська)", "/images/flags/uk.jpg" ),
     };
 
     public List<GeeseText> GetTexts(LanguageCode language)

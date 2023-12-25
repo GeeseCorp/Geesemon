@@ -4,7 +4,7 @@ import s from './Menu.module.scss';
 import { Link } from 'react-router-dom';
 
 export type MenuItem = {
-  icon?: React.ReactNode;
+  icon?: React.ReactNode | null;
   content: React.ReactNode;
   onClick?: () => void;
   type: 'default' | 'danger';

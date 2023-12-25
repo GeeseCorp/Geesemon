@@ -25,7 +25,7 @@ const LanguageDropdown = ({ className, ...rest }: Props) => {
   };
 
   const menuItems: MenuItem[] = languages.map(l => ({
-    icon: <img src={l.flagUrl} className={styles.flag} />,
+    icon: l.flagUrl ? <img src={l.flagUrl} className={styles.flag} /> : <div className={styles.flag} />,
     content: l.name,
     type: 'default',
     onClick: () => setSelectedLanguage(l.code),
@@ -39,7 +39,7 @@ const LanguageDropdown = ({ className, ...rest }: Props) => {
       className={`${className} ${styles.languageDropdown}`}
       {...rest}
     >
-      <img src={selectedLanguage?.flagUrl} className={styles.flag} />
+      {selectedLanguage?.flagUrl && <img src={selectedLanguage?.flagUrl} className={styles.flag} />}
     </Dropdown>
   );
 };

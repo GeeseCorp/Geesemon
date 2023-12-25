@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import s from './ProfileButton.module.scss';
 
 type Props = {
-  icon: React.ReactNode;
+  icon?: React.ReactNode;
   text?: string | null | React.ReactNode;
   label?: string | null;
   type?: 'default' | 'danger';
