@@ -1,5 +1,7 @@
 ﻿using Geesemon.Model.Models;
+
 using Microsoft.EntityFrameworkCore;
+
 using System.Linq.Expressions;
 
 namespace Geesemon.DataAccess.Providers.UserProvider
@@ -12,22 +14,22 @@ namespace Geesemon.DataAccess.Providers.UserProvider
         {
         }
 
-        public async Task<IEnumerable<User>> GetReadByAsync(Guid messageId, int skip, int take)
+        public Task<List<User>> GetReadByAsync(Guid messageId, int skip, int take)
         {
-            return await context.Users
-                .Include(u => u.ReadMessages)
-                .Where(u => u.ReadMessages.Any(r => r.MessageId == messageId))
-                .OrderByDescending(u => u.ReadMessages.FirstOrDefault(rm => rm.MessageId == messageId).CreatedAt)
+            return context.ReadMessages
+                .Include(rm => rm.ReadBy)
+                .Where(rm => rm.MessageId == messageId)
+                .OrderByDescending(rm => rm.CreatedAt)
                 .Skip(skip)
                 .Take(take)
+                .Select(rm => rm.ReadBy)
                 .ToListAsync();
         }
-        
-        public async Task<int> GetReadByCountByAsync(Guid messageId)
+
+        public Task<int> GetReadByCountByAsync(Guid messageId)
         {
-            return await context.Users
-                .Include(u => u.ReadMessages)
-                .CountAsync(u => u.ReadMessages.Any(r => r.MessageId == messageId));
+            return context.ReadMessages
+                .CountAsync(rm => rm.MessageId == messageId);
         }
 
         public virtual Task<User?> GetByIdentifierAsync(string identifier, params Expression<Func<User, object>>[] includes)

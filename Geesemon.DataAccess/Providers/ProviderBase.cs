@@ -1,5 +1,7 @@
 ﻿using Geesemon.Model.Common;
+
 using Microsoft.EntityFrameworkCore;
+
 using System.Linq.Expressions;
 
 namespace Geesemon.DataAccess.Providers
@@ -11,6 +13,13 @@ namespace Geesemon.DataAccess.Providers
         public ProviderBase(AppDbContext context)
         {
             this.context = context;
+        }
+
+        public Task<List<T>> GetByIdsAsync(IEnumerable<Guid> ids)
+        {
+            return context.Set<T>()
+                .Where(u => ids.Contains(u.Id))
+                .ToListAsync();
         }
 
         public virtual Task<T?> GetByIdAsync(Guid? id, params Expression<Func<T, object>>[] includes)
