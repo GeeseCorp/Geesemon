@@ -32,6 +32,7 @@
   "Firstname": "Им'я",
   "Lastname": "Прізвище",
   "Identifier": "Ідентификатор",
+  "Username": "Username",
 
   //left bar
   "NewGroup": "Нова група",

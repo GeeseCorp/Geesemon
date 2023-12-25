@@ -13,25 +13,22 @@ const LanguageSelection = () => {
     dispatch(settingsActions.getLanguagesAsync());
   }, [dispatch]);
 
-  const setSelectedLanguage = (name: string) =>{
-    setSelectedLangCookie('lang', name, { path: '/' });
+  const setSelectedLanguage = (code: string) => {
+    setSelectedLangCookie('lang', code, { path: '/' });
     dispatch(settingsActions.getGeeseTextsAsync());
-  };   
+  };
 
   return (
     <>
-      {languages.map(lang =>
-        (
-          <div key={lang.key}>
-            <LanguageField
-              id={'language'}
-              key={lang.key}
-              language={lang}
-              selected={lang.key === selectedLangCookie.lang}
-              setSelected={name => setSelectedLanguage(name)}
-            />
-          </div>
-        ))}
+      {languages.map(lang => (
+        <div key={lang.code}>
+          <LanguageField
+            language={lang}
+            selected={lang.code === selectedLangCookie.lang}
+            setSelected={code => setSelectedLanguage(code)}
+          />
+        </div>
+      ))}
     </>
   );
 };

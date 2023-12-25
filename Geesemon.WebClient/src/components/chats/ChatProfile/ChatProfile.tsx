@@ -25,13 +25,13 @@ import { notificationsActions } from '../../../behavior/features/notifications/s
 import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
 
 export enum Tab {
-    Members = 'Members',
-    Files = 'Files',
-    Voice = 'Voice',
+  Members = 'Members',
+  Files = 'Files',
+  Voice = 'Voice',
 }
 
 type Props = {
-    chat: Chat;
+  chat: Chat;
 };
 
 export const ChatProfile: FC<Props> = ({ chat }) => {
@@ -64,13 +64,13 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
 
   const getContextMenuItems = (user: UserType): MenuItem[] => {
     const items: MenuItem[] = [];
-    if(user.id !== authedUser?.id && selectedChat?.creatorId === authedUser?.id)
+    if (user.id !== authedUser?.id && selectedChat?.creatorId === authedUser?.id)
       items.push({
         content: T.RemoveFromGroup,
         icon: <img src={deleteSvg} width={20} className={'dangerSvg'} alt={'deleteSvg'} />,
         onClick: () => {
-          if(!selectedChat){
-            dispatch(notificationsActions.addError('No selected chat'));            
+          if (!selectedChat) {
+            dispatch(notificationsActions.addError('No selected chat'));
             return;
           }
           dispatch(chatActions.chatRemoveMembersAsync({
@@ -81,22 +81,22 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
         type: 'danger',
       });
     return items;
-  }; 
+  };
 
   const renderTab = () => {
     switch (selectedTab) {
-    case Tab.Members:
-      return chat?.users.map(user => (
-        <User
-          key={user.id}
-          user={user}
-          selectedUsers={selectedUsers}
-          onSelectedUsersChange={onSelectedUsersChangeHandler}
-          getContextMenuItems={getContextMenuItems}
-        />
-      ));
-    default:
-      <></>;
+      case Tab.Members:
+        return chat?.users.map(user => (
+          <User
+            key={user.id}
+            user={user}
+            selectedUsers={selectedUsers}
+            onSelectedUsersChange={onSelectedUsersChangeHandler}
+            getContextMenuItems={getContextMenuItems}
+          />
+        ));
+      default:
+        return null;
     }
   };
 
@@ -113,12 +113,12 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
           <div className={'headerTitle'}>{T.Profile}</div>
         </div>
         {chat.type === ChatKind.Group &&
-                    <HeaderButton
-                      keyName={'RightSidebar/UpdateGroup'}
-                      onClick={() => dispatch(appActions.setRightSidebarState(RightSidebarState.UpdateGroup))}
-                    >
-                      <img src={pencilOutlinedSvg} width={20} className={'secondaryTextSvg'} alt={'pencilOutlinedSvg'} />
-                    </HeaderButton>
+          <HeaderButton
+            keyName={'RightSidebar/UpdateGroup'}
+            onClick={() => dispatch(appActions.setRightSidebarState(RightSidebarState.UpdateGroup))}
+          >
+            <img src={pencilOutlinedSvg} width={20} className={'secondaryTextSvg'} alt={'pencilOutlinedSvg'} />
+          </HeaderButton>
         }
       </div>
       <div className={s.chatInfo}>
@@ -144,12 +144,12 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
           }
         </div>
         <div className={s.chatProfileButtons}>
-          <ProfileButton 
+          <ProfileButton
             icon={<img src={atSignSvg} width={25} className={'secondaryTextSvg'} alt={'atSignSvg'} />}
             text={chat.identifier}
-            label={T.Identifier}
+            label={selectedChat?.type === ChatKind.Group ? T.Identifier : T.Username}
           />
-          <ProfileButton 
+          <ProfileButton
             icon={<img src={notificationOutlinedSvg} width={25} className={'secondaryTextSvg'} alt={'notificationOutlinedSvg'} />}
             text={(
               <div className={s.notifications}>

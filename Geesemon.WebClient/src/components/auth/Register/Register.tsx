@@ -12,11 +12,11 @@ import { useEffect } from 'react';
 import { formatGeesetext } from '../../../utils/stringUtils';
 
 type FormValues = {
-    firstName: string;
-    lastName?: string;
-    email?: string;
-    identifier: string;
-    password: string;
+  firstName: string;
+  lastName?: string;
+  email?: string;
+  identifier: string;
+  password: string;
 };
 
 export const Register = () => {
@@ -28,18 +28,18 @@ export const Register = () => {
     firstName: Yup.string()
       .max(100, formatGeesetext(T.MaxLengthValidation, 100))
       .required(T.Required),
-  
+
     lastName: Yup.string()
       .max(100, formatGeesetext(T.MaxMaxLengthValidation, 100)),
-  
+
     email: Yup.string()
       .email(T.InvalidEmail)
       .max(100, formatGeesetext(T.MaxMaxLengthValidation, 100)),
-  
+
     identifier: Yup.string()
       .max(100, formatGeesetext(T.MaxMaxLengthValidation, 100))
       .required(T.Required),
-  
+
     password: Yup.string()
       .min(3, formatGeesetext(T.MinLengthValidation, 3))
       .max(100, formatGeesetext(T.MaxMaxLengthValidation, 100))
@@ -102,7 +102,7 @@ export const Register = () => {
           errors={formik.errors.email}
         />
         <Input
-          placeholder={T.Identifier}
+          placeholder={T.Username}
           name={nameof<FormValues>('identifier')}
           value={formik.values.identifier}
           onChange={formik.handleChange}

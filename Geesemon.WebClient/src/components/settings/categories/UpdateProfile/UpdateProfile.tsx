@@ -19,9 +19,9 @@ import { format } from 'util';
 type Props = {};
 
 type FormValues = {
-    firstname: string;
-    lastname?: string;
-    identifier: string;
+  firstname: string;
+  lastname?: string;
+  identifier: string;
 };
 
 export const UpdateProfile: FC<Props> = ({ }) => {
@@ -74,7 +74,7 @@ export const UpdateProfile: FC<Props> = ({ }) => {
       </div>
       <form onSubmit={formik.handleSubmit} className={s.form}>
         <InputPhoto
-          image={image ? URL.createObjectURL(image) : imageUrl} 
+          image={image ? URL.createObjectURL(image) : imageUrl}
           onChange={files => {
             setImage(files?.length ? files[0] : null);
             setImageUrl('');
@@ -99,7 +99,7 @@ export const UpdateProfile: FC<Props> = ({ }) => {
           errors={formik.errors.lastname}
         />
         <Input
-          placeholder={T.Identifier}
+          placeholder={T.Username}
           name={nameof<FormValues>('identifier')}
           value={formik.values.identifier}
           onChange={formik.handleChange}
@@ -109,7 +109,7 @@ export const UpdateProfile: FC<Props> = ({ }) => {
         />
         <div className={s.bottonSubmit}>
           <SmallPrimaryButton type="submit">
-            {updateProfileLoading 
+            {updateProfileLoading
               ? <SmallLoading />
               : <img src={checkSvg} width={15} className={'primaryTextSvg'} alt={'checkSvg'} />
             }

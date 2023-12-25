@@ -4,22 +4,25 @@ import s from './Menu.module.scss';
 import { Link } from 'react-router-dom';
 
 export type MenuItem = {
-    icon?: React.ReactNode;
-    content: React.ReactNode;
-    onClick?: () => void;
-    type: 'default' | 'danger';
-    link?: string;
+  icon?: React.ReactNode;
+  content: React.ReactNode;
+  onClick?: () => void;
+  type: 'default' | 'danger';
+  link?: string;
+  selected?: boolean;
 };
 
 type Props = {
-    items: MenuItem[];
-    left?: number;
-    top?: number;
-    right?: number;
-    bottom?: number;
-    setOpen: Dispatch<React.SetStateAction<boolean>>;
+  items: MenuItem[];
+  left?: number;
+  top?: number;
+  right?: number;
+  bottom?: number;
+  setOpen: Dispatch<React.SetStateAction<boolean>>;
+  className?: string;
 };
-export const Menu: FC<Props> = ({ items, left, top, right, bottom, setOpen }) => {
+
+export const Menu: FC<Props> = ({ items, left, top, right, bottom, setOpen, className }) => {
   const menuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -42,7 +45,7 @@ export const Menu: FC<Props> = ({ items, left, top, right, bottom, setOpen }) =>
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.5 }}
         transition={{ duration: .25 }}
-        className={s.menuItems}
+        className={`${s.menuItems} ${className}`}
         ref={menuRef}
         style={{
           left,
@@ -65,7 +68,7 @@ export const Menu: FC<Props> = ({ items, left, top, right, bottom, setOpen }) =>
                 <div
                   key={i}
                   onClick={() => setOpen(false)}
-                  className={[s.menuItem, item.type === 'danger' && 'danger'].join(' ')}
+                  className={[s.menuItem, item.type === 'danger' && 'danger', item.selected ? s.selected : ''].join(' ')}
                 >
                   <div className={s.icon}>{item.icon}</div>
                   <div className={s.content}>{item.content}</div>
@@ -77,7 +80,7 @@ export const Menu: FC<Props> = ({ items, left, top, right, bottom, setOpen }) =>
             <div
               key={i}
               onClick={onClick}
-              className={[s.menuItem, item.type === 'danger' && 'danger'].join(' ')}
+              className={[s.menuItem, item.type === 'danger' && 'danger', item.selected ? s.selected : ''].join(' ')}
             >
               <div className={s.icon}>{item.icon}</div>
               <div className={s.content}>{item.content}</div>

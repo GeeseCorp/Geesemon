@@ -162,7 +162,7 @@ body {
     font-weight: 600;
 }
 
-.ant-message .ant-message-custom-content>span:last-child {
+.ant-message .ant-message-custom-content > span:last-child {
     color: black !important;
 }
 
@@ -202,4 +202,16 @@ body {
 
 .disabled {
     pointer-events: none;
+}
+
+.languageDropdown {
+    position: absolute;
+    right: 100px;
+    top: 20px;
+}
+
+@media (max-width:600px) {
+    .languageDropdown {
+        right: 20px;
+    }
 }

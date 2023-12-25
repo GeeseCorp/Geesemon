@@ -1,8 +1,3 @@
-﻿namespace Geesemon.Web.Geesetext;
+﻿namespace Geesemon.Web.GeeseTexts;
 
-public enum Language
-{
-    EN,
-    RU,
-    UA
-}
+public record Language(LanguageCode Code, string Name, string FlagUrl);

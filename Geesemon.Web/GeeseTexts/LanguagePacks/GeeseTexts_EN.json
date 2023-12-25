@@ -32,6 +32,7 @@
   "Firstname": "Firstname",
   "Lastname": "Lastname",
   "Identifier": "Identifier",
+  "Username": "Username",
 
   //left bar
   "NewGroup": "New group",

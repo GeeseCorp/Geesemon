@@ -1,17 +1,23 @@
-import React, { FC, MouseEventHandler } from 'react';
+import React, { FC } from 'react';
 import s from './ProfileButton.module.scss';
 
 type Props = {
-    icon: React.ReactNode;
-    text?: string | null | React.ReactNode;
-    label?: string | null;
-    type?: 'default' | 'danger';
-    onClick?: MouseEventHandler | undefined;
-};
+  icon: React.ReactNode;
+  text?: string | null | React.ReactNode;
+  label?: string | null;
+  type?: 'default' | 'danger';
+} & JSX.IntrinsicElements['div'];
 
-export const ProfileButton: FC<Props> = ({ icon, text, label, onClick, type = 'default' }) => {
+export const ProfileButton: FC<Props> = ({
+  icon,
+  text,
+  label,
+  type = 'default',
+  className,
+  ...rest
+}) => {
   return (
-    <div className={s.profileButton} onClick={onClick}>
+    <div className={`${s.profileButton} ${className}`} {...rest}>
       <div className={s.icon}>
         {icon}
       </div>
