@@ -29,7 +29,7 @@ public class SessionProvider : ProviderBase<Session>, ISessionProvider
         return context.Sessions.SingleOrDefaultAsync(s => s.Token == token);
     }
 
-    public Task<List<Session>> GetLastsActiveAsync(IEnumerable<Guid> userIds)
+    public Task<List<Session>> GetLastActiveAsync(IEnumerable<Guid> userIds)
     {
         return context.Sessions
             .Where(s => userIds.Contains(s.UserId))

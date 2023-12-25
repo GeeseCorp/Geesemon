@@ -31,7 +31,7 @@ public class SessionLoader
     private async Task<IDictionary<Guid, Session>> FetchAsync(IEnumerable<Guid> userIds)
     {
         using var scope = serviceProvider.CreateScope();
-        var sessions = await scope.ServiceProvider.GetRequiredService<SessionManager>().GetLastsActiveAsync(userIds);
+        var sessions = await scope.ServiceProvider.GetRequiredService<SessionManager>().GetLastActiveAsync(userIds);
         return sessions.ToDictionary(s => s.UserId);
     }
 }
