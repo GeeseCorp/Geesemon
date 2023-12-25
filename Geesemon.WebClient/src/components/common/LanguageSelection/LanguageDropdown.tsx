@@ -31,7 +31,6 @@ const LanguageDropdown = ({ className, ...rest }: Props) => {
     onClick: () => setSelectedLanguage(l.code),
     selected: l.code === selectedLanguage?.code,
   }));
-  console.log(menuItems);
 
   return (
     <Dropdown

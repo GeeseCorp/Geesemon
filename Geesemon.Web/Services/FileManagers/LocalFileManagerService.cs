@@ -44,7 +44,7 @@ public class LocalFileManagerService : IFileManagerService
             stream.CopyTo(fileStream);
         }
 
-        return await Task.Run(() => Path.Combine("Assets", folderPath, fileName));
+        return await Task.Run(() => Path.Combine("dynamic", folderPath, fileName));
     }
 
     public string FormatUrl(string url)

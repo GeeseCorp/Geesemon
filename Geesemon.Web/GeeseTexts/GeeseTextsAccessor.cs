@@ -17,9 +17,9 @@ public class GeeseTextsAccessor
 
     public static List<Language> Languages = new List<Language>
     {
-       new Language(LanguageCode.EN, "English", "./images/flags/us.jpg"),
-       new Language(LanguageCode.RU, "Russian", "./images/flags/ru.png"),
-       new Language(LanguageCode.UK, "Ukrainian", "./images/flags/uk.jpg" ),
+       new Language(LanguageCode.EN, "English", "/images/flags/us.jpg"),
+       new Language(LanguageCode.RU, "Russian", "/images/flags/ru.png"),
+       new Language(LanguageCode.UK, "Ukrainian", "/images/flags/uk.jpg" ),
     };
 
     public List<GeeseText> GetTexts(LanguageCode language)
@@ -51,14 +51,14 @@ public class GeeseTextsAccessor
 
     private void FillMissingTexts()
     {
-        foreach (var lang in Enum.GetNames<LanguageCode>())
+        foreach (var lang in Languages)
         {
-            if (lang == LanguageCode.EN.ToString())
+            if (lang.Code == LanguageCode.EN)
                 continue;
 
             foreach (var text in GeeseTexts[LanguageCode.EN])
             {
-                var langTexts = GeeseTexts[Enum.Parse<LanguageCode>(lang)];
+                var langTexts = GeeseTexts[lang.Code];
                 if (langTexts != null && !langTexts.Contains(text, new GeeseTextEqualityComparer()))
                 {
                     langTexts.Add(text);
