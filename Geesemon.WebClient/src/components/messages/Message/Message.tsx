@@ -7,8 +7,8 @@ import { ChatKind, Message, MessageKind, MediaKind, ForwardedMessage } from '../
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
 import { useOnScreen } from '../../../hooks/useOnScreen';
 import { useSelectedChat } from '../../../hooks/useSelectedChat';
-import { formatGeesetext, getFileName } from '../../../utils/stringUtils';
-import { FileType, getFileType } from '../../../utils/fileUtils';
+import { formatGeesetext } from '../../../utils/stringUtils';
+import { FileType, getFileName, getFileType } from '../../../utils/fileUtils';
 import { Checkbox } from '../../common/formControls/Checkbox/Checkbox';
 import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
 import { VoiceMessage } from './VoiceMessage';
@@ -96,9 +96,11 @@ export const MessageItem: FC<Props> = memo(({ message, inputTextFocus, isFromVis
               {renderFile(message.forwardedMessage, message.forwardedMessage.text ? null : message.createdAt)}
               {message.forwardedMessage.text && <span className={styles.messageText}>{forwardedMessageText}</span>}
               {(message.forwardedMessage.text || forwardedMessageFileType === FileType.File) && (
-                <span className={styles.messageInfo}>
-                  <MessageAdditionalInfo message={message} isMessageMy={isMessageMy} />
-                </span>
+                <MessageAdditionalInfo
+                  className={styles.messageInfo}
+                  message={message}
+                  isMessageMy={isMessageMy}
+                />
               )}
             </div>
           );
@@ -142,9 +144,11 @@ export const MessageItem: FC<Props> = memo(({ message, inputTextFocus, isFromVis
               {renderFile(message, message.text ? null : message.createdAt)}
               {message.text && <span className={styles.messageText}>{messageText}</span>}
               {(message.text || fileType === FileType.File) && message.mediaKind !== MediaKind.Video && (
-                <span className={styles.messageInfo}>
-                  <MessageAdditionalInfo message={message} isMessageMy={isMessageMy} />
-                </span>
+                <MessageAdditionalInfo
+                  className={styles.messageInfo}
+                  message={message}
+                  isMessageMy={isMessageMy}
+                />
               )}
             </div>
           );
@@ -171,9 +175,11 @@ export const MessageItem: FC<Props> = memo(({ message, inputTextFocus, isFromVis
           <div className={styles.mediaWrapper}>
             <img src={url} alt={url} className={styles.media} />
             {date && (
-              <div className={styles.fileMessageInfo}>
-                <MessageAdditionalInfo message={message} isMessageMy={isMessageMy} />
-              </div>
+              <MessageAdditionalInfo
+                className={styles.fileMessageInfo}
+                message={message}
+                isMessageMy={isMessageMy}
+              />
             )}
           </div>
         );
@@ -182,9 +188,11 @@ export const MessageItem: FC<Props> = memo(({ message, inputTextFocus, isFromVis
           <div className={styles.mediaWrapper}>
             <video controls src={url} className={styles.media} />
             {date && (
-              <div className={styles.fileMessageInfo}>
-                <MessageAdditionalInfo message={message} isMessageMy={isMessageMy} />
-              </div>
+              <MessageAdditionalInfo
+                className={styles.fileMessageInfo}
+                message={message}
+                isMessageMy={isMessageMy}
+              />
             )}
           </div>
         );
@@ -192,7 +200,7 @@ export const MessageItem: FC<Props> = memo(({ message, inputTextFocus, isFromVis
         return (
           <a href={url} target="_blank" rel="noreferrer">
             <div className={styles.file}>
-              <img src={fileSvg} width={25} className={'primaryTextSvg'} alt={'fileSvg'} />
+              <img src={fileSvg} width={30} className={'primaryTextSvg'} alt={'fileSvg'} />
               <div>{getFileName(url)}</div>
             </div>
           </a>

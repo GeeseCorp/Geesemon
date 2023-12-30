@@ -1,6 +1,6 @@
 import { combineEpics, Epic, ofType } from 'redux-observable';
-import { catchError, endWith, from, iif, map, mergeMap, of, startWith, tap } from 'rxjs';
-import { isGuidEmpty } from '../../../utils/stringUtils';
+import { catchError, endWith, from, mergeMap, of, startWith } from 'rxjs';
+import { isGuidEmpty } from '../../../utils/guidUtils';
 import { client } from '../../client';
 import { RootState } from '../../store';
 import { appActions, LeftSidebarState, RightSidebarState } from '../app/slice';
