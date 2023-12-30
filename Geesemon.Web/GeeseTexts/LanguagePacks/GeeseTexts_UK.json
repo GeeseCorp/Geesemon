@@ -31,13 +31,13 @@
   "UpdateProfile": "Редагувати профіль",
   "Firstname": "Им'я",
   "Lastname": "Прізвище",
-  "Identifier": "Ідентификатор",
+  "Identifier": "Ідентифікатор",
   "Username": "Username",
 
   //left bar
   "NewGroup": "Нова група",
   "GroupName": "Назва групи",
-  "NewPersonalChat": "Новий чат",
+  "NewPersonalChat": "Новий персональний чат",
   "Search": "Пошук",
   "SearchMembers": "Пошук участников",
   "SearchUsers": "Пошук користувачів",
@@ -57,9 +57,9 @@
   "Password": "Пароль",
   "Login": "Увійти",
   "LoginInGeesemon": "Вхід у Geesemon",
-  "Register": "Зерегиструватися",
+  "Register": "Зереєструватися",
   "LoginViaQRCode": "Увійти через QR код",
-  "LoginViaCredentials": "Увійти з реквезитмами",
+  "LoginViaCredentials": "Увійти за обліковими даними",
   "LoginInGeesemonViaQRCode": "Вхід у Geesemon через QR код",
   "Email": "Пошта",
   "RegisterInGeesemon": "Зарееструватися у Geesemon",
@@ -80,10 +80,11 @@
   "Forward": "Переслати",
   "Select": "Вибрати",
   "Seen": "бачили",
+  "Download": "Завантажити",
 
   // Validation
   "Required": "Обов`язкове",
-  "InvalidEmail": "Крива почка, хлопче...",
+  "InvalidEmail": "Некоректний email",
   "MaxLengthValidation": "Повинен бути {0} символiв чи меньше",
   "MinLengthValidation": "Повинен бути {0} символiв чи бiльше"
 }

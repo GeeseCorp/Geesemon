@@ -39,13 +39,6 @@ public class SessionProvider : ProviderBase<Session>, ISessionProvider
             .ToListAsync();
     }
 
-    public Task<Session?> GetLastActiveAsync(Guid userId)
-    {
-        return context.Sessions
-            .OrderByDescending(s => s.LastTimeOnline)
-            .FirstOrDefaultAsync(s => s.UserId == userId);
-    }
-
     public async Task RemoveAllForUserAsync(Guid userId)
     {
         var tokens = await GetAsync(t => t.UserId == userId);

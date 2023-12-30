@@ -5,7 +5,7 @@ import { chatActions } from '../../../behavior/features/chats';
 import { ChatKind, Message } from '../../../behavior/features/chats/types';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
 import { useSelectedChat, useSelectedChatIdentifier } from '../../../hooks/useSelectedChat';
-import { isGuidEmpty } from '../../../utils/stringUtils';
+import { isGuidEmpty } from '../../../utils/guidUtils';
 import { Avatar } from '../../common/Avatar/Avatar';
 import { AvatarWithoutImage } from '../../common/AvatarWithoutImage/AvatarWithoutImage';
 import { MessageItem } from '../Message/Message';

@@ -5,26 +5,6 @@ export const getFirstAndLastName = (name: string) => {
   return [firstName, lastName] as const;
 };
 
-export const isGuidEmpty = (guid: string): boolean => {
-  return guid === '00000000-0000-0000-0000-000000000000';
-};
-
-export const getFileName = (str: string): string => {
-  const parts = str.split('/');
-  if (!parts.length)
-    return '';
-  const lastPart = parts[parts.length - 1];
-  return lastPart.substring(37);
-};
-
-export const getFileExtension = (str: string): string => {
-  const parts = str.split('.');
-  if (!parts.length)
-    return '';
-  const lastPart = parts[parts.length - 1];
-  return lastPart.substring(1);
-};
-
 export const toCamel = (text : string) => {
   return text.replace(/([-_][a-z])/ig, $1 => {
     return $1.toUpperCase()

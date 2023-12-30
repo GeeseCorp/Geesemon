@@ -8,6 +8,7 @@ import pencilFilledSvg from '../../../assets/svg/pencilFilled.svg';
 import personSvg from '../../../assets/svg/person.svg';
 import savedSvg from '../../../assets/svg/saved.svg';
 import settingsSvg from '../../../assets/svg/settings.svg';
+import peopleSvg from '../../../assets/svg/people.svg';
 import { appActions, LeftSidebarState } from '../../../behavior/features/app/slice';
 import { authActions } from '../../../behavior/features/auth/slice';
 import { navigateActions } from '../../../behavior/features/navigate/slice';
@@ -57,15 +58,15 @@ export const Chats: FC = () => {
   const createChatMenuItems: MenuItem[] = [
     {
       icon: <img src={personSvg} className={[s.menuItem, 'secondaryTextSvg'].join(' ')} alt={'personSvg'} />,
-      content: T.NewGroup,
-      type: 'default',
-      onClick: () => dispatch(appActions.setLeftSidebarState(LeftSidebarState.CreateGroupChat)),
-    },
-    {
-      icon: <img src={personSvg} className={[s.menuItem, 'secondaryTextSvg'].join(' ')} alt={'personSvg'} />,
       content: T.NewPersonalChat,
       type: 'default',
       onClick: () => dispatch(appActions.setLeftSidebarState(LeftSidebarState.CreatePersonalChat)),
+    },
+    {
+      icon: <img src={peopleSvg} className={[s.menuItem, 'secondaryTextSvg'].join(' ')} alt={'peopleSvg'} />,
+      content: T.NewGroup,
+      type: 'default',
+      onClick: () => dispatch(appActions.setLeftSidebarState(LeftSidebarState.CreateGroupChat)),
     },
   ];
 
@@ -123,10 +124,7 @@ export const Chats: FC = () => {
             <LeftSidebarSmallPrimaryButton>
               <div
                 className={s.smallPrimaryButton}
-                onClick={isCreateChatMenuVisible
-                  ? () => setIsCreateChatMenuVisible(false)
-                  : () => setIsCreateChatMenuVisible(true)
-                }
+                onClick={() => setIsCreateChatMenuVisible(prev => !prev)}
               >
                 <SmallPrimaryButton>
                   {isCreateChatMenuVisible

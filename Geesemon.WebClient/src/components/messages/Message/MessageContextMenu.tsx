@@ -9,11 +9,14 @@ import deleteSvg from '../../../assets/svg/delete.svg';
 import pencilOutlinedSvg from '../../../assets/svg/pencilOutlined.svg';
 import replySvg from '../../../assets/svg/reply.svg';
 import selectSvg from '../../../assets/svg/select.svg';
+import copySvg from '../../../assets/svg/copy.svg';
+import downloadSvg from '../../../assets/svg/download.svg';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
 import { ChatKind, Message } from '../../../behavior/features/chats/types';
 import { useSelectedChat } from '../../../hooks/useSelectedChat';
 import { Checks } from '../Checks/Checks';
 import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
+import { downloadFile } from '../../../utils/fileUtils';
 
 type Props = {
     children: ReactNode;
@@ -28,6 +31,14 @@ export const MessageContextMenu = ({ children, message, inputTextFocus }: Props)
     const dispatch = useAppDispatch();
     const T = useGeeseTexts();
 
+    const onCopy = () => {
+        const messageText = message.text ?? message.forwardedMessage?.text;
+        if (!messageText)
+            return;
+
+        navigator.clipboard.writeText(messageText);
+    };
+
     const getContextMenuItems = (): MenuItem[] => {
         const items: MenuItem[] = [];
 
@@ -35,7 +46,7 @@ export const MessageContextMenu = ({ children, message, inputTextFocus }: Props)
             items.push({
                 content: T.ForwardSelected,
                 icon: <img src={replySvg} width={17} className={['primaryTextSvg', styles.forwardSvg].join(' ')} alt={'forwardSvg'} />,
-                onClick: () => setForwardMessageIdsHanlder(selectedMessageIds),
+                onClick: () => setForwardMessageIdsHandler(selectedMessageIds),
                 type: 'default',
             });
 
@@ -60,7 +71,7 @@ export const MessageContextMenu = ({ children, message, inputTextFocus }: Props)
             items.push({
                 content: T.Reply,
                 icon: <img src={replySvg} width={17} className={'primaryTextSvg'} alt={'replySvg'} />,
-                onClick: () => setReplyMessageHanlder(message.id),
+                onClick: () => setReplyMessageHandler(message.id),
                 type: 'default',
             });
 
@@ -68,25 +79,37 @@ export const MessageContextMenu = ({ children, message, inputTextFocus }: Props)
                 items.push({
                     content: T.Update,
                     icon: <img src={pencilOutlinedSvg} width={15} className={'primaryTextSvg'} alt={'pencilOutlinedSvg'} />,
-                    onClick: () => setInUpdateMessageHanlder(message.id),
+                    onClick: () => setInUpdateMessageHandler(message.id),
+                    type: 'default',
+                });
+
+            if (message.text || message.forwardedMessage?.text) {
+                items.push({
+                    content: T.Copy,
+                    icon: <img src={copySvg} width={15} className={'primaryTextSvg'} alt={'copySvg'} />,
+                    type: 'default',
+                    onClick: onCopy,
+                });
+            }
+
+            if (message.fileUrl)
+                items.push({
+                    content: T.Download,
+                    icon: <img src={downloadSvg} width={17} className="primaryTextSvg" alt={'downloadSvg'} />,
+                    onClick: () => downloadFile(message.fileUrl!),
                     type: 'default',
                 });
 
             items.push(
-                {
-                    content: T.Copy,
-                    // icon: <img src={pencilOutlinedSvg} width={15} className={'primaryTextSvg'} alt={'pencilOutlinedSvg'} />,
-                    type: 'default',
-                },
-                {
-                    content: T.Pin,
-                    // icon: <img src={pencilOutlinedSvg} width={15} className={'primaryTextSvg'} alt={'pencilOutlinedSvg'} />,
-                    type: 'default',
-                },
+                // {
+                //     content: T.Pin,
+                //     // icon: <img src={pencilOutlinedSvg} width={15} className={'primaryTextSvg'} alt={'pencilOutlinedSvg'} />,
+                //     type: 'default',
+                // },
                 {
                     content: T.Forward,
                     icon: <img src={replySvg} width={17} className={['primaryTextSvg', styles.forwardSvg].join(' ')} alt={'forwardSvg'} />,
-                    onClick: () => setForwardMessageIdsHanlder([message.id]),
+                    onClick: () => setForwardMessageIdsHandler([message.id]),
                     type: 'default',
                 },
                 {
@@ -141,19 +164,19 @@ export const MessageContextMenu = ({ children, message, inputTextFocus }: Props)
         return items;
     };
 
-    const setInUpdateMessageHanlder = (messageId: string) => {
+    const setInUpdateMessageHandler = (messageId: string) => {
         dispatch(chatActions.setInUpdateMessageId(messageId));
         dispatch(chatActions.setMode(Mode.Updating));
         inputTextFocus && inputTextFocus();
     };
 
-    const setReplyMessageHanlder = (messageId: string) => {
+    const setReplyMessageHandler = (messageId: string) => {
         dispatch(chatActions.setReplyMessageId(messageId));
         dispatch(chatActions.setMode(Mode.Reply));
         inputTextFocus && inputTextFocus();
     };
 
-    const setForwardMessageIdsHanlder = (messageIds: string[]) => {
+    const setForwardMessageIdsHandler = (messageIds: string[]) => {
         dispatch(chatActions.setForwardMessageIds(messageIds));
         dispatch(chatActions.setMode(Mode.Forward_SelectChat));
     };
