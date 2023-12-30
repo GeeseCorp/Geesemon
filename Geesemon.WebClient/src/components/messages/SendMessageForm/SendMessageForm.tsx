@@ -29,6 +29,7 @@ import { RoundVideoRecordingModal } from './RoundVideoRecordingModal';
 import { VolumeIndicator } from './VolumeIndicator';
 import { TimeAndIndicator } from './TimeAndIndicator';
 import { localStorageGetItem, localStorageSetItem } from '../../../utils/localStorageUtils';
+import { shallowEqual } from 'react-redux';
 
 const INPUT_TEXT_DEFAULT_HEIGHT = '25px';
 
@@ -40,9 +41,19 @@ type Props = {
 export type RecordingType = 'Voice' | 'RoundVideo';
 
 export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => {
-  const mode = useAppSelector(s => s.chats.mode);
-  const inUpdateMessageId = useAppSelector(s => s.chats.inUpdateMessageId);
-  const replyMessageId = useAppSelector(s => s.chats.replyMessageId);
+  const {
+    mode,
+    inUpdateMessageId,
+    replyMessageId,
+    forwardMessageIds,
+    chats,
+  } = useAppSelector(s => ({
+    mode: s.chats.mode,
+    inUpdateMessageId: s.chats.inUpdateMessageId,
+    replyMessageId: s.chats.replyMessageId,
+    forwardMessageIds: s.chats.forwardMessageIds,
+    chats: s.chats.chats,
+  }), shallowEqual);
   const [messageText, setMessageText] = useState('');
   const [isEmojiPickerVisible, setIsEmojiPickerVisible] = useState(false);
   const dispatch = useAppDispatch();
@@ -51,7 +62,6 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
   const inUpdateMessage = messages.find(m => m.id === inUpdateMessageId);
   const replyMessage = messages.find(m => m.id === replyMessageId);
   const [files, setFiles] = useState<File[]>([]);
-  const forwardMessageIds = useAppSelector(s => s.chats.forwardMessageIds);
   const T = useGeeseTexts();
   const [recordingType, setRecordingType] = useState<RecordingType>(localStorageGetItem('RecordingType') as RecordingType || 'Voice');
 
@@ -230,7 +240,10 @@ export const SendMessageForm: FC<Props> = ({ scrollToBottom, inputTextRef }) => 
       }
       case Mode.Forward: {
         const firstForwardMessageId = forwardMessageIds.length ? forwardMessageIds[0] : null;
-        const firstForwardMessage = selectedChat?.messages.find(m => m.id === firstForwardMessageId);
+        const firstForwardMessage = chats
+          .find(c => c.messages.some(m => m.id === firstForwardMessageId))
+          ?.messages.find(m => m.id === firstForwardMessageId);
+
         switch (forwardMessageIds.length) {
           case 0:
             return null;
