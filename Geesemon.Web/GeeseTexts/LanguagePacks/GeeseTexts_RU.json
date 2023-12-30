@@ -37,7 +37,7 @@
   //left bar
   "NewGroup": "Новая группа",
   "GroupName": "Название группы",
-  "NewPersonalChat": "Новый чат",
+  "NewPersonalChat": "Новый персональный чат",
   "Search": "Поиск",
   "SearchMembers": "Поиск участников",
   "SearchUsers": "Поиск пользователей",
@@ -59,7 +59,7 @@
   "LoginInGeesemon": "Вход в Geesemon",
   "Register": "Зарегистрироваться",
   "LoginViaQRCode": "Войти через QR код",
-  "LoginViaCredentials": "Войти с реквезитмами",
+  "LoginViaCredentials": "Войти по учетным данным",
   "LoginInGeesemonViaQRCode": "Вход в Geesemon через QR код",
   "Email": "Почта",
   "RegisterInGeesemon": "Зарегистрироваться в Geesemon",
@@ -84,7 +84,7 @@
 
   // Validation
   "Required": "Обязательное",
-  "InvalidEmail": "Кривая почта, чел...",
+  "InvalidEmail": "Некорректный email",
   "MaxLengthValidation": "Должен быть {0} символов или меньше",
   "MinLengthValidation": "Должен быть {0} символов или больше"
 }
