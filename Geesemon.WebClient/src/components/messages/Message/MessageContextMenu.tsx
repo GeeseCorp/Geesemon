@@ -9,6 +9,7 @@ import deleteSvg from '../../../assets/svg/delete.svg';
 import pencilOutlinedSvg from '../../../assets/svg/pencilOutlined.svg';
 import replySvg from '../../../assets/svg/reply.svg';
 import selectSvg from '../../../assets/svg/select.svg';
+import copySvg from '../../../assets/svg/copy.svg';
 import { useAppDispatch, useAppSelector } from '../../../behavior/store';
 import { ChatKind, Message } from '../../../behavior/features/chats/types';
 import { useSelectedChat } from '../../../hooks/useSelectedChat';
@@ -27,6 +28,14 @@ export const MessageContextMenu = ({ children, message, inputTextFocus }: Props)
     const selectedChat = useSelectedChat();
     const dispatch = useAppDispatch();
     const T = useGeeseTexts();
+
+    const onCopy = () => {
+        const messageText = message.text ?? message.forwardedMessage?.text;
+        if (!messageText)
+            return;
+
+        navigator.clipboard.writeText(messageText);
+    };
 
     const getContextMenuItems = (): MenuItem[] => {
         const items: MenuItem[] = [];
@@ -72,17 +81,21 @@ export const MessageContextMenu = ({ children, message, inputTextFocus }: Props)
                     type: 'default',
                 });
 
-            items.push(
-                {
+            if (message.text || message.forwardedMessage?.text) {
+                items.push({
                     content: T.Copy,
-                    // icon: <img src={pencilOutlinedSvg} width={15} className={'primaryTextSvg'} alt={'pencilOutlinedSvg'} />,
+                    icon: <img src={copySvg} width={15} className={'primaryTextSvg'} alt={'copySvg'} />,
                     type: 'default',
-                },
-                {
-                    content: T.Pin,
-                    // icon: <img src={pencilOutlinedSvg} width={15} className={'primaryTextSvg'} alt={'pencilOutlinedSvg'} />,
-                    type: 'default',
-                },
+                    onClick: onCopy,
+                });
+            }
+
+            items.push(
+                // {
+                //     content: T.Pin,
+                //     // icon: <img src={pencilOutlinedSvg} width={15} className={'primaryTextSvg'} alt={'pencilOutlinedSvg'} />,
+                //     type: 'default',
+                // },
                 {
                     content: T.Forward,
                     icon: <img src={replySvg} width={17} className={['primaryTextSvg', styles.forwardSvg].join(' ')} alt={'forwardSvg'} />,
