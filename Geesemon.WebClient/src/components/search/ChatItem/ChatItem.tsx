@@ -8,37 +8,34 @@ type Props = {
   onClickChat: (chatIdentifier: string) => void;
 };
 
-export const ChatItem = ({ chat, onClickChat }: Props) => {
-
-  return (
-    <div
-      className={s.chat}
-      onClick={() => onClickChat(chat.identifier)}
-    >
-      <div className={s.chatInner}>
-        <div className={s.avatar}>
-          {chat.imageUrl
-            ? <Avatar imageUrl={chat.imageUrl} width={54} height={54} />
-            : (
-              <AvatarWithoutImage
-                name={chat.name || ''}
-                backgroundColor={chat.imageColor}
-                width={54}
-                height={54}
-              />
-            )
-          }
-        </div>
-        <div className={s.chatInfo}>
-          <div className={s.chatTitle}>
-            <div className={['bold', s.name].join(' ')}>{chat.name}</div>
-          </div>
-          <div className={s.chatSubtitle}>
-            <span className="secondary">@{chat.identifier}</span>
-          </div>
-        </div>
-
+export const ChatItem = ({ chat, onClickChat }: Props) => (
+  <div
+    className={s.chat}
+    onClick={() => onClickChat(chat.identifier)}
+  >
+    <div className={s.chatInner}>
+      <div className={s.avatar}>
+        {chat.imageUrl
+          ? <Avatar imageUrl={chat.imageUrl} width={54} height={54} />
+          : (
+            <AvatarWithoutImage
+              name={chat.name || ''}
+              backgroundColor={chat.imageColor}
+              width={54}
+              height={54}
+            />
+          )
+        }
       </div>
+      <div className={s.chatInfo}>
+        <div className={s.chatTitle}>
+          <div className={['bold', s.name].join(' ')}>{chat.name}</div>
+        </div>
+        <div className={s.chatSubtitle}>
+          <span className="secondary">@{chat.identifier}</span>
+        </div>
+      </div>
+
     </div>
-  );
-};
+  </div>
+);

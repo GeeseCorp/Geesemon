@@ -1,9 +1,10 @@
-.searchResults{
+.searchResults {
   overflow-x: scroll;
   height: calc(100% - 56px);
 }
 
-
-.loading{
-  align-self: center;
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
