@@ -20,6 +20,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Geesemon.DomainModel\Geesemon.Model.csproj" />
+    <ProjectReference Include="..\Geesemon\Geesemon.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Common\" />
   </ItemGroup>
 
 </Project>

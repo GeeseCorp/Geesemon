@@ -1,5 +1,6 @@
 ﻿using Geesemon.Model.Common;
 using Geesemon.Model.Enums;
+
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
@@ -10,6 +11,7 @@ public class User : Entity
     public string FirstName { get; set; }
 
     public string? LastName { get; set; }
+
     [NotMapped]
     public string FullName { get => $"{FirstName} {LastName}"; }
 

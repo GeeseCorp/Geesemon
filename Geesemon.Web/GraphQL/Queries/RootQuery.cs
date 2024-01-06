@@ -17,13 +17,17 @@ namespace Geesemon.Web.GraphQL.Queries
             Field<ChatQuery>()
                 .Name("Chat")
                 .Resolve(_ => new { });
-            
+
             Field<MessageQuery>()
                 .Name("Message")
                 .Resolve(_ => new { });
-            
+
             Field<GeeseTextsQuery>()
                 .Name("GeeseTexts")
+                .Resolve(_ => new { });
+
+            Field<SearchQuery>()
+                .Name("Search")
                 .Resolve(_ => new { });
         }
 
