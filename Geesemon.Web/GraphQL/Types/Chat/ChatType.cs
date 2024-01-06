@@ -1,6 +1,7 @@
 ﻿using Geesemon.DataAccess.Managers;
 using Geesemon.Model.Enums;
 using Geesemon.Model.Models;
+
 using GraphQL;
 using GraphQL.Types;
 
@@ -8,12 +9,12 @@ namespace Geesemon.Web.GraphQL.Types
 {
     public class ChatType : EntityType<Chat>
     {
-        public ChatType(IServiceProvider serviceProvider, IHttpContextAccessor httpContextAccessor)
+        public ChatType(IServiceProvider serviceProvider)
         {
             Field<NonNullGraphType<StringGraphType>, string>()
                  .Name("Name")
                  .Resolve(context => context.Source.Name);
-            
+
             Field<NonNullGraphType<StringGraphType>, string?>()
                  .Name("Identifier")
                  .Resolve(context => context.Source.Identifier);
@@ -43,7 +44,7 @@ namespace Geesemon.Web.GraphQL.Types
             Field<StringGraphType, string>()
                 .Name("ImageColor")
                 .Resolve(context => context.Source.ImageColor);
-            
+
             Field<NonNullGraphType<IntGraphType>, int>()
                 .Name("MembersTotal")
                 .ResolveAsync(async context =>
@@ -56,7 +57,7 @@ namespace Geesemon.Web.GraphQL.Types
                     var chatManager = scope.ServiceProvider.GetRequiredService<ChatManager>();
                     return await chatManager.GetMembersTotalAsync(chatId);
                 });
-            
+
             Field<NonNullGraphType<IntGraphType>, int>()
                 .Name("MembersOnline")
                 .ResolveAsync(async context =>
@@ -69,7 +70,7 @@ namespace Geesemon.Web.GraphQL.Types
                     var chatManager = scope.ServiceProvider.GetRequiredService<ChatManager>();
                     return await chatManager.GetMembersOnlineAsync(chatId);
                 });
-            
+
             Field<NonNullGraphType<IntGraphType>, int>()
                 .Name("NotReadMessagesCount")
                 .Resolve(context => context.Source.NotReadMessagesCount);

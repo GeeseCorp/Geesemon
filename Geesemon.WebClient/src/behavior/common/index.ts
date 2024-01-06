@@ -1,1 +1,1 @@
-export type { Entity } from './types';
+export type { Entity, Paging } from './types';

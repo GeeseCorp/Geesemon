@@ -1,0 +1,10 @@
+.searchResults {
+  overflow-x: scroll;
+  height: calc(100% - 56px);
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

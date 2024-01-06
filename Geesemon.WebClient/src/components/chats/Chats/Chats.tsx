@@ -22,6 +22,7 @@ import { SmallPrimaryButton } from '../../common/SmallPrimaryButton/SmallPrimary
 import { ChatList } from './ChatList';
 import s from './Chats.module.scss';
 import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
+import { SearchResults } from '../../search/SearchResults';
 
 export const Chats: FC = () => {
   const dispatch = useAppDispatch();
@@ -74,6 +75,11 @@ export const Chats: FC = () => {
     dispatch(navigateActions.navigateToChat({ identifier }));
   };
 
+  const cancelSearch = () => {
+    setIsEnabledSearchMode(false);
+    setSearchValue('');
+  };
+
   return (
     <div className={s.wrapper}>
       <div className={['header', s.header].join(' ')}>
@@ -82,8 +88,8 @@ export const Chats: FC = () => {
             {isEnabledSearchMode
               ? (
                 <HeaderButton
-                  keyName={'back'}
-                  onClick={() => setIsEnabledSearchMode(false)}
+                  keyName={'cancelSearch'}
+                  onClick={cancelSearch}
                 >
                   <img src={backSvg} width={25} className={'secondaryTextSvg'} alt={'backSvg'} />
                 </HeaderButton>
@@ -112,7 +118,13 @@ export const Chats: FC = () => {
         />
       </div>
       {isEnabledSearchMode
-        ? <div>search</div>
+        ? (
+          <SearchResults
+            keywords={searchValue}
+            onClickChat={onClickChat}
+            setIsEnabledSearchMode={setIsEnabledSearchMode}
+          />
+        )
         : (
           <div className={s.chats}>
             <ChatList onClickChat={onClickChat} />

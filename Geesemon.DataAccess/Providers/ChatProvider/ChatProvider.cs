@@ -1,5 +1,7 @@
-﻿using Geesemon.Model.Enums;
+﻿using Geesemon.Common;
+using Geesemon.Model.Enums;
 using Geesemon.Model.Models;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace Geesemon.DataAccess.Providers.ChatProvider
@@ -12,9 +14,9 @@ namespace Geesemon.DataAccess.Providers.ChatProvider
         {
         }
 
-        public async Task<Chat?> GetByIdentifierAsync(string chatIdentifier, Guid currentUserId)
+        public Task<Chat?> GetByIdentifierAsync(string chatIdentifier, Guid currentUserId)
         {
-            return await context.Chats
+            return context.Chats
                 .Include(c => c.UserChats)
                 .ThenInclude(uc => uc.User)
                 .SingleOrDefaultAsync(c => c.Type == ChatKind.Personal
@@ -23,12 +25,12 @@ namespace Geesemon.DataAccess.Providers.ChatProvider
                         ? c.UserChats.All(uc => uc.User.Identifier == chatIdentifier && uc.UserId == currentUserId)
                         : c.Identifier == chatIdentifier && c.UserChats.Any(uc => uc.UserId == currentUserId));
         }
-        
+
         public async Task<Chat?> GetByIdentifierAsync(string chatIdentifier)
         {
             return await context.Chats.SingleOrDefaultAsync(c => c.Identifier == chatIdentifier);
         }
-        
+
         public async Task<int> GetMembersTotalAsync(Guid chatId)
         {
             var chat = context.Chats.Find(chatId);
@@ -48,9 +50,9 @@ namespace Geesemon.DataAccess.Providers.ChatProvider
                 .SelectMany(c => c.UserChats)
                 .Select(uc => uc.User)
                 .Select(u => u.Sessions.OrderByDescending(s => s.LastTimeOnline).FirstOrDefault())
-                .CountAsync(s => s.IsOnline == true);
+                .CountAsync(s => s.IsOnline);
         }
-        
+
         public async Task<IEnumerable<Chat>> GetAllForUserAsync(Guid userId)
         {
             return await context.Chats
@@ -65,8 +67,8 @@ namespace Geesemon.DataAccess.Providers.ChatProvider
                 .Include(c => c.UserChats)
                 .Include(c => c.Messages)
                 .Where(c => c.UserChats.Any(uc => uc.UserId == userId))
-                .OrderByDescending(c => c.Messages.OrderByDescending(m => m.CreatedAt).FirstOrDefault() != null 
-                    ? c.Messages.OrderByDescending(m => m.CreatedAt).First().CreatedAt 
+                .OrderByDescending(c => c.Messages.OrderByDescending(m => m.CreatedAt).FirstOrDefault() != null
+                    ? c.Messages.OrderByDescending(m => m.CreatedAt).First().CreatedAt
                     : c.CreatedAt)
                 .Skip(skipMessageCount)
                 .Take(takeMessageCount)
@@ -80,6 +82,25 @@ namespace Geesemon.DataAccess.Providers.ChatProvider
                 .FirstOrDefaultAsync(c => c.Id == chatId && c.UserChats.Any(uc => uc.UserId == userId));
             var a = chat?.Id;
             return chat != null;
+        }
+
+        public Task<List<Chat>> Search(string keywords, Guid currentUserId, Paging paging)
+        {
+            return context.Chats
+                .Include(c => c.UserChats)
+                .ThenInclude(uc => uc.User)
+                .Where(c => c.Type == ChatKind.Personal
+                    ? c.UserChats.All(uc =>
+                        ((uc.User.Identifier.Contains(keywords) || uc.User.FirstName.Contains(keywords) || uc.User.LastName.Contains(keywords)
+                            ) && uc.UserId != currentUserId) || uc.UserId == currentUserId)
+                    : c.Type == ChatKind.Saved
+                        ? c.UserChats.All(uc =>
+                            (uc.User.Identifier.Contains(keywords) || uc.User.FirstName.Contains(keywords) || uc.User.LastName.Contains(keywords)
+                                ) && uc.UserId == currentUserId)
+                        : (c.Identifier.Contains(keywords) || c.Name.Contains(keywords)) && c.UserChats.Any(uc => uc.UserId == currentUserId))
+                .Skip(paging.Skip)
+                .Take(paging.Take)
+                .ToListAsync();
         }
     }
 }

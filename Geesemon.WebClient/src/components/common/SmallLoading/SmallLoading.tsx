@@ -1,10 +1,8 @@
-import React, { FC } from 'react';
 import { motion } from 'framer-motion';
 
-type Props = {
+type Props = JSX.IntrinsicElements['div'];
 
-};
-export const SmallLoading: FC<Props> = ({}) => {
+export const SmallLoading = (props: Props) => {
   const LoadingDot = {
     display: 'block',
     width: '5px',
@@ -49,27 +47,29 @@ export const SmallLoading: FC<Props> = ({}) => {
   };
 
   return (
-    <motion.div
-      style={LoadingContainer}
-      variants={ContainerVariants}
-      initial="initial"
-      animate="animate"
-    >
-      <motion.span
-        style={LoadingDot}
-        variants={DotVariants}
-        transition={DotTransition}
-      />
-      <motion.span
-        style={LoadingDot}
-        variants={DotVariants}
-        transition={DotTransition}
-      />
-      <motion.span
-        style={LoadingDot}
-        variants={DotVariants}
-        transition={DotTransition}
-      />
-    </motion.div>
+    <div {...props}>
+      <motion.div
+        style={LoadingContainer}
+        variants={ContainerVariants}
+        initial="initial"
+        animate="animate"
+      >
+        <motion.span
+          style={LoadingDot}
+          variants={DotVariants}
+          transition={DotTransition}
+        />
+        <motion.span
+          style={LoadingDot}
+          variants={DotVariants}
+          transition={DotTransition}
+        />
+        <motion.span
+          style={LoadingDot}
+          variants={DotVariants}
+          transition={DotTransition}
+        />
+      </motion.div>
+    </div>
   );
 };

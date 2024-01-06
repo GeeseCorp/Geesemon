@@ -12,6 +12,8 @@ import { authEpics } from './features/auth/epics';
 import { userEpics } from './features/users/epics';
 import { settingsEpics } from './features/settings/epics';
 import { settingsReducer } from './features/settings/slice';
+import { searchReducer } from './features/search/slice';
+import { searchEpics } from './features/search/epics';
 
 const epicMiddleware = createEpicMiddleware();
 
@@ -24,6 +26,7 @@ export const store = configureStore({
     chats: chatReducer,
     navigate: navigateReducer,
     settings: settingsReducer,
+    search: searchReducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({ thunk: true, serializableCheck: false }).concat(epicMiddleware),
@@ -36,6 +39,7 @@ const rootEpic = combineEpics(
   authEpics,
   userEpics,
   settingsEpics,
+  searchEpics,
 );
 // @ts-ignore
 epicMiddleware.run(rootEpic);
