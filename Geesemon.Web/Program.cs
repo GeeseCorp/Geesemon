@@ -14,6 +14,7 @@ builder.Services.AddMsSql(settingsProvider.GetConnectionString());
 
 builder.Services.AddGraphQLApi();
 builder.Services.AddJwtAuthorization(settingsProvider);
+builder.Services.AddAuthorization();
 
 var MyAllowSpecificOrigins = "MyAllowSpecificOrigins";
 builder.Services.AddCors(options =>
