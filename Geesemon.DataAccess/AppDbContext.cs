@@ -1,7 +1,9 @@
 ﻿using Geesemon.Model.Common;
 using Geesemon.Model.Models;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+
 using Newtonsoft.Json;
 
 namespace Geesemon.DataAccess
@@ -11,7 +13,7 @@ namespace Geesemon.DataAccess
         public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)
         {
-            Database.Migrate();
+            //Database.Migrate();
         }
 
         public DbSet<User> Users { get; set; }

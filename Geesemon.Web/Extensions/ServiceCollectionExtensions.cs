@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 
+using Geesemon.Migrations;
 using Geesemon.Model.Enums;
 using Geesemon.Web.Geesetext;
 using Geesemon.Web.GraphQL;
@@ -64,7 +65,7 @@ namespace Geesemon.Web.Extensions
             return services;
         }
 
-        public static IServiceCollection AddJwtAuthorization(this IServiceCollection services, ISettingsProvider settingsProvider)
+        public static IServiceCollection AddJwtAuthorization(this IServiceCollection services)
         {
             services
                  .AddAuthentication(BasicAuthenticationHandler.SchemeName)
@@ -72,17 +73,21 @@ namespace Geesemon.Web.Extensions
             return services;
         }
 
-        public static IServiceCollection AddServices(this IServiceCollection services)
+        public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddSingleton<ISettingsProvider, AppSettingsProvider>();
+            services.AddSingleton<AuthService>();
+            services.AddSingleton<IMessageActionSubscriptionService, MessageActionSubscriptionService>();
+            services.AddSingleton<IChatActionSubscriptionService, ChatActionSubscriptionService>();
+            services.AddSingleton<IChatActivitySubscriptionService, ChatActivitySubscriptionService>();
+            services.AddSingleton<IChatMembersSubscriptionService, ChatMembersSubscriptionService>();
+            services.AddSingleton<ILoginViaTokenSubscriptionService, LoginViaTokenSubscriptionService>();
+            services.AddSingleton<GeeseTextsAccessor>();
+
+            services.AddHostedService<MigrationHostedService>();
             services.AddHostedService<MakeOfflineService>();
 
-            services.AddSingleton<ISettingsProvider, AppSettingsProvider>();
-
-            services.AddSingleton<AuthService>();
-
-            var settingsProvider = services.BuildServiceProvider().GetService<ISettingsProvider>();
-
-            var fileProvider = settingsProvider.GetFileProvider();
+            var fileProvider = configuration.GetValue<FileProvider>("FileProvider");
             switch (fileProvider)
             {
                 case FileProvider.Local:
@@ -95,14 +100,6 @@ namespace Geesemon.Web.Extensions
                     services.AddSingleton<IFileManagerService, CloudinaryFileManagerService>();
                     break;
             }
-
-            services.AddSingleton<IMessageActionSubscriptionService, MessageActionSubscriptionService>();
-            services.AddSingleton<IChatActionSubscriptionService, ChatActionSubscriptionService>();
-            services.AddSingleton<IChatActivitySubscriptionService, ChatActivitySubscriptionService>();
-            services.AddSingleton<IChatMembersSubscriptionService, ChatMembersSubscriptionService>();
-            services.AddSingleton<ILoginViaTokenSubscriptionService, LoginViaTokenSubscriptionService>();
-
-            services.AddSingleton<GeeseTextsAccessor>();
 
             services.Configure<KestrelServerOptions>(options =>
             {

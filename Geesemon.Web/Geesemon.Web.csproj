@@ -48,6 +48,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Geesemon.DataAccess\Geesemon.DataAccess.csproj" />
     <ProjectReference Include="..\Geesemon.DomainModel\Geesemon.Model.csproj" />
+    <ProjectReference Include="..\Geesemon.Migrations\Geesemon.Migrations.csproj" />
   </ItemGroup>
 
   <ItemGroup>

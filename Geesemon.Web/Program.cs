@@ -1,19 +1,20 @@
 using Geesemon.DataAccess.Extensions;
+using Geesemon.Migrations.Extensions;
 using Geesemon.Web.Extensions;
 using Geesemon.Web.GraphQL;
-using Geesemon.Web.Utils.SettingsAccess;
 
 using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddServices(builder.Configuration);
+builder.Services.AddMigrationServices(builder.Configuration);
 
-builder.Services.AddServices();
+var connectionString = builder.Configuration.GetValue<string>("ConnectionString");
 
-var settingsProvider = builder.Services.BuildServiceProvider().GetService<ISettingsProvider>();
-builder.Services.AddMsSql(settingsProvider.GetConnectionString());
+builder.Services.AddMsSql(connectionString);
 
 builder.Services.AddGraphQLApi();
-builder.Services.AddJwtAuthorization(settingsProvider);
+builder.Services.AddJwtAuthorization();
 builder.Services.AddAuthorization();
 
 var MyAllowSpecificOrigins = "MyAllowSpecificOrigins";
@@ -28,6 +29,7 @@ builder.Services.AddCors(options =>
             .AllowCredentials();
         });
 });
+
 
 var app = builder.Build();
 
