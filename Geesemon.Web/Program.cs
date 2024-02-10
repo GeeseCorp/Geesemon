@@ -1,3 +1,4 @@
+using Geesemon.DataAccess.Dapper.Extensions;
 using Geesemon.DataAccess.Extensions;
 using Geesemon.Migrations.Extensions;
 using Geesemon.Web.Extensions;
@@ -12,6 +13,7 @@ builder.Services.AddMigrationServices(builder.Configuration);
 var connectionString = builder.Configuration.GetValue<string>("ConnectionString");
 
 builder.Services.AddMsSql(connectionString);
+builder.Services.AddDapperServices();
 
 builder.Services.AddGraphQLApi();
 builder.Services.AddJwtAuthorization();

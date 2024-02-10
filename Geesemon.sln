@@ -5,7 +5,7 @@ VisualStudioVersion = 17.1.32414.318
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geesemon.Web", "Geesemon.Web\Geesemon.Web.csproj", "{ABEACE3A-4040-493D-97D3-03A3DB180EE3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geesemon.Model", "Geesemon.DomainModel\Geesemon.Model.csproj", "{038D280D-95F0-420E-AC3B-C3E49B7F41FF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geesemon.Model", "Geesemon.Model\Geesemon.Model.csproj", "{038D280D-95F0-420E-AC3B-C3E49B7F41FF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geesemon.DataAccess", "Geesemon.DataAccess\Geesemon.DataAccess.csproj", "{2BA4EFA6-0B6B-49CA-8523-2505254F3638}"
 EndProject
@@ -14,9 +14,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geesemon", "Geesemon\Geesemon.csproj", "{017117F3-663B-49B7-BC82-234CFA9B91FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geesemon", "Geesemon\Geesemon.csproj", "{017117F3-663B-49B7-BC82-234CFA9B91FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geesemon.Migrations", "Geesemon.Migrations\Geesemon.Migrations.csproj", "{3AA2560A-2F45-4450-B7C9-4A4FD1F16CC0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geesemon.Migrations", "Geesemon.Migrations\Geesemon.Migrations.csproj", "{3AA2560A-2F45-4450-B7C9-4A4FD1F16CC0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geesemon.DataAccess.Dapper", "Geesemon.DataAccess.Dapper\Geesemon.DataAccess.Dapper.csproj", "{D4378282-0290-4248-B7FF-1380A75D8F5E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -44,6 +46,10 @@ Global
 		{3AA2560A-2F45-4450-B7C9-4A4FD1F16CC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3AA2560A-2F45-4450-B7C9-4A4FD1F16CC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3AA2560A-2F45-4450-B7C9-4A4FD1F16CC0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4378282-0290-4248-B7FF-1380A75D8F5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4378282-0290-4248-B7FF-1380A75D8F5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4378282-0290-4248-B7FF-1380A75D8F5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4378282-0290-4248-B7FF-1380A75D8F5E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

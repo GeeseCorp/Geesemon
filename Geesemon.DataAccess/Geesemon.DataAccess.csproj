@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Geesemon.DomainModel\Geesemon.Model.csproj" />
+    <ProjectReference Include="..\Geesemon.Model\Geesemon.Model.csproj" />
     <ProjectReference Include="..\Geesemon\Geesemon.csproj" />
   </ItemGroup>
 

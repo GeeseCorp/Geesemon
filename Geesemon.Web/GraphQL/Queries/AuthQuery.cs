@@ -1,16 +1,19 @@
-﻿using Geesemon.DataAccess.Managers;
+﻿using Geesemon.DataAccess.Dapper.Providers;
+using Geesemon.DataAccess.Managers;
 using Geesemon.Model.Models;
 using Geesemon.Web.GraphQL.Auth;
 using Geesemon.Web.GraphQL.Types;
+
 using GraphQL;
 using GraphQL.Types;
+
 using Microsoft.Net.Http.Headers;
 
 namespace Geesemon.Web.GraphQL.Queries
 {
     public class AuthQuery : ObjectGraphType
     {
-        public AuthQuery(IHttpContextAccessor httpContextAccessor, UserManager userManager, SessionManager sessionManager)
+        public AuthQuery(IHttpContextAccessor httpContextAccessor, SessionManager sessionManager, UserProvider userProvider)
         {
             Field<NonNullGraphType<AuthResponseType>, AuthResponse>()
                 .Name("Me")
@@ -20,11 +23,11 @@ namespace Geesemon.Web.GraphQL.Queries
                     return new AuthResponse()
                     {
                         Token = httpContextAccessor.HttpContext.Request.Headers[HeaderNames.Authorization],
-                        User = await userManager.GetByIdAsync(userId),
+                        User = await userProvider.GetByIdAsync(userId),
                     };
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
-            
+
             Field<NonNullGraphType<ListGraphType<SessionType>>, IEnumerable<Session>>()
                 .Name("GetSessions")
                 .ResolveAsync(async context =>

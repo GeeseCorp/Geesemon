@@ -2,6 +2,7 @@
 using Geesemon.Model.Models;
 using Geesemon.Web.GraphQL.Auth;
 using Geesemon.Web.GraphQL.Types;
+
 using GraphQL;
 using GraphQL.Types;
 
@@ -30,7 +31,7 @@ namespace Geesemon.Web.GraphQL.Queries
                     return await userManager.GetByIdAsync(context.GetArgument<Guid>("UserId"));
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
-            
+
             Field<NonNullGraphType<ListGraphType<UserType>>, IEnumerable<User>>()
                 .Name("GetReadBy")
                 .Argument<NonNullGraphType<GuidGraphType>, Guid>("MessageId", "")
