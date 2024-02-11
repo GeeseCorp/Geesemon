@@ -16,7 +16,7 @@ public class LanguageType : ObjectGraphType<Language>
             .Name("Name")
             .Resolve(context => context.Source.Name);
 
-        Field<StringGraphType>()
+        Field<NonNullGraphType<StringGraphType>>()
             .Name("FlagUrl")
             .Resolve(context => context.Source.FlagUrl);
     }
