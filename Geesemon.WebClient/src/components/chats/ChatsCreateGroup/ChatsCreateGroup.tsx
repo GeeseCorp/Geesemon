@@ -31,7 +31,7 @@ export const ChatsCreateGroup: FC = () => {
   const [image, setImage] = useState<File | null>(null);
   const [state, setState] = useState<'Members' | 'ImageAndName'>('Members');
   const dispatch = useAppDispatch();
-  const q = useAppSelector(s => s.users.q);
+  const q = useAppSelector(s => s.users.query);
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
   const T = useGeeseTexts();
 

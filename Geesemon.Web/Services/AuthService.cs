@@ -2,10 +2,14 @@
 using Geesemon.Model.Models;
 using Geesemon.Web.GraphQL.Auth;
 using Geesemon.Web.Utils.SettingsAccess;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+
 using MyCSharp.HttpUserAgentParser;
+
 using Newtonsoft.Json;
+
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;

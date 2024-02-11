@@ -1,4 +1,5 @@
-﻿using Geesemon.DataAccess.Managers;
+﻿using Geesemon.DataAccess.Dapper.Providers;
+using Geesemon.DataAccess.Managers;
 using Geesemon.Model.Models;
 using Geesemon.Web.GraphQL.Auth;
 using Geesemon.Web.GraphQL.Types;
@@ -10,7 +11,7 @@ namespace Geesemon.Web.GraphQL.Queries
 {
     public class UserQuery : ObjectGraphType
     {
-        public UserQuery(UserManager userManager, IHttpContextAccessor httpContextAccessor)
+        public UserQuery(UserManager userManager, IHttpContextAccessor httpContextAccessor, UserProvider userProvider)
         {
             Field<NonNullGraphType<ListGraphType<UserType>>, List<User>>()
                 .Name("Get")
@@ -19,7 +20,7 @@ namespace Geesemon.Web.GraphQL.Queries
                 {
                     var input = context.GetArgument<UserGetInput>("Input");
                     var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
-                    return await userManager.GetAsync(input.Take, input.Skip, input.Q, currentUserId);
+                    return await userProvider.GetAsync(input.Take, input.Skip, input.Query, currentUserId);
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
 

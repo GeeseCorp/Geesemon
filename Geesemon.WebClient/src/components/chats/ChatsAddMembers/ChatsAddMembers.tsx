@@ -18,7 +18,7 @@ import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
 
 export const ChatsAddMembers: FC = () => {
   const dispatch = useAppDispatch();
-  const q = useAppSelector(s => s.users.q);
+  const q = useAppSelector(s => s.users.query);
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
   const selectedChat = useSelectedChat();
   const chatAddMembersLoading = useAppSelector(s => s.chats.chatAddMembersLoading);

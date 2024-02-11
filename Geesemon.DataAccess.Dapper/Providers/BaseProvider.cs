@@ -1,5 +1,7 @@
 ﻿using Dapper;
 
+using Geesemon.Model.Common;
+
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
@@ -7,9 +9,9 @@ using System.Reflection;
 using System.Text;
 
 namespace Geesemon.DataAccess.Dapper.Providers;
-public class BaseProvider<T> where T : class
+public class BaseProvider<T> where T : Entity
 {
-    private readonly DapperConnection dapperConnection;
+    protected readonly DapperConnection dapperConnection;
 
     public BaseProvider(DapperConnection dapperConnection)
     {
@@ -20,16 +22,13 @@ public class BaseProvider<T> where T : class
     {
         using var connection = dapperConnection.Open();
         int rowsEffected = 0;
-        try
-        {
-            var tableName = GetTableName();
-            var columns = GetColumns(excludeKey: true);
-            var properties = GetPropertyNames(excludeKey: true);
-            var query = $"INSERT INTO {tableName} ({columns}) VALUES ({properties})";
 
-            rowsEffected = await connection.ExecuteAsync(query, entity);
-        }
-        catch (Exception ex) { }
+        var tableName = GetTableName();
+        var columns = GetColumns(excludeKey: true);
+        var properties = GetPropertyNames(excludeKey: true);
+        var query = $"INSERT INTO {tableName} ({columns}) VALUES ({properties})";
+
+        rowsEffected = await connection.ExecuteAsync(query, entity);
 
         return rowsEffected > 0 ? true : false;
     }
@@ -38,16 +37,14 @@ public class BaseProvider<T> where T : class
     {
         using var connection = dapperConnection.Open();
         int rowsEffected = 0;
-        try
-        {
-            var tableName = GetTableName();
-            var keyColumn = GetKeyColumnName();
-            var keyProperty = GetKeyPropertyName();
-            var query = $"DELETE FROM {tableName} WHERE {keyColumn} = @{keyProperty}";
 
-            rowsEffected = await connection.ExecuteAsync(query, entity);
-        }
-        catch (Exception ex) { }
+        var tableName = GetTableName();
+        var keyColumn = GetKeyColumnName();
+        var keyProperty = GetKeyPropertyName();
+
+        var query = $"DELETE FROM {tableName} WHERE {keyColumn} = @{keyProperty}";
+
+        rowsEffected = await connection.ExecuteAsync(query, entity);
 
         return rowsEffected > 0 ? true : false;
     }
@@ -56,14 +53,11 @@ public class BaseProvider<T> where T : class
     {
         using var connection = dapperConnection.Open();
         IEnumerable<T> result = null;
-        try
-        {
-            var tableName = GetTableName();
-            var query = $"SELECT * FROM {tableName}";
 
-            result = await connection.QueryAsync<T>(query);
-        }
-        catch (Exception ex) { }
+        var tableName = GetTableName();
+        var query = $"SELECT * FROM {tableName}";
+
+        result = await connection.QueryAsync<T>(query);
 
         return result;
     }
@@ -72,15 +66,13 @@ public class BaseProvider<T> where T : class
     {
         using var connection = dapperConnection.Open();
         IEnumerable<T> result = null;
-        try
-        {
-            var tableName = GetTableName();
-            var keyColumn = GetKeyColumnName();
-            var query = $"SELECT * FROM {tableName} WHERE {keyColumn} = '{Id}'";
 
-            result = await connection.QueryAsync<T>(query);
-        }
-        catch (Exception ex) { }
+        var tableName = GetTableName();
+        var keyColumn = GetKeyColumnName();
+
+        var query = $"SELECT * FROM {tableName} WHERE {keyColumn} = '{Id}'";
+
+        result = await connection.QueryAsync<T>(query);
 
         return result.FirstOrDefault();
     }
@@ -89,77 +81,45 @@ public class BaseProvider<T> where T : class
     {
         using var connection = dapperConnection.Open();
         int rowsEffected = 0;
-        try
+
+        var tableName = GetTableName();
+        var keyColumn = GetKeyColumnName();
+        var keyProperty = GetKeyPropertyName();
+
+        StringBuilder query = new StringBuilder();
+        query.Append($"UPDATE {tableName} SET ");
+
+        foreach (var property in GetProperties(true))
         {
-            var tableName = GetTableName();
-            var keyColumn = GetKeyColumnName();
-            var keyProperty = GetKeyPropertyName();
+            var columnAttr = property.GetCustomAttribute<ColumnAttribute>();
 
-            StringBuilder query = new StringBuilder();
-            query.Append($"UPDATE {tableName} SET ");
+            var propertyName = property.Name;
+            var columnName = columnAttr.Name;
 
-            foreach (var property in GetProperties(true))
-            {
-                var columnAttr = property.GetCustomAttribute<ColumnAttribute>();
-
-                var propertyName = property.Name;
-                var columnName = columnAttr.Name;
-
-                query.Append($"{columnName} = @{propertyName},");
-            }
-
-            query.Remove(query.Length - 1, 1);
-
-            query.Append($" WHERE {keyColumn} = @{keyProperty}");
-
-            rowsEffected = await connection.ExecuteAsync(query.ToString(), entity);
+            query.Append($"{columnName} = @{propertyName},");
         }
-        catch (Exception ex) { }
+
+        query.Remove(query.Length - 1, 1);
+
+        query.Append($" WHERE {keyColumn} = @{keyProperty}");
+
+        rowsEffected = await connection.ExecuteAsync(query.ToString(), entity);
+
 
         return rowsEffected > 0 ? true : false;
     }
 
     protected string GetTableName()
     {
-        var tableName = "";
         var type = typeof(T);
         var tableAttr = type.GetCustomAttribute<TableAttribute>();
         if (tableAttr != null)
         {
-            tableName = tableAttr.Name;
-            return tableName;
+            return tableAttr.Name;
         }
 
         return type.Name + "s";
     }
-
-    protected static string GetKeyColumnName()
-    {
-        PropertyInfo[] properties = typeof(T).GetProperties();
-
-        foreach (PropertyInfo property in properties)
-        {
-            object[] keyAttributes = property.GetCustomAttributes(typeof(KeyAttribute), true);
-
-            if (keyAttributes != null && keyAttributes.Length > 0)
-            {
-                object[] columnAttributes = property.GetCustomAttributes(typeof(ColumnAttribute), true);
-
-                if (columnAttributes != null && columnAttributes.Length > 0)
-                {
-                    ColumnAttribute columnAttribute = (ColumnAttribute)columnAttributes[0];
-                    return columnAttribute.Name;
-                }
-                else
-                {
-                    return property.Name;
-                }
-            }
-        }
-
-        return null;
-    }
-
 
     protected string GetColumns(bool excludeKey = false)
     {
@@ -207,6 +167,39 @@ public class BaseProvider<T> where T : class
         }
 
         return null;
+    }
+    protected static string GetKeyColumnName()
+    {
+        PropertyInfo[] properties = typeof(T).GetProperties();
+
+        foreach (PropertyInfo property in properties)
+        {
+            object[] keyAttributes = property.GetCustomAttributes(typeof(KeyAttribute), true);
+
+            if (keyAttributes != null && keyAttributes.Length > 0)
+            {
+                object[] columnAttributes = property.GetCustomAttributes(typeof(ColumnAttribute), true);
+
+                if (columnAttributes != null && columnAttributes.Length > 0)
+                {
+                    ColumnAttribute columnAttribute = (ColumnAttribute)columnAttributes[0];
+                    return columnAttribute.Name;
+                }
+                else
+                {
+                    return property.Name;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    protected static string GetColumnName(PropertyInfo property)
+    {
+        var columnAttr = property.GetCustomAttribute<ColumnAttribute>();
+
+        return columnAttr != null ? columnAttr.Name : property.Name;
     }
 }
 

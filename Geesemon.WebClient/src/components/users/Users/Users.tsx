@@ -20,7 +20,7 @@ export const Users: FC<Props> = ({ onSelectedUsersChange, selectMultiple = false
   const take = useAppSelector(s => s.users.take);
   const skip = useAppSelector(s => s.users.skip);
   const hasNext = useAppSelector(s => s.users.hasNext);
-  const q = useAppSelector(s => s.users.q);
+  const query = useAppSelector(s => s.users.query);
   const dispatch = useAppDispatch();
   const observer = useRef<IntersectionObserver | null>(null);
   const [isFirstTimeRendered, setIsFirstTimeRendered] = useState(false);
@@ -44,12 +44,12 @@ export const Users: FC<Props> = ({ onSelectedUsersChange, selectMultiple = false
     dispatch(usersActions.usersGetAsync({
       take,
       skip,
-      q,
+      query,
     }));
     return () => {
       dispatch(usersActions.resetUsers());
     };
-  }, [skip, take, q]);
+  }, [skip, take, query]);
 
   useEffect(() => {
     if (isFirstTimeRendered) {
@@ -57,7 +57,7 @@ export const Users: FC<Props> = ({ onSelectedUsersChange, selectMultiple = false
       return;
     }
 
-  }, [q]);
+  }, [query]);
 
   return (
     <div className={s.users}>

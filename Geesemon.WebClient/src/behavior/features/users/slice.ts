@@ -8,7 +8,7 @@ type InitialState = {
     hasNext: boolean;
     take: number;
     skip: number;
-    q: string;
+    query: string;
 
     readByGetLoading: boolean;
     readByHasNext: boolean;
@@ -21,7 +21,7 @@ const initialState: InitialState = {
   hasNext: true,
   take: 20,
   skip: 0,
-  q: '',
+  query: '',
 
   readByGetLoading: false,
   readByHasNext: true,
@@ -52,7 +52,7 @@ const slice = createSlice({
       state.skip = action.payload;
     },
     setQ: (state, action: PayloadAction<string>) => {
-      state.q = action.payload;
+      state.query = action.payload;
     },
 
     readByGetAsync: (state, action: PayloadAction<UsersGetReadByVars>) => state,
@@ -72,7 +72,7 @@ const slice = createSlice({
       state.hasNext = initialState.hasNext;
       state.take = initialState.take;
       state.skip = initialState.skip;
-      state.q = initialState.q;
+      state.query = initialState.query;
     },
     resetReadBy: (state, action: PayloadAction) => {
       state.readByGetLoading = initialState.readByGetLoading;

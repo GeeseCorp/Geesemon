@@ -7,7 +7,7 @@ export type UsersGetVars = { input: UserGetInputType };
 export type UserGetInputType = {
   take: number;
   skip: number;
-  q: string;
+  query: string;
 };
 export const USERS_GET_QUERY = gql`
 ${USER_FRAGMENT}

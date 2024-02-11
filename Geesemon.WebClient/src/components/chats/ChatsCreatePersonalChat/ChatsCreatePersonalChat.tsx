@@ -15,7 +15,7 @@ import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
 type Props = {};
 export const ChatsCreatePersonalChat: FC<Props> = () => {
   const dispatch = useAppDispatch();
-  const q = useAppSelector(s => s.users.q);
+  const q = useAppSelector(s => s.users.query);
   const users = useAppSelector(s => s.users.users);
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
   const navigate = useNavigate();
