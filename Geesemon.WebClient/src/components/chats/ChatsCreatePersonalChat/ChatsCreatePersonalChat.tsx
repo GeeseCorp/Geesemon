@@ -34,10 +34,10 @@ export const ChatsCreatePersonalChat: FC<Props> = () => {
   };
 
   const onQChange = (value: string) => {
+    dispatch(usersActions.setQ(value));
     dispatch(usersActions.setUsers([]));
     dispatch(usersActions.setSkip(0));
     dispatch(usersActions.setHasNext(true));
-    dispatch(usersActions.setQ(value));
   };
 
   return (

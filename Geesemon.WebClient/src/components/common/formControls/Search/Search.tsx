@@ -22,6 +22,8 @@ export const Search: FC<Props> = ({ onFocus, placeholder, value, setValue }) => 
     setInputSearchFocused(false);
   };
 
+  console.log(value);
+
   return (
     <div className={[s.wrapperInputSearch, inputSearchFocused && s.focused].join(' ')}>
       <img src={searchSvg} width={20} className={inputSearchFocused ? 'primarySvg' : 'secondaryTextSvg'} alt={'searchSvg'} />

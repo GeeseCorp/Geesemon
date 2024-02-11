@@ -29,7 +29,7 @@ namespace Geesemon.Web.GraphQL.Queries
                 .Argument<GuidGraphType>("UserId")
                 .ResolveAsync(async context =>
                 {
-                    return await userManager.GetByIdAsync(context.GetArgument<Guid>("UserId"));
+                    return await userProvider.GetByIdAsync(context.GetArgument<Guid>("UserId"));
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
 

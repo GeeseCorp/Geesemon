@@ -17,7 +17,7 @@ public class UserProvider : BaseProvider<User>
         var tableName = GetTableName();
         var query =
                 $@"SELECT * FROM {tableName} 
-                WHERE(Identifier like '%' + @searchQuery + '%' or Email like '%' +  @searchQuery + '%') and Id != @currentUserId
+                WHERE(Identifier like '%' + @searchQuery + '%' or Email like '%' +  @searchQuery + '%' or LastName like '%' +  @searchQuery + '%' or FirstName like '%' +  @searchQuery + '%') and Id != @currentUserId
                 ORDER BY FirstName, LastName 
                 OFFSET @skip ROWS
                 FETCH NEXT @take ROWS ONLY;";
@@ -26,14 +26,4 @@ public class UserProvider : BaseProvider<User>
 
         return result.ToList();
     }
-    //public Task<List<User>> GetAsync(int take, int skip, string query, Guid? currentUserId = null)
-    //{
-    //    return context.Users
-    //        .Where(u => (u.Identifier.Contains(query) || (u.Email != null && u.Email.Contains(query))) && u.Id != currentUserId)
-    //        .OrderBy(u => u.FirstName)
-    //        .ThenBy(u => u.LastName)
-    //        .Skip(skip)
-    //        .Take(take)
-    //        .ToListAsync();
-    //}
 }

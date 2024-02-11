@@ -52,6 +52,7 @@ const slice = createSlice({
       state.skip = action.payload;
     },
     setQ: (state, action: PayloadAction<string>) => {
+      console.log(action);
       state.query = action.payload;
     },
 
@@ -72,7 +73,6 @@ const slice = createSlice({
       state.hasNext = initialState.hasNext;
       state.take = initialState.take;
       state.skip = initialState.skip;
-      state.query = initialState.query;
     },
     resetReadBy: (state, action: PayloadAction) => {
       state.readByGetLoading = initialState.readByGetLoading;
