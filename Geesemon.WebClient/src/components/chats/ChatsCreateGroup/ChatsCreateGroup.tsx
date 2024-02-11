@@ -52,8 +52,6 @@ export const ChatsCreateGroup: FC = () => {
     },
     validationSchema: schema,
     onSubmit: ({ name, identifier }) => {
-      console.log('submit');
-
       dispatch(chatActions.createGroupChatAsync({
         name,
         identifier,

@@ -42,7 +42,6 @@ export const ContentBar: FC = () => {
 
   useEffect(() => {
     if (selectedChatIdentifier && !chat && !chatsGetLoading && !chatGetByIdentifierLoading) {
-      console.log('req');
       dispatch(chatActions.chatGetByIdentifierAsync(selectedChatIdentifier));
     }
   }, [selectedChatIdentifier]);

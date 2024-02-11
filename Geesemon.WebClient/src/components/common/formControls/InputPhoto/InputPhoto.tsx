@@ -33,9 +33,7 @@ export const InputPhoto: FC<Props> = ({ image, onChange }) => {
         />
       </div>
       {image && 
-                <button type="button" className={`${s.remove}`} onClick={() => {
-                  console.log('gg');
-                    
+                <button type="button" className={`${s.remove}`} onClick={() => {                  
                   onChange([]);
                 }}
                 >

@@ -52,7 +52,6 @@ const slice = createSlice({
       state.skip = action.payload;
     },
     setQ: (state, action: PayloadAction<string>) => {
-      console.log(action);
       state.query = action.payload;
     },
 

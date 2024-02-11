@@ -32,7 +32,6 @@ export const Users: FC<Props> = ({ onSelectedUsersChange, selectMultiple = false
       observer.current.disconnect();
     observer.current = new IntersectionObserver(entries => {
       if (entries[0].isIntersecting && hasNext) {
-        console.log(skip + take);
         dispatch(usersActions.setSkip(skip + take));
       }
     });

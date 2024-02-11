@@ -25,7 +25,6 @@ export const ReadQrCodeModal = () => {
 
   const onQrCodeResult = (text?: string, error?: string) => {
     if(!error && text && !loginViaTokenLoading){
-      console.log(text);
       dispatch(authActions.loginViaTokenAsync(text));
     }
   };

@@ -41,7 +41,6 @@ export const meAsyncEpic: Epic<ReturnType<typeof authActions.meAsync>, any, Root
       })).pipe(
         mergeMap(response => {
           if (response.errors?.length) {
-            console.log(response);
             return [
               ...response.errors.map(e => notificationsActions.addError(e.message)),
               appActions.setInitialised(true),

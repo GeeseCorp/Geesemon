@@ -24,9 +24,7 @@ export const ViewMessageReadByModal: FC = () => {
 
   const onScrollHandler = (e: React.UIEvent<HTMLDivElement, UIEvent>) => {
     const element = e.currentTarget;
-    if (element.scrollHeight - element.clientHeight - element.scrollTop < 70 && !readByGetLoading && readByHasNext && inViewMessageIdReadBy && inViewMessageReadBy) {
-      console.log('req');
-            
+    if (element.scrollHeight - element.clientHeight - element.scrollTop < 70 && !readByGetLoading && readByHasNext && inViewMessageIdReadBy && inViewMessageReadBy) {          
       dispatch(usersActions.readByGetAsync({
         messageId: inViewMessageIdReadBy,
         take: readByTake,
