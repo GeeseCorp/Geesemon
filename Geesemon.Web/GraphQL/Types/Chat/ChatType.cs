@@ -2,6 +2,7 @@
 using Geesemon.DataAccess.Managers;
 using Geesemon.Model.Enums;
 using Geesemon.Model.Models;
+using Geesemon.Web.Services.FileManagers;
 
 using GraphQL;
 using GraphQL.Types;
@@ -10,7 +11,7 @@ namespace Geesemon.Web.GraphQL.Types
 {
     public class ChatType : EntityType<Chat>
     {
-        public ChatType(IServiceProvider serviceProvider, UserProvider userProvider)
+        public ChatType(IServiceProvider serviceProvider, UserProvider userProvider, IFileManagerService fileManagerService)
         {
             Field<NonNullGraphType<StringGraphType>, string>()
                  .Name("Name")
@@ -34,8 +35,7 @@ namespace Geesemon.Web.GraphQL.Types
                     using var scope = serviceProvider.CreateScope();
                     var request = scope.ServiceProvider.GetRequiredService<IHttpContextAccessor>().HttpContext.Request;
 
-                    var protocol = request.IsHttps ? "https" : "http";
-                    return $"{protocol}://{request.Host}{context.Source.ImageUrl}";
+                    return fileManagerService.FormatUrl(context.Source.ImageUrl);
                 });
 
             Field<GuidGraphType, Guid?>()
