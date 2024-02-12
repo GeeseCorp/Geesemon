@@ -1,4 +1,5 @@
-﻿using Geesemon.DataAccess.Managers;
+﻿using Geesemon.DataAccess.Dapper.Providers;
+using Geesemon.DataAccess.Managers;
 using Geesemon.Model.Enums;
 using Geesemon.Model.Models;
 
@@ -9,7 +10,7 @@ namespace Geesemon.Web.GraphQL.Types
 {
     public class ChatType : EntityType<Chat>
     {
-        public ChatType(IServiceProvider serviceProvider)
+        public ChatType(IServiceProvider serviceProvider, UserProvider userProvider)
         {
             Field<NonNullGraphType<StringGraphType>, string>()
                  .Name("Name")
@@ -84,8 +85,7 @@ namespace Geesemon.Web.GraphQL.Types
                         return new List<User>();
 
                     using var scope = serviceProvider.CreateScope();
-                    var userManager = scope.ServiceProvider.GetRequiredService<UserManager>();
-                    return await userManager.GetAsync(chatId);
+                    return await userProvider.GetAsync(chatId);
                 });
 
             Field<NonNullGraphType<ListGraphType<MessageType>>, IList<Message>>()

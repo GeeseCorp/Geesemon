@@ -7,11 +7,11 @@ namespace Geesemon.Model.Common
     {
         [Key]
         [Column("Id")]
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
-        private DateTime createdAt;
+        private DateTime createdAt = DateTime.UtcNow;
 
-        private DateTime updatedAt;
+        private DateTime updatedAt = DateTime.UtcNow;
 
         [Column("CreatedAt")]
         public DateTime CreatedAt { get => DateTime.SpecifyKind(createdAt, DateTimeKind.Utc); set => createdAt = value; }

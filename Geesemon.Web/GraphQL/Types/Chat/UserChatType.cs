@@ -1,12 +1,14 @@
-﻿using Geesemon.DataAccess.Managers;
+﻿using Geesemon.DataAccess.Dapper.Providers;
+using Geesemon.DataAccess.Managers;
 using Geesemon.Model.Models;
+
 using GraphQL.Types;
 
 namespace Geesemon.Web.GraphQL.Types
 {
     public class UserChatType : ObjectGraphType<UserChat>
     {
-        public UserChatType(IServiceProvider serviceProvider)
+        public UserChatType(IServiceProvider serviceProvider, UserProvider userProvider)
         {
 
             Field<NonNullGraphType<GuidGraphType>, Guid>()
@@ -35,8 +37,7 @@ namespace Geesemon.Web.GraphQL.Types
                     if (context.Source.User != null)
                         return context.Source.User;
                     using var scope = serviceProvider.CreateScope();
-                    var userManager = scope.ServiceProvider.GetRequiredService<UserManager>();
-                    return await userManager.GetByIdAsync(context.Source.UserId);
+                    return await userProvider.GetByIdAsync(context.Source.UserId);
                 });
         }
     }

@@ -1,19 +1,24 @@
 ﻿using FluentValidation;
+
+using Geesemon.DataAccess.Dapper.Providers;
 using Geesemon.DataAccess.Managers;
 using Geesemon.Model.Enums;
 using Geesemon.Model.Models;
 using Geesemon.Web.Extensions;
-using Geesemon.Web.Geesetext;
 using Geesemon.Web.GraphQL.Auth;
 using Geesemon.Web.GraphQL.Types;
 using Geesemon.Web.Services;
 using Geesemon.Web.Services.ChatActivitySubscription;
 using Geesemon.Web.Services.FileManagers;
 using Geesemon.Web.Services.LoginViaTokenSubscription;
+
 using GraphQL;
 using GraphQL.Types;
+
 using Microsoft.Net.Http.Headers;
+
 using Newtonsoft.Json;
+
 using System.Text;
 
 namespace Geesemon.Web.GraphQL.Mutations
@@ -22,7 +27,7 @@ namespace Geesemon.Web.GraphQL.Mutations
     {
         public AuthMutation(
             AuthService authService,
-            UserManager userManager,
+            UserProvider userProvider,
             SessionManager sessionManager,
             IFileManagerService fileManagerService,
             IHttpContextAccessor httpContextAccessor,
@@ -41,18 +46,18 @@ namespace Geesemon.Web.GraphQL.Mutations
                     var authRegisterInput = context.GetArgument<AuthRegisterInput>("input");
                     authRegisterInputValidator.ValidateAndThrow(authRegisterInput);
 
-                    var user = await userManager.GetByIdentifierAsync(authRegisterInput.Identifier);
+                    var user = await userProvider.GetByIdentifierAsync(authRegisterInput.Identifier);
                     if (user != null)
                         throw new Exception($"User with login '{authRegisterInput.Identifier}' already exist.");
 
-                    user = await userManager.GetByEmailAsync(authRegisterInput.Email);
+                    user = await userProvider.GetByEmailAsync(authRegisterInput.Email);
 
                     if (user != null)
                         throw new Exception($"User with email '{authRegisterInput.Email}' already exist.");
 
                     var userId = Guid.NewGuid();
                     var saltedPassword = authRegisterInput.Password + userId;
-                    var newUser = await userManager.CreateAsync(new User
+                    var newUser = await userProvider.CreateAsync(new User
                     {
                         Id = userId,
                         Identifier = authRegisterInput.Identifier,
@@ -86,7 +91,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                     var authLoginInput = context.GetArgument<AuthLoginInput>("input");
                     authLoginInputValidator.ValidateAndThrow(authLoginInput);
 
-                    var user = await userManager.GetByIdentifierAsync(authLoginInput.Identifier);
+                    var user = await userProvider.GetByIdentifierAsync(authLoginInput.Identifier);
                     if (user == null)
                         throw new Exception("Login or password not valid.");
 
@@ -177,12 +182,12 @@ namespace Geesemon.Web.GraphQL.Mutations
                         imageUrl = authUpdateProfile.ImageUrl;
 
                     var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
-                    var currentUser = await userManager.GetByIdAsync(currentUserId);
+                    var currentUser = await userProvider.GetByIdAsync(currentUserId);
                     currentUser.FirstName = authUpdateProfile.Firstname;
                     currentUser.LastName = authUpdateProfile.Lastname;
                     currentUser.Identifier = authUpdateProfile.Identifier;
                     currentUser.ImageUrl = imageUrl;
-                    currentUser = await userManager.UpdateAsync(currentUser);
+                    currentUser = await userProvider.UpdateAsync(currentUser);
 
                     await chatActivitySubscriptionService.Notify(currentUser.Id);
                     return currentUser;
@@ -219,7 +224,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                         throw new ExecutionError("Token is not valid");
 
                     var identifier = httpContextAccessor.HttpContext.User.Claims.GetIdentifier();
-                    var user = await userManager.GetByIdentifierAsync(identifier);
+                    var user = await userProvider.GetByIdentifierAsync(identifier);
                     if (user == null)
                         throw new Exception("User does not exists.");
 

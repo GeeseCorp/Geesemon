@@ -1,6 +1,7 @@
 ﻿using Dapper;
 
 using Geesemon.Model.Common;
+using Geesemon.Model.Models;
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -18,19 +19,19 @@ public class BaseProvider<T> where T : Entity
         this.dapperConnection = dapperConnection;
     }
 
-    public async Task<bool> CreateAsync(T entity)
+    public async Task<T> CreateAsync(T entity)
     {
         using var connection = dapperConnection.Open();
         int rowsEffected = 0;
 
         var tableName = GetTableName();
-        var columns = GetColumns(excludeKey: true);
-        var properties = GetPropertyNames(excludeKey: true);
+        var columns = GetColumns();
+        var properties = GetPropertyNames();
         var query = $"INSERT INTO {tableName} ({columns}) VALUES ({properties})";
 
         rowsEffected = await connection.ExecuteAsync(query, entity);
 
-        return rowsEffected > 0 ? true : false;
+        return rowsEffected > 0 ? entity : throw new Exception($"Failed to create {nameof(T)} entity in database.");
     }
 
     public async Task<bool> RemoveAsync(T entity)
@@ -77,7 +78,32 @@ public class BaseProvider<T> where T : Entity
         return result.FirstOrDefault();
     }
 
-    public async Task<bool> UpdateAsync(T entity)
+    public async Task<IEnumerable<T>> GetByIdsAsync(Guid[] Ids)
+    {
+        if (Ids.Length == 0)
+            return Enumerable.Empty<T>();
+
+        using var connection = dapperConnection.Open();
+        IEnumerable<T> result = null;
+
+        var tableName = GetTableName();
+        var keyColumn = GetKeyColumnName();
+
+        var whereParts = Ids.Select(id => $"{keyColumn} = '{id}'");
+
+        var query = $"SELECT * FROM {tableName} WHERE " + string.Join(" OR ", whereParts);
+
+        result = await connection.QueryAsync<T>(query);
+
+        return result;
+    }
+
+    public Task<IEnumerable<T>> GetByIdsAsync(IEnumerable<Guid> Ids)
+    {
+        return GetByIdsAsync(Ids.ToArray());
+    }
+
+    public async Task<T> UpdateAsync(T entity)
     {
         using var connection = dapperConnection.Open();
         int rowsEffected = 0;
@@ -106,7 +132,7 @@ public class BaseProvider<T> where T : Entity
         rowsEffected = await connection.ExecuteAsync(query.ToString(), entity);
 
 
-        return rowsEffected > 0 ? true : false;
+        return rowsEffected > 0 ? entity : throw new Exception($"Failed to create {nameof(T)} entity in database.");
     }
 
     protected string GetTableName()
@@ -125,11 +151,11 @@ public class BaseProvider<T> where T : Entity
     {
         var type = typeof(T);
         var columns = string.Join(", ", type.GetProperties()
-            .Where(p => !excludeKey || !p.IsDefined(typeof(KeyAttribute)))
+            .Where(p => !p.IsDefined(typeof(NotMappedAttribute)) && !p.IsDefined(typeof(DapperNotMappedAttribute)) && (!excludeKey || !p.IsDefined(typeof(KeyAttribute))))
             .Select(p =>
             {
                 var columnAttr = p.GetCustomAttribute<ColumnAttribute>();
-                return columnAttr != null ? columnAttr.Name : p.Name;
+                return columnAttr != null ? GetTableName() + '.' + columnAttr.Name : p.Name;
             }));
 
         return columns;
@@ -138,7 +164,7 @@ public class BaseProvider<T> where T : Entity
     protected string GetPropertyNames(bool excludeKey = false)
     {
         var properties = typeof(T).GetProperties()
-            .Where(p => !excludeKey || p.GetCustomAttribute<KeyAttribute>() == null);
+            .Where(p => !p.IsDefined(typeof(NotMappedAttribute)) && !p.IsDefined(typeof(DapperNotMappedAttribute)) && (!excludeKey || p.GetCustomAttribute<KeyAttribute>() == null));
 
         var values = string.Join(", ", properties.Select(p =>
         {
@@ -151,7 +177,7 @@ public class BaseProvider<T> where T : Entity
     protected IEnumerable<PropertyInfo> GetProperties(bool excludeKey = false)
     {
         var properties = typeof(T).GetProperties()
-            .Where(p => !excludeKey || p.GetCustomAttribute<KeyAttribute>() == null);
+            .Where(p => !p.IsDefined(typeof(NotMappedAttribute)) && !p.IsDefined(typeof(DapperNotMappedAttribute)) && (!excludeKey || p.GetCustomAttribute<KeyAttribute>() == null));
 
         return properties;
     }
@@ -193,13 +219,6 @@ public class BaseProvider<T> where T : Entity
         }
 
         return null;
-    }
-
-    protected static string GetColumnName(PropertyInfo property)
-    {
-        var columnAttr = property.GetCustomAttribute<ColumnAttribute>();
-
-        return columnAttr != null ? columnAttr.Name : property.Name;
     }
 }
 

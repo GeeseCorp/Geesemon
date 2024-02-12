@@ -1,5 +1,4 @@
-﻿
-using Geesemon.DataAccess.Managers;
+﻿using Geesemon.DataAccess.Dapper.Providers;
 using Geesemon.Model.Models;
 
 using GraphQL.DataLoader;
@@ -10,11 +9,13 @@ public class UserLoader
 {
     private readonly IDataLoaderContextAccessor loaderContextAccessor;
     private readonly IServiceProvider serviceProvider;
+    private readonly UserProvider userProvider;
 
-    public UserLoader(IDataLoaderContextAccessor loaderContextAccessor, IServiceProvider serviceProvider)
+    public UserLoader(IDataLoaderContextAccessor loaderContextAccessor, IServiceProvider serviceProvider, UserProvider userProvider)
     {
         this.loaderContextAccessor = loaderContextAccessor;
         this.serviceProvider = serviceProvider;
+        this.userProvider = userProvider;
     }
 
     public IDataLoaderResult<User> Load(Guid userId)
@@ -25,7 +26,7 @@ public class UserLoader
     private async Task<IDictionary<Guid, User>> FetchAsync(IEnumerable<Guid> ids)
     {
         using var scope = serviceProvider.CreateScope();
-        var users = await scope.ServiceProvider.GetRequiredService<UserManager>().GetByIdsAsync(ids);
+        var users = await userProvider.GetByIdsAsync(ids);
         return users.ToDictionary(u => u.Id);
     }
 }

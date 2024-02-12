@@ -5,7 +5,7 @@ public class Session : Entity
 {
     public string Token { get; set; }
     public bool IsOnline { get; set; }
-    public DateTime LastTimeOnline { get; set; }
+    public DateTime LastTimeOnline { get; set; } = DateTime.UtcNow;
     public string IpAddress { get; set; }
     public string UserAgent { get; set; }
     public string Location { get; set; }
