@@ -1,4 +1,5 @@
 ﻿using Geesemon.DataAccess.Managers;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,7 +13,6 @@ public static class ServiceCollectionExtensions
             options.UseSqlServer(connectionString ?? AppDbContext.DefaultConnectionString, b => b.MigrationsAssembly("Geesemon.DataAccess"));
         });
 
-        services.AddScoped<UserManager>();
         services.AddScoped<ChatManager>();
         services.AddScoped<MessageManager>();
         services.AddScoped<UserChatManager>();

@@ -16,7 +16,7 @@ public static class ServiceCollectionExtensions
 
     private static IServiceCollection AddProviders(this IServiceCollection services)
     {
-        services.AddScoped<UserProvider>();
+        services.AddSingleton<UserProvider>();
 
 
         return services;

@@ -58,13 +58,13 @@ namespace Geesemon.DataAccess
                 if (entity is Chat)
                 {
                     var chat = (Chat)entity;
-                    chat.ImageColor = colors[rnd.Next(0, colors.Count - 1)];
+                    chat.ImageColor = ColorGenerator.GetRandomColor();
                 }
 
                 if (entity is User)
                 {
                     var user = (User)entity;
-                    user.AvatarColor = colors[rnd.Next(0, colors.Count - 1)];
+                    user.AvatarColor = ColorGenerator.GetRandomColor();
                 }
             }
         }

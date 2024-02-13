@@ -1,5 +1,6 @@
 ﻿using Geesemon.Model.Common;
 using Geesemon.Model.Enums;
+
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Geesemon.Model.Models;
@@ -21,8 +22,8 @@ public class Chat : Entity
     [NotMapped]
     public int NotReadMessagesCount { get; set; }
 
-    public Guid? CreatorId { get; set; }
-    public User? Creator { get; set; }
+    public Guid CreatorId { get; set; }
+    public User Creator { get; set; }
 
     public List<Message>? Messages { get; set; }
 

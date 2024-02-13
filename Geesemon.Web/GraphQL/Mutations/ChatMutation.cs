@@ -1,4 +1,6 @@
 ﻿using FluentValidation;
+
+using Geesemon.DataAccess.Dapper.Providers;
 using Geesemon.DataAccess.Managers;
 using Geesemon.Model.Enums;
 using Geesemon.Model.Models;
@@ -8,9 +10,9 @@ using Geesemon.Web.GraphQL.Types;
 using Geesemon.Web.Services.ChatActionsSubscription;
 using Geesemon.Web.Services.FileManagers;
 using Geesemon.Web.Services.MessageSubscription;
+
 using GraphQL;
 using GraphQL.Types;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Geesemon.Web.GraphQL.Mutations
 {
@@ -23,7 +25,7 @@ namespace Geesemon.Web.GraphQL.Mutations
         private readonly IChatMembersSubscriptionService chatMembersSubscriptionService;
         private readonly ChatManager chatManager;
         private readonly UserChatManager userChatManager;
-        private readonly UserManager userManager;
+        private readonly UserProvider userProvider;
         private readonly IServiceProvider serviceProvider;
         private readonly IValidator<CreateGroupChatInput> createGroupChatInputValidator;
         private readonly IValidator<UpdateChatInput> updateChatInputValidator;
@@ -37,7 +39,7 @@ namespace Geesemon.Web.GraphQL.Mutations
             IChatMembersSubscriptionService chatMembersSubscriptionService,
             ChatManager chatManager,
             UserChatManager userChatManager,
-            UserManager userManager,
+            UserProvider userProvider,
             IServiceProvider serviceProvider,
             IValidator<CreateGroupChatInput> createGroupChatInputValidator,
             IValidator<UpdateChatInput> updateChatInputValidator,
@@ -67,13 +69,13 @@ namespace Geesemon.Web.GraphQL.Mutations
                 .Argument<UpdateChatInputType>("Input", "Chat input for updating chat.")
                 .ResolveAsync(ResolveUpdate)
                 .AuthorizeWith(AuthPolicies.Authenticated);
-            
+
             Field<NonNullGraphType<ListGraphType<UserType>>, IEnumerable<User>>()
                 .Name("AddMembers")
                 .Argument<NonNullGraphType<ChatsAddMembersInputType>, ChatsAddMembersInput>("Input", "")
                 .ResolveAsync(ResolveAddMembers)
                 .AuthorizeWith(AuthPolicies.Authenticated);
-            
+
             Field<NonNullGraphType<ListGraphType<UserType>>, IEnumerable<User>>()
                 .Name("RemoveMembers")
                 .Argument<NonNullGraphType<ChatsAddMembersInputType>, ChatsAddMembersInput>("Input", "")
@@ -93,7 +95,7 @@ namespace Geesemon.Web.GraphQL.Mutations
             this.chatMembersSubscriptionService = chatMembersSubscriptionService;
             this.chatManager = chatManager;
             this.userChatManager = userChatManager;
-            this.userManager = userManager;
+            this.userProvider = userProvider;
             this.serviceProvider = serviceProvider;
             this.createGroupChatInputValidator = createGroupChatInputValidator;
             this.updateChatInputValidator = updateChatInputValidator;
@@ -109,7 +111,7 @@ namespace Geesemon.Web.GraphQL.Mutations
             if (checkChat != null)
                 throw new Exception("Personal chat already exists");
 
-            var oppositeUser = await userManager.GetByIdentifierAsync(chatInp.Identifier);
+            var oppositeUser = await userProvider.GetByIdentifierAsync(chatInp.Identifier);
 
             var chat = new Chat
             {
@@ -119,7 +121,7 @@ namespace Geesemon.Web.GraphQL.Mutations
             chat = await chatManager.CreateAsync(chat);
 
             var userChat = new List<UserChat>
-            { 
+            {
                 new UserChat { UserId = currentUserId, ChatId = chat.Id },
             };
             if (oppositeUser.Id != currentUserId)
@@ -135,7 +137,6 @@ namespace Geesemon.Web.GraphQL.Mutations
         {
             var chatManager = context.RequestServices.GetRequiredService<ChatManager>();
             var userChatManager = context.RequestServices.GetRequiredService<UserChatManager>();
-            var userManager = context.RequestServices.GetRequiredService<UserManager>();
             var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
             var currentUserIdentifier = httpContextAccessor.HttpContext.User.Claims.GetIdentifier();
             var chatInput = context.GetArgument<CreateGroupChatInput>("Input");
@@ -213,14 +214,14 @@ namespace Geesemon.Web.GraphQL.Mutations
                 chat.ImageUrl = await fileManagerService.UploadFileAsync(FileManagerConstants.GroupImagesFolder, chatUpdateInput.Image);
 
             chat.Name = chatUpdateInput.Name;
-            chat.Identifier = chatUpdateInput.Identifier ;
+            chat.Identifier = chatUpdateInput.Identifier;
             await chatManager.UpdateAsync(chat);
 
             var userChats = await userChatManager.Get(chat.Id);
             chatActionSubscriptionService.Notify(chat, ChatActionKind.Update, userChats.Select(uc => uc.UserId));
             return chat;
         }
-        
+
         private async Task<IEnumerable<User>> ResolveAddMembers(IResolveFieldContext context)
         {
             var chatsAddMembersInput = context.GetArgument<ChatsAddMembersInput>("Input");
@@ -236,14 +237,14 @@ namespace Geesemon.Web.GraphQL.Mutations
                 throw exception;
 
             var newUserChats = new List<UserChat>();
-            foreach(var userId in chatsAddMembersInput.UserIds)
+            foreach (var userId in chatsAddMembersInput.UserIds)
             {
-                var user = await userManager.GetByIdAsync(userId);
+                var user = await userProvider.GetByIdAsync(userId);
                 if (user == null)
                     throw new ExecutionError($"User with id {user.Id} not found");
 
                 var userChat = await userChatManager.Get(chatsAddMembersInput.ChatId, userId);
-                if(userChat == null)
+                if (userChat == null)
                     newUserChats.Add(new UserChat
                     {
                         ChatId = chatsAddMembersInput.ChatId,
@@ -270,7 +271,7 @@ namespace Geesemon.Web.GraphQL.Mutations
             }
             return newUserChats.Select(uc => uc.User);
         }
-        
+
         private async Task<IEnumerable<User>> ResolveRemoveMembers(IResolveFieldContext context)
         {
             var chatsAddMembersInput = context.GetArgument<ChatsAddMembersInput>("Input");
@@ -282,9 +283,9 @@ namespace Geesemon.Web.GraphQL.Mutations
                 throw new Exception("User can update only group chats he own.");
 
             var removeUserChats = new List<UserChat>();
-            foreach(var userId in chatsAddMembersInput.UserIds)
+            foreach (var userId in chatsAddMembersInput.UserIds)
             {
-                var user = await userManager.GetByIdAsync(userId);
+                var user = await userProvider.GetByIdAsync(userId);
                 if (user == null)
                     throw new ExecutionError($"User with id {user.Id} not found");
 
@@ -306,7 +307,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                     ChatId = chatsAddMembersInput.ChatId,
                     Text = "RemovedFromChatMessage",
                     Type = MessageKind.SystemGeeseText,
-                    GeeseTextArguments = new[] { "@" + currentIdentifier, "@" + userChat.User.Identifier}
+                    GeeseTextArguments = new[] { "@" + currentIdentifier, "@" + userChat.User.Identifier }
                 };
                 newMessage = await messageManager.CreateAsync(newMessage);
                 messageSubscriptionService.Notify(newMessage, MessageActionKind.Create);
@@ -325,7 +326,7 @@ namespace Geesemon.Web.GraphQL.Mutations
             if (chat == null || !await chatManager.IsUserInChat(currentUserId, chat.Id) || chat.Type != ChatKind.Group)
                 throw new Exception("User can leave only chats that he is in.");
 
-            chatActionSubscriptionService.Notify(chat, ChatActionKind.Delete, new List<Guid>{ currentUserId });
+            chatActionSubscriptionService.Notify(chat, ChatActionKind.Delete, new List<Guid> { currentUserId });
 
             var userChat = new UserChat() { ChatId = chat.Id, UserId = currentUserId };
 

@@ -1,5 +1,8 @@
 ﻿using FluentValidation;
+
+using Geesemon.DataAccess.Dapper.Providers;
 using Geesemon.DataAccess.Managers;
+
 using GraphQL.Types;
 using GraphQL.Upload.AspNetCore;
 
@@ -16,7 +19,7 @@ public class CreateGroupChatInputType : InputObjectGraphType<CreateGroupChatInpu
         Field<NonNullGraphType<StringGraphType>, string>()
             .Name("Name")
             .Resolve(context => context.Source.Name);
-        
+
         Field<NonNullGraphType<StringGraphType>, string>()
             .Name("Identifier")
             .Resolve(context => context.Source.Identifier);
@@ -37,15 +40,15 @@ public class CreateGroupChatInput
 
 public class CreateGroupChatInputValidation : AbstractValidator<CreateGroupChatInput>
 {
-    public CreateGroupChatInputValidation(ChatManager chatManager, UserManager userManager, IHttpContextAccessor httpContextAccessor)
+    public CreateGroupChatInputValidation(ChatManager chatManager, UserProvider userProvider, IHttpContextAccessor httpContextAccessor)
     {
         RuleFor(r => r.UsersId)
             .NotNull()
             .MustAsync(async (usersId, cancellation) =>
             {
-                foreach(var userId in usersId)
+                foreach (var userId in usersId)
                 {
-                    var user = await userManager.GetByIdAsync(userId);
+                    var user = await userProvider.GetByIdAsync(userId);
                     if (user == null)
                         return false;
                 }
@@ -56,7 +59,7 @@ public class CreateGroupChatInputValidation : AbstractValidator<CreateGroupChatI
             .NotEmpty()
             .NotNull()
             .MaximumLength(100);
-        
+
         RuleFor(r => r.Identifier)
             .NotEmpty()
             .NotNull()

@@ -1,5 +1,7 @@
-﻿using Geesemon.DataAccess.Managers;
+﻿using Geesemon.DataAccess.Dapper.Providers;
+using Geesemon.DataAccess.Managers;
 using Geesemon.Model.Models;
+
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 
@@ -9,19 +11,20 @@ public class ChatActivitySubscriptionService : IChatActivitySubscriptionService
 {
     private readonly ISubject<UserChat> userChatActivityStream = new Subject<UserChat>();
     private readonly IServiceProvider serviceProvider;
+    private readonly UserProvider userProvider;
 
-    public ChatActivitySubscriptionService(IServiceProvider serviceProvider)
+    public ChatActivitySubscriptionService(IServiceProvider serviceProvider, UserProvider userProvider)
     {
         this.serviceProvider = serviceProvider;
+        this.userProvider = userProvider;
     }
 
     public async Task Notify(Guid userId)
     {
         using var scope = serviceProvider.CreateScope();
         var chatManager = scope.ServiceProvider.GetRequiredService<ChatManager>();
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager>();
         var relatedToUserChats = await chatManager.GetAllForUserAsync(userId);
-        var user = await userManager.GetByIdAsync(userId);
+        var user = await userProvider.GetByIdAsync(userId);
         foreach (var chat in relatedToUserChats)
         {
             userChatActivityStream.OnNext(new UserChat

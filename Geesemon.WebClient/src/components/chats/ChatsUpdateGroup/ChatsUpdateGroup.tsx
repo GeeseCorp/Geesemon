@@ -130,7 +130,7 @@ export const ChatsUpdateGroup: FC<Props> = ({ chat }) => {
         <BigPrimaryButton
           onClick={formik.submitForm}
           loading={updateChatLoading}
-          disabled={!(formik.isValid && formik.dirty)}
+          disabled={!(formik.isValid && (formik.dirty || newImage))}
         >
                     Submit
         </BigPrimaryButton>

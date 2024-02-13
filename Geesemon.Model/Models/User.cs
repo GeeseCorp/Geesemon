@@ -47,19 +47,28 @@ public class User : Entity
     public string? ImageUrl { get; set; }
 
     [Column("AvatarColor")]
-    public string AvatarColor { get; set; } = "#000000";
+    public string AvatarColor { get; set; } = ColorGenerator.GetRandomColor();
 
     [NotMapped]
-    public DateTime LastTimeOnline { get; set; }
+    public DateTime LastTimeOnline { get; set; } = DateTime.UtcNow;
 
     [NotMapped]
     public bool IsOnline { get; set; }
 
+    [DapperNotMapped]
     public List<Message>? Messages { get; set; }
 
+    [DapperNotMapped]
     public List<Chat>? AuthoredChats { get; set; }
 
+    [DapperNotMapped]
     public List<UserChat>? UserChats { get; set; }
+
+    [DapperNotMapped]
     public List<Session>? Sessions { get; set; }
+
+    [DapperNotMapped]
     public List<ReadMessage>? ReadMessages { get; set; }
 }
+
+public class DapperNotMappedAttribute : Attribute;

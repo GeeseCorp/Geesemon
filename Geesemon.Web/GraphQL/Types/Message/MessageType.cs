@@ -1,4 +1,4 @@
-﻿using Geesemon.DataAccess.Managers;
+﻿using Geesemon.DataAccess.Dapper.Providers;
 using Geesemon.Model.Common;
 using Geesemon.Model.Enums;
 using Geesemon.Model.Models;
@@ -16,7 +16,8 @@ namespace Geesemon.Web.GraphQL.Types
             IServiceProvider serviceProvider,
             IFileManagerService fileManagerService,
             UserLoader userLoader,
-            MessageLoader messageLoader)
+            MessageLoader messageLoader,
+            UserProvider userProvider)
         {
             Field<StringGraphType, string>()
                 .Name("Text")
@@ -69,12 +70,11 @@ namespace Geesemon.Web.GraphQL.Types
                 .ResolveAsync(async context =>
                 {
                     using var scope = serviceProvider.CreateScope();
-                    var userManager = scope.ServiceProvider.GetRequiredService<UserManager>();
                     var skip = context.GetArgument<int>("Skip");
                     var take = context.GetArgument<int?>("Take");
                     var messageId = context.Source.Id;
 
-                    return await userManager.GetReadByAsync(messageId, skip, take ?? 30); ;
+                    return await userProvider.GetReadByAsync(messageId, skip, take ?? 30); ;
                 });
 
             Field<NonNullGraphType<IntGraphType>, int>()
@@ -82,9 +82,8 @@ namespace Geesemon.Web.GraphQL.Types
                 .ResolveAsync(async context =>
                 {
                     using var scope = serviceProvider.CreateScope();
-                    var userManager = scope.ServiceProvider.GetRequiredService<UserManager>();
                     var messageId = context.Source.Id;
-                    return await userManager.GetReadByCountByAsync(messageId);
+                    return await userProvider.GetReadByCountByAsync(messageId);
                 });
 
             Field<StringGraphType, string?>()
