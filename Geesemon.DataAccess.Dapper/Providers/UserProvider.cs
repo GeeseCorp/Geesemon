@@ -41,7 +41,7 @@ public class UserProvider : BaseProvider<User>
         using var connection = dapperConnection.Open();
 
         var tableName = GetTableName();
-        var query = $"SELECT * FROM {tableName} WHERE Identifier = @email";
+        var query = $"SELECT * FROM {tableName} WHERE Email = @email";
 
         return await connection.QuerySingleOrDefaultAsync<User?>(query, new { email });
     }
