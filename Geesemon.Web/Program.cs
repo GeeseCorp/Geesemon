@@ -13,7 +13,7 @@ builder.Services.AddMigrationServices(builder.Configuration);
 var connectionString = builder.Configuration.GetValue<string>("ConnectionString");
 
 builder.Services.AddMsSql(connectionString);
-builder.Services.AddDapperServices();
+builder.Services.InitializeDapper();
 
 builder.Services.AddGraphQLApi();
 builder.Services.AddJwtAuthorization();

@@ -14,7 +14,6 @@ public static class ServiceCollectionExtensions
         });
 
         services.AddScoped<ChatManager>();
-        services.AddScoped<MessageManager>();
         services.AddScoped<UserChatManager>();
         services.AddScoped<SessionManager>();
         services.AddScoped<ReadMessagesManager>();

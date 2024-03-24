@@ -29,7 +29,7 @@ namespace Geesemon.Web.GraphQL.Mutations
         private readonly IServiceProvider serviceProvider;
         private readonly IValidator<CreateGroupChatInput> createGroupChatInputValidator;
         private readonly IValidator<UpdateChatInput> updateChatInputValidator;
-        private readonly MessageManager messageManager;
+        private readonly MessageProvider messageProvider;
 
         public ChatMutation(
             IHttpContextAccessor httpContextAccessor,
@@ -43,7 +43,7 @@ namespace Geesemon.Web.GraphQL.Mutations
             IServiceProvider serviceProvider,
             IValidator<CreateGroupChatInput> createGroupChatInputValidator,
             IValidator<UpdateChatInput> updateChatInputValidator,
-            MessageManager messageManager
+            MessageProvider messageProvider
             )
         {
             Field<NonNullGraphType<ChatType>, Chat>()
@@ -99,7 +99,7 @@ namespace Geesemon.Web.GraphQL.Mutations
             this.serviceProvider = serviceProvider;
             this.createGroupChatInputValidator = createGroupChatInputValidator;
             this.updateChatInputValidator = updateChatInputValidator;
-            this.messageManager = messageManager;
+            this.messageProvider = messageProvider;
         }
 
         private async Task<Chat?> ResolveCreatePersonal(IResolveFieldContext context)
@@ -265,7 +265,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                     Type = MessageKind.SystemGeeseText,
                     GeeseTextArguments = new[] { "@" + currentIdentifier, "@" + userChat.User.Identifier }
                 };
-                newMessage = await messageManager.CreateAsync(newMessage);
+                newMessage = await messageProvider.CreateAsync(newMessage);
                 messageSubscriptionService.Notify(newMessage, MessageActionKind.Create);
                 chatMembersSubscriptionService.Notify(userChat.User, ChatMembersKind.Add, chat.Id);
             }
@@ -309,7 +309,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                     Type = MessageKind.SystemGeeseText,
                     GeeseTextArguments = new[] { "@" + currentIdentifier, "@" + userChat.User.Identifier }
                 };
-                newMessage = await messageManager.CreateAsync(newMessage);
+                newMessage = await messageProvider.CreateAsync(newMessage);
                 messageSubscriptionService.Notify(newMessage, MessageActionKind.Create);
                 chatMembersSubscriptionService.Notify(userChat.User, ChatMembersKind.Delete, chat.Id);
             }
@@ -339,7 +339,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                 Type = MessageKind.SystemGeeseText,
                 GeeseTextArguments = new[] { "@" + currentIdentifier }
             };
-            newMessage = await messageManager.CreateAsync(newMessage);
+            newMessage = await messageProvider.CreateAsync(newMessage);
             messageSubscriptionService.Notify(newMessage, MessageActionKind.Create);
             chatMembersSubscriptionService.Notify(userChat.User, ChatMembersKind.Delete, chat.Id);
 

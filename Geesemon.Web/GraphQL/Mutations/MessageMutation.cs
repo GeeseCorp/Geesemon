@@ -1,4 +1,6 @@
 ﻿using FluentValidation;
+
+using Geesemon.DataAccess.Dapper.Providers;
 using Geesemon.DataAccess.Managers;
 using Geesemon.Model.Common;
 using Geesemon.Model.Models;
@@ -6,6 +8,7 @@ using Geesemon.Web.GraphQL.Auth;
 using Geesemon.Web.GraphQL.Types;
 using Geesemon.Web.Services.FileManagers;
 using Geesemon.Web.Services.MessageSubscription;
+
 using GraphQL;
 using GraphQL.Types;
 
@@ -16,7 +19,7 @@ namespace Geesemon.Web.GraphQL.Mutations
         public MessageMutation(
             IMessageActionSubscriptionService messageActionSubscriptionService,
             IHttpContextAccessor httpContextAccessor,
-            MessageManager messageManager,
+            MessageProvider messageProvider,
             ChatManager chatManager,
             ReadMessagesManager readMessagesManager,
             IValidator<SentMessageInput> sentMessageInputValidator,
@@ -38,9 +41,11 @@ namespace Geesemon.Web.GraphQL.Mutations
                         throw new ExecutionError("User can sent messages only to chats that he participate.");
 
                     Message? replyMessage = null;
-                    if (sentMessageInput.ReplyMessageId != null)
+
+                    var replyMessageId = sentMessageInput.ReplyMessageId;
+                    if (replyMessageId != null)
                     {
-                        replyMessage = await messageManager.GetByIdAsync(sentMessageInput.ReplyMessageId);
+                        replyMessage = await messageProvider.GetByIdAsync(replyMessageId.Value);
                         if (replyMessage.ChatId != chat.Id)
                             throw new ExecutionError("User can reply messages only from one chat");
                     }
@@ -82,7 +87,7 @@ namespace Geesemon.Web.GraphQL.Mutations
 
                         foreach (var forwardedMessageId in sentMessageInput.ForwardedMessageIds)
                         {
-                            var message = await messageManager.GetByIdAsync(forwardedMessageId);
+                            var message = await messageProvider.GetByIdAsync(forwardedMessageId);
                             var newMessage = new Message()
                             {
                                 ChatId = chat.Id,
@@ -112,7 +117,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                     var createdMessages = new List<Message>();
                     foreach (var newMessage in newMessages)
                     {
-                        var createdMessage = await messageManager.CreateAsync(newMessage);
+                        var createdMessage = await messageProvider.CreateAsync(newMessage);
                         messageActionSubscriptionService.Notify(createdMessage, MessageActionKind.Create);
                         createdMessages.Add(createdMessage);
                     }
@@ -133,8 +138,8 @@ namespace Geesemon.Web.GraphQL.Mutations
                     var deletedMessages = new List<Message>();
                     foreach (var messageId in input.MessageIds)
                     {
-                        var deletedMessage = await messageManager.GetByIdAsync(messageId);
-                        await messageManager.RemoveAsync(deletedMessage);
+                        var deletedMessage = await messageProvider.GetByIdAsync(messageId);
+                        await messageProvider.RemoveAsync(deletedMessage);
                         deletedMessages.Add(deletedMessage);
                     }
 
@@ -155,7 +160,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                     var input = context.GetArgument<UpdateMessageInput>("Input");
                     var currentUserId = httpContextAccessor?.HttpContext?.User.Claims.GetUserId();
 
-                    var message = await messageManager.GetByIdAsync(input.MessageId);
+                    var message = await messageProvider.GetByIdAsync(input.MessageId);
 
                     if (message == null)
                         throw new Exception("Message not found.");
@@ -169,7 +174,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                     message.Text = input.Text;
                     message.IsEdited = true;
 
-                    await messageManager.UpdateAsync(message);
+                    await messageProvider.UpdateAsync(message);
 
                     return messageActionSubscriptionService.Notify(message, MessageActionKind.Update);
                 })
@@ -183,7 +188,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                     var messageId = context.GetArgument<Guid>("MessageId");
                     var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
 
-                    var message = await messageManager.GetByIdAsync(messageId);
+                    var message = await messageProvider.GetByIdAsync(messageId);
                     if (message == null)
                         throw new ExecutionError("Message not found.");
 

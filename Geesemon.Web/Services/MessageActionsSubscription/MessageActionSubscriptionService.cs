@@ -1,6 +1,8 @@
-﻿using Geesemon.DataAccess.Managers;
+﻿using Geesemon.DataAccess.Dapper.Providers;
+using Geesemon.DataAccess.Managers;
 using Geesemon.Model.Enums;
 using Geesemon.Model.Models;
+
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 
@@ -11,9 +13,12 @@ namespace Geesemon.Web.Services.MessageSubscription
         private readonly ISubject<MessageAction> messageActionStream = new Subject<MessageAction>();
 
         private readonly IServiceProvider serviceProvider;
-        public MessageActionSubscriptionService(IServiceProvider serviceProvider)
+        private readonly MessageProvider messageProvider;
+
+        public MessageActionSubscriptionService(IServiceProvider serviceProvider, MessageProvider messageProvider)
         {
             this.serviceProvider = serviceProvider;
+            this.messageProvider = messageProvider;
         }
 
         public Message Notify(Message message, MessageActionKind type)
@@ -25,7 +30,6 @@ namespace Geesemon.Web.Services.MessageSubscription
         public async Task<Message> SentSystemMessageAsync(string text, Guid chatId)
         {
             using var scope = serviceProvider.CreateScope();
-            var messageManager = scope.ServiceProvider.GetRequiredService<MessageManager>();
 
             Message message = new Message()
             {
@@ -35,7 +39,7 @@ namespace Geesemon.Web.Services.MessageSubscription
                 Type = MessageKind.System,
             };
 
-            message = await messageManager.CreateAsync(message);
+            message = await messageProvider.CreateAsync(message);
 
             messageActionStream.OnNext(new MessageAction { Message = message, Type = MessageActionKind.Create });
             return message;
@@ -44,7 +48,6 @@ namespace Geesemon.Web.Services.MessageSubscription
         public async Task<Message> SentSystemGeeseMessageAsync(string text, Guid chatId, string[] arguments)
         {
             using var scope = serviceProvider.CreateScope();
-            var messageManager = scope.ServiceProvider.GetRequiredService<MessageManager>();
 
             Message message = new Message()
             {
@@ -55,7 +58,7 @@ namespace Geesemon.Web.Services.MessageSubscription
                 GeeseTextArguments = arguments
             };
 
-            message = await messageManager.CreateAsync(message);
+            message = await messageProvider.CreateAsync(message);
 
             messageActionStream.OnNext(new MessageAction { Message = message, Type = MessageActionKind.Create });
             return message;

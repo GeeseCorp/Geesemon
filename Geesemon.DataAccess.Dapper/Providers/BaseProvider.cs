@@ -12,16 +12,16 @@ using System.Text;
 namespace Geesemon.DataAccess.Dapper.Providers;
 public class BaseProvider<T> where T : Entity
 {
-    protected readonly DapperConnection dapperConnection;
+    protected readonly DbConnection dbConnection;
 
-    public BaseProvider(DapperConnection dapperConnection)
+    public BaseProvider(DbConnection dapperConnection)
     {
-        this.dapperConnection = dapperConnection;
+        this.dbConnection = dapperConnection;
     }
 
-    public async Task<T> CreateAsync(T entity)
+    public virtual async Task<T> CreateAsync(T entity)
     {
-        using var connection = dapperConnection.Open();
+        using var connection = dbConnection.Open();
         int rowsEffected = 0;
 
         var tableName = GetTableName();
@@ -34,25 +34,35 @@ public class BaseProvider<T> where T : Entity
         return rowsEffected > 0 ? entity : throw new Exception($"Failed to create {nameof(T)} entity in database.");
     }
 
-    public async Task<bool> RemoveAsync(T entity)
+
+    public virtual async Task<T> RemoveAsync(T entity)
     {
-        using var connection = dapperConnection.Open();
+        using var connection = dbConnection.Open();
         int rowsEffected = 0;
 
         var tableName = GetTableName();
         var keyColumn = GetKeyColumnName();
         var keyProperty = GetKeyPropertyName();
 
-        var query = $"DELETE FROM {tableName} WHERE {keyColumn} = @{keyProperty}";
+        var query = $"DELETE FROM {tableName} WHERE {keyColumn} = @{keyColumn}";
 
         rowsEffected = await connection.ExecuteAsync(query, entity);
 
-        return rowsEffected > 0 ? true : false;
+        return entity;
     }
 
-    public async Task<IEnumerable<T>> GetAllAsync()
+    public virtual async Task<T> RemoveByIdAsync(Guid id)
     {
-        using var connection = dapperConnection.Open();
+        T? entity = await GetByIdAsync(id);
+        if (entity == null)
+            throw new NullReferenceException("This record with given id doesn't exist.");
+        entity = await RemoveAsync(entity);
+        return entity;
+    }
+
+    public virtual async Task<IEnumerable<T>> GetAllAsync()
+    {
+        using var connection = dbConnection.Open();
         IEnumerable<T> result = null;
 
         var tableName = GetTableName();
@@ -63,9 +73,9 @@ public class BaseProvider<T> where T : Entity
         return result;
     }
 
-    public async Task<T> GetByIdAsync(Guid Id)
+    public virtual async Task<T> GetByIdAsync(Guid Id)
     {
-        using var connection = dapperConnection.Open();
+        using var connection = dbConnection.Open();
         IEnumerable<T> result = null;
 
         var tableName = GetTableName();
@@ -78,12 +88,12 @@ public class BaseProvider<T> where T : Entity
         return result.FirstOrDefault();
     }
 
-    public async Task<IEnumerable<T>> GetByIdsAsync(Guid[] Ids)
+    public virtual async Task<IEnumerable<T>> GetByIdsAsync(Guid[] Ids)
     {
         if (Ids.Length == 0)
             return Enumerable.Empty<T>();
 
-        using var connection = dapperConnection.Open();
+        using var connection = dbConnection.Open();
         IEnumerable<T> result = null;
 
         var tableName = GetTableName();
@@ -98,14 +108,14 @@ public class BaseProvider<T> where T : Entity
         return result;
     }
 
-    public Task<IEnumerable<T>> GetByIdsAsync(IEnumerable<Guid> Ids)
+    public virtual Task<IEnumerable<T>> GetByIdsAsync(IEnumerable<Guid> Ids)
     {
         return GetByIdsAsync(Ids.ToArray());
     }
 
-    public async Task<T> UpdateAsync(T entity)
+    public virtual async Task<T> UpdateAsync(T entity)
     {
-        using var connection = dapperConnection.Open();
+        using var connection = dbConnection.Open();
         int rowsEffected = 0;
 
         var tableName = GetTableName();

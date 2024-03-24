@@ -1,6 +1,9 @@
 ﻿using FluentValidation;
+
+using Geesemon.DataAccess.Dapper.Providers;
 using Geesemon.DataAccess.Managers;
 using Geesemon.Model.Enums;
+
 using GraphQL.Types;
 using GraphQL.Upload.AspNetCore;
 
@@ -48,7 +51,7 @@ public class SentMessageInput
 
 public class SentMessageInputValidator : AbstractValidator<SentMessageInput>
 {
-    public SentMessageInputValidator(ChatManager chatManager, IHttpContextAccessor httpContextAccessor, MessageManager messageManager)
+    public SentMessageInputValidator(ChatManager chatManager, IHttpContextAccessor httpContextAccessor, MessageProvider messageProvider)
     {
         RuleFor(r => r.Identifier)
             .NotNull()
@@ -71,7 +74,7 @@ public class SentMessageInputValidator : AbstractValidator<SentMessageInput>
                 if (replyMessageId == null)
                     return true;
 
-                var message = await messageManager.GetByIdAsync(replyMessageId);
+                var message = await messageProvider.GetByIdAsync(replyMessageId.Value);
                 return message != null;
             }).WithMessage("Reply message not found");
 
@@ -85,7 +88,7 @@ public class SentMessageInputValidator : AbstractValidator<SentMessageInput>
 
                 foreach (var forwardedMessageId in forwardedMessageIds)
                 {
-                    var forwardedMessage = await messageManager.GetByIdAsync(forwardedMessageId);
+                    var forwardedMessage = await messageProvider.GetByIdAsync(forwardedMessageId);
                     if (forwardedMessage == null)
                         return false;
                 }

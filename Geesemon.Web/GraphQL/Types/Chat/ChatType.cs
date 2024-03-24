@@ -11,7 +11,8 @@ namespace Geesemon.Web.GraphQL.Types
 {
     public class ChatType : EntityType<Chat>
     {
-        public ChatType(IServiceProvider serviceProvider, UserProvider userProvider, IFileManagerService fileManagerService)
+        public ChatType(IServiceProvider serviceProvider, UserProvider userProvider,
+            MessageProvider messageProvider, IFileManagerService fileManagerService)
         {
             Field<NonNullGraphType<StringGraphType>, string>()
                  .Name("Name")
@@ -101,8 +102,8 @@ namespace Geesemon.Web.GraphQL.Types
                     var skip = context.GetArgument<int>("Skip");
                     var take = context.GetArgument<int?>("Take");
                     using var scope = serviceProvider.CreateScope();
-                    var messageManager = scope.ServiceProvider.GetRequiredService<MessageManager>();
-                    return await messageManager.GetByChatIdAsync(chatId, skip, take ?? 30);
+
+                    return await messageProvider.GetByChatIdAsync(chatId, skip, take ?? 30);
                 });
         }
     }

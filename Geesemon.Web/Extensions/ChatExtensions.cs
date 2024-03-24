@@ -1,5 +1,4 @@
 ﻿using Geesemon.DataAccess.Dapper.Providers;
-using Geesemon.DataAccess.Managers;
 using Geesemon.Model.Enums;
 using Geesemon.Model.Models;
 
@@ -7,11 +6,12 @@ namespace Geesemon.Web.Extensions;
 
 public static class ChatExtensions
 {
-    public static async Task<Chat> MapForUserAsync(this Chat chat, Guid currentUserId, IServiceProvider serviceProvider)
+    public static async Task<Chat> MapForUserAsync(this Chat chat, Guid currentUserId,
+        IServiceProvider serviceProvider)
     {
         using var scope = serviceProvider.CreateScope();
-        var messageManager = scope.ServiceProvider.GetRequiredService<MessageManager>();
-        var userProvider = scope.ServiceProvider.GetRequiredService<UserProvider>();
+        var messageProvider = serviceProvider.GetRequiredService<MessageProvider>();
+        var userProvider = serviceProvider.GetRequiredService<UserProvider>();
         switch (chat.Type)
         {
             case ChatKind.Personal:
@@ -29,7 +29,8 @@ public static class ChatExtensions
                 chat.ImageUrl = user.ImageUrl;
                 break;
         }
-        chat.NotReadMessagesCount = await messageManager.GetNotReadMessagesCount(chat.Id, currentUserId);
+        chat.NotReadMessagesCount = await messageProvider.GetNotReadMessagesCount(chat.Id, currentUserId);
+
         return chat;
     }
 

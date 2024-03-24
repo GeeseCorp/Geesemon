@@ -1,8 +1,9 @@
-﻿using Geesemon.DataAccess.Managers;
-using Geesemon.Model.Enums;
+﻿using Geesemon.DataAccess.Dapper.Providers;
+using Geesemon.DataAccess.Managers;
 using Geesemon.Model.Models;
 using Geesemon.Web.GraphQL.Auth;
 using Geesemon.Web.GraphQL.Types;
+
 using GraphQL;
 using GraphQL.Types;
 
@@ -10,7 +11,7 @@ namespace Geesemon.Web.GraphQL.Queries
 {
     public class MessageQuery : ObjectGraphType
     {
-        public MessageQuery(IHttpContextAccessor httpContextAccessor, ChatManager chatManager, MessageManager messageManager)
+        public MessageQuery(IHttpContextAccessor httpContextAccessor, ChatManager chatManager, MessageProvider messageProvider)
         {
             Field<NonNullGraphType<ListGraphType<MessageType>>, List<Message>>()
                 .Name("Get")
@@ -32,14 +33,13 @@ namespace Geesemon.Web.GraphQL.Queries
                     if (!await chatManager.IsUserInChat(currentUserId, chat.Id))
                         throw new Exception("User not in this chat.");
 
-                    var messages = await messageManager.GetByChatIdAsync(chat.Id, skip, take ?? 30);
+                    var messages = await messageProvider.GetByChatIdAsync(chat.Id, skip, take ?? 30);
 
-                    foreach(var message in messages)
-                    {
-                        if (!string.IsNullOrEmpty(message.FileUrl))
-                            message.FileUrl = httpContextAccessor.HttpContext.Request.Host + message.FileUrl;
-                    }
-
+                    //foreach (var message in messages)
+                    //{
+                    //    if (!string.IsNullOrEmpty(message.FileUrl))
+                    //        message.FileUrl = httpContextAccessor.HttpContext.Request.Host + message.FileUrl;
+                    //}
                     return messages;
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);

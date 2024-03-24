@@ -5,13 +5,13 @@ using Geesemon.Model.Models;
 namespace Geesemon.DataAccess.Dapper.Providers;
 public class UserProvider : BaseProvider<User>
 {
-    public UserProvider(DapperConnection dapperConnection)
-        : base(dapperConnection)
+    public UserProvider(DbConnection dbConnection)
+        : base(dbConnection)
     { }
 
     public async Task<List<User>> GetAsync(int take, int skip, string searchQuery, Guid? currentUserId = null)
     {
-        using var connection = dapperConnection.Open();
+        using var connection = dbConnection.Open();
 
         var tableName = GetTableName();
         var query =
@@ -28,7 +28,7 @@ public class UserProvider : BaseProvider<User>
 
     public async Task<User?> GetByIdentifierAsync(string identifier)
     {
-        using var connection = dapperConnection.Open();
+        using var connection = dbConnection.Open();
 
         var tableName = GetTableName();
         var query = $"SELECT * FROM {tableName} WHERE Identifier = @identifier";
@@ -38,7 +38,7 @@ public class UserProvider : BaseProvider<User>
 
     public async Task<User?> GetByEmailAsync(string email)
     {
-        using var connection = dapperConnection.Open();
+        using var connection = dbConnection.Open();
 
         var tableName = GetTableName();
         var query = $"SELECT * FROM {tableName} WHERE Email = @email";
@@ -48,7 +48,7 @@ public class UserProvider : BaseProvider<User>
 
     public async Task<List<User>> GetReadByAsync(Guid messageId, int skip, int take)
     {
-        using var connection = dapperConnection.Open();
+        using var connection = dbConnection.Open();
 
         var tableName = GetTableName();
         var columns = GetColumns();
@@ -68,7 +68,7 @@ public class UserProvider : BaseProvider<User>
 
     public async Task<int> GetReadByCountByAsync(Guid messageId)
     {
-        using var connection = dapperConnection.Open();
+        using var connection = dbConnection.Open();
 
         var tableName = GetTableName();
         var query =
@@ -84,7 +84,7 @@ public class UserProvider : BaseProvider<User>
 
     public async Task<List<User>> GetAsync(Guid chatId)
     {
-        using var connection = dapperConnection.Open();
+        using var connection = dbConnection.Open();
 
         var tableName = GetTableName();
         var columns = GetColumns();

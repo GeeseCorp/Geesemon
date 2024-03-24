@@ -1,9 +1,10 @@
 ﻿using FluentValidation;
+
+using Geesemon.DataAccess.Dapper.Providers;
 using Geesemon.DataAccess.Managers;
 using Geesemon.Model.Enums;
-using GraphQL;
+
 using GraphQL.Types;
-using Microsoft.AspNetCore.Http;
 
 namespace Geesemon.Web.GraphQL.Types;
 
@@ -24,15 +25,15 @@ public class DeleteMessageInput
 
 public class DeleteMessageInputValidator : AbstractValidator<DeleteMessageInput>
 {
-    public DeleteMessageInputValidator(MessageManager messageManager, ChatManager chatManager, IHttpContextAccessor httpContextAccessor)
+    public DeleteMessageInputValidator(MessageProvider messageProvider, ChatManager chatManager, IHttpContextAccessor httpContextAccessor)
     {
         RuleFor(r => r.MessageIds)
             .NotNull()
             .MustAsync(async (messageIds, cancellation) =>
             {
-                foreach(var messageId in messageIds)
+                foreach (var messageId in messageIds)
                 {
-                    var message = await messageManager.GetByIdAsync(messageId);
+                    var message = await messageProvider.GetByIdAsync(messageId);
                     if (message == null)
                         return false;
 
