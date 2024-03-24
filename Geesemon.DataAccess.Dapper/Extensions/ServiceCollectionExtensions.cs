@@ -13,7 +13,7 @@ public static class ServiceCollectionExtensions
     {
         AddDapperServices(services);
         AddProviders(services);
-        AddSqlMappers();
+        AddTypeHandlers();
 
         return services;
     }
@@ -33,7 +33,7 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    private static void AddSqlMappers()
+    private static void AddTypeHandlers()
     {
         SqlMapper.AddTypeHandler(typeof(string[]), new JsonTypeHandler<string[]>());
         SqlMapper.AddTypeHandler(typeof(ForwardedMessage), new JsonTypeHandler<ForwardedMessage>());
