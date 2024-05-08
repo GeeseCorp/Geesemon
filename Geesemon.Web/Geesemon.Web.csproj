@@ -15,6 +15,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\images\flags\ru.png" />
+    <Content Remove="wwwroot\images\flags\uk.jpg" />
+    <Content Remove="wwwroot\images\flags\us.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
     <_WebToolingArtifacts Remove="Properties\launchSettings.json" />
   </ItemGroup>
 
@@ -66,5 +72,10 @@
   <ItemGroup>
     <Folder Include="wwwroot\dynamic\Images\UserAvatars\" />
   </ItemGroup>
-
+	
+	<ItemGroup>
+		<Content Include="Assets\**">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
 </Project>

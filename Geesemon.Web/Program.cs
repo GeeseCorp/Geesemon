@@ -3,7 +3,6 @@ using Geesemon.DataAccess.Extensions;
 using Geesemon.Migrations.Extensions;
 using Geesemon.Web.Extensions;
 using Geesemon.Web.GraphQL;
-
 using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -50,18 +49,9 @@ app.UseStaticFiles(new StaticFileOptions()
         ctx.Context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     },
     FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Assets")),
-    RequestPath = new PathString("")
 });
-app.UseStaticFiles(new StaticFileOptions()
-{
-    OnPrepareResponse = ctx =>
-    {
-        ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
-        ctx.Context.Response.Headers.Append("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    },
-    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")),
-    RequestPath = new PathString("")
-});
+
+app.UseStaticFiles();
 
 app.UseRouting();
 
