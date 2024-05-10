@@ -34,7 +34,6 @@ namespace Geesemon.Web.GraphQL.Types
                         return null;
 
                     using var scope = serviceProvider.CreateScope();
-                    var request = scope.ServiceProvider.GetRequiredService<IHttpContextAccessor>().HttpContext.Request;
 
                     return fileManagerService.FormatUrl(context.Source.ImageUrl);
                 });
