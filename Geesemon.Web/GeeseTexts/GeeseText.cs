@@ -25,10 +25,7 @@ public class GeeseTextEqualityComparer : IEqualityComparer<GeeseText>
 {
     public bool Equals(GeeseText text1, GeeseText text2)
     {
-        if(text1.Key == text2.Key)
-            return true;
-
-        return false;
+        return text1.Key == text2.Key;
     }
 
     public int GetHashCode(GeeseText text)
