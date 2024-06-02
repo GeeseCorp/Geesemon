@@ -74,7 +74,7 @@
   </ItemGroup>
 	
 	<ItemGroup>
-		<Content Include="Assets\**">
+		<Content Include="Assets\**" Exclude="Assets\dynamic\**">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>
