@@ -239,6 +239,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                 throw exception;
 
             var newUserChats = new List<UserChat>();
+            var newUsers = new List<User>();
             foreach (var userId in chatsAddMembersInput.UserIds)
             {
                 var user = await userProvider.GetByIdAsync(userId);
@@ -247,12 +248,14 @@ namespace Geesemon.Web.GraphQL.Mutations
 
                 var userChat = await userChatManager.Get(chatsAddMembersInput.ChatId, userId);
                 if (userChat == null)
+                {
                     newUserChats.Add(new UserChat
                     {
                         ChatId = chatsAddMembersInput.ChatId,
                         UserId = user.Id,
-                        User = user,
                     });
+                    newUsers.Add(user);
+                }
             }
 
             await userChatManager.CreateManyAsync(newUserChats);
@@ -260,18 +263,20 @@ namespace Geesemon.Web.GraphQL.Mutations
 
             foreach (var userChat in newUserChats)
             {
+                var user = newUsers.FirstOrDefault(u => u.Id == userChat.UserId);
                 var newMessage = new Message
                 {
                     ChatId = chatsAddMembersInput.ChatId,
                     Text = "AddedToChatMessage",
                     Type = MessageKind.SystemGeeseText,
-                    GeeseTextArguments = new[] { "@" + currentIdentifier, "@" + userChat.User.Identifier }
+                    GeeseTextArguments = ["@" + currentIdentifier, "@" + user?.Identifier]
                 };
+
                 newMessage = await messageProvider.CreateAsync(newMessage);
                 messageSubscriptionService.Notify(newMessage, MessageActionKind.Create);
-                chatMembersSubscriptionService.Notify(userChat.User, ChatMembersKind.Add, chat.Id);
+                chatMembersSubscriptionService.Notify(user, ChatMembersKind.Add, chat.Id);
             }
-            return newUserChats.Select(uc => uc.User);
+            return newUsers;
         }
 
         private async Task<IEnumerable<User>> ResolveRemoveMembers(IResolveFieldContext context)
@@ -300,8 +305,13 @@ namespace Geesemon.Web.GraphQL.Mutations
 
             chatActionSubscriptionService.Notify(chat, ChatActionKind.Delete, removeUserChats.Select(uc => uc.UserId));
 
+            var usersToRemove = new List<User>();
+
             foreach (var userChat in removeUserChats)
             {
+                var user = await userProvider.GetByIdAsync(userChat.UserId);
+                usersToRemove.Add(user);
+
                 await userChatManager.RemoveAsync(userChat);
 
                 var newMessage = new Message
@@ -309,13 +319,13 @@ namespace Geesemon.Web.GraphQL.Mutations
                     ChatId = chatsAddMembersInput.ChatId,
                     Text = "RemovedFromChatMessage",
                     Type = MessageKind.SystemGeeseText,
-                    GeeseTextArguments = new[] { "@" + currentIdentifier, "@" + userChat.User.Identifier }
+                    GeeseTextArguments = ["@" + currentIdentifier, "@" + user.Identifier]
                 };
                 newMessage = await messageProvider.CreateAsync(newMessage);
                 messageSubscriptionService.Notify(newMessage, MessageActionKind.Create);
-                chatMembersSubscriptionService.Notify(userChat.User, ChatMembersKind.Delete, chat.Id);
+                chatMembersSubscriptionService.Notify(user, ChatMembersKind.Delete, chat.Id);
             }
-            return removeUserChats.Select(uc => uc.User);
+            return usersToRemove;
         }
 
         private async Task<bool> ResolveLeaveChat(IResolveFieldContext context)
