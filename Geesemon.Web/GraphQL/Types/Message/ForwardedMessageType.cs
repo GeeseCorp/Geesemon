@@ -1,6 +1,7 @@
 ﻿using Geesemon.Model.Common;
 using Geesemon.Model.Enums;
 using Geesemon.Web.GraphQL.DataLoaders;
+using Geesemon.Web.Services.FileManagers;
 
 using GraphQL.Types;
 
@@ -8,7 +9,7 @@ namespace Geesemon.Web.GraphQL.Types;
 
 public class ForwardedMessageType : ObjectGraphType<ForwardedMessage>
 {
-    public ForwardedMessageType(UserLoader userLoader)
+    public ForwardedMessageType(UserLoader userLoader, IFileManagerService fileManagerService)
     {
         Field<StringGraphType, string>()
             .Name("Text")
@@ -34,6 +35,12 @@ public class ForwardedMessageType : ObjectGraphType<ForwardedMessage>
 
         Field<StringGraphType, string?>()
             .Name("FileUrl")
-            .Resolve(ctx => ctx.Source.FileUrl);
+            .Resolve(ctx =>
+            {
+                if (string.IsNullOrEmpty(ctx.Source.FileUrl))
+                    return null;
+
+                return fileManagerService.FormatUrl(ctx.Source.FileUrl);
+            });
     }
 }
