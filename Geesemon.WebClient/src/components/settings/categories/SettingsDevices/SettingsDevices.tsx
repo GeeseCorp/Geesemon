@@ -11,6 +11,7 @@ import { authActions } from '../../../../behavior/features/auth/slice';
 import { ContextMenu } from '../../../common/ContextMenu/ContextMenu';
 import { SmallLoading } from '../../../common/SmallLoading/SmallLoading';
 import { useGeeseTexts } from '../../../../hooks/useGeeseTexts';
+import moment from 'moment';
 
 type Props = {};
 export const SettingsDevices: FC<Props> = ({ }) => {
@@ -45,8 +46,8 @@ export const SettingsDevices: FC<Props> = ({ }) => {
             <div className="subText">{currentSession?.ipAddress} - {currentSession?.location}</div>
           </div>
           <div className={s.profileButtons}>
-            <ProfileButton 
-              icon={terminateAllOtherSessionsLoading 
+            <ProfileButton
+              icon={terminateAllOtherSessionsLoading
                 ? <SmallLoading />
                 : <img src={stopSvg} width={25} className={'dangerSvg'} alt={'stopSvg'} />}
               text={T.TerminateAllOtherSessions}
@@ -70,9 +71,9 @@ export const SettingsDevices: FC<Props> = ({ }) => {
               <div className={s.session}>
                 <div className={s.title}>
                   <div className="bold">{session.userAgent}</div>
-                  {session.isOnline 
+                  {session.isOnline
                     ? <div className="subText">Online</div>
-                    : <div className="subText">{session.lastTimeOnline}</div>
+                    : <div className="subText">{moment(session.lastTimeOnline).format('lll')}</div>
                   }
                 </div>
                 <div className="subText">{session.ipAddress} - {session.location}</div>

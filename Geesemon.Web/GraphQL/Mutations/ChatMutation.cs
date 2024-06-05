@@ -189,8 +189,10 @@ namespace Geesemon.Web.GraphQL.Mutations
 
             //NOTE: Because functionality in ChatActionSubscriptionService depends on chat being in database we need to run notify before deletion
             var userChats = await userChatManager.Get(chat.Id);
-            await chatManager.RemoveAsync(chat.Id);
             chatActionSubscriptionService.Notify(chat, ChatActionKind.Delete, userChats.Select(uc => uc.UserId));
+
+            await chatManager.RemoveAsync(chat.Id);
+
             return true;
         }
 
