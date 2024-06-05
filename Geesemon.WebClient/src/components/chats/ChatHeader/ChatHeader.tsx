@@ -35,16 +35,16 @@ export const ChatHeader: FC = () => {
 
   const renderActivity = () => {
     switch (selectedChat?.type) {
-    case ChatKind.Personal:
-      return <div className={'subText'}>{isOnline ? T.Online : lastTimeOnline && getLastTimeActivity(new Date(lastTimeOnline))}</div>;
-    case ChatKind.Group:
-    {
-      if(selectedChat.membersOnline > 1)
-        return <div className={'subText'}>{formatGeesetext(T.MembersInChatAndOnline, selectedChat.membersTotal, selectedChat.membersOnline)}</div>;
-      return <div className={'subText'}>{formatGeesetext(T.MembersInChat, selectedChat.membersTotal)}</div>;
-    }
-    default:
-      return null;
+      case ChatKind.Personal:
+        return <div className={'subText'}>{isOnline ? T.Online : lastTimeOnline && getLastTimeActivity(new Date(lastTimeOnline))}</div>;
+      case ChatKind.Group:
+        {
+          if (selectedChat.membersOnline > 1)
+            return <div className={'subText'}>{formatGeesetext(T.MembersInChatAndOnline, selectedChat.membersTotal, selectedChat.membersOnline)}</div>;
+          return <div className={'subText'}>{formatGeesetext(T.MembersInChat, selectedChat.membersTotal)}</div>;
+        }
+      default:
+        return null;
     }
   };
 
@@ -60,16 +60,16 @@ export const ChatHeader: FC = () => {
     },
   ];
 
-  if(!selectedChat)
+  if (!selectedChat)
     return null;
 
   return (
     <div className={[s.wrapper, 'header'].join(' ')}>
       <div className={s.backAndChatInfo}>
         {isMobile &&
-                    <HeaderButton keyName={'back'} onClick={() => navigate(-1)}>
-                      <img src={backSvg} width={25} className={'secondaryTextSvg'} alt={'backSvg'} />
-                    </HeaderButton>
+          <HeaderButton keyName={'back'} onClick={() => navigate(-1)}>
+            <img src={backSvg} width={25} className={'secondaryTextSvg'} alt={'backSvg'} />
+          </HeaderButton>
         }
         <div
           className={s.chatInfo}
@@ -99,18 +99,18 @@ export const ChatHeader: FC = () => {
         </div>
       </div>
       <div className={s.extraButtons}>
-        <HeaderButton keyName={'ContentBar/ChatHeader/Search'}>
+        {/* <HeaderButton keyName={'ContentBar/ChatHeader/Search'}>
           <img src={searchSvg} width={20} className={'secondaryTextSvg'} alt={'searchSvg'} />
-        </HeaderButton>
+        </HeaderButton> */}
         <HeaderButton keyName={'ContentBar/ChatHeader/ThreeDots'} onClick={() => setIsCreateChatMenuVisible(!isCreateChatMenuVisible)}>
           <img src={threeDotsSvg} width={25} className={'secondaryTextSvg'} alt={'threeDotsSvg'} />
           {isCreateChatMenuVisible &&
-                        <Menu
-                          items={menuItems}
-                          top={50}
-                          right={-20}
-                          setOpen={setIsCreateChatMenuVisible}
-                        />
+            <Menu
+              items={menuItems}
+              top={50}
+              right={-20}
+              setOpen={setIsCreateChatMenuVisible}
+            />
           }
         </HeaderButton>
       </div>

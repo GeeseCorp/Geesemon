@@ -23,10 +23,10 @@ import { formatGeesetext } from '../../../utils/stringUtils';
 import { localStorageGetItem } from '../../../utils/localStorageUtils';
 
 type Props = {
-    chat: ChatType;
-    withSelected?: boolean;
-    withMenu?: boolean;
-    onClickChat: (chatIdentifier: string) => void;
+  chat: ChatType;
+  withSelected?: boolean;
+  withMenu?: boolean;
+  onClickChat: (chatIdentifier: string) => void;
 };
 
 export const Chat: FC<Props> = ({ chat, withSelected = true, withMenu = true, onClickChat }) => {
@@ -66,12 +66,12 @@ export const Chat: FC<Props> = ({ chat, withSelected = true, withMenu = true, on
   useEffect(() => {
     if (chatMembers.data?.chatMembers) {
       switch (chatMembers.data.chatMembers.type) {
-      case ChatMembersKind.Add:
-        dispatch(chatActions.chatAddMembers({ chatId: chat.id, members: [chatMembers.data.chatMembers.user] }));
-        break;
-      case ChatMembersKind.Delete:
-        dispatch(chatActions.chatRemoveMembers({ chatId: chat.id, members: [chatMembers.data.chatMembers.user] }));
-        break;
+        case ChatMembersKind.Add:
+          dispatch(chatActions.chatAddMembers({ chatId: chat.id, members: [chatMembers.data.chatMembers.user] }));
+          break;
+        case ChatMembersKind.Delete:
+          dispatch(chatActions.chatRemoveMembers({ chatId: chat.id, members: [chatMembers.data.chatMembers.user] }));
+          break;
       }
     }
   }, [chatMembers.data?.chatMembers]);
@@ -82,19 +82,19 @@ export const Chat: FC<Props> = ({ chat, withSelected = true, withMenu = true, on
 
     const items: MenuItem[] = [];
 
-    items.push({
-      content: T.Pin,
-      icon: <img src={pinSvg} width={20} className={'primaryTextSvg'} alt={'pinSvg'} />,
-      onClick: () => { },
-      type: 'default',
-    });
+    // items.push({
+    //   content: T.Pin,
+    //   icon: <img src={pinSvg} width={20} className={'primaryTextSvg'} alt={'pinSvg'} />,
+    //   onClick: () => { },
+    //   type: 'default',
+    // });
 
-    items.push({
-      content: T.Unmute,
-      icon: <img src={notificationOutlinedSvg} width={20} className={'primaryTextSvg'} alt={'notificationOutlinedSvg'} />,
-      onClick: () => { },
-      type: 'default',
-    });
+    // items.push({
+    //   content: T.Unmute,
+    //   icon: <img src={notificationOutlinedSvg} width={20} className={'primaryTextSvg'} alt={'notificationOutlinedSvg'} />,
+    //   onClick: () => { },
+    //   type: 'default',
+    // });
 
     items.push({
       content: T.LeaveChat,
@@ -157,14 +157,14 @@ export const Chat: FC<Props> = ({ chat, withSelected = true, withMenu = true, on
             <div className={s.chatSubtitle}>
               <div className={s.chatLastMessage}>
                 {chat.type === ChatKind.Group
-                                    && lastMessage?.fromId
-                                    && lastMessage?.fromId !== authedUser?.id
-                                    && <span>{lastMessage?.from?.firstName}: </span>
+                  && lastMessage?.fromId
+                  && lastMessage?.fromId !== authedUser?.id
+                  && <span>{lastMessage?.from?.firstName}: </span>
                 }
                 <span className="secondary">{lastMessage?.forwardedMessage ? lastMessage.forwardedMessage.text : lastMessageText}</span>
               </div>
               {!!chat.notReadMessagesCount &&
-                                <div className={s.notReadMessagesCount}>{chat.notReadMessagesCount}</div>
+                <div className={s.notReadMessagesCount}>{chat.notReadMessagesCount}</div>
               }
             </div>
           </div>

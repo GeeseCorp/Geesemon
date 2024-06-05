@@ -149,7 +149,7 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
             text={chat.identifier}
             label={selectedChat?.type === ChatKind.Group ? T.Identifier : T.Username}
           />
-          <ProfileButton
+          {/* <ProfileButton
             icon={<img src={notificationOutlinedSvg} width={25} className={'secondaryTextSvg'} alt={'notificationOutlinedSvg'} />}
             text={(
               <div className={s.notifications}>
@@ -160,7 +160,7 @@ export const ChatProfile: FC<Props> = ({ chat }) => {
                 />
               </div>
             )}
-          />
+          /> */}
         </div>
 
         <div className={'divider'} />
