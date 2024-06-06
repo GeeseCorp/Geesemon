@@ -1,6 +1,7 @@
 ﻿using Geesemon.Model.Enums;
 using Geesemon.Model.Models;
 using Geesemon.Web.GraphQL.DataLoaders;
+using Geesemon.Web.Services.FileManagers;
 
 using GraphQL.Types;
 
@@ -8,7 +9,7 @@ namespace Geesemon.Web.GraphQL.Types
 {
     public class UserType : EntityType<User>
     {
-        public UserType(SessionLoader sessionLoader)
+        public UserType(SessionLoader sessionLoader, IFileManagerService fileManagerService)
             : base()
         {
             Field<NonNullGraphType<StringGraphType>, string>()
@@ -49,7 +50,13 @@ namespace Geesemon.Web.GraphQL.Types
 
             Field<StringGraphType, string?>()
                .Name("ImageUrl")
-               .Resolve(context => context.Source.ImageUrl);
+                .Resolve(context =>
+                {
+                    if (string.IsNullOrEmpty(context.Source.ImageUrl))
+                        return null;
+
+                    return fileManagerService.FormatUrl(context.Source.ImageUrl);
+                });
 
             Field<NonNullGraphType<StringGraphType>, string>()
                .Name("AvatarColor")

@@ -96,16 +96,17 @@ export const Chat: FC<Props> = ({ chat, withSelected = true, withMenu = true, on
     //   type: 'default',
     // });
 
-    items.push({
-      content: T.LeaveChat,
-      icon: <img src={exitSvg} width={20} className={'primaryTextSvg'} alt={'exitSvg'} />,
-      onClick: () => {
-        dispatch(chatActions.leaveChatAsync({ chatId: chat.id }));
-        if (selectedChatIdentifier === chat.identifier)
-          navigate('/');
-      },
-      type: 'default',
-    });
+    if (chat.type === ChatKind.Group)
+      items.push({
+        content: T.LeaveChat,
+        icon: <img src={exitSvg} width={20} className={'primaryTextSvg'} alt={'exitSvg'} />,
+        onClick: () => {
+          dispatch(chatActions.leaveChatAsync({ chatId: chat.id }));
+          if (selectedChatIdentifier === chat.identifier)
+            navigate('/');
+        },
+        type: 'default',
+      });
 
     if (chat.creatorId === authedUser?.id || chat.type === ChatKind.Personal)
       items.push({

@@ -62,7 +62,7 @@ export const SettingsDevices: FC<Props> = ({ }) => {
           {sessions.map(session => (
             <ContextMenu
               items={[{
-                content: 'Terminate',
+                content: T.Terminate,
                 type: 'default',
                 icon: <img src={stopSvg} width={20} className={'secondaryTextSvg'} alt={'stopSvg'} />,
                 onClick: () => dispatch(authActions.terminateSessionAsync({ sessionId: session.id })),

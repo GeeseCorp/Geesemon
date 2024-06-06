@@ -48,20 +48,21 @@ export const ChatHeader: FC = () => {
     }
   };
 
-  const menuItems: MenuItem[] = [
-    {
+  if (!selectedChat)
+    return null;
+
+  const menuItems: MenuItem[] = [];
+
+  if (selectedChat.type === ChatKind.Group)
+    menuItems.push({
       content: T.LeaveChat,
       icon: <img src={exitSvg} width={20} className={'primaryTextSvg'} alt={'exitSvg'} />,
       onClick: () => {
-        dispatch(chatActions.leaveChatAsync({ chatId: selectedChat?.id! }));
+        dispatch(chatActions.leaveChatAsync({ chatId: selectedChat.id }));
         navigate('/');
       },
       type: 'default',
-    },
-  ];
-
-  if (!selectedChat)
-    return null;
+    });
 
   return (
     <div className={[s.wrapper, 'header'].join(' ')}>
