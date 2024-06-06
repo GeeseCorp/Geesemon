@@ -179,7 +179,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                     if (authUpdateProfile.Image != null)
                         imageUrl = await fileManagerService.UploadFileAsync(FileManagerConstants.UsersAvatarsFolder, authUpdateProfile.Image);
                     else
-                        imageUrl = authUpdateProfile.ImageUrl;
+                        imageUrl = fileManagerService.GetProcessedUrl(authUpdateProfile.ImageUrl);
 
                     var currentUserId = httpContextAccessor.HttpContext.User.Claims.GetUserId();
                     var currentUser = await userProvider.GetByIdAsync(currentUserId);

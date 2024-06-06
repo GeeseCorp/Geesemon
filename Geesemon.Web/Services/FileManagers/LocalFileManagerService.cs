@@ -54,4 +54,7 @@ public class LocalFileManagerService : IFileManagerService
         var protocol = request.IsHttps ? "https" : "http";
         return $"{protocol}://{request.Host}/{url}";
     }
+
+    public string GetProcessedUrl(string url)
+        => new Uri(url).AbsolutePath;
 }

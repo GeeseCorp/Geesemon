@@ -78,7 +78,10 @@ public class CloudinaryFileManagerService : IFileManagerService
     }
 
     public string FormatUrl(string url)
-      => url;
+        => url;
+
+    public string GetProcessedUrl(string url)
+        => url;
 
     private string GetFileNameFromPath(string path)
     {

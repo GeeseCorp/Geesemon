@@ -10,4 +10,5 @@ public interface IFileManagerService
 
     string FormatUrl(string url);
 
+    string GetProcessedUrl(string url);
 }

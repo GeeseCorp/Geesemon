@@ -44,4 +44,7 @@ public class BlobFileManagerService : IFileManagerService
 
     public string FormatUrl(string url)
         => url;
+    public string GetProcessedUrl(string url)
+        => url;
+
 }
