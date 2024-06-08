@@ -8,8 +8,8 @@ public class _20240608180000_AddIndexes : Migration
     public override void Up()
     {
         Execute.Sql("ALTER TABLE Users ALTER COLUMN FirstName nvarchar(100) NOT NULL");
-        Execute.Sql("ALTER TABLE Users ALTER COLUMN LastName nvarchar(100) NOT NULL");
-        Execute.Sql("ALTER TABLE Users ALTER COLUMN Email nvarchar(100) NOT NULL");
+        Execute.Sql("ALTER TABLE Users ALTER COLUMN LastName nvarchar(100) NULL");
+        Execute.Sql("ALTER TABLE Users ALTER COLUMN Email nvarchar(100) NULL");
         Execute.Sql("ALTER TABLE Users ALTER COLUMN Identifier nvarchar(100) NOT NULL");
         Execute.Sql("ALTER TABLE Chats ALTER COLUMN Identifier nvarchar(100) NULL");
 
