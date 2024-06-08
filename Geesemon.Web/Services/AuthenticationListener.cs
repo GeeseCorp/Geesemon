@@ -28,7 +28,6 @@ namespace Geesemon.Web.Services
                     var principal = authService.ValidateAccessToken(token);
                     if (principal != null)
                     {
-                        var userId = principal.Claims.GetUserId();
                         httpContextAccessor.HttpContext.User = principal;
                         context.Properties[PRINCIPAL_KEY] = principal;
                     }
