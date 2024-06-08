@@ -30,7 +30,6 @@ public class GeeseTextEqualityComparer : IEqualityComparer<GeeseText>
 
     public int GetHashCode(GeeseText text)
     {
-        string hCode = text.Key;
-        return hCode.GetHashCode();
+        return text.Key.GetHashCode();
     }
 }
