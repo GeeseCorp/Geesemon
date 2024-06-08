@@ -27,17 +27,17 @@ export const AuthedApp: FC = () => {
     variables: { token: localStorageGetItem('AuthToken') || '' },
   });
 
-  const makeOfflineAsync = () => {
-    dispatch(authActions.toggleOnlineAsync(false));
-  };
+  // const makeOfflineAsync = () => {
+  //   dispatch(authActions.toggleOnlineAsync(false));
+  // };
 
-  useEffect(() => {
-    dispatch(authActions.toggleOnlineAsync(true));
-    window.addEventListener('beforeunload', makeOfflineAsync);
-    return () => {
-      window.removeEventListener('beforeunload', makeOfflineAsync);
-    };
-  }, []);
+  // useEffect(() => {
+  //   dispatch(authActions.toggleOnlineAsync(true));
+  //   window.addEventListener('beforeunload', makeOfflineAsync);
+  //   return () => {
+  //     window.removeEventListener('beforeunload', makeOfflineAsync);
+  //   };
+  // }, []);
 
   useEffect(() => {
     const data = messageActionSubscription.data;

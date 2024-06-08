@@ -47,7 +47,7 @@ export const VoiceMessage = ({ message }: { message: Message }) => {
 
     wavesurfer.current.on('play', () => {
       if (wavesurfer.current) {
-        dispatch(chatActions.setRepproducingMediaMessageId(message.id));
+        dispatch(chatActions.setReproducingMediaMessageId(message.id));
       }
     });
 

@@ -1,5 +1,5 @@
 import { combineEpics, Epic, ofType } from 'redux-observable';
-import { catchError, debounceTime, endWith, from, mergeMap, of, startWith } from 'rxjs';
+import { catchError, debounceTime, endWith, from, of, startWith, switchMap } from 'rxjs';
 import { client } from '../../client';
 import { RootState } from '../../store';
 import { notificationsActions } from '../notifications/slice';
@@ -10,12 +10,12 @@ export const chatsGetAsyncEpic: Epic<ReturnType<typeof searchActions.chatsGetAsy
   action$.pipe(
     ofType(searchActions.chatsGetAsync.type),
     debounceTime(250),
-    mergeMap(action =>
+    switchMap(action =>
       from(client.query({
         query: searchChatsQuery,
         variables: action.payload,
       })).pipe(
-        mergeMap(response => {
+        switchMap(response => {
           const chats = response.data.search.chats;
 
           return chats.length < action.payload.paging.take

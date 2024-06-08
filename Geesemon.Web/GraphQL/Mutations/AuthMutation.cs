@@ -138,7 +138,7 @@ namespace Geesemon.Web.GraphQL.Mutations
                     session = await authService.FillSession(session, isOnline);
                     await sessionManager.UpdateAsync(session);
 
-                    await chatActivitySubscriptionService.Notify(userId);
+                    //await chatActivitySubscriptionService.Notify(userId);
                     return true;
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);

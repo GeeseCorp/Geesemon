@@ -33,8 +33,6 @@ namespace Geesemon.Web.GraphQL.Types
                     if (string.IsNullOrEmpty(context.Source.ImageUrl))
                         return null;
 
-                    using var scope = serviceProvider.CreateScope();
-
                     return fileManagerService.FormatUrl(context.Source.ImageUrl);
                 });
 
@@ -84,7 +82,6 @@ namespace Geesemon.Web.GraphQL.Types
                     if (chatId == Guid.Empty)
                         return new List<User>();
 
-                    using var scope = serviceProvider.CreateScope();
                     return await userProvider.GetAsync(chatId);
                 });
 
@@ -100,7 +97,6 @@ namespace Geesemon.Web.GraphQL.Types
 
                     var skip = context.GetArgument<int>("Skip");
                     var take = context.GetArgument<int?>("Take");
-                    using var scope = serviceProvider.CreateScope();
 
                     return await messageProvider.GetByChatIdAsync(chatId, skip, take ?? 30);
                 });

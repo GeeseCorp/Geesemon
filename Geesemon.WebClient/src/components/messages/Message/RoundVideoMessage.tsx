@@ -45,7 +45,7 @@ export const RoundVideoMessage = ({ message, isMessageMy }: Props) => {
   };
 
   const onPlay = () => {
-    dispatch(chatActions.setRepproducingMediaMessageId(message.id));
+    dispatch(chatActions.setReproducingMediaMessageId(message.id));
   };
 
   const onEnded = () => {

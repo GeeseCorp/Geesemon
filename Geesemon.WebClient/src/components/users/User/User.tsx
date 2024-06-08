@@ -11,11 +11,11 @@ import { useGeeseTexts } from '../../../hooks/useGeeseTexts';
 import { formatGeesetext } from '../../../utils/stringUtils';
 
 type Props = {
-    user: UserType;
-    selectMultiple?: boolean;
-    selectedUsers: UserType[];
-    onSelectedUsersChange?: (selectedUsers: UserType[]) => void;
-    getContextMenuItems?: (user: UserType) => MenuItem[];
+  user: UserType;
+  selectMultiple?: boolean;
+  selectedUsers: UserType[];
+  onSelectedUsersChange?: (selectedUsers: UserType[]) => void;
+  getContextMenuItems?: (user: UserType) => MenuItem[];
 };
 
 export const User: FC<Props> = ({ user, selectMultiple = false, selectedUsers, onSelectedUsersChange, getContextMenuItems }) => {
@@ -40,10 +40,10 @@ export const User: FC<Props> = ({ user, selectMultiple = false, selectedUsers, o
     <ContextMenu items={items}>
       <div key={user.id} className={s.user} onClick={() => onChangeHanlder(user)}>
         {selectMultiple &&
-                    <Checkbox  
-                      checked={!!selectedUsers.some(u => u.id === user.id)}
-                      setChecked={() => null}
-                    />
+          <Checkbox
+            checked={!!selectedUsers.some(u => u.id === user.id)}
+            setChecked={() => null}
+          />
         }
         <div className={s.userInner}>
           {user.imageUrl
@@ -59,7 +59,7 @@ export const User: FC<Props> = ({ user, selectMultiple = false, selectedUsers, o
           }
           <div className={s.userInfo}>
             <div className={'bold'}>{user.firstName} {user.lastName}</div>
-            <div className={'subText'}>{user.isOnline ? T.OnlineStatus : formatGeesetext(T.LastSeen, getLastTimeActivity(new Date(user.lastTimeOnline)))}</div>
+            <div className={'subText'}>{user.isOnline ? T.OnlineStatus : user.lastTimeOnline && formatGeesetext(T.LastSeen, getLastTimeActivity(new Date(user.lastTimeOnline)))}</div>
           </div>
         </div>
       </div>

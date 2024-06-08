@@ -15,40 +15,40 @@ import { ChatsGetVars, MessageGetVars } from './queries';
 import { Chat, Message, UserChat } from './types';
 
 export enum Mode {
-    Text = 'Text',
-    Recording = 'Recording',
-    Updating = 'Updating',
-    Reply = 'Reply',
-    Forward_SelectChat = 'Forward_SelectChat',
-    Forward = 'Forward',
+  Text = 'Text',
+  Recording = 'Recording',
+  Updating = 'Updating',
+  Reply = 'Reply',
+  Forward_SelectChat = 'Forward_SelectChat',
+  Forward = 'Forward',
 }
 
 type InitialState = {
-    chats: Chat[];
-    chatsGetLoading: boolean;
-    chatsGetHasNext: boolean;
+  chats: Chat[];
+  chatsGetLoading: boolean;
+  chatsGetHasNext: boolean;
 
-    messageGetLoading: boolean;
-    messagesGetHasNext: boolean;
+  messageGetLoading: boolean;
+  messagesGetHasNext: boolean;
 
-    replyMessageId?: string | null;
-    inUpdateMessageId?: string | null;
-    forwardMessageIds: string[];
-    selectedMessageIds: string[];
-    mode: Mode;
+  replyMessageId?: string | null;
+  inUpdateMessageId?: string | null;
+  forwardMessageIds: string[];
+  selectedMessageIds: string[];
+  mode: Mode;
 
-    createChatLoading: boolean;
-    updateChatLoading: boolean;
+  createChatLoading: boolean;
+  updateChatLoading: boolean;
 
-    messageIdsMakeReadLoading: string[];
-    inViewMessageIdReadBy?: string | null;
+  messageIdsMakeReadLoading: string[];
+  inViewMessageIdReadBy?: string | null;
 
-    chatByIdentifier?: Chat | null;
-    chatGetByIdentifierLoading: boolean;
+  chatByIdentifier?: Chat | null;
+  chatGetByIdentifierLoading: boolean;
 
-    chatAddMembersLoading: boolean;
+  chatAddMembersLoading: boolean;
 
-    repproducingMediaMessageId: string | null;
+  repproducingMediaMessageId: string | null;
 };
 
 const initialState: InitialState = {
@@ -273,7 +273,7 @@ const slice = createSlice({
 
     leaveChatAsync: (state, action: PayloadAction<{ chatId: string }>) => state,
 
-    setRepproducingMediaMessageId: (state, action: PayloadAction<string | null>) => {
+    setReproducingMediaMessageId: (state, action: PayloadAction<string | null>) => {
       state.repproducingMediaMessageId = action.payload;
     },
 
