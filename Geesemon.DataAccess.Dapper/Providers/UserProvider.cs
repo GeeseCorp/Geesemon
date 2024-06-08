@@ -16,7 +16,7 @@ public class UserProvider : BaseProvider<User>
         var tableName = GetTableName();
         var query =
                 $@"SELECT * FROM {tableName} 
-                WHERE(Identifier like '%' + @searchQuery + '%' or Email like '%' +  @searchQuery + '%' or LastName like '%' +  @searchQuery + '%' or FirstName like '%' +  @searchQuery + '%') and Id != @currentUserId
+                WHERE(Identifier like @searchQuery + '%' or Email like @searchQuery + '%' or LastName like  @searchQuery + '%' or FirstName like  @searchQuery + '%') and Id != @currentUserId
                 ORDER BY FirstName, LastName 
                 OFFSET @skip ROWS
                 FETCH NEXT @take ROWS ONLY;";
