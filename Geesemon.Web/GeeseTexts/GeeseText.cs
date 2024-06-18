@@ -2,6 +2,10 @@
 
 public class GeeseText
 {
+    public string Key { get; set; }
+
+    public string Value { get; set; }
+
     public GeeseText(KeyValuePair<string, string> keyValuePair)
     {
         this.Key = keyValuePair.Key;
@@ -15,10 +19,6 @@ public class GeeseText
 
         this.Value = value;
     }
-
-    public string Key { get; set; }
-
-    public string Value { get; set; }
 }
 
 public class GeeseTextEqualityComparer : IEqualityComparer<GeeseText>
