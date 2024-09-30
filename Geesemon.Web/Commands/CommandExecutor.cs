@@ -28,6 +28,12 @@ public class CommandExecutor
     {
         foreach (var commandInfo in commandInfos)
         {
+            if (context.Message == commandInfo.Command)
+            {
+                await (Task)commandInfo.CommandMethod.Invoke(commandInfo.Module, [context]);
+                return;
+            }
+
             var command = commandInfo.Command + " ";
 
             if (context.Message.StartsWith(command))
@@ -37,6 +43,7 @@ public class CommandExecutor
                 context = context with { Message = message };
 
                 await (Task)commandInfo.CommandMethod.Invoke(commandInfo.Module, [context]);
+                return;
             }
         }
     }
