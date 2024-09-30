@@ -3,10 +3,12 @@ using Geesemon.DataAccess.Extensions;
 using Geesemon.Migrations.Extensions;
 using Geesemon.Web.Extensions;
 using Geesemon.Web.GraphQL;
+
 using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddServices(builder.Configuration);
+builder.Services.AddCommandModules();
 builder.Services.AddMigrationServices(builder.Configuration);
 
 var connectionString = builder.Configuration.GetValue<string>("ConnectionString");

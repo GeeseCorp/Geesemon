@@ -2,6 +2,7 @@
 
 using Geesemon.Migrations;
 using Geesemon.Model.Enums;
+using Geesemon.Web.Commands;
 using Geesemon.Web.Geesetext;
 using Geesemon.Web.GraphQL;
 using Geesemon.Web.GraphQL.Auth;
@@ -105,6 +106,22 @@ namespace Geesemon.Web.Extensions
             {
                 options.Limits.MaxRequestBodySize = int.MaxValue;
             });
+
+            return services;
+        }
+
+        public static IServiceCollection AddCommandModules(this IServiceCollection services)
+        {
+            var commandModuleType = typeof(ICommandModule);
+
+            var commandModules = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(a => a.GetTypes())
+                .Where(t => t.GetInterfaces().Contains(commandModuleType));
+
+            foreach (var commandModule in commandModules)
+                services.AddSingleton(commandModuleType, commandModule);
+
+            services.AddSingleton<CommandExecutor>();
 
             return services;
         }
