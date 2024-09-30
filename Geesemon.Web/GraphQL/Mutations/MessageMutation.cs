@@ -4,6 +4,7 @@ using Geesemon.DataAccess.Dapper.Providers;
 using Geesemon.DataAccess.Managers;
 using Geesemon.Model.Common;
 using Geesemon.Model.Models;
+using Geesemon.Web.Commands;
 using Geesemon.Web.GraphQL.Auth;
 using Geesemon.Web.GraphQL.Types;
 using Geesemon.Web.Services.FileManagers;
@@ -24,7 +25,8 @@ namespace Geesemon.Web.GraphQL.Mutations
             ReadMessagesManager readMessagesManager,
             IValidator<SentMessageInput> sentMessageInputValidator,
             IValidator<DeleteMessageInput> deleteMessageInputValidator,
-            IFileManagerService fileManagerService
+            IFileManagerService fileManagerService,
+            CommandExecutor commandExecutor
             )
         {
             Field<NonNullGraphType<ListGraphType<MessageType>>, IEnumerable<Message>>()
@@ -122,8 +124,9 @@ namespace Geesemon.Web.GraphQL.Mutations
                         createdMessages.Add(createdMessage);
                     }
 
-                    return createdMessages;
+                    await commandExecutor.Execute(new(sentMessageInput.Text, currentUserId, chat.Id));
 
+                    return createdMessages;
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
 

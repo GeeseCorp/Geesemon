@@ -15,5 +15,7 @@
         string GetBlobConnectionString();
 
         FileProvider GetFileProvider();
+
+        string GetChatGptApiKey();
     }
 }
