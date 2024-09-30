@@ -36,5 +36,10 @@
         {
             return Enum.Parse<FileProvider>(Environment.GetEnvironmentVariable("FileProvider"));
         }
+
+        public string GetChatGptApiKey()
+        {
+            return Environment.GetEnvironmentVariable("ChatGptApiKey");
+        }
     }
 }

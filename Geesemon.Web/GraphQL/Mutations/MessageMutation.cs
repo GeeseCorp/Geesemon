@@ -8,9 +8,12 @@ using Geesemon.Web.GraphQL.Auth;
 using Geesemon.Web.GraphQL.Types;
 using Geesemon.Web.Services.FileManagers;
 using Geesemon.Web.Services.MessageSubscription;
+using Geesemon.Web.Utils.SettingsAccess;
 
 using GraphQL;
 using GraphQL.Types;
+
+using System.Text.RegularExpressions;
 
 namespace Geesemon.Web.GraphQL.Mutations
 {
@@ -24,7 +27,8 @@ namespace Geesemon.Web.GraphQL.Mutations
             ReadMessagesManager readMessagesManager,
             IValidator<SentMessageInput> sentMessageInputValidator,
             IValidator<DeleteMessageInput> deleteMessageInputValidator,
-            IFileManagerService fileManagerService
+            IFileManagerService fileManagerService,
+            ISettingsProvider settingsProvider
             )
         {
             Field<NonNullGraphType<ListGraphType<MessageType>>, IEnumerable<Message>>()
@@ -122,8 +126,32 @@ namespace Geesemon.Web.GraphQL.Mutations
                         createdMessages.Add(createdMessage);
                     }
 
-                    return createdMessages;
+                    var match = Regex.Match(sentMessageInput.Text, @"^\/ai (.+)");
+                    if (match.Success)
+                    {
+                        var apiKey = settingsProvider.GetChatGptApiKey();
+                        var api = new OpenAI_API.OpenAIAPI(apiKey);
 
+                        var chatGpt = api.Chat.CreateConversation();
+                        chatGpt.Model = OpenAI_API.Models.Model.ChatGPTTurbo;
+
+                        var command = match.Groups[1].Value;
+                        chatGpt.AppendUserInput(command);
+
+                        var chatGptResponse = await chatGpt.GetResponseFromChatbotAsync();
+
+                        var newMessage = new Message
+                        {
+                            ChatId = chat.Id,
+                            Text = chatGptResponse,
+                            FromId = currentUserId,
+                        };
+                        var createdMessage = await messageProvider.CreateAsync(newMessage);
+                        messageActionSubscriptionService.Notify(createdMessage, MessageActionKind.Create);
+                        createdMessages.Add(createdMessage);
+                    }
+
+                    return createdMessages;
                 })
                 .AuthorizeWith(AuthPolicies.Authenticated);
 

@@ -43,5 +43,10 @@
         {
             return configuration.GetValue<FileProvider>("FileProvider");
         }
+
+        public string GetChatGptApiKey()
+        {
+            return configuration.GetValue<string>("ChatGptApiKey");
+        }
     }
 }
