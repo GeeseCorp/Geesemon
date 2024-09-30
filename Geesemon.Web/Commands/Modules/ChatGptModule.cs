@@ -10,7 +10,8 @@ namespace Geesemon.Web.Commands.Modules;
 public class ChatGptModule(
     ISettingsProvider settingsProvider,
     MessageProvider messageProvider,
-    IMessageActionSubscriptionService messageActionSubscriptionService) : ICommandModule
+    IMessageActionSubscriptionService messageActionSubscriptionService)
+    : ICommandModule
 {
     readonly MessageProvider messageProvider = messageProvider;
     readonly IMessageActionSubscriptionService messageActionSubscriptionService = messageActionSubscriptionService;
@@ -23,16 +24,26 @@ public class ChatGptModule(
 
         conversation.AppendUserInput(context.Message);
 
-        var chatGptResponse = await conversation.GetResponseFromChatbotAsync();
-
-        var newMessage = new Message
+        Message? message = null;
+        await foreach (var messagePart in conversation.StreamResponseEnumerableFromChatbotAsync())
         {
-            ChatId = context.ChatId,
-            Text = chatGptResponse,
-            FromId = context.FromId,
-        };
+            if (message == null)
+            {
+                message = new Message
+                {
+                    ChatId = context.ChatId,
+                    Text = messagePart,
+                    FromId = context.FromId,
+                };
 
-        var createdMessage = await messageProvider.CreateAsync(newMessage);
-        messageActionSubscriptionService.Notify(createdMessage, MessageActionKind.Create);
+                message = await messageProvider.CreateAsync(message);
+                messageActionSubscriptionService.Notify(message, MessageActionKind.Create);
+                continue;
+            }
+
+            message.Text += messagePart;
+            message = await messageProvider.UpdateAsync(message);
+            messageActionSubscriptionService.Notify(message, MessageActionKind.Update);
+        }
     }
 }
