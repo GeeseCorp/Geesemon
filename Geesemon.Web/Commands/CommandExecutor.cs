@@ -24,7 +24,7 @@ public class CommandExecutor
         }
     }
 
-    public async Task Execute(Context context)
+    public async Task Execute(CommandContext context)
     {
         foreach (var commandInfo in commandInfos)
         {
@@ -34,13 +34,12 @@ public class CommandExecutor
             {
                 var message = context.Message[command.Length..];
 
-                var commandContext = new CommandContext(message, context.FromId, context.ChatId);
-                await (Task)commandInfo.CommandMethod.Invoke(commandInfo.Module, [commandContext]);
+                context = context with { Message = message };
+
+                await (Task)commandInfo.CommandMethod.Invoke(commandInfo.Module, [context]);
             }
         }
     }
-
-    public readonly record struct Context(string Message, Guid FromId, Guid ChatId);
 }
 
 readonly record struct CommandInfo(ICommandModule Module, MethodInfo CommandMethod, string Command);
